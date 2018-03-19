@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.myBox
+  div.myBox(v-loading="true")
     div.head
       p.top  
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
@@ -62,7 +62,7 @@
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
-              span ￥{{item.price}}  
+              span {{item.price | price-filter}}  
             li.region
               span {{item.region}} 
               span {{item.buyerNum}} 人已购买

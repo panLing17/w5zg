@@ -1,7 +1,7 @@
 <template lang="pug">
   .homeBox
     nav-bar(background="rgb(245,0,87)")
-      .topLeft(slot="left" @click="$router.push('/citySearch')")
+      .topLeft(slot="left" @click="goToCitySearch")
         img(src="../../../assets/img/home定位按钮@2x.png")
         span.city {{cityName}}
       .topCenter(slot="center")
@@ -38,7 +38,7 @@
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
-              span ￥{{item.price}}
+              span {{item.price | price-filter}}
             li.region
               span {{item.region}}
               span {{item.buyerNum}} 人已购买
@@ -47,32 +47,32 @@
     .downOver 已到最底部
 </template>
 <script>
-  import my_goods from '../../../assets/img/my_goods.png'
-  import 分类 from '../../../assets/img/分类.jpg'
+  import myGoods from '../../../assets/img/my_goods.png'
+  import classify from '../../../assets/img/分类.jpg'
 
   export default {
     name: 'home',
     data () {
       return {
         cityName:this.$route.query.routeParams,
-        classify:[{"imgSrc":分类},{"imgSrc":分类},{"imgSrc":分类},{"imgSrc":分类},{"imgSrc":分类},{"imgSrc":分类},{"imgSrc":分类},{"imgSrc":分类}],
+        classify:[{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify}],
         goodsDetails:[
           {
-            'imgSrc':my_goods,
+            'imgSrc':myGoods,
             'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
             'price':568,
             'region':'江苏南京',
             'buyerNum':'167'
           },
           {
-            'imgSrc':my_goods,
+            'imgSrc':myGoods,
             'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
             'price':379,
             'region':'浙江杭州',
             'buyerNum':'200'
           },
           {
-            'imgSrc':my_goods,
+            'imgSrc':myGoods,
             'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
             'price':299,
             'region':'安徽合肥',
@@ -121,7 +121,16 @@
       },
 
       jump:function(){
-        window.location.href = "http://localhost:8088/#/searchHistory";
+        this.$router.push('/searchHistory');
+      },
+
+      goToCitySearch:function(){
+        this.$router.push({
+          name: '城市搜索',
+           query: {
+              routeParams: 1
+           }
+        })
       }
 
 
@@ -134,7 +143,6 @@
     width: 100%;
     background: rgb(238,238,238);
     padding-bottom: 2rem;
-    position: relative;
   }
   /*顶部搜索--开始*/
   .topLeft{

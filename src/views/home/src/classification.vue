@@ -28,28 +28,28 @@
 
 </template>
 <script>
-  import my_goods from '../../../assets/img/my_goods.png'
+  import myGoods from '../../../assets/img/my_goods.png'
   export default {
     name: 'classification',
     data () {
       return {
         goodsDetails:[
           {
-            'imgSrc':my_goods,
+            'imgSrc':myGoods,
             'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
             'price':568,
             'region':'江苏南京',
             'buyerNum':'167'
           },
           {
-            'imgSrc':my_goods,
+            'imgSrc':myGoods,
             'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
             'price':379,
             'region':'浙江杭州',
             'buyerNum':'200'
           },
           {
-            'imgSrc':my_goods,
+            'imgSrc':myGoods,
             'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
             'price':299,
             'region':'安徽合肥',
@@ -69,16 +69,6 @@
               document.getElementById("returnTop").style.display = "none";
           }
       };
-      var city = document.getElementsByClassName("city")[0];
-      if (city.innerText.length == 2) {
-        city.style.fontSize = .5 + "rem";
-      }
-      if (city.innerText.length == 3) {
-        city.style.fontSize = .3 + "rem";
-      }
-      if (city.innerText.length == 4) {
-        city.style.fontSize = .4 + "rem";
-      }
     },
     methods: {
       // 点击按钮，返回顶部
