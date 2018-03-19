@@ -1,3 +1,3 @@
 import confirm from './confirm/index.js'
-
-export default {confirm}
+import loading from './loading/index.js'
+export default {confirm, loading}

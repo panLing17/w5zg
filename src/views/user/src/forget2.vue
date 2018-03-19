@@ -6,11 +6,10 @@
       .topCenter(slot="center") 忘记密码
       .topRight(slot="right")
     .form
-      w-input(label="手机号：", label-width="1.8rem", placeholder="", :type="passwordType", v-model="form.password")
-      w-input(label="验证码：", label-width="1.8rem", placeholder="", :type="passwordType", v-model="form.password", input-button="true", button-cover)
-        .aplaceholder(slot="button")
-      button.regButton(@click="$router.push('/forget2')") 下一步
-
+      w-input(label="手机验证码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
+      w-input(label="输入新密码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
+      w-input(label="确认新密码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
+      button.regButton(@click="$router.push('/')") 确定
 </template>
 
 <script>
@@ -30,7 +29,7 @@
 </script>
 
 <style scoped>
-  .registerBox {
+  .registerBox{
     min-height: 100vh;
     background: rgb(242,242,242);
   }
@@ -43,9 +42,7 @@
   .inputButton{
     width: 2rem;
     height: .9rem;
-    border-radius: 1rem;
-    background: rgb(245,0,87);
-    color: white;
+    background: #666;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,10 +62,5 @@
     margin-top: .2rem;
     font-size: .3rem;
     color: rgb(153,153,153);
-  }
-  .aplaceholder{
-    width: 2rem;
-    height: 1rem;
-    background-color: rgb(245,0,87);
   }
 </style>

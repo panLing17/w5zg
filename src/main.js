@@ -10,6 +10,8 @@ Vue.use(VueScroller)
 import axios from 'axios'
 //公用方法
 import method from './utils/method.js'
+//mescroll初始化
+import './utils/mescrollInt.js'
 //过滤器
 import './filter/filter.js'
 //动画

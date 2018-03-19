@@ -6,28 +6,23 @@
       li
         router-link(to='/home')
           p
-            img(:src="$route.matched[1].path=='/home'?'static/img/bottom_home_checked.png':'static/img/bottom_home.png'")
+            img(:src="$route.matched[1].path=='/home'?'static/img/homepage4@3x.png':'static/img/homepage3@3x.png'")
           p(:class="{checked:$route.matched[1].path=='/home'}") 主页
       li
         router-link(to='/page')
           p
-            img(:src="$route.matched[1].path=='/page'?'static/img/bottom_page_checked.png':'static/img/bottom_page.png'")
+            img(:src="$route.matched[1].path=='/page'?'static/img/classification4@3x.png':'static/img/classification3@3x.png'")
           p(:class="{checked:$route.matched[1].path=='/page'}") 分类
-      li
-        router-link(to='/cabinet')
-          p
-            img(:src="$route.matched[1].path=='/cabinet'?'static/img/bottom_cabinet_checked.png':'static/img/bottom_cabinet.png'")
-          p(:class="{checked:$route.matched[1].path=='/cabinet'}") 生鲜柜
       li
         router-link(to='/shoppingCart')
           span.count(v-if="$store.state.shoppingCount>0") {{$store.state.shoppingCount}}
           p
-            img(:src="$route.matched[1].path=='/shoppingCart'?'static/img/bottom_shoppingCart_checked.png':'static/img/bottom_shoppingCart.png'")
+            img(:src="$route.matched[1].path=='/shoppingCart'?'static/img/shoppingcart4@3x.png':'static/img/shoppingcart3@3x.png'")
           p(:class="{checked:$route.matched[1].path=='/shoppingCart'}") 购物车
       li
         router-link(to='/my')
           p
-            img(:src="$route.matched[1].path=='/my'?'static/img/bottom_my_checked.png':'static/img/bottom_my.png'")
+            img(:src="$route.matched[1].path=='/my'?'static/img/mine4@3x.png':'static/img/mine3@3x.png'")
           p(:class="{checked:$route.matched[1].path=='/my'}") 我的
 </template>
 
@@ -113,6 +108,6 @@
 
   /*选中颜色*/
   .checked {
-    color: #06c0aa;
+    color: rgb(245,0,87);
   }
 </style>

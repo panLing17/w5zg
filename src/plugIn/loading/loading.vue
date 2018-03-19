@@ -1,17 +1,25 @@
 <template lang="pug">
   .loading
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut", :duration="{ enter: 500, leave: 300 }")
-      .bg(v-if="show")
+      .bg(v-if="show", :style="{height:height}")
         .box
 </template>
 
 <script>
   export default {
     name: 'loading',
+    mounted () {
+      console.log(this.father)
+    },
     props: {
+      father: {},
       show: {
         type: Boolean,
         default: true
+      },
+      height: {
+        type: String,
+        default:'100%'
       }
     }
   }
@@ -19,12 +27,11 @@
 
 <style scoped>
   .loading{
-
   }
   .bg{
     background: rgba(0,0,0,0.3);
     width: 100%;
-    height: 100%;
+    max-height: 100vh;
     position: absolute;
     top: 0;
     left: 0;

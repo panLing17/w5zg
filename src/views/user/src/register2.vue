@@ -8,8 +8,6 @@
     .form
       w-input(label="登入密码：", label-width="2rem", placeholder="", :type="passwordType", v-model="form.password", required)
       w-input(label="确认密码：", label-width="2rem", placeholder="", :type="passwordType", v-model="form.password", required)
-      w-input(v-model="form.mobile", label="验证码：", label-width="2rem", placeholder="", input-button=true, :error="message", required, button-cover)
-        .inputButton(slot="button")
       button.regButton(@click="$router.push('/regOver')") 确定
 </template>
 
@@ -30,6 +28,10 @@
 </script>
 
 <style scoped>
+  .registerBox{
+    min-height: 100vh;
+    background: rgb(242,242,242);
+  }
   .form{
     margin-top: 1.3rem;
     display: flex;
