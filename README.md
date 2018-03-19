@@ -71,7 +71,7 @@
 
 - vuex
 
-- Element UI
+- vue-scroller 上拉加载，下拉刷新
 
 - axios.js  http请求
 
