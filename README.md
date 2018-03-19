@@ -1,4 +1,4 @@
-# 万合云深管理后台
+# 万物直供WEB端
 
 ## 初始化
 
@@ -6,7 +6,7 @@
 
   `npm install`
 
-- 启动本地服务默认打开`http//localhost:8080`
+- 启动本地服务默认打开`http//localhost:8088`
 
   `npm run dev`
 
@@ -24,8 +24,8 @@
 ```bash
 
 ├── build                      // 构建相关 
-├── config                     // 配置相关 
-├── src                        // 源代码 
+├── config                     // 配置相关
+├── src                        // 源代码
 │   ├── api                    // 所有请求
 │   ├── assets                 // 一些初始化的css/js文件，img/fonts文件
 │   ├── components             // 公用组件
@@ -38,7 +38,7 @@
 │   ├── views                  // view，所有页面模板
 │   ├── App.vue                // 入口页面
 │   └── main.js                // 入口 加载组件 初始化等
-├── static                     // 暂时不用，第三方不打包资源已经移至cdn
+├── static                     // 第三方资源
 ├── .babelrc                   // babel-loader 配置
 ├── .editorconfig              // IDE 配置项
 ├── .eslintignore              // eslint 忽略项
@@ -51,7 +51,7 @@
 
 # build 生成目录
 
-├── dist                        // 源代码 
+├── dist                        // 源代码
 │   ├── css                     // 样式文件
 │   ├── fonts                   // 字体文件
 │   └── js                      // 脚本文件
@@ -82,24 +82,4 @@
 - css预处理器，推荐使用stylus
 
 - JavaScript, 推荐使用 ES2015及以上
-
-
-### 前端CDN
-
-> 开发中会用到一些第三方常用库，如果每次都打包会影响打包时间，
-> 建议在index.html页面使用script标签引入，启用cdn加速
-
-如：
-
-[jQuery 3.1.1](https://static.unimeida.com/fe/common/jquery/jquery.3.1.1.min.js)
-
-[moment 2.19.2](https://static.unimeida.com/fe/common/moment/moment.2.19.2.min.js)
-
-### 参考项目：
-
-- [vue-element-admin](https://panjiachen.github.io/vue-element-admin)
-基于 Element-UI
-
-- [iview-admin](https://iview.github.io/iview-admin/)
-基于 iView
 
