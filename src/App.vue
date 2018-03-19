@@ -31,4 +31,10 @@ li{
   color: #2c3e50;
 }
 a{text-decoration:none}
+.scrollWarpClass {
+  position: fixed;
+  bottom: 2rem;
+  right: .5rem;
+  width: 1rem;
+}
 </style>

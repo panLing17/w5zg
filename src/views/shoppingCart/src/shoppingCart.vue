@@ -17,6 +17,10 @@
     mounted () {
       this.$mescrollInt("mescroll",this.upCallback)
     },
+    // 防止页面切换导致的返回顶部按钮回不去，在实例销毁前主动干掉
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+    },
     methods: {
       //上拉回调 page = {num:1, size:10}; num:当前页 ,默认从1开始; size:每页数据条数,默认10
       upCallback: function(page) {
@@ -26,14 +30,14 @@
           //curPageData=[]; //打开本行注释,可演示列表无任何数据empty的配置
 
           //如果是第一页需手动制空列表 (代替clearId和clearEmptyId的配置)
-          if(page.num === 1) self.list = [];
+          if(page.num === 1) self.list = []
 
           //更新列表数据
-          self.list = self.list.concat(curPageData);
+          self.list = self.list.concat(curPageData)
 
           //联网成功的回调,隐藏下拉刷新和上拉加载的状态;
           //mescroll会根据传的参数,自动判断列表如果无任何数据,则提示空;列表无下一页数据,则提示无更多数据;
-          console.log("page.num="+page.num+", page.size="+page.size+", curPageData.length="+curPageData.length+", self.list.length==" + self.list.length);
+          console.log("page.num="+page.num+", page.size="+page.size+", curPageData.length="+curPageData.length+", self.list.length==" + self.list.length)
 
           //方法一(推荐): 后台接口有返回列表的总页数 totalPage
           //self.mescroll.endByPage(curPageData.length, totalPage); //必传参数(当前页的数据个数, 总页数)
@@ -45,12 +49,11 @@
           //self.mescroll.endSuccess(curPageData.length, hasNext); //必传参数(当前页的数据个数, 是否有下一页true/false)
 
           //方法四 (不推荐),会存在一个小问题:比如列表共有20条数据,每页加载10条,共2页.如果只根据当前页的数据个数判断,则需翻到第三页才会知道无更多数据,如果传了hasNext,则翻到第二页即可显示无更多数据.
-          self.mescroll.endSuccess(curPageData.length);
-
+          self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
-        });
+        })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         //延时一秒,模拟联网
