@@ -32,6 +32,7 @@
     name: 'citySearch',
     data () {
       return {
+        statusNum: this.$route.query.routeParams,
         letter:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
         num:9,
         selected:0,
@@ -82,23 +83,44 @@
         console.log(e.target.innerText);
         var cityShow = document.getElementsByClassName("cityShow")[0];
         cityShow.innerHTML = e.target.innerText + "市";
-        this.$router.push({
-           name: '首页',
-           query: {
-              routeParams: e.target.innerText
-           }    
-        });     
+        if(this.statusNum == 1){
+          this.$router.push({
+             name: '首页',
+             query: {
+                routeParams: e.target.innerText
+             }    
+          });
+        }
+        if(this.statusNum == 2){
+          this.$router.push({
+             name: '分类',
+             query: {
+                routeParams: e.target.innerText
+             }    
+          });
+        }     
       },
 
       goToHome:function(e){
         console.log(e.target.innerText);
         var str = e.target.innerText.substr(0,e.target.innerText.length-1);
-        this.$router.push({
-           name: '首页',
-           query: {
-              routeParams: str
-           }    
-        });  
+        if (this.statusNum == 1) {
+          this.$router.push({
+             name: '首页',
+             query: {
+                routeParams: str
+             }    
+          });
+        }
+        if (this.statusNum == 2) {
+          this.$router.push({
+             name: '分类',
+             query: {
+                routeParams: str
+             }    
+          });
+        }
+          
       }
     }
   }
