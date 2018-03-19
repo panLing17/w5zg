@@ -24,7 +24,7 @@
       },
       borderBottom: {
         type: String,
-        default: 'solid 1px rgb(153,153,153)'
+        default: 'solid 1px rgb(204,204,204)'
       }
     }
   }

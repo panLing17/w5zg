@@ -101,7 +101,6 @@
     outline: none;
     border-bottom: solid 1px rgb(51, 51, 51);
     background: none;
-    -webkit-box-shadow: 0 0 0 400px white inset;
   }
 
   .button {
@@ -115,7 +114,7 @@
     align-items: flex-start;
   }
   .cover{
-    background: white;
+    background: rgb(242,242,242);
   }
   .error {
     height: .8rem;

@@ -1,6 +1,13 @@
 import index from './src/index'
 import home from  './src/home'
+import citySearch from './src/citySearch'
+import scan from './src/scan'
+import searchHistory from './src/searchHistory'
+import scanSuccess from './src/scanSuccess'
+import searchResult from './src/searchResult'
+import activities from './src/activities'
+import classification from './src/classification'
 
 export default {
-  index,home
+  index,home,citySearch,scan,searchHistory,scanSuccess,searchResult,activities,classification
 }
