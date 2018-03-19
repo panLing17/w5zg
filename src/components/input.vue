@@ -100,6 +100,7 @@
     border: none;
     outline: none;
     border-bottom: solid 1px rgb(51, 51, 51);
+    /* -webkit-box-shadow: 0 0 0 400px rgb(242,242,242) inset;*/
     background: none;
   }
 

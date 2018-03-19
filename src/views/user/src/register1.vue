@@ -6,9 +6,11 @@
       .topCenter(slot="center") 注册
       .topRight(slot="right")
     .form
-      w-input(v-model="form.mobile", label="手机号码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required, button-cover)
+      w-input(label="手机号：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
+      w-input(v-model="form.mobile", label="验证码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required, button-cover)
+        .inputButton(slot="button")
+      w-input(v-model="form.mobile", label="手机验证码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required, button-cover)
         .inputButton(slot="button") 55s
-      w-input(label="手机验证码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
       button.regButton(@click="$router.push('/register2')") 下一步
       p.tips 点击注册,表示同意《万物直供用户协议》
 </template>
@@ -30,6 +32,10 @@
 </script>
 
 <style scoped>
+  .registerBox {
+    min-height: 100vh;
+    background: rgb(242,242,242);
+  }
   .form{
     margin-top: 1.3rem;
     display: flex;

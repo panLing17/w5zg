@@ -39,6 +39,10 @@ const router = new Router ({
       path: '/forget1',
       name: '忘记密码1',
       component: User.forget1
+    },{
+      path: '/forget2',
+      name: '忘记密码2',
+      component: User.forget2
     }, {
       path: '/',
       name: '应用',

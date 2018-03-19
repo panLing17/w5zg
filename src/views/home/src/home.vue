@@ -25,8 +25,8 @@
         li(@click="$router.push('/activities')")
           img(src="../../../assets/img/p3.jpg")
         li(@click="$router.push('/activities')")
-          img(src="../../../assets/img/p4.jpg")      
-        
+          img(src="../../../assets/img/p4.jpg")
+
     .recommend
       img(src="../../../assets/img/my_recommend@2x.png")
     .goodsList
@@ -38,13 +38,13 @@
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
-              span {{item.price | price-filter}}  
+              span {{item.price | price-filter}}
             li.region
-              span {{item.region}} 
+              span {{item.region}}
               span {{item.buyerNum}} 人已购买
     #returnTop(@click="topFunction()")
       img(src="../../../assets/img/my_top@2x.png")
-    .downOver 已到最底部        
+    .downOver 已到最底部
 </template>
 <script>
   import myGoods from '../../../assets/img/my_goods.png'
@@ -84,7 +84,7 @@
     mounted () {
       // 当网页向下滑动 40px 出现"返回顶部" 按钮
       window.onscroll = function() {scrollFunction()};
-       
+
       function scrollFunction() {
           if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
               document.getElementById("returnTop").style.display = "block";
@@ -132,7 +132,7 @@
            }
         })
       }
-      
+
 
     }
   }
@@ -154,7 +154,7 @@
     margin-left: .1rem;
   }
   .topLeft .city{
-    width: 1rem; 
+    width: 1rem;
     display: inline-block;
     vertical-align: middle;
     font-size: .5rem;
@@ -185,7 +185,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-content: space-around; 
+    align-content: space-around;
   }
   .classify li.goodsList{
     width: 2rem;
@@ -224,7 +224,7 @@
   }
   .activitiesPic ul{
     display: flex;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
   }
   .activitiesPic ul li{
     width: 50%;
@@ -282,7 +282,7 @@
     border-top-right-radius: .3rem;
     width: 4.46rem;
   }
-  
+
   .goodsList li.details li.goodsMsg{
     font-size: .4rem;
     padding: 0 .2rem;
