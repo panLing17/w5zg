@@ -10,6 +10,11 @@ Vue.prototype.$mescrollInt = function (id,upFun,downFun) {
         use: true, //列表数据过少,是否自动加载下一页,直到满屏或者无更多数据为止;默认false
         delay: 1000 //延时执行的毫秒数; 延时是为了保证列表数据或占位的图片都已初始化完成,且下拉刷新上拉加载中区域动画已执行完毕;
       },
+      // 关闭自定义滚动条
+      scrollbar:{
+        use: false
+        // barClass : "mescroll-bar"
+      },
       //以下参数可删除,不配置
       isBounce: false, //此处禁止ios回弹,解析(务必认真阅读,特别是最后一点): http://www.mescroll.com/qa.html#q10
       //page:{size:8}, //可配置每页8条数据,默认10

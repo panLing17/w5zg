@@ -1,5 +1,5 @@
 <template lang="pug">
-  .homeBox
+  div.homeBox.mescroll#homeMescroll
     nav-bar(background="rgb(245,0,87)")
       .topLeft(slot="left" @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
@@ -8,90 +8,92 @@
         searchInput(placeholder="请输入商品名称" @focus="jump")
       .topRight(slot="right")
         img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/scan')")
-    slideShow
-    .classify
-      ul
-        li.goodsList(v-for="item in classify" @click="$router.push('/classification')")
-          img(v-bind:src="item.imgSrc")
-    .poster
-      img(src="../../../assets/img/poster.jpg")
-    .activities ———— 活动 ————
-    .activitiesPic
-      ul
-        li(@click="$router.push('/activities')")
-          img(src="../../../assets/img/p1.jpg")
-        li(@click="$router.push('/activities')")
-          img(src="../../../assets/img/p2.jpg")
-        li(@click="$router.push('/activities')")
-          img(src="../../../assets/img/p3.jpg")
-        li(@click="$router.push('/activities')")
-          img(src="../../../assets/img/p4.jpg")
-
-    .recommend
-      img(src="../../../assets/img/my_recommend@2x.png")
-    .goodsList
-      ul.goods
-        li(v-for="item in goodsDetails").details
-          ul
-            li.img
-              img(v-bind:src="item.imgSrc")
-            li.goodsMsg
-              span {{item.goodsMsg}}
-            li.price
-              span {{item.price | price-filter}}
-            li.region
-              span {{item.region}}
-              span {{item.buyerNum}} 人已购买
-    #returnTop(@click="topFunction()")
-      img(src="../../../assets/img/my_top@2x.png")
-    .downOver 已到最底部
+    carousel(:indicators="true", :auto="5000", v-if="list.length > 0", :responsive="0", style="height:5rem")
+      div(v-for="tag in list", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
+        img(:src="tag.image" , style="width:100%;height:5rem")
+    hot-button
+    l-news.news(:newsData="news")
+    .title
+      .line
+      p 活动
+    w-activity(:listData="activityGoods")
+    .title
+      .line
+      p 推荐
+    w-recommend#dataId(:listData="recommendGoods")
+    .bottomPlaceholder
 </template>
 <script>
-  import myGoods from '../../../assets/img/my_goods.png'
-  import classify from '../../../assets/img/分类.jpg'
-
+  import hotButton from './hotButton'
+  import lNews from './news'
+  import wActivity from './activities'
+  import wRecommend from './bottomList'
   export default {
     name: 'home',
-    data () {
+    data() {
       return {
+        mescroll: null,
+        loading: 0,
+        date: 1,
         cityName:this.$route.query.routeParams,
-        classify:[{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify},{"imgSrc":classify}],
-        goodsDetails:[
+        activityGoods: [
+          {image: 'static/img/1.jpg'},
+          {image: 'static/img/2.jpg'},
+          {image: 'static/img/3.jpg'},
+          {image: 'static/img/4.jpg'},
+          {image: 'static/img/5.jpg'}
+        ],
+        recommendGoods: [
           {
-            'imgSrc':myGoods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':568,
-            'region':'江苏南京',
-            'buyerNum':'167'
+            image: ''
           },
           {
-            'imgSrc':myGoods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':379,
-            'region':'浙江杭州',
-            'buyerNum':'200'
+            image: ''
           },
           {
-            'imgSrc':myGoods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':299,
-            'region':'安徽合肥',
-            'buyerNum':'101'
+            image: ''
           },
+          {
+            image: ''
+          }
+        ],
+        loadingMoreFlag: false,
+        page: 1,
+        news: [
+          {title:'新闻1'},
+          {title:'新闻2'},
+          {title:'新闻3'},
+          {title:'新闻4'},
+          {title:'新闻5'},
+          {title:'新闻6'}
+        ],
+        titlePhoto: [
+          {
+            image: ''
+          },
+          {
+            image: ''
+          },
+          {
+            image: ''
+          },
+          {
+            image: ''
+          }
+        ],
+        list: [
+          {image: 'static/img/1.jpg'},
+          {image: 'static/img/2.jpg'},
+          {image: 'static/img/3.jpg'},
+          {image: 'static/img/4.jpg'},
+          {image: 'static/img/5.jpg'}
         ]
       }
     },
-    mounted () {
-      // 当网页向下滑动 40px 出现"返回顶部" 按钮
-      window.onscroll = function() {scrollFunction()};
+    mounted() {
+      this.$mescrollInt("homeMescroll",this.upCallback);
+      this.wxConfig();
 
-      function scrollFunction() {
-          if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
-              document.getElementById("returnTop").style.display = "block";
-          } else {
-              document.getElementById("returnTop").style.display = "none";
-          }
-      };
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
         city.style.fontSize = .5 + "rem";
@@ -103,47 +105,145 @@
         city.style.fontSize = .4 + "rem";
       }
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+    },
     methods: {
-      // 点击按钮，返回顶部
-      topFunction:function () {
-        var timer = setInterval(function(){
-            var top = document.body.scrollTop || document.documentElement.scrollTop;
-            var speed = top / 4;
-            if (document.body.scrollTop!=0) {
-                document.body.scrollTop -= speed;
-            }else {
-                document.documentElement.scrollTop -= speed;
-            }
-            if (top == 0) {
-                clearInterval(timer);
-            }
-        },30);
-      },
-
       jump:function(){
         this.$router.push('/searchHistory');
       },
-
       goToCitySearch:function(){
         this.$router.push({
-          name: '城市搜索',
+           name: '城市搜索',
            query: {
               routeParams: 1
            }
+        });
+      },
+
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if(page.num === 1) self.recommendGoods = []
+          console.log(curPageData)
+          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
         })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        setTimeout(function () {
+//          	axios.get("xxxxxx", {
+//					params: {
+//						num: pageNum, //页码
+//						size: pageSize //每页长度
+//					}
+//				})
+//				.then(function(response) {
+          successCallback&&successCallback({});//成功回调
+          successCallback&&successCallback({});//成功回调
+          successCallback&&successCallback({});//成功回调
+          successCallback&&successCallback({});//成功回调
+//				})
+//				.catch(function(error) {
+//					errorCallback&&errorCallback()//失败回调
+//				});
+        },1000)
+      },
+      GetQueryString(url, name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
+        var r = url.split('?')[1].match(reg)  //获取url中"?"符后的字符串并正则匹配
+        var context = ''
+        if (r != null)
+          context = r[2]
+        reg = null
+        r = null
+        return context == null || context == '' || context == 'undefined' ? '' : context
+      },
+      aaa() {
+        this.$confirm({
+          title: '确认',
+          message: '真的要这样做吗',
+          confirm: () => {
+            alert('确定')
+          },
+          noConfirm: () => {
+            alert('取消')
+          }
+        })
+      },
+      wxConfig() {
+        let _this = this
+        _this.$ajax({
+          method: 'post',
+          url: 'pay/sao',
+          params: {
+            url: window.location.href
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          response.data.code = response.data.code.toString()
+          if (response.data.code === '100') {
+            wx.config({
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
+              timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
+              nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
+              signature: response.data.data.signature,// 必填，签名，见附录1
+              jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            })
+          }
+        })
+      },
+      searchCode() {
+        let self = this
+        let _this = this
+         wx.scanQRCode({
+          desc: 'scanQRCode desc',
+          needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: function (res) {
+            let id = _this.GetQueryString(res.resultStr, 'containerId')
+            _this.$ajax({
+              method: 'post',
+              url: 'sweep/sweepResult',
+              params: {
+                containerId: id
+              },
+              headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            }).then(function (response) {
+              response.data.code = response.data.code.toString()
+              if (response.data.code === '100') {
+                _this.$message.success('扫码成功，请您开柜')
+              }
+            })
+          },
+          error: function(res){
+            if(res.errMsg.indexOf('function_not_exist') > 0){
+              alert('版本过低请升级')
+            }
+          }
+        })
+      },
+      goSearch() {
+        this.$router.push('/search')
+      },
+      goActivity(link, type) {
+        var Case = parseInt(type)
+        if (Case === 1) {
+          this.$router.push({path: '/goods', query: {id: link}})
+        } else {
+          window.location = link
+        }
       }
-
-
-    }
+    },
+    components: {hotButton, lNews, wActivity, wRecommend}
   }
 </script>
 
 <style scoped>
-  .homeBox {
-    width: 100%;
-    background: rgb(238,238,238);
-    padding-bottom: 2rem;
-  }
   /*顶部搜索--开始*/
   .topLeft{
     width: 1.8rem;
@@ -154,7 +254,7 @@
     margin-left: .1rem;
   }
   .topLeft .city{
-    width: 1rem;
+    width: 1rem; 
     display: inline-block;
     vertical-align: middle;
     font-size: .5rem;
@@ -174,154 +274,62 @@
     vertical-align: middle;
   }
   /*顶部搜索--结束*/
-  /*商品分类--开始*/
-  .classify{
-    /*height: 6rem;*/
-    background-color: #fff;
-    padding: .4rem .6rem;
+
+
+  #homeMescroll {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    height: auto;
   }
-  .classify ul{
-    height: 4.55rem;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-content: space-around;
+  .homeBox {
+    background: #f2f2f2;
   }
-  .classify li.goodsList{
-    width: 2rem;
-    height: 2rem;
-    background-color: #fff;
-  }
-  .classify li.goodsList img{
-    width: 100%;
-  }
-  .classify .name{
-    width: 100%;
-    text-align: center;
-  }
-  /*商品分类--结束*/
-  /*广告--开始*/
-  .poster{
-    background-color: #fff;
-    margin-top: .2rem;
-    padding: 0 .3rem;
-  }
-  .poster img{
-    width: 100%;
-  }
-  /*广告--结束*/
-  /*活动--开始*/
-  .activities{
-    height: 1rem;
-    text-align: center;
-    font-size: .4rem;
-    line-height: 1rem;
-    color: rgb(195,195,195);
-  }
-  .activitiesPic{
-    background-color: #fff;
-    /*height: 5rem;*/
-  }
-  .activitiesPic ul{
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .activitiesPic ul li{
-    width: 50%;
-    /*height: 2.5rem;*/
-  }
-  /*.activitiesPic ul li:nth-child(1){
-    border-right: .25px dashed rgb(120,120,120);
-    border-bottom: .25px dashed rgb(120,120,120);
-  }
-  .activitiesPic ul li:nth-child(2){
-    border-left: .25px dashed rgb(120,120,120);
-    border-bottom: .25px dashed rgb(120,120,120);
-  }
-  .activitiesPic ul li:nth-child(3){
-    border-top: .25px dashed rgb(120,120,120);
-    border-right: .25px dashed rgb(120,120,120);
-  }
-  .activitiesPic ul li:nth-child(4){
-    border-top: .25px dashed rgb(120,120,120);
-    border-left: .25px dashed rgb(120,120,120);
-  }*/
-  .activitiesPic ul li img{
-    width: 100%;
-    /*height: 2.5rem;*/
-  }
-  /*活动--结束*/
-  /*我的推荐--开始*/
-  .recommend{
-    height: 1rem;
-    line-height: 1.2rem;
-    text-align: center;
-  }
-  .recommend img{
-    width: 5rem;
-  }
-  /*我的推荐--结束*/
-  /*商品列表--开始*/
-  .goodsList{
-    padding: 0 .3rem .4rem 0;
-    background-color: #fff;
-  }
-  .goodsList ul.goods{
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .goodsList ul.goods li.details{
-    width: 4.5rem;
-    border: 1px solid rgb(153,153,153);
-    border-radius: .3rem;
-    margin: .4rem 0 0 .35rem;
-    padding-bottom: .2rem;
-  }
-  .goodsList ul.goods li.details img{
-    border-top-left-radius: .3rem;
-    border-top-right-radius: .3rem;
-    width: 4.46rem;
+  .news {
+    margin-top: 6px;
   }
 
-  .goodsList li.details li.goodsMsg{
-    font-size: .4rem;
-    padding: 0 .2rem;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .goodsList li.details li.price{
-    font-weight: bold;
-    color: rgb(245,0,87);
-    font-size: .4rem;
-    margin-top: .2rem;
-    padding: 0 .15rem;
-  }
-  .goodsList li.details li.region{
-    margin-top: .2rem;
-    padding: 0 .2rem;
+  .title{
+    height: .8rem;
+    width: 100%;
+    position: relative;
     display: flex;
-    justify-content: space-between;
-    color: rgb(153,153,153);
-    font-size: .3rem;
+    background: #f2f2f2;
+    justify-content: center;
+    align-items: center;
   }
-  /*商品列表--结束*/
-  /*返回顶部的样式--开始*/
-  #returnTop{
-    width: 1.5rem;
-    position: fixed;
-    right: .3rem;
-    bottom: 2rem;
-    display: none;
+  .line{
+    height: 1px;
+    width: 3rem;
+    background: #999;
   }
-  #returnTop img{
-    width: 1.5rem;
-    vertical-align: top;
+  .title p{
+    position: absolute;
+    background: #f2f2f2 ;
+    padding: 0 .2rem;
   }
-  /*返回顶部的样式--开始*/
-  /*已到最底部--开始*/
-  .downOver{
-    text-align: center;
+  .loadingNotMore {
+    height: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #d3d3d3;
   }
-  /*已到最底部--结束*/
+
+  .have {
+    opacity: 1;
+    animation: opacity-fade .2s infinite;
+    animation-direction: alternate;
+  }
+  .bottomPlaceholder {
+    height: 1.5rem;
+  }
+  @keyframes opacity-fade {
+    from {
+      opacity: 0
+    }
+    to {
+      opacity: 1
+    }
+  }
 </style>

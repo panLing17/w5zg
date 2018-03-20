@@ -1,7 +1,7 @@
 <template lang="pug">
   .page
     nav-bar
-      .topLeft(slot="left" @click="goToCitySearch")
+      .topLeft(slot="left" @click="goToCitySearch()")
         img(src="../../../assets/img/page三角0.png")
         span.city {{cityName}}
       .topCenter(slot="center")
@@ -30,6 +30,7 @@
   import jacket from '../../../assets/img/page_jacket.png'
   import downCoat from '../../../assets/img/page_downCoat.png'
   import coat from '../../../assets/img/page_coat.png'
+
   export default {
     name: "page",
     data(){
@@ -64,7 +65,7 @@
                   {img:downCoat,words:"休闲上衣"}
                 ]
               }
-            ] 
+            ]
           },
           {
             kind:[
@@ -201,7 +202,7 @@
            name: '城市搜索',
            query: {
               routeParams: 2
-           }    
+           }
         });
       },
 
@@ -234,7 +235,7 @@
     margin-left: .1rem;
   }
   .topLeft .city{
-    width: 1rem; 
+    width: 1rem;
     display: inline-block;
     vertical-align: middle;
     font-size: .5rem;

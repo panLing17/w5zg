@@ -19,7 +19,7 @@
     .accountSafety
       ul.wrap
         li.left 账户安全
-        li.right(@click="$router.push('/accountSafety')")
+        li.right(@click="$router.push('/my/accountSafety')")
           img(src="../../../assets/img/next@2x.png")
     .addressAdmin
       ul.wrap
