@@ -1,7 +1,7 @@
 <template lang="pug">
   div.myBox
     div.head
-      p.top  
+      p.top
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
           img(src="../../../assets/img/my_account@2x.png" @click="routergoUser()")
       p.center
@@ -15,17 +15,17 @@
             li 元
     div.fav_att_foot
       ul.left
-        li 0       
+        li 0
         li 收藏夹
       ul.center
         li 0
-        li 关注店铺 
-      ul.right 
+        li 关注店铺
+      ul.right
         li 22
-        li 足迹 
+        li 足迹
     div.myOrderForm
-      ul.top 
-        li 我的订单 
+      ul.top
+        li 我的订单
         li
           img(src="../../../assets/img/my_more@2x.png")
       ul.bottom
@@ -40,8 +40,8 @@
         li
           img(src="../../../assets/img/my_aftersale@2x.png")
     div.myTreasure
-      ul.top 
-        li 我的财富 
+      ul.top
+        li 我的财富
         li
           img(src="../../../assets/img/my_more@2x.png")
       ul.bottom
@@ -62,14 +62,14 @@
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
-              span {{item.price | price-filter}}  
+              span {{item.price | price-filter}}
             li.region
-              span {{item.region}} 
+              span {{item.region}}
               span {{item.buyerNum}} 人已购买
     div(@click="topFunction()")#returnTop
-      img(src="../../../assets/img/my_top@2x.png")          
-    .downOver 已到最底部      
-		
+      img(src="../../../assets/img/my_top@2x.png")
+    .downOver 已到最底部
+
 </template>
 
 <script>
@@ -102,15 +102,15 @@ import my_goods from '../../../assets/img/my_goods.png'
             'buyerNum':'101'
           },
         ]
-        
-       
-      } 
-    	
+
+
+      }
+
     },
     mounted(){
       // 当网页向下滑动 40px 出现"返回顶部" 按钮
       window.onscroll = function() {scrollFunction()};
-       
+
       function scrollFunction() {
           if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
               document.getElementById("returnTop").style.display = "block";
@@ -118,8 +118,8 @@ import my_goods from '../../../assets/img/my_goods.png'
               document.getElementById("returnTop").style.display = "none";
           }
       }
-       
-      
+
+
     },
     methods: {
       // 点击按钮，返回顶部
@@ -143,7 +143,7 @@ import my_goods from '../../../assets/img/my_goods.png'
            name: '我的用户资料',
            query: {
               routeParams: this.name
-           }    
+           }
         });
       },
 
@@ -152,7 +152,7 @@ import my_goods from '../../../assets/img/my_goods.png'
            name: '我的设置',
            query: {
               routeParams: this.name
-           }    
+           }
         });
       }
 
@@ -328,7 +328,7 @@ import my_goods from '../../../assets/img/my_goods.png'
 		border-top-right-radius: .3rem;
 		width: 4.46rem;
 	}
-  
+
   .goodsList li.details li.goodsMsg{
     font-size: .4rem;
     padding: 0 .2rem;
