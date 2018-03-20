@@ -26,7 +26,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
     padding: .2rem;
-    background: white;
+    background: rgb(242,242,242);
   }
   .goodsList li{
     border: solid 1px #ccc;
