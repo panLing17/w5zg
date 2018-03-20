@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.homeBox.mescroll#homeMescroll
+  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}")
     nav-bar(background="rgb(245,0,87)")
       .topLeft(slot="left" @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
@@ -32,6 +32,8 @@
     name: 'home',
     data() {
       return {
+        // 整页的固定定位，如果一直有的话会影响页面切换效果
+        positionFixed: false,
         mescroll: null,
         loading: 0,
         date: 1,
@@ -92,8 +94,8 @@
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
-      this.wxConfig();
-
+      this.wxConfig()
+      this.animateHack()
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
         city.style.fontSize = .5 + "rem";
@@ -120,7 +122,13 @@
            }
         });
       },
-
+      // 切换动画hack
+      animateHack () {
+        let self = this
+        setTimeout(function () {
+          self.positionFixed = true
+        },1000)
+      },
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
@@ -277,10 +285,12 @@
 
 
   #homeMescroll {
-    position: fixed;
     top: 0;
     bottom: 0;
     height: auto;
+  }
+  .positionFixed{
+    position: fixed;
   }
   .homeBox {
     background: #f2f2f2;
