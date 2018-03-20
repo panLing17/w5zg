@@ -1,61 +1,72 @@
 <template lang="pug">
   .activities
-    nav-bar
-      .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 大牌云集
-      .topRight(slot="right")
-        img(src="../../../assets/img/scanSuccess消息.png")
-    .banner
-      ul
-        li
-          img(src="../../../assets/img/1.jpg")
-        li
-          img(src="../../../assets/img/2.jpg")
-        li
-          img(src="../../../assets/img/3.jpg")
-        li
-          img(src="../../../assets/img/4.jpg") 
-      
+    ul.goodsList
+      li
+        img(src="../../../assets/img/p2.jpg")
+      li
+        img(src="../../../assets/img/p2.jpg")
+      li
+        img(src="../../../assets/img/p2.jpg")
+      li
+        img(src="../../../assets/img/p2.jpg")
+    .columLine
+    .rowLine
 </template>
 
 <script>
   export default {
     name: "activities",
+    props: ['listData'],
     data (){
       return{
-      	
-      }	
+
+      }
     },
     mounted (){
-      window.onscroll = function(){}	
+
     }
   }
 </script>
 
 <style scoped>
-  .activities{
-	background-color: rgb(242,242,242);
-	padding-bottom: 2rem;
+  .activities {
+    width: 100%;
+    height: 6rem;
+    position: relative;
   }
-  .topCenter{
-	font-size: .45rem;
-	font-weight: 400;
+  .goodsList {
+    width: 100%;
+    position: relative;
   }
-  .topRight img{
-    width: .7rem;
-    vertical-align: middle;
+  .goodsList li{
+    float: left;
+    width: 50%;
+    height: 3rem;
+    position: relative;
   }
-  /*内容图片的样式--开始*/
-  .banner{
-	margin-top: .2rem;
-	background-color: #fff;
+  .goodsList li img {
+    width: 100%;
+    height: 100%;
   }
-  .banner ul li{
-	margin-top: .1rem;
+  /* 十字线 */
+  .columLine {
+    position: absolute;
+    width: 1px;
+    height: 5rem;
+    left: 50%;
+    top: 50%;
+    margin-left: -.5px;
+    margin-top: -2.5rem;
+    background: #ccc;
   }
-  .banner ul li img{
-  	height: 4.2rem;
+  .rowLine {
+    position: absolute;
+    width: 9rem;
+    height: 1px;
+    left: 50%;
+    top: 50%;
+    margin-left: -4.5rem;
+    margin-top: -.5px;
+    background: #ccc;
   }
-  /*内容图片的样式--结束*/
 </style>
