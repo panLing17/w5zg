@@ -1,7 +1,7 @@
 <template lang="pug">
   .page
     nav-bar
-      .topLeft(slot="left" @click="goToCitySearch")
+      .topLeft(slot="left" @click="goToCitySearch()")
         img(src="../../../assets/img/page三角0.png")
         span.city {{cityName}}
       .topCenter(slot="center")
@@ -16,7 +16,7 @@
       .right
         ul(v-for="(item,index) in productList" v-show="index == num").tabs
           li(v-for="items in item.kind").tabsList
-            .title
+            .title(@click="$router.push('/commodityList')")
               span.point
               span.letter {{items.title}}
             ul.listOfGoods
@@ -27,6 +27,10 @@
 </template>
 
 <script>
+  import jacket from '../../../assets/img/page_jacket.png'
+  import downCoat from '../../../assets/img/page_downCoat.png'
+  import coat from '../../../assets/img/page_coat.png'
+
   export default {
     name: "page",
     data(){

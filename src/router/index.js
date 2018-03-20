@@ -104,6 +104,11 @@ const router = new Router ({
               path: '/',
               name: '分类',
               component: Page.page
+            },
+            {
+              path: '/commodityList',
+              name: '商品列表',
+              component: Page.commodityList
             }
           ]
         }, {
@@ -128,37 +133,37 @@ const router = new Router ({
               component: My.my
             },
             {
-              path: '/settings',
+              path: '/my/settings',
               name: '我的设置',
               component: My.settings
             },
             {
-              path: '/userinfo',
+              path: '/my/userinfo',
               name: '我的用户资料',
               component: My.userinfo
             },
             {
-              path: '/nickname',
+              path: '/my/nickname',
               name: '我的昵称',
               component: My.nickname
             },
             {
-              path: '/accountBind',
+              path: '/my/accountBind',
               name: '我的账户绑定',
               component: My.accountBind
             },
             {
-              path: '/accountSafety',
+              path: '/my/accountSafety',
               name: '我的账户安全',
               component: My.accountSafety
             },
             {
-              path: '/updatePassword1',
+              path: '/my/updatePassword1',
               name: '我的修改登录密码1',
               component: My.updatePassword1
             },
             {
-              path: '/updatePassword2',
+              path: '/my/updatePassword2',
               name: '我的修改登录密码2',
               component: My.updatePassword2
             },

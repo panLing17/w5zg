@@ -7,7 +7,7 @@
     .form
       w-input(v-model="form.mobile", label="新密码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required) 
       w-input(label="确认新密码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required)
-      button.regButton(@click="$router.push('/accountSafety')") 提交                          
+      button.regButton(@click="$router.push('/my/accountSafety')") 提交                          
 </template>
 <script>
  

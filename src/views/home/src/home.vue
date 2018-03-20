@@ -1,9 +1,13 @@
 <template lang="pug">
   div.homeBox.mescroll#homeMescroll
-    w-top(background="white")
-      .topLeft(slot="left" , @click="searchCode")
+    nav-bar(background="rgb(245,0,87)")
+      .topLeft(slot="left" @click="goToCitySearch()")
+        img(src="../../../assets/img/home定位按钮@2x.png")
+        span.city {{cityName}}
       .topCenter(slot="center")
-      .topRight(slot="right" , @click="goSearch")
+        searchInput(placeholder="请输入商品名称" @focus="jump")
+      .topRight(slot="right")
+        img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/scan')")
     carousel(:indicators="true", :auto="5000", v-if="list.length > 0", :responsive="0", style="height:5rem")
       div(v-for="tag in list", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
         img(:src="tag.image" , style="width:100%;height:5rem")
@@ -31,6 +35,7 @@
         mescroll: null,
         loading: 0,
         date: 1,
+        cityName:this.$route.query.routeParams,
         activityGoods: [
           {image: 'static/img/1.jpg'},
           {image: 'static/img/2.jpg'},
@@ -86,14 +91,36 @@
       }
     },
     mounted() {
-      this.$mescrollInt("homeMescroll",this.upCallback)
-      // this.wxConfig()
+      this.$mescrollInt("homeMescroll",this.upCallback);
+      this.wxConfig();
 
+      var city = document.getElementsByClassName("city")[0];
+      if (city.innerText.length == 2) {
+        city.style.fontSize = .5 + "rem";
+      }
+      if (city.innerText.length == 3) {
+        city.style.fontSize = .3 + "rem";
+      }
+      if (city.innerText.length == 4) {
+        city.style.fontSize = .4 + "rem";
+      }
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods: {
+      jump:function(){
+        this.$router.push('/searchHistory');
+      },
+      goToCitySearch:function(){
+        this.$router.push({
+           name: '城市搜索',
+           query: {
+              routeParams: 1
+           }
+        });
+      },
+
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
@@ -217,9 +244,41 @@
 </script>
 
 <style scoped>
+  /*顶部搜索--开始*/
+  .topLeft{
+    width: 1.8rem;
+  }
+  .topLeft img{
+    width: .4rem;
+    vertical-align: middle;
+    margin-left: .1rem;
+  }
+  .topLeft .city{
+    width: 1rem;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: .5rem;
+    font-weight: 400;
+    color: #fff;
+    margin-left: .2rem;
+    word-break: break-all;
+  }
+  .topCenter{
+    margin-left: .1rem;
+  }
+  .topRight{
+    margin-right: .1rem;
+  }
+  .topRight img{
+    width: .7rem;
+    vertical-align: middle;
+  }
+  /*顶部搜索--结束*/
+
+
   #homeMescroll {
     position: fixed;
-    top: 44px;
+    top: 0;
     bottom: 0;
     height: auto;
   }
