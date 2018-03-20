@@ -107,17 +107,6 @@ const router = new Router ({
             }
           ]
         }, {
-          path: '/cabinet',
-          name: '生鲜柜',
-          component: Cabinet.index,
-          children: [
-            {
-              path: '/',
-              name: '生鲜柜',
-              component: Cabinet.cabinet
-            }
-          ]
-        }, {
           path: '/shoppingCart',
           name: '购物车',
           component: ShoppingCart.index,
@@ -172,6 +161,16 @@ const router = new Router ({
               path: '/updatePassword2',
               name: '我的修改登录密码2',
               component: My.updatePassword2
+            },
+            {
+              path: '/my/localAdmin',
+              name: '收货地址管理',
+              component: My.localAdmin
+            },
+            {
+              path: '/my/localAdd',
+              name: '新增收货地址',
+              component: My.localAdd
             }
           ]
         }
@@ -182,12 +181,12 @@ const router = new Router ({
 // 全局前置守卫，下面是我上个项目实现左右滑动页面的例子
 router.beforeEach ((to, from, next) => {
   window.scrollTo (0, 0)  // 页面回到顶部
-  const list = ['首页', '分类', '生鲜柜', '购物车', '我的']  // 将需要切换效果的路由名称组成一个数组
+  const list = ['首页', '分类', '购物车', '我的']  // 将需要切换效果的路由名称组成一个数组
   const toName = to.name  // 即将进入的路由名字
   const fromName = from.name  // 即将离开的路由名字
   const toIndex = list.indexOf (toName) // 进入下标
   const fromIndex = list.indexOf (fromName)  // 离开下标
-  let direction = 'slide-fade'
+  let direction = ''
   if (toIndex > -1 && fromIndex > -1) {  // 如果下标都存在
     if (toIndex < fromIndex) {     // 如果进入的下标小于离开的下标，那么是左滑
       direction = 'slide-left'

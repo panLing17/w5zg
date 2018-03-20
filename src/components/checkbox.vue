@@ -2,7 +2,8 @@
   .checkBox
     transition(name="bounce" , mode="out-in")
       img(src="../assets/img/checked.png" v-if="msg" , @click="change")
-    .radius(v-if="!msg" , @click="change")
+      .radius(v-if="!msg" , @click="change")
+    input.realyCheckbox(type="checkbox", :checked="msg", @change="update")
 </template>
 
 <script>
@@ -17,8 +18,10 @@
       change () {
         if (!this.disabled) {
           this.$emit('cMsg', !this.msg)
-          this.fun()
         }
+      },
+      update () {
+        this.$emit('change')
       }
     }
   }
@@ -32,14 +35,18 @@
   }
 
   .radius {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 10px;
-    border: solid 1px rgb(252, 139, 109);
+    border: solid 1px #666;
   }
 
   .checkBox img {
-    width: 20px;
-    height: 20px
+    width: 18px;
+    height: 18px
+  }
+  .realyCheckbox {
+    position: absolute;
+    opacity: 0;
   }
 </style>

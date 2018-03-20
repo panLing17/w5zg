@@ -87,7 +87,7 @@
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback)
-      this.wxConfig()
+      // this.wxConfig()
 
     },
     beforeDestroy () {
