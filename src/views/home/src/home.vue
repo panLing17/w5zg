@@ -1,7 +1,7 @@
 <template lang="pug">
   .homeBox
     nav-bar(background="rgb(245,0,87)")
-      .topLeft(slot="left" @click="goToCitySearch")
+      .topLeft(slot="left" @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
         span.city {{cityName}}
       .topCenter(slot="center")

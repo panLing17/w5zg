@@ -16,7 +16,7 @@
       .right
         ul(v-for="(item,index) in productList" v-show="index == num").tabs
           li(v-for="items in item.kind").tabsList
-            .title
+            .title(@click="$router.push('/commodityList')")
               span.point
               span.letter {{items.title}}
             ul.listOfGoods

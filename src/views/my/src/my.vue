@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.myBox(v-loading="true")
+  div.myBox
     div.head
       p.top  
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")

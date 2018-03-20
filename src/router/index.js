@@ -104,6 +104,11 @@ const router = new Router ({
               path: '/',
               name: '分类',
               component: Page.page
+            },
+            {
+              path: '/commodityList',
+              name: '商品列表',
+              component: Page.commodityList
             }
           ]
         }, {
