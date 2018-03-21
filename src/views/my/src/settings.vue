@@ -22,24 +22,24 @@
         li.right(@click="$router.push('/my/accountSafety')")
           img(src="../../../assets/img/next@2x.png")
     .addressAdmin
-      ul.wrap
+      ul.wrap(@click="$router.push('/my/localAdmin')")
         li.left 地址管理
         li.right
           img(src="../../../assets/img/next@2x.png")
     .feedback
-      ul.wrap
+      ul.wrap(@click="$router.push('/my/feedback')")
         li.left 意见反馈
         li.right
           img(src="../../../assets/img/next@2x.png")
     .aboutUs
-      ul.wrap
+      ul.wrap(@click="$router.push('/my/aboutUs')")
         li.left 关于我们
         li.right
           img(src="../../../assets/img/next@2x.png")
-    .logOut 退出登录                        
+    .logOut 退出登录
 </template>
 <script>
- 
+
   export default {
     name: 'settings',
     data () {
@@ -48,7 +48,7 @@
       }
     },
     mounted () {
- 
+
     },
     methods: {
       routergoUser:function(){
@@ -56,7 +56,7 @@
            name: '我的用户资料',
            query: {
               routeParams: this.name
-           }    
+           }
         });
       },
       notOpen:function(){
@@ -77,7 +77,7 @@
                 borderRadius:".5rem"
             }
             for(var i in style)
-                layer.style[i]=style[i];   
+                layer.style[i]=style[i];
             if(document.getElementById("layer")==null){
                 document.body.appendChild(layer);
                 setTimeout("document.body.removeChild(layer)",2000)
@@ -178,7 +178,7 @@
     height: 1.4rem;
     line-height: 1.4rem;
   }
-  
+
   /*昵称,性别,出生日期共同的样式--结束*/
   /*用户头像,账户安全下方的边框--开始*/
   .avatar ul.wrap,

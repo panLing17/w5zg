@@ -21,23 +21,23 @@
           span.bind 选择默认支付方式
           img(src="../../../assets/img/next@2x.png")
     .cellPhoneNum
-      ul.wrap
+      ul.wrap(@click="$router.push('/my/changeMobile1')")
         li.left 更换手机号
         li.right
           span.bind 手机号
-          img(src="../../../assets/img/next@2x.png")                       
+          img(src="../../../assets/img/next@2x.png")
 </template>
 <script>
- 
+
   export default {
     name: 'accountSafety',
     data () {
       return {
-        
+
       }
     },
     mounted () {
- 
+
     },
     methods: {
       routergoUpdate1:function(){
@@ -45,7 +45,7 @@
            name: '我的修改登录密码1',
            query: {
               routeParams: 1
-           }    
+           }
         });
       },
       routergoUpdate2:function(){
@@ -53,7 +53,7 @@
            name: '我的修改登录密码1',
            query: {
               routeParams: 2
-           }    
+           }
         });
       },
     }
@@ -70,7 +70,7 @@
   	font-weight: 400;
   	color: rgb(51,51,51);
   }
-  
+
   /*微信,QQ,支付宝,微博共同样式--开始*/
   .loginPassword,
   .paymentPassword,
@@ -113,7 +113,7 @@
     color: rgb(153,153,153);
   }
   /*微信,QQ,支付宝,微博共同样式--结束*/
-  
+
   /*微信,QQ,支付宝下方边框--开始*/
   .loginPassword ul.wrap,
   .paymentPassword ul.wrap,
@@ -121,5 +121,5 @@
     border-bottom: 1px solid rgb(204,204,204);
   }
   /*微信,QQ,支付宝下方边框--结束*/
-  
+
 </style>
