@@ -11,7 +11,7 @@
 <script>
     export default {
         name: "bottom-list",
-        props:['listData'],
+        props: ['listData'],
         methods:{
           goGoods (id) {
             this.$router.push({path:'/goods',query:{id:id}})

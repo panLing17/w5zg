@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="$router.push('/searchResult')")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="$router.push('/home/searchResult')")
           input(:type="type",placeholder="请输入商品名称" @focus="handFocus")
       .topRight(slot="right" @click="$router.go(-1)") 取消
     .history

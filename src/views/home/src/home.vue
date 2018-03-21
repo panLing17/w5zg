@@ -6,8 +6,9 @@
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称" @focus="jump")
+        img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')")
       .topRight(slot="right")
-        img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/scan')")
+        img(src="../../../assets/img/msg.png")
     carousel(:indicators="true", :auto="5000", v-if="list.length > 0", :responsive="0", style="height:5rem")
       div(v-for="tag in list", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
         img(:src="tag.image" , style="width:100%;height:5rem")
@@ -112,7 +113,7 @@
     },
     methods: {
       jump:function(){
-        this.$router.push('/searchHistory');
+        this.$router.push('/home/searchHistory');
       },
       goToCitySearch:function(){
         this.$router.push({
@@ -273,6 +274,13 @@
   }
   .topCenter{
     margin-left: .1rem;
+    position: relative;
+  }
+  .topCenter img{
+    width: .6rem;
+    position: absolute;
+    top: .15rem;
+    right: .25rem;
   }
   .topRight{
     margin-right: .1rem;

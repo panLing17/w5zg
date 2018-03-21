@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 扫描成功
       .topRight(slot="right")
-        img(src="../../../assets/img/scanSuccess消息.png")
+        img(src="../../../assets/img/msg_0.png")
     .cont
       .top 扫描成功
       .center 您获得200元,已经加入您的账户

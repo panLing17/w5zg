@@ -6,9 +6,9 @@
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称")
-        img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/scan')")
+        img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')")
       .topRight(slot="right")
-        img(src="../../../assets/img/scanSuccess消息.png")
+        img(src="../../../assets/img/msg_0.png")
     .content
       .left
         ul
@@ -16,7 +16,7 @@
       .right
         ul(v-for="(item,index) in productList" v-show="index == num").tabs
           li(v-for="items in item.kind").tabsList
-            .title(@click="$router.push('/commodityList')")
+            .title(@click="$router.push('/page/commodityList')")
               span.point
               span.letter {{items.title}}
             ul.listOfGoods

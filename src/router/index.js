@@ -60,37 +60,37 @@ const router = new Router ({
               component: Home.home
             },
             {
-              path: '/citySearch',
+              path: '/home/citySearch',
               name: '城市搜索',
               component: Home.citySearch
             },
             {
-              path: '/scan',
+              path: '/home/scan',
               name: '扫描',
               component: Home.scan
             },
             {
-              path: '/scanSuccess',
+              path: '/home/scanSuccess',
               name: '扫描成功',
               component: Home.scanSuccess
             },
             {
-              path: '/searchHistory',
+              path: '/home/searchHistory',
               name: '搜索历史',
               component: Home.searchHistory
             },
             {
-              path: '/searchResult',
+              path: '/home/searchResult',
               name: '搜索结果',
               component: Home.searchResult
             },
             {
-              path: '/activities',
+              path: '/home/activities',
               name: '活动',
               component: Home.activities
             },
             {
-              path: '/classification',
+              path: '/home/classification',
               name: '首页分类',
               component: Home.classification
             }
@@ -106,7 +106,7 @@ const router = new Router ({
               component: Page.page
             },
             {
-              path: '/commodityList',
+              path: '/page/commodityList',
               name: '商品列表',
               component: Page.commodityList
             }

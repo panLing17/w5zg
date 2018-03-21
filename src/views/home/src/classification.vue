@@ -6,7 +6,7 @@
       .topCenter(slot="center") 运动
       .topRight(slot="right")
         img(src="../../../assets/img/searchInput搜索图标@2x.png").search
-        img(src="../../../assets/img/scanSuccess消息.png").msg
+        img(src="../../../assets/img/msg_0.png").msg
     .content
       slideShow
     .goodsList
