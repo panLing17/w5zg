@@ -14,3 +14,6 @@ Vue.component('slideShow',slideShow)
 Vue.component('searchInput',searchInput)
 Vue.component('carousel', Carousel)
 Vue.component('w-button', wButton)
+// 二维码
+import VueQrcode from '@xkeshi/vue-qrcode'
+Vue.component('qrcode', VueQrcode)

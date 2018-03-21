@@ -12,10 +12,10 @@
         label 联系电话 <input type="text" v-model="mobile">
     ul.form.bottomForm
       li
-        label(@click="locationSelect") 地址&nbsp;&nbsp; <input type="text" v-model="locationName" placeholder='请选择' disabled="disabled">
+        label(@click="show=!show") 地址&nbsp;&nbsp; <input type="text" v-model="locationName" placeholder='请选择' disabled="disabled">
         img(src="" )
       li(style="height:2rem")
-        label(style="height:2rem") 详细地址 <textarea v-model="address"></textarea>
+        label.detailed(style="height:2rem") 详细地址 <textarea v-model="address"></textarea>
       li
         label 邮政编码 <input type="text" v-model="mobile" placeholder='(选填)'>
       li.checkbox
@@ -24,22 +24,17 @@
         span 设为默认
     .bottomButton
       w-button 保存
-    .selectBox(v-if="locationBox")
-      w-top(background="white")
-        .topLeft(slot="left", @click="hideSelect")
-          img.topLeft(src="" )
-        .topCenter(slot="center") {{selectType}}
-        .topRight(slot="right")
-      ul
-        li(v-for="item in locationList" , @click="locationNext(item)") {{item}}
+    city-select(:show="show", @close="show=!show")
 </template>
 
 <script>
   import locationList from '../../../utils/locationJson.js'
+  import citySelect from './citySelect'
   export default {
     name: "localhost-add",
     data(){
       return {
+        show: false,
         title:'',
         selectType: '选择省',
         locationBox: false ,
@@ -56,6 +51,7 @@
         type: '0',
       }
     },
+    components: {citySelect},
     mounted(){
       this.getProvince()
       this.getBase()
@@ -176,6 +172,11 @@
     line-height: 1.2rem;
     border-bottom: solid 1px #eee;
     width: 100%;
+  }
+  /* 详细地址 */
+  .detailed {
+    display: flex;
+    justify-content: space-between;
   }
   .form>li input{
     border: none;

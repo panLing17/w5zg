@@ -9,8 +9,6 @@ import Main from '../views/main'
 import Home from '../views/home/index.js'
 // 分类
 import Page from '../views/page/index.js'
-// 生鲜柜
-import Cabinet from '../views/cabinet/index.js'
 // 购物车
 import ShoppingCart from '../views/shoppingCart/index.js'
 // 我的
@@ -168,6 +166,16 @@ const router = new Router ({
               component: My.updatePassword2
             },
             {
+              path: '/my/changeMobile1',
+              name: '更换手机号1',
+              component: User.changeMobile1
+            },
+            {
+              path: '/my/changeMobile2',
+              name: '更换手机号2',
+              component: User.changeMobile2
+            },
+            {
               path: '/my/localAdmin',
               name: '收货地址管理',
               component: My.localAdmin
@@ -176,6 +184,16 @@ const router = new Router ({
               path: '/my/localAdd',
               name: '新增收货地址',
               component: My.localAdd
+            },
+            {
+              path: '/my/feedback',
+              name: '意见反馈',
+              component: My.feedback
+            },
+            {
+              path: '/my/aboutUs',
+              name: '关于我们',
+              component: My.aboutUs
             }
           ]
         }
