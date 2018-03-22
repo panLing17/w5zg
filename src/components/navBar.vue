@@ -1,5 +1,5 @@
 <template lang="pug">
-  .box
+  .box(:style="{height:height}")
     ul.top(:style="{background:background,borderBottom:borderBottom,position:position}")
       li.left
         slot(name="left")
@@ -25,6 +25,10 @@
       borderBottom: {
         type: String,
         default: 'solid 1px rgb(204,204,204)'
+      },
+      height: {
+        type: String,
+        default: '1.3rem'
       }
     }
   }

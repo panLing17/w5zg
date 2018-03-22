@@ -3,9 +3,6 @@ import App from './App'
 import store from './vuex/store'
 // 路由
 import router from './router'
-// 上拉加载
-import VueScroller from 'vue-scroller'
-Vue.use(VueScroller)
 //http请求
 import axios from 'axios'
 //公用方法

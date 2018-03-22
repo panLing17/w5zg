@@ -15,10 +15,10 @@
             li(@click="changes2()" :class="{active:change2}") 销量
         li.right
           ul
-            li.showStyle(@click="exchange()") 
+            li.showStyle(@click="exchange()")
               img(src="../../../assets/img/pageBigList.png" v-show="!flag")
               img(src="../../../assets/img/pageList.png" v-show="flag")
-            li.price(@click="liftOrSort()") 
+            li.price(@click="liftOrSort()")
               .priceWords(:class="{active:change}") 价格
               .topDown
                 img(src="../../../assets/img/pageAsc.png" v-show="check").top
@@ -38,7 +38,7 @@
     .mask
       .lefter
       .righter
-        filtrate       
+        filtrate
 </template>
 
 <script>
@@ -58,7 +58,7 @@
         checked: false,
         change: false,
         change1: false,
-        change2: false, 
+        change2: false,
         recommendGoods: [],
         style: false
       }
@@ -301,7 +301,7 @@
   .toggle .wrapWords .text{
     width: 100%;
     margin-top: .1rem;
-    word-wrap: break-word; 
+    word-wrap: break-word;
   }
   .toggle .wrapWords .price{
     margin: .2rem 0;
