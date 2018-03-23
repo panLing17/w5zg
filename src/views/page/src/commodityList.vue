@@ -36,9 +36,9 @@
               .price ￥516.22
               .bottom <span>江苏南京</span><span>2555人购买</span>
     .mask
-      .lefter
+      .lefter(@click="")
       .righter
-        filtrate
+        filtrate(@ievent="ievent" msg="123")
 </template>
 
 <script>
@@ -83,10 +83,21 @@
         lefter.onclick = function(){
           mask.style.left = "100%";
           mask.style.transition = "left opacity .2s";
+          if (mask.style.left == "100%") {
+            mask.style.display = none;
+          }
           commodityList.style.overflow = "scroll";
         }
       },
 
+      ievent(data){
+        var mask = document.getElementsByClassName("mask")[0];
+        console.log(data.flag);
+        if (data.flag == true) {
+          mask.style.left = "100%";
+          mask.style.transition = "left opacity .2s";
+        }
+      },
 
       changes1:function(){
         this.change1 = !this.change1;

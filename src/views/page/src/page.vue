@@ -12,8 +12,8 @@
     .content
       .left
         ul
-          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(index)") {{item}}
-      .right
+          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index)") {{item}}
+      .right(:class="{styles:flag}")
         ul(v-for="(item,index) in productList" v-show="index == num").tabs
           li(v-for="items in item.kind").tabsList
             .title(@click="$router.push('/page/commodityList')")
@@ -30,14 +30,20 @@
   import jacket from '../../../assets/img/page_jacket.png'
   import downCoat from '../../../assets/img/page_downCoat.png'
   import coat from '../../../assets/img/page_coat.png'
+  import logo1 from '../../../assets/img/logo1.png'
+  import logo2 from '../../../assets/img/logo2.png'
+  import logo3 from '../../../assets/img/logo3.png'
+  import logo4 from '../../../assets/img/logo4.png'
+  import logo5 from '../../../assets/img/logo5.png'
 
   export default {
     name: "page",
     data(){
       return {
+        flag:false,
         num:0,
         cityName:this.$route.query.routeParams,
-        pageName:["运动","男装","女装","鞋子","箱包"],
+        pageName:["运动","男装","女装","鞋子","箱包","品牌"],
         productList:[
           {
             kind:[
@@ -178,6 +184,34 @@
                 ]
               }
             ]
+          },
+          {
+            kind:[
+              {
+                title:"推荐品牌",
+                goods:[
+                  {img:logo1,words:"休闲上衣"},
+                  {img:logo2,words:"休闲上衣"},
+                  {img:logo3,words:"休闲上衣"},
+                  {img:logo4,words:"休闲上衣"},
+                  {img:logo5,words:"休闲上衣"},
+                  {img:logo1,words:"休闲上衣"},
+                  {img:logo2,words:"休闲上衣"}
+                ]
+              },
+              {
+                title:"服饰内衣",
+                goods:[
+                  {img:logo3,words:"休闲上衣"},
+                  {img:logo4,words:"休闲上衣"},
+                  {img:logo5,words:"休闲上衣"},
+                  {img:logo1,words:"休闲上衣"},
+                  {img:logo2,words:"休闲上衣"},
+                  {img:logo3,words:"休闲上衣"},
+                  {img:logo4,words:"休闲上衣"}
+                ]
+              }
+            ]
           }
         ]
       }
@@ -206,7 +240,13 @@
         });
       },
 
-      tab(index){
+      tab(item,index){
+        console.log(item);
+        if (item == "品牌") {
+          this.flag = true;
+        }else{
+          this.flag = false;
+        }
         this.num = index;
         document.documentElement.scrollTop = 0;
       }
@@ -215,6 +255,19 @@
 </script>
 
 <style scoped>
+  /*品牌名的页面--开始*/
+  .styles ul.tabs ul.listOfGoods{
+    display: flex;
+    justify-content: none;
+    flex-wrap: wrap;
+    margin: .5rem .3rem 0;
+    background-color: rgb(242,242,242);
+  }
+  .styles ul.tabs ul.listOfGoods li{
+    width: 1.9rem;
+    margin-bottom: 0 !important;
+  }
+  /*品牌名的页面--结束*/
   .active{
     background-color: #fff;
     color: rgb(244,0,87) !important;
