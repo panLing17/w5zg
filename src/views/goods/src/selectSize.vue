@@ -3,12 +3,12 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
+      .main(v-if="show", @touchstart="touchStart", @touchmove="touchMove")
         .photosBox
-          ul.photos(:style="{width:4 * photos.length + 'rem'}")
-            li(v-for="item in photos")
+          ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
+            li(v-for="item in list")
               img(:src="item.image")
-        .goodsData
+        .goodsData(:class="{smallGoodsData:smallPhotoFlag}")
           .price ￥569.00
           .store 库存12222
           .size 选择 颜色 尺寸
@@ -24,9 +24,17 @@
             ul.content
               li 红色
               p(style="clear:both")
+          li
+            .title 版型
+            ul.content
+              li 宽松
+              p(style="clear:both")
+        .count
+          span 数量
+          w-counter(v-model="content", :min="1")
     .buttons(v-if="show")
       .left 加入购物车
-      .right(@click="selectFlag = true") 立即购买
+      .right(@click="buy") 立即购买
 </template>
 
 <script>
@@ -34,8 +42,10 @@
     name: "city-select",
     data () {
       return {
-        // 当前选择的类型，0为选择省，1为市，2为区
-        selectType: 0
+        startY: '',
+        moveY: '',
+        smallPhotoFlag: false,
+        content: 1
       }
     },
     props: {
@@ -48,15 +58,47 @@
         default: false
       }
     },
+    computed:{
+      list(){
+        // 深度拷贝
+        let obj={};
+        obj=JSON.parse(JSON.stringify(this.photos))
+        return obj
+      }
+    },
+    mounted () {
+
+    },
     methods:{
       close () {
         this.$emit('close')
       },
-      typeClick (type) {
-        this.selectType = type
+      buy () {
+        this.$router.push('/confirmOrder')
       },
-      tab (num) {
-        this.selectType = num
+      // 触摸开始
+      touchStart (e) {
+        this.startY = e.targetTouches[0].clientY
+      },
+      // 滑动中
+      touchMove (e) {
+        this.moveY = e.targetTouches[0].clientY
+        // 滑动距离超过10 执行样式变换
+        if( this.startY -this.moveY > 100) {
+          this.smallPhotoFlag = true
+          this.list.splice(1,this.list.length-1)
+        }
+
+      },
+      onTouchMove(inFlag) {
+        if (inFlag) {
+          document.addEventListener('touchmove', this.onHandler, false);
+        } else {
+          document.removeEventListener('touchmove', this.onHandler, false);
+        }
+      },
+      onHandler(e) {
+        e.preventDefault();
       }
     }
   }
@@ -79,6 +121,7 @@
 
   .main {
     padding-top: .2rem;
+    padding-bottom: 1.5rem;
     background-color: white;
     width: 100%;
     height: 70%;
@@ -86,6 +129,7 @@
     bottom: 0;
     left: 0;
     z-index: 102;
+    overflow-y: auto;
   }
   .buttons {
     position: fixed;
@@ -126,9 +170,19 @@
     justify-content: space-around;
     min-width: 100% !important;
   }
+  /* 缩小后样式 */
+  .smallPhoto {
+    justify-content: flex-start !important;
+    padding-left: .2rem;
+  }
+  .smallPhoto li{
+    height: 2rem !important;
+    width: 2rem !important;
+  }
   .photos li{
-    height: 4rem;
-    width: 4rem;
+    transition: width 1s, height 1s;
+    height: 5rem;
+    width: 5rem;
     border-radius: .3rem;
     overflow: hidden;
   }
@@ -140,13 +194,18 @@
   .goodsData{
     margin-top: .2rem;
     height: 1.6rem;
+    left: 50%;
+    top:4rem;
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    transition: width .9s, left .9s, top .9s;
   }
   .goodsData .price{
     font-size: .5rem;
+    transition: font-size .5s;
     font-weight: 600;
     color: rgb(246,0,87);
   }
@@ -156,6 +215,18 @@
   .goodsData .size{
      color: #999;
    }
+  /* 小商品数据 */
+  .smallGoodsData {
+    width: 3rem !important;
+    height: 2rem !important;
+    position: absolute;
+    align-items: flex-start;
+    left: 2.4rem;
+    top: 0;
+  }
+  .smallGoodsData .price{
+    font-size: .4rem !important;
+  }
   /* 规格部分 */
   .spec{
 
@@ -176,5 +247,14 @@
     background: pink;
     margin-left: .4rem;
     border-radius: .2rem;
+  }
+  /* 选择数量部分 */
+  .count {
+    margin-top: .5rem;
+    font-size: .4rem;
+    padding: 0 .2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 </style>

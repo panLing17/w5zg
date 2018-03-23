@@ -3,6 +3,7 @@
     .banner
       nav-bar(background="rgba(255,255,255,.7)", height="0", border-bottom="none")
         .topLeft(slot="left")
+          img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
         .topCenter(slot="center") 商品
         .topRight(slot="right")
       carousel(:indicators="true", :auto="5000", v-if="list.length > 0", :responsive="0", style="height:8rem")
@@ -27,7 +28,7 @@
     .size
       .left 规格
       img(src="../../../assets/img/right.png").right
-    .distribution
+    .distribution(@click="distribution")
       .top
         .left 配送方式
         .right
@@ -49,18 +50,27 @@
     w-recommend(:listData="recommendGoods", background="white")
     .buttons
       .left 加入购物车
-      .right(@click="selectFlag = true") 立即购买
-    select-size(:show="selectFlag", :photos="list", @close="selectFlag = false")
+      .right(@click="buy") 立即购买
+    select-size(:show="selectFlag", :photos="list", @close="selectClose")
+    dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
+    store-select(:show="selectStoreFlag", @close="closeSelectStore")
+    city-select(:show="selectCity", @close="closeSelectCity")
 </template>
 
 <script>
   import wRecommend from '../../home/src/bottomList'
   import selectSize from './selectSize'
+  import disType from './disType'
+  import citySelect from './citySelect'
+  import storeSelect from './storeSelect'
   export default {
     name: "goods-detailed",
     data () {
       return {
-        selectFlag: true,
+        selectFlag: false,
+        disTypeFlag: false,
+        selectCity: false,
+        selectStoreFlag: false,
         list: [
           {image: 'static/img/1.jpg'},
           {image: 'static/img/2.jpg'},
@@ -84,7 +94,54 @@
         ]
       }
     },
-    components: {wRecommend,selectSize}
+    components: {wRecommend,selectSize,citySelect,disType,storeSelect},
+    methods:{
+      buy () {
+        this.selectFlag = true
+        this.onTouchMove(true)
+        document.body.style.overflow='hidden'
+        document.body.style.height="100vh"
+      },
+      selectClose () {
+        this.selectFlag = false
+        this.onTouchMove(false)
+        document.body.style.overflow='auto'
+      },
+      distribution () {
+        this.disTypeFlag = true
+      },
+      // 关闭门店选择
+      closeSelectStore () {
+        this.selectStoreFlag = false
+      },
+      // 关闭城市选择
+      closeSelectCity () {
+        this.selectCity = false
+      },
+      // 关闭配送类型选择
+      disTypeClose () {
+        this.disTypeFlag = false
+      },
+      // 选择配送类型
+      selectDis (data) {
+        this.disTypeClose()
+        if (data === 1) {
+          this.selectCity = true
+        } else {
+          this.selectStoreFlag = true
+        }
+      },
+      onTouchMove(inFlag) {
+        if (inFlag) {
+          document.addEventListener('touchmove', this.onHandler, false);
+        } else {
+          document.removeEventListener('touchmove', this.onHandler, false);
+        }
+      },
+      onHandler(e) {
+        e.preventDefault();
+      }
+    }
   }
 </script>
 
