@@ -1,0 +1,180 @@
+<template lang="pug">
+  .selectSizeBox
+    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
+      .bg(v-if="show", @click="close")
+    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
+      .main(v-if="show")
+        .photosBox
+          ul.photos(:style="{width:4 * photos.length + 'rem'}")
+            li(v-for="item in photos")
+              img(:src="item.image")
+        .goodsData
+          .price ￥569.00
+          .store 库存12222
+          .size 选择 颜色 尺寸
+        ul.spec
+          li
+            .title 尺寸
+            ul.content
+              li M
+              li XXl
+              p(style="clear:both")
+          li
+            .title 颜色
+            ul.content
+              li 红色
+              p(style="clear:both")
+    .buttons(v-if="show")
+      .left 加入购物车
+      .right(@click="selectFlag = true") 立即购买
+</template>
+
+<script>
+  export default {
+    name: "city-select",
+    data () {
+      return {
+        // 当前选择的类型，0为选择省，1为市，2为区
+        selectType: 0
+      }
+    },
+    props: {
+      photos: {
+        type: Array,
+        default:[]
+      },
+      show: {
+        type: Boolean,
+        default: false
+      }
+    },
+    methods:{
+      close () {
+        this.$emit('close')
+      },
+      typeClick (type) {
+        this.selectType = type
+      },
+      tab (num) {
+        this.selectType = num
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .selectSizeBox {
+
+  }
+
+  .bg {
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 101;
+  }
+
+  .main {
+    padding-top: .2rem;
+    background-color: white;
+    width: 100%;
+    height: 70%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 102;
+  }
+  .buttons {
+    position: fixed;
+    z-index: 103;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.2rem;
+    display: flex;
+    border: solid 1px rgb(244,0,87);
+  }
+  .buttons div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .buttons .left{
+    flex-grow: 1;
+    height: 100%;
+    background: white;
+    font-size: .4rem;
+    color: rgb(244,0,87);
+  }
+  .buttons .right{
+    flex-grow: 1;
+    height: 100%;
+    background: rgb(244,0,87);
+    font-size: .4rem;
+    color: white;
+  }
+  /* 商品图片部分 */
+  .photosBox {
+    overflow-x: auto;
+    width: 100%;
+  }
+  .photosBox .photos{
+    display: flex;
+    justify-content: space-around;
+    min-width: 100% !important;
+  }
+  .photos li{
+    height: 4rem;
+    width: 4rem;
+    border-radius: .3rem;
+    overflow: hidden;
+  }
+  .photos li img {
+    width: 100%;
+    height: 100%;
+  }
+  /* 商品数据部分 */
+  .goodsData{
+    margin-top: .2rem;
+    height: 1.6rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .goodsData .price{
+    font-size: .5rem;
+    font-weight: 600;
+    color: rgb(246,0,87);
+  }
+  .goodsData .store{
+    color: #aaaaaa;
+  }
+  .goodsData .size{
+     color: #999;
+   }
+  /* 规格部分 */
+  .spec{
+
+  }
+  .spec>li{
+    margin-top: .4rem;
+  }
+  .spec>li .title{
+    font-size: .4rem;
+    padding-left: .2rem;
+  }
+  .spec .content{
+    margin-top: .3rem;
+  }
+  .spec .content li{
+    float: left;
+    padding: .2rem .3rem;
+    background: pink;
+    margin-left: .4rem;
+    border-radius: .2rem;
+  }
+</style>

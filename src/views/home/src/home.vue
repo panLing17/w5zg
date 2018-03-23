@@ -95,7 +95,7 @@
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
-      this.wxConfig()
+      // this.wxConfig()
       this.animateHack()
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
@@ -128,7 +128,7 @@
         let self = this
         setTimeout(function () {
           self.positionFixed = true
-        },1000)
+        },400)
       },
       upCallback: function(page) {
         let self = this;
@@ -150,7 +150,7 @@
 //						size: pageSize //每页长度
 //					}
 //				})
-//				.then(function(response) 
+//				.then(function(response)
           successCallback&&successCallback({});//成功回调
           successCallback&&successCallback({});//成功回调
           successCallback&&successCallback({});//成功回调

@@ -10,7 +10,6 @@
       w-input(label="验证码：", label-width="1.8rem", placeholder="", :type="passwordType", v-model="form.password", input-button="true", button-cover)
         .aplaceholder(slot="button")
       button.regButton(@click="$router.push('/forget2')") 下一步
-
 </template>
 
 <script>

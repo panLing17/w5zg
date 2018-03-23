@@ -33,6 +33,8 @@
         }
       }
     },
+    mounted () {
+    },
     methods: {
       passwordSwitch (show) {
         if (show) {

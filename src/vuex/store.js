@@ -11,12 +11,12 @@ const state = {
     cityId: 330300,
     areaId: 330303
   },
-  giveGoodsAddress:[],
+  // 推荐商品数据
+  recommendGoods: [],
+  giveGoodsAddress: [],
   nowLocation: [116.397428, 39.90923],
   // 数据中转（修改数据、查看详情等。用来带数据）
   transfer:[],
-  // 为true则进入启动页
-  startFlag: false
 }
 const mutations = {
   transferGive (state, data) {
@@ -24,6 +24,9 @@ const mutations = {
   },
   getLocationId (state, data) {
     state.locationId = data
+  },
+  getRecommendGoods (state, data) {
+    state.recommendGoods =data
   },
   giveGoodsAddressChange (state, data) {
     state.giveGoodsAddress = data

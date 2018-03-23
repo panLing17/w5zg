@@ -13,7 +13,8 @@ import Page from '../views/page/index.js'
 import ShoppingCart from '../views/shoppingCart/index.js'
 // 我的
 import My from '../views/my/index.js'
-
+// 商品相关
+import Goods from '../views/goods/index.js'
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -41,6 +42,10 @@ const router = new Router ({
       path: '/forget2',
       name: '忘记密码2',
       component: User.forget2
+    }, {
+      path: '/goodsDetailed',
+      name: '商品详情',
+      component: Goods.goodsDetailed
     }, {
       path: '/',
       name: '应用',
