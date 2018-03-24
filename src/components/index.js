@@ -5,6 +5,9 @@ import wInput from './input'
 import slideShow from './slideShow'
 import searchInput from './searchInput'
 import wButton from './button'
+// ios风格开关
+import ToggleButton from 'vue-js-toggle-button'
+Vue.use(ToggleButton)
 // 数字选择器
 import wCounter from './counter'
 Vue.component('w-counter', wCounter)

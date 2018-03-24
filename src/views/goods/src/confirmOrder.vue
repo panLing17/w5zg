@@ -17,7 +17,14 @@
           .info 江苏南京软件园，4002-1一楼四厅588室 江苏南京软件园，4002-1一楼四厅588室
       .icon
         img(src="../../../assets/img/next@2x.png")
-    goods-card.goods-card
+    goods-card.goods-card(v-for="i in 2")
+    .allPrice
+      .goodsNum 共计4件商品
+      .price
+        span 合计
+        p ￥596.00
+    toggle-button(v-model="myDataVariable")
+
 </template>
 
 <script>
@@ -26,7 +33,7 @@
     name: 'confirm-order',
     data () {
       return {
-
+        myDataVariable:false
       }
     },
     components:{goodsCard},
@@ -92,5 +99,29 @@
   /* 商品卡片部分 */
   .goods-card{
     margin-top: .2rem;
+  }
+  /* 合计部分 */
+  .allPrice {
+    height: 1.5rem;
+    padding-right: .2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .goodsNum{
+    margin-right: .3rem;
+    color: #aaa;
+  }
+  .price {
+    display: flex;
+    align-items: center;
+  }
+  .price span{
+    margin-right: .1rem;
+  }
+  .price p{
+    font-weight: 600;
+    font-size: .45rem;
+    color: rgb(244,0,87);
   }
 </style>
