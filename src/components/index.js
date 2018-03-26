@@ -5,7 +5,13 @@ import wInput from './input'
 import slideShow from './slideShow'
 import searchInput from './searchInput'
 import wButton from './button'
-//轮播
+// ios风格开关
+import ToggleButton from 'vue-js-toggle-button'
+Vue.use(ToggleButton)
+// 数字选择器
+import wCounter from './counter'
+Vue.component('w-counter', wCounter)
+// 轮播
 import Carousel from 'vue-m-carousel'
 Vue.component('w-checkbox', wCheckbox)
 Vue.component('nav-bar', navBar)
