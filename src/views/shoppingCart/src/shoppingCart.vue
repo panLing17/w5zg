@@ -9,15 +9,12 @@
       ul
         li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
           p 门店自提
-          span(class="animated", :class="{rubberBand:flag,flipInY:!flag}") 1
+          span(class="animated", :class="{rubberBand:flag}") 1
         li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
           p 快递配送
-          span(class="animated", :class="{rubberBand:flag,swing:!flag}") 1
+          span(class="animated", :class="{swing:flag}") 1
       p(:style="{left:nowTab*50+'%'}")
-
-    button(@click="flag = !flag") 切换
-    button(@click="http") 错误请求测试
-    goods-card
+    goods-card.goodsCard(v-for="i in 2", :key="i", @tab="changeType")
 </template>
 
 <script>
@@ -26,7 +23,7 @@
     name: 'home',
     data () {
       return {
-        flag: true,
+        flag: false,
         nowTab: 0
       }
     },
@@ -42,14 +39,11 @@
       tabChange (num) {
         this.nowTab = num
       },
-      http () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiMember + '/test',
-          params: {},
-        }).then(function (response) {
-        })
+      changeType () {
+        this.flag = true
+        setTimeout(()=>{
+          this.flag = false
+        },1000)
       }
     }
   }
@@ -104,5 +98,9 @@
   }
   .tabChecked span{
     background-color: rgb(244,0,84) !important;
+  }
+  /* 商品卡片 */
+  .goodsCard {
+    margin-top: .2rem;
   }
 </style>
