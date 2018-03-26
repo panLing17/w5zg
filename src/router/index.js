@@ -14,6 +14,8 @@ import Page from '../views/page/index.js'
 import ShoppingCart from '../views/shoppingCart/index.js'
 // 我的
 import My from '../views/my/index.js'
+// 订单管理
+import MyOrder from '../views/my/src/myOrder/index.js'
 // 商品相关
 import Goods from '../views/goods/index.js'
 Vue.use(Router)
@@ -204,6 +206,11 @@ const router = new Router ({
               path: '/my/aboutUs',
               name: '关于我们',
               component: My.aboutUs
+            },
+            {
+              path: '/my/orderManage',
+              name: '订单管理',
+              component: MyOrder.orderManage
             }
           ]
         }

@@ -5,21 +5,21 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 设置
     .avatar
-      ul.wrap
+      ul.wrap(@click="routergoUser()")
         li.left
           span.pic
-        li.right(@click="routergoUser()")
+        li.right
           span.name {{name}}
           img(src="../../../assets/img/next@2x.png")
     .accountBind
-      ul.wrap
+      ul.wrap(@click="notOpen()")
         li.left 账户绑定
-        li.right(@click="notOpen()")
+        li.right
           img(src="../../../assets/img/next@2x.png")
     .accountSafety
-      ul.wrap
+      ul.wrap(@click="$router.push('/my/accountSafety')")
         li.left 账户安全
-        li.right(@click="$router.push('/my/accountSafety')")
+        li.right
           img(src="../../../assets/img/next@2x.png")
     .addressAdmin
       ul.wrap(@click="$router.push('/my/localAdmin')")
@@ -66,7 +66,7 @@
             var style={
                 background:"rgba(0,0,0,0.2)",
                 position:"fixed",
-                zIndex:10,
+                zIndex:101,
                 width:"4rem",
                 height:"1rem",
                 left:"3rem",
@@ -80,7 +80,7 @@
                 layer.style[i]=style[i];
             if(document.getElementById("layer")==null){
                 document.body.appendChild(layer);
-                setTimeout("document.body.removeChild(layer)",2000)
+                setTimeout("document.body.removeChild(layer)",2000);
             }
       }
     }
@@ -89,9 +89,12 @@
 
 <style scoped>
   .settings{
-  	height: 95vh;
-	background-color: rgb(242,242,242);
-	overflow: scroll;
+    width: 100%;
+    min-height: 100vh;
+  	background-color: rgb(242,242,242);
+    position: absolute;
+    z-index: 100;
+  	overflow: scroll;
   }
   .settings .topCenter{
   	font-size: .5rem;
@@ -183,7 +186,7 @@
   /*用户头像,账户安全下方的边框--开始*/
   .avatar ul.wrap,
   .accountSafety ul.wrap{
-	border-bottom: 1px solid rgb(204,204,204);
+	  border-bottom: 1px solid rgb(204,204,204);
   }
   /*用户头像,账户安全下方的边框--结束*/
   /*退出登录--开始*/
