@@ -30,7 +30,7 @@
   import store from '../vuex/store.js'
 
   export default {
-    name: '主界面',
+    name: 'mainView',
     data () {
       return {}
     },

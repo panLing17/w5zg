@@ -4,7 +4,7 @@
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show", @touchstart="touchStart", @touchmove="touchMove")
-        .photosBox
+        .photosBox(@touchstart="removeTouchDisable")
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
             li(v-for="item in list")
               img(:src="item.image")
@@ -23,11 +23,6 @@
             .title 颜色
             ul.content
               li 红色
-              p(style="clear:both")
-          li
-            .title 版型
-            ul.content
-              li 宽松
               p(style="clear:both")
         .count
           span 数量
@@ -73,7 +68,11 @@
       close () {
         this.$emit('close')
       },
+      removeTouchDisable () {
+        this.$emit('buy')
+      },
       buy () {
+        this.$emit('buy')
         this.$router.push('/confirmOrder')
       },
       // 触摸开始
@@ -83,10 +82,15 @@
       // 滑动中
       touchMove (e) {
         this.moveY = e.targetTouches[0].clientY
-        // 滑动距离超过10 执行样式变换
+        // 滑动距离超过100 执行样式变换
         if( this.startY -this.moveY > 100) {
           this.smallPhotoFlag = true
           this.list.splice(1,this.list.length-1)
+          // 延迟0.8秒 移除禁止触摸
+          setTimeout(()=>{
+            this.$emit('buy')
+          },800)
+
         }
 
       },
@@ -106,7 +110,6 @@
 
 <style scoped>
   .selectSizeBox {
-
   }
 
   .bg {

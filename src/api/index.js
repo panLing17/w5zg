@@ -3,10 +3,14 @@ import Message from 'vue-multiple-message'
 import store from '../vuex/store'
 
 
-axios.defaults.baseURL = process.env.API_ROOT
+// axios.defaults.baseURL = process.env.API_ROOT
 
 // 过滤请求
 axios.interceptors.request.use((config) => {
+  // 如果没有token追加一条token
+  if (!config.params.token) {
+    config.params.token = store.state.userData.token
+  }
   return config
 })
 axios.defaults.withCredentials = true
@@ -14,15 +18,13 @@ axios.defaults.withCredentials = true
 axios.interceptors.response.use(
   (response) => {
     const res = response.data
-    let code = res.code
-    code = code.toString()
-    if (code !== '100') {
-      if (code === '404') {
-        return response
-      } else {
+    let optSuc = res.optSuc
+    if (optSuc) {
+      return response
+    } else {
+      if (response.config.url.indexOf('member/login') === -1) {
         Message.error(res.msg)
       }
-    } else {
       return response
     }
   },

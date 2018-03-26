@@ -17,14 +17,25 @@
           .info 江苏南京软件园，4002-1一楼四厅588室 江苏南京软件园，4002-1一楼四厅588室
       .icon
         img(src="../../../assets/img/next@2x.png")
-    goods-card.goods-card(v-for="i in 2")
+    goods-card.goods-card(v-for="i in 2", :key="i")
     .allPrice
       .goodsNum 共计4件商品
       .price
         span 合计
         p ￥596.00
-    toggle-button(v-model="myDataVariable")
-
+    ul.switchList
+      li
+        .left 网金卡
+        .right
+          span 已抵扣100.00
+          toggle-button(v-model="myDataVariable", color="rgb(244,0,87)")
+      li
+        .left 通用卷 <span>您有通用卷500，可抵扣100</span>
+        .right
+          toggle-button(v-model="myDataVariable", color="rgb(244,0,87)")
+    .submit
+      .left 实付：￥500.00
+      .right 提交订单
 </template>
 
 <script>
@@ -46,6 +57,7 @@
 <style scoped>
   .confirmOrderBox {
     background:rgb(242,242,242);
+    padding-bottom: 2rem;
   }
   .title{
     background: white;
@@ -97,12 +109,12 @@
     height: .4rem;
   }
   /* 商品卡片部分 */
-  .goods-card{
+  .goods-card {
     margin-top: .2rem;
   }
   /* 合计部分 */
   .allPrice {
-    height: 1.5rem;
+    height: 1.2rem;
     padding-right: .2rem;
     display: flex;
     justify-content: flex-end;
@@ -116,12 +128,46 @@
     display: flex;
     align-items: center;
   }
-  .price span{
+  .price span {
     margin-right: .1rem;
   }
-  .price p{
+  .price p {
     font-weight: 600;
     font-size: .45rem;
     color: rgb(244,0,87);
+  }
+  /* 开关列表 */
+  .switchList {
+    background: white;
+  }
+  .switchList li{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 .2rem;
+    height: 1.2rem;
+    border-bottom: solid 1px #ddd;
+  }
+  .switchList .left {
+    font-size: .35rem;
+    font-weight: 600;
+  }
+  .switchList .left span{
+    color: #aaa;
+    font-weight: 500;
+    font-size: .3rem;
+    margin-left: .2rem;
+  }
+  .switchList .right{
+    color: rgb(244,0,87);
+    display: flex;
+    align-items: center;
+  }
+  .switchList .right span{
+    margin-right: .2rem;
+  }
+  /* 提交 */
+  .submit {
+
   }
 </style>

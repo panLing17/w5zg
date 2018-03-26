@@ -33,18 +33,24 @@ const mutations = {
   },
   userDataChange (state, data) {
     state.userData = data
-  },
-  startFlagClose (state) {
-    state.startFlag = false
-  },
-  nowLocationChange (state, data) {
-    state.nowLocation = data
-  },
-  shoppingCountChange (state, num) {
-    state.shoppingCount = num
+  }
+}
+const actions = {
+  login (context,data) {
+    let vm = new Vue({})
+    axios({
+      method: 'post',
+      url: vm.$apiMember + 'member/login',
+      params: data,
+    }).then(function (response) {
+      if (response.data.optSuc){
+        context.commit('userDataChange',response.data.data)
+      }
+    })
   }
 }
 export default new Vuex.Store({
   state,
-  mutations
+  mutations,
+  actions
 })
