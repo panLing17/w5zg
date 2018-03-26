@@ -247,12 +247,12 @@ router.beforeEach ((to, from, next) => {
     vm.$store.dispatch('login', form)
   }
   // 购物车及我的页面权限处理
-  if (to.path === '/my' || to.path === '/shoppingCart') {
-    if (store.state.userData === '') {
-      Message.warning('请先登录')
-      next({path:'/login'})
-    }
-  }
+  // if (to.path === '/my' || to.path === '/shoppingCart') {
+  //   if (store.state.userData === '') {
+  //     Message.warning('请先登录')
+  //     next({path:'/login'})
+  //   }
+  // }
   next()
 })
 export default router
