@@ -1,3 +1,5 @@
+import Vue from 'vue'
+import router from '../router/index.js'
 import axios from 'axios'
 import Message from 'vue-multiple-message'
 import store from '../vuex/store'
@@ -8,8 +10,8 @@ import store from '../vuex/store'
 // 过滤请求
 axios.interceptors.request.use((config) => {
   // 如果没有token追加一条token
-  if (!config.params.token) {
-    config.params.token = store.state.userData.token
+  if (!config.params.W5MALLTOKEN && config.url.indexOf('member/login') === -1) {
+    config.params.W5MALLTOKEN = localStorage.getItem('token')
   }
   return config
 })
@@ -56,7 +58,14 @@ axios.interceptors.response.use(
   //       return response.data;
   //     }
   (error) => {
-    console.log('err' + error)// for debug
+    console.log(error.response.status) // for debug
+    if (error.response.status === 800) {
+      let vm = new Vue({
+        router
+      })
+      vm.$router.push('/login')
+      localStorage.removeItem('token')
+    }
     Message.error(error.message)
     return Promise.reject(error)
   })
