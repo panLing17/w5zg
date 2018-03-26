@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/store.js'
+import Message from 'vue-multiple-message'
 // 用户操作（登录注册等）
 import User from '../views/user/index.js'
 // 主要操作页总路由
@@ -217,7 +218,7 @@ const router = new Router ({
     }
   ]
 })
-// 全局前置守卫，下面是我上个项目实现左右滑动页面的例子
+// 全局前置守卫
 router.beforeEach ((to, from, next) => {
   window.scrollTo (0, 0)  // 页面回到顶部
   const list = ['首页', '分类', '购物车', '我的']  // 将需要切换效果的路由名称组成一个数组
@@ -234,6 +235,24 @@ router.beforeEach ((to, from, next) => {
     }
     store.state.viewDirection = direction // vuex赋值动画名
   }
-  next ()
+  // 自动登录(先判断是否有token，在判断vuex中有无用户信息，防止重复登录)
+  if (localStorage.hasOwnProperty('token') && store.state.userData === '') {
+    let vm = new Vue({
+      store
+    })
+    let form = {
+      mobile: localStorage.getItem('mobile'),
+      token: localStorage.getItem('token')
+    }
+    vm.$store.dispatch('login', form)
+  }
+  // 购物车及我的页面权限处理
+  if (to.path === '/my' || to.path === '/shoppingCart') {
+    if (store.state.userData === '') {
+      Message.warning('请先登录')
+      next({path:'/login'})
+    }
+  }
+  next()
 })
 export default router

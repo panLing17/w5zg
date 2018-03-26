@@ -17,8 +17,10 @@ import './animate/animate.css'
 import './components/index.js'
 //自定义插件
 import './plugIn/index.js'
-//axios拦截器
+// axios拦截器
 import './api/index.js'
+// 接口端口号
+import './api/apiType'
 //message插件
 import Message from 'vue-multiple-message'
 Vue.prototype.$message = Message

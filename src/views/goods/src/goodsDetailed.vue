@@ -51,7 +51,7 @@
     .buttons
       .left 加入购物车
       .right(@click="buy") 立即购买
-    select-size(:show="selectFlag", :photos="list", @close="selectClose")
+    select-size(:show="selectFlag", :photos="list", @close="selectClose", @buy="removeTouchDisable")
     dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
     store-select(:show="selectStoreFlag", @close="closeSelectStore")
     city-select(:show="selectCity", @close="closeSelectCity")
@@ -95,6 +95,8 @@
       }
     },
     components: {wRecommend,selectSize,citySelect,disType,storeSelect},
+    mounted () {
+    },
     methods:{
       buy () {
         this.selectFlag = true
@@ -109,6 +111,11 @@
       },
       distribution () {
         this.disTypeFlag = true
+      },
+      // 移除禁止触摸事件
+      removeTouchDisable () {
+        this.onTouchMove(false)
+        document.body.style.overflow='auto'
       },
       // 关闭门店选择
       closeSelectStore () {
