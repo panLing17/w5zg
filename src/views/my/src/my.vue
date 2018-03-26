@@ -24,7 +24,7 @@
         li 22
         li 足迹
     div.myOrderForm
-      ul.top
+      ul.top(@click="$router.push('/my/orderManage')")
         li 我的订单
         li
           img(src="../../../assets/img/my_more@2x.png")
@@ -356,12 +356,12 @@ import my_goods from '../../../assets/img/my_goods.png'
   #returnTop{
     width: 1.5rem;
     position: fixed;
-    right: .3rem;
+    right: 0;
     bottom: 2rem;
     display: none;
   }
   #returnTop img{
-    width: 1.5rem;
+    width: 1rem;
     vertical-align: top;
   }
   /*返回顶部的样式--开始*/

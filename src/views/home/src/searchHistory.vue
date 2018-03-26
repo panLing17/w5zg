@@ -80,10 +80,16 @@
 </script>
 
 <style scoped>
+.searchHistory{
+  position: absolute;
+  z-index: 100;
+  min-height: 100vh;
+  background-color: #fff;
+}
 .active{
-    color: #fff !important;
-    background-color: rgb(255,128,171) !important;
-  }
+  color: #fff !important;
+  background-color: rgb(255,128,171) !important;
+}
 
 .topRight{
   color: rgb(245,0,87);

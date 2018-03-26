@@ -1,7 +1,7 @@
 <template lang="pug">
   .filtrate 
     .wrap(v-show="downList")
-      .brand(@click="down($event)") 
+      .brand(@click="down()") 
         span 品牌
         img(src="../../../assets/img/right.png")
       .brandList
@@ -19,29 +19,18 @@
           li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index)") {{item}}  
     .button(v-show="downList")
       .reset(@click="reset()") 重置
-      .affirm(@click="hide()") 确认
-    .wrapToggle(v-show="brandName")
-      .brand 
-        span 品牌
-      p.hot 热门
-      .brandList
-        ul
-          li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index)") {{item}}
-      .allBrandList
-        ul(v-for="(key,value,oIndex) in letterBrandList")
-          li.letters(:id="'anchor-'+oIndex") {{value}}
-          li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event)") {{item}}
-          li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
-      ul.letter(v-show="brandName" :name="msg")
-        li #
-        li(v-for="(item,index) in letter" @click="goAnchor('#anchor-'+index)") {{item}} 
-        li #             
+      .affirm(@click="hide()") 确认             
 </template>
 
 <script>
     export default {
         name: "filtrate",
-        props:["msg"],
+        props: {
+          show: {
+            type: Boolean,
+            default: false
+          }
+        },
         data(){
           return{
             downList:true,
@@ -95,11 +84,11 @@
             };
             this.$emit('ievent',data); 
           },
-          down(e){    
-            e.target.style.opacity = 0;
-            e.target.style.transition = "opacity .5s";
-            this.downList = false;
-            this.brandName = true;
+          down(){
+            let data = {
+              a : 1
+            };    
+            this.$emit("showSon",data);
           },
           goAnchor:function(selector) {
             var anchor = this.$el.querySelector(selector);
@@ -131,8 +120,8 @@
   width: 100%;
   height: 100%;
   background-color: #fff;
-  float: right;
-  z-index: 999;
+  /*float: right;*/
+  z-index: 101;
 }
 .filtrate .wrap{
   padding: .5rem 0 2.9rem;
@@ -212,7 +201,6 @@
 /*重置,确认--开始*/
 .button{
   position: fixed;
-  bottom: 1.6rem;
   width: 70%;
   height: 1.3rem;
   border: 1px solid rgb(244,0,87);
@@ -237,6 +225,7 @@
 /*商品名列表--开始*/
 .wrapToggle{
   padding: .5rem 0 2.9rem;
+  position: relative;
 }
 .wrapToggle .hot{
   padding: .2rem .3rem 0;
@@ -280,6 +269,7 @@
 /*右边显示的字母--开始*/
 .letter{
   width: .4rem;
+  text-align: center;
   position: fixed;
   top: 3rem;
   right: 0;

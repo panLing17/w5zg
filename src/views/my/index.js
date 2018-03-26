@@ -11,6 +11,8 @@ import localAdmin from './src/localhostAdmin'
 import localAdd from './src/localhostAdd'
 import feedback from './src/feedback'
 import aboutUs from './src/aboutUs'
+
+
 export default {
   index,my,settings,userinfo,nickname,accountBind,accountSafety,updatePassword1,updatePassword2,localAdmin,localAdd,feedback,aboutUs
 }

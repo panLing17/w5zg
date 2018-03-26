@@ -36,9 +36,11 @@
               .price ￥516.22
               .bottom <span>江苏南京</span><span>2555人购买</span>
     .mask
-      .lefter(@click="")
+      .lefter
       .righter
-        filtrate(@ievent="ievent" msg="123")
+        filtrate(@ievent="ievent" v-show="filtrateFlag" @showSon="showSon")
+        allBrand(v-show="allBrandFlag")
+
 </template>
 
 <script>
@@ -46,12 +48,15 @@
   import downCoat from '../../../assets/img/page_downCoat.png'
   import coat from '../../../assets/img/page_coat.png'
   import filtrate from './filtrate.vue'
+  import allBrand from './allBrand.vue'
 
   export default {
     name: "commodityList",
-    components: {filtrate},
+    components: {filtrate,allBrand},
     data(){
       return {
+        filtrateFlag: true,
+        allBrandFlag: false,
         mescroll: null,
         flag: false,
         check: true,
@@ -73,19 +78,23 @@
     methods:{
       // 筛选左滑
       leftScroll(){
+        var _this = this;
+        this.$mescrollInt("",this.upCallback);
+        this.filtrateFlag = true;
+        this.allBrandFlag = false;
         var mask = document.getElementsByClassName("mask")[0];
         var lefter = document.getElementsByClassName("lefter")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
         console.log(lefter);
+        mask.style.opacity = 1;
         mask.style.left = 0;
         mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
         lefter.onclick = function(){
+          _this.$mescrollInt("pageMescroll",this.upCallback);
           mask.style.left = "100%";
-          mask.style.transition = "left opacity .2s";
-          if (mask.style.left == "100%") {
-            mask.style.display = none;
-          }
+          mask.style.opacity = 0;
+          mask.style.transition = "left .3s, opacity .3s";
           commodityList.style.overflow = "scroll";
         }
       },
@@ -96,6 +105,14 @@
         if (data.flag == true) {
           mask.style.left = "100%";
           mask.style.transition = "left opacity .2s";
+        }
+      },
+
+      showSon(data){
+        console.log(data.a);
+        if (data.a == 1) {
+          this.filtrateFlag = false;
+          this.allBrandFlag = true;
         }
       },
 
@@ -175,6 +192,7 @@
     top: 0;
     bottom: 0;
     height: auto;
+    z-index: 100;
   }
   .active{
     background-color: #fff;
@@ -182,7 +200,7 @@
   }
   .commodityList{
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     background: rgb(242,242,242);
     padding-bottom: 2rem;
   }
@@ -335,16 +353,21 @@
     left: 110%;
     right: 0;
     bottom: 0;
-    z-index: 10;
+    z-index: 101;
     display: flex;
   }
   .mask .lefter{
     width: 30%;
-    height: 100%;
+    height: 100vh;
+    position: absolute;
+    left: 0;
   }
   .mask .righter{
     width: 70%;
-    height: 100%;
+    height: 100vh;
+    position: absolute;
+    right: 0;
+    overflow: scroll;
   }
   /*蒙板--结束*/
 

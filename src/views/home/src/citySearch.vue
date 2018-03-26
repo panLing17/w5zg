@@ -10,7 +10,7 @@
       ul 
         li 当前定位
         li.icon
-          img(src="../../../assets/img/citySearch定位图标@2x.png") 
+          img(src="../../../assets/img/citySearch.png") 
         li.cityShow(@click="goToHome($event)") 南京市
     .hotCity 热门城市
     .hotCityList
@@ -137,6 +137,9 @@
   .citySearch{
     background-color: rgb(242,242,242);
     padding-bottom: 2rem;
+    min-height: 100vh;
+    z-index: 100;
+    position: absolute;
   }
   .citySearch .topRight{
     color: rgb(245,0,87);

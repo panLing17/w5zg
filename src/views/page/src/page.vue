@@ -17,12 +17,12 @@
         ul(v-for="(item,index) in productList" v-show="index == num").tabs
           li(v-for="items in item.kind").tabsList
             .title(@click="$router.push('/page/commodityList')")
-              span.point
+              span.point(v-show="wordsShow")
               span.letter {{items.title}}
             ul.listOfGoods
-              li(v-for="list in items.goods")
+              li(v-for="list in items.goods").wrapImg
                 img(:src="list.img")
-                .words {{list.words}}
+                .words(v-show="wordsShow") {{list.words}}
 
 </template>
 
@@ -41,6 +41,7 @@
     data(){
       return {
         flag:false,
+        wordsShow:true,
         num:0,
         cityName:this.$route.query.routeParams,
         pageName:["运动","男装","女装","鞋子","箱包","品牌"],
@@ -196,7 +197,11 @@
                   {img:logo4,words:"休闲上衣"},
                   {img:logo5,words:"休闲上衣"},
                   {img:logo1,words:"休闲上衣"},
-                  {img:logo2,words:"休闲上衣"}
+                  {img:logo2,words:"休闲上衣"},
+                  {img:logo3,words:"休闲上衣"},
+                  {img:logo4,words:"休闲上衣"},
+                  {img:logo5,words:"休闲上衣"},
+                  {img:logo1,words:"休闲上衣"}
                 ]
               },
               {
@@ -208,7 +213,11 @@
                   {img:logo1,words:"休闲上衣"},
                   {img:logo2,words:"休闲上衣"},
                   {img:logo3,words:"休闲上衣"},
-                  {img:logo4,words:"休闲上衣"}
+                  {img:logo4,words:"休闲上衣"},
+                  {img:logo5,words:"休闲上衣"},
+                  {img:logo1,words:"休闲上衣"},
+                  {img:logo2,words:"休闲上衣"},
+                  {img:logo3,words:"休闲上衣"}
                 ]
               }
             ]
@@ -244,8 +253,10 @@
         console.log(item);
         if (item == "品牌") {
           this.flag = true;
+          this.wordsShow = false;
         }else{
           this.flag = false;
+          this.wordsShow = true;
         }
         this.num = index;
         document.documentElement.scrollTop = 0;
@@ -256,16 +267,26 @@
 
 <style scoped>
   /*品牌名的页面--开始*/
+  .styles .title{
+    background-color: rgb(242,242,242);
+    margin: 0 .3rem;
+    padding-left: .2rem;
+    font-weight: bold;
+  }
   .styles ul.tabs ul.listOfGoods{
     display: flex;
-    justify-content: none;
     flex-wrap: wrap;
-    margin: .5rem .3rem 0;
+    justify-content: flex-start !important;
+    margin: 0 .3rem !important;
     background-color: rgb(242,242,242);
+    padding: .3rem .2rem !important; 
   }
-  .styles ul.tabs ul.listOfGoods li{
-    width: 1.9rem;
-    margin-bottom: 0 !important;
+  .styles ul.tabs ul.listOfGoods li.wrapImg{
+    width: 32.9%;
+    background-color: #fff;
+    margin-left: 1px !important;
+    margin-bottom: 1px !important;
+    text-align: center;
   }
   /*品牌名的页面--结束*/
   .active{

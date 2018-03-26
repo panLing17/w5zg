@@ -39,8 +39,11 @@
 
 <style scoped>
   .nicknameBox{
-    height: 100vh;
-    background-color: rgb(238,238,238);
+    width: 100%;
+    min-height: 100vh;
+    background-color: rgb(242,242,242);
+    position: absolute;
+    z-index: 100;
   }
   .nicknameBox .topCenter{
     font-size: .5rem;

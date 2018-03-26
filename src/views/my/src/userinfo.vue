@@ -5,21 +5,21 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="routerback()")
       .topCenter(slot="center") 用户资料
     .avatar
-      ul.wrap
+      ul.wrap(@click="select(1)")
         li.left 头像
-        li.right(@click="select(1)")
+        li.right
           span.pic
           img(src="../../../assets/img/next@2x.png") 
     .nickname
-      ul.wrap
+      ul.wrap(@click="routergo()")
         li.left 昵称
-        li.right(@click="routergo()")
+        li.right
           span.name {{name}}
           img(src="../../../assets/img/next@2x.png")
     .gender
-      ul.wrap
+      ul.wrap(@click="select(3)")
         li.left 性别
-        li.right(@click="select(3)")
+        li.right
           span.sex 男
           img(src="../../../assets/img/next@2x.png")
     .birthDay
@@ -112,8 +112,11 @@
 
 <style scoped>
   .userinfo{
-    height: 100%;
-  	background-color: rgb(238,238,238);
+    width: 100%;
+    min-height: 100vh;
+  	background-color: #fff;
+    position: absolute;
+    z-index: 100;
   }
   .userinfo .topCenter{
     font-size: .5rem;
