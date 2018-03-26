@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 商品
+      .topCenter(slot="center") 确认订单
       .topRight(slot="right")
     .title
       .stud 联系人
@@ -95,10 +95,12 @@
   }
   .giveGoodsLocation .label{
     width: 1.5rem;
+    line-height: .6rem;
   }
   .giveGoodsLocation .info{
     width: 0;
     flex-grow: 1;
+    line-height: .6rem;
   }
   .icon {
     display: flex;
@@ -168,6 +170,31 @@
   }
   /* 提交 */
   .submit {
-
+    width: 100%;
+    height: 1.2rem;
+    font-size: .35rem;
+    border-top: 1px solid #ddd;
+    background-color: white;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .submit .left {
+    flex-grow: 1;
+    display: flex;
+    justify-content: flex-end;
+    margin-right: .4rem;
+  }
+  .submit .right{
+    width: 3.5rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(244,0,87);
+    color: white;
   }
 </style>

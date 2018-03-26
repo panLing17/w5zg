@@ -236,23 +236,25 @@ router.beforeEach ((to, from, next) => {
     store.state.viewDirection = direction // vuex赋值动画名
   }
   // 自动登录(先判断是否有token，在判断vuex中有无用户信息，防止重复登录)
-  if (localStorage.hasOwnProperty('token') && store.state.userData === '') {
+  /* if (localStorage.hasOwnProperty('token') && store.state.userData === '') {
     let vm = new Vue({
       store
     })
     let form = {
-      mobile: localStorage.getItem('mobile'),
       token: localStorage.getItem('token')
     }
     vm.$store.dispatch('login', form)
-  }
+  } */
   // 购物车及我的页面权限处理
-  if (to.path === '/my' || to.path === '/shoppingCart') {
-    if (store.state.userData === '') {
+  if (to.name === '我的' || to.name === '购物车') {
+    if (!localStorage.hasOwnProperty('token')) {
       Message.warning('请先登录')
       next({path:'/login'})
+    } else {
+      next()
     }
+  } else {
+    next()
   }
-  next()
 })
 export default router

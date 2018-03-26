@@ -56,11 +56,10 @@
         }).then(function (response) {
           // 储存登录信息
           self.$store.commit('userDataChange',response.data.data)
-          // 本地储存账号和token
-          localStorage.setItem('mobile',self.form.mobile)
-          localStorage.setItem('token',response.data.data.token)
+          // 本地储token
+          localStorage.setItem('token',response.data.data.W5MALLTOKEN)
           // 跳转至首页
-          self.$router.push('/home')
+          self.$router.push('/my')
         })
         // this.$store.dispatch('login',this.form)
       }
