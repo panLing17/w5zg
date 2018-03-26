@@ -27,14 +27,14 @@
 </template>
 
 <script>
-  import jacket from '../../../assets/img/page_jacket.png'
-  import downCoat from '../../../assets/img/page_downCoat.png'
-  import coat from '../../../assets/img/page_coat.png'
-  /* import logo1 from '../../../assets/img/logo1.png'
-  import logo2 from '../../../assets/img/logo2.png'
-  import logo3 from '../../../assets/img/logo3.png'
-  import logo4 from '../../../assets/img/logo4.png'
-  import logo5 from '../../../assets/img/logo5.png' */
+  // import jacket from '../../../assets/img/page_jacket.png'
+  // import downCoat from '../../../assets/img/page_downCoat.png'
+  // import coat from '../../../assets/img/page_coat.png'
+  // import logo1 from '../../../assets/img/logo1.png'
+  // import logo2 from '../../../assets/img/logo2.png'
+  // import logo3 from '../../../assets/img/logo3.png'
+  // import logo4 from '../../../assets/img/logo4.png'
+  // import logo5 from '../../../assets/img/logo5.png'
 
   export default {
     name: "page",
@@ -279,7 +279,7 @@
     justify-content: flex-start !important;
     margin: 0 .3rem !important;
     background-color: rgb(242,242,242);
-    padding: .3rem .2rem !important; 
+    padding: .3rem .2rem !important;
   }
   .styles ul.tabs ul.listOfGoods li.wrapImg{
     width: 32.9%;
