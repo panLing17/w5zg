@@ -8,6 +8,9 @@ import wButton from './button'
 // ios风格开关
 import ToggleButton from 'vue-js-toggle-button'
 Vue.use(ToggleButton)
+// 推荐商品
+import recommend from './recommend'
+Vue.component('w-recommend', recommend)
 // 数字选择器
 import wCounter from './counter'
 Vue.component('w-counter', wCounter)

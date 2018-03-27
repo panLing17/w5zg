@@ -28,7 +28,6 @@
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
-  import wRecommend from './bottomList'
   export default {
     name: 'home',
     data() {
@@ -134,7 +133,6 @@
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
           if(page.num === 1) self.recommendGoods = []
-          console.log(curPageData)
           self.recommendGoods = self.recommendGoods.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
@@ -159,7 +157,7 @@
 //				.catch(function(error) {
 //					errorCallback&&errorCallback()//失败回调
 //				});
-        },1000)
+        },10)
       },
       GetQueryString(url, name) {
         var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')
@@ -248,7 +246,7 @@
         }
       }
     },
-    components: {hotButton, lNews, wActivity, wRecommend}
+    components: {hotButton, lNews, wActivity}
   }
 </script>
 

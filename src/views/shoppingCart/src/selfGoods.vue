@@ -1,9 +1,6 @@
 <template lang="pug">
-  transition( leave-active-class="animated rotateOutUpLeft")
+  transition( leave-active-class="animated rotateOutUpRight")
     .goodsCardBox(v-if="list.length>0")
-      .title
-        w-checkbox(v-model="isdefault")
-        p PELLIOT旗舰店
       transition-group(tag="div", name="leftOut")
         .goodsBox(v-for="(i,index) in list", :key="index")
           .main
@@ -52,8 +49,7 @@
 
 <style scoped>
   .goodsCardBox{
-    background-color: white;
-    padding: 0 .2rem;
+
   }
   .title{
     font-weight: 600;
@@ -67,6 +63,8 @@
   }
   .goodsBox {
     background-color: white;
+    margin-top: .1rem;
+    padding: 0 .2rem;
   }
   .main{
     height: 2.2rem;
@@ -138,7 +136,7 @@
   }
   .leftOut-enter, .leftOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translate(-100%,-1000%) scale(.1,.1);
+    transform: translate(100%,-1000%) scale(.1,.1);
     opacity: 0;
   }
 </style>

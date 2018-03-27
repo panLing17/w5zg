@@ -1,14 +1,14 @@
 <template lang="pug">
-  transition( leave-active-class="animated rotateOutUpLeft")
+  transition( leave-active-class="animated flipOutX")
     .goodsCardBox(v-if="list.length>0")
       .title
-        w-checkbox(v-model="isdefault")
         p PELLIOT旗舰店
+        img(src="../../../assets/img/searchHistory_clear.png")
       transition-group(tag="div", name="leftOut")
         .goodsBox(v-for="(i,index) in list", :key="index")
           .main
             .checkbox
-              w-checkbox(v-model="isdefault")
+              img(src="../../../assets/img/Invalid@3x.png")
             img(src="../../../../static/img/1.jpg")
             .info
               .text
@@ -19,18 +19,15 @@
               .price
                 span ￥596.00
             .mainRight
-              img(src="../../../assets/img/edit@3x.png")
-              p x1
           .bottom
-            .left(@click="changeType") <img src="../../../assets/img/switch@2x.png"/>门店自提
             .right
-              span 江苏省 南京市
+              span 商品已过期
               img
 </template>
 
 <script>
   export default {
-    name: "goods-card",
+    name: "disable-goods",
     data () {
       return {
         isdefault: false,
@@ -56,14 +53,17 @@
     padding: 0 .2rem;
   }
   .title{
-    font-weight: 600;
     height: .8rem;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #eee;
   }
   .title p{
     margin-left: 5px;
+  }
+  .title img {
+    width: .6rem;
   }
   .goodsBox {
     background-color: white;
@@ -78,6 +78,9 @@
     height: 100%;
     display: flex;
     align-items: center;
+  }
+  .main .checkbox img{
+    width: .7rem;
   }
   .main>img{
     width: 2rem;
