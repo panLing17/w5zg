@@ -16,6 +16,8 @@ import ShoppingCart from '../views/shoppingCart/index.js'
 import My from '../views/my/index.js'
 // 订单管理
 import MyOrder from '../views/my/src/myOrder/index.js'
+// 售后
+import AfterSale from '../views/my/src/afterSale/index.js'
 // 商品相关
 import Goods from '../views/goods/index.js'
 Vue.use(Router)
@@ -211,6 +213,26 @@ const router = new Router ({
               path: '/my/orderManage',
               name: '订单管理',
               component: MyOrder.orderManage
+            },
+            {
+              path: '/my/orderDetails',
+              name: '订单详情',
+              component: MyOrder.orderDetails
+            },
+            {
+              path: '/my/applyAfterSale',
+              name: '申请售后',
+              component: AfterSale.applyAfterSale
+            },
+            {
+              path: '/my/selectService',
+              name: '选择服务方式',
+              component: AfterSale.selectService
+            },
+            {
+              path: '/my/refundReturn',
+              name: '申请退款退货',
+              component: AfterSale.refundReturn
             }
           ]
         }
@@ -246,15 +268,16 @@ router.beforeEach ((to, from, next) => {
     vm.$store.dispatch('login', form)
   } */
   // 购物车及我的页面权限处理
-  if (to.name === '我的' || to.name === '购物车') {
-    if (!localStorage.hasOwnProperty('token')) {
-      Message.warning('请先登录')
-      next({path:'/login'})
-    } else {
-      next()
-    }
-  } else {
-    next()
-  }
+  // if (to.name === '我的' || to.name === '购物车') {
+  //   if (!localStorage.hasOwnProperty('token')) {
+  //     Message.warning('请先登录')
+  //     next({path:'/login'})
+  //   } else {
+  //     next()
+  //   }
+  // } else {
+  //   next()
+  // }
+  next()
 })
 export default router

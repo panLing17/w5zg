@@ -2,7 +2,7 @@
   div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}")
     nav-bar(background="rgb(245,0,87)")
       .topLeft(slot="left" @click="goToCitySearch()")
-        img(src="../../../assets/img/home定位按钮@2x.png")
+        img(src="../../../assets/img/homeLocation@2x.png")
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称" @focus="jump")

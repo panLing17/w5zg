@@ -16,17 +16,9 @@
           span.orderNum 订单编号:
           span.num {{item.orderNum}}
         .right#state {{item.status}}  
-      .center
+      .center(@click="$router.push('/my/orderDetails')")
         .image
-          img(:src="item.imageSrc")
-        .goodsExplain
-          .words {{item.words}}
-          .cont
-            .property
-              span.color {{item.color}}
-              span.size {{item.size}}
-            .quantity x
-              span {{item.quantity}}   
+          img(:src="items" v-for="items in item.imageSrc")   
       .bottom
         .left(v-if="item.status === '待备货'")
           .goodsCode 提货码: {{item.goodsCode}}
@@ -55,12 +47,8 @@
             {
               orderNum:"2018031401",
               status:"待付款",
-              imageSrc:myGoods,
-              words:"法国PELLIOT秋冬新品户外冲锋衣",
-              color:"黄色",
-              size:"L",
-              quantity:2,
-              amount:2,
+              imageSrc:[myGoods,myGoods,myGoods,myGoods],
+              amount:4,
               priceNum:596,
               buttonL:"取消订单",
               buttonR:"支付"
@@ -68,25 +56,17 @@
             {
               orderNum:"2018031402",
               status:"备货中",
-              imageSrc:myGoods,
-              words:"法国PELLIOT秋冬新品户外冲锋衣",
-              color:"黄色",
-              size:"M",
-              quantity:3,
+              imageSrc:[myGoods,myGoods,myGoods,myGoods,myGoods,myGoods],
               goodsCode:"03200001",
-              amount:3,
+              amount:6,
               priceNum:596
             },
             {
               orderNum:"2018031403",
               status:"待发货",
-              imageSrc:myGoods,
-              words:"法国PELLIOT秋冬新品户外冲锋衣",
-              color:"黄色",
-              size:"XL",
-              quantity:3,
+              imageSrc:[myGoods,myGoods,myGoods,myGoods,myGoods],
               goodsCode:"03200001",
-              amount:3,
+              amount:5,
               priceNum:596,
               buttonL:"提醒发货",
               buttonR:"物流信息"
@@ -94,11 +74,7 @@
             {
               orderNum:"2018031404",
               status:"待自提",
-              imageSrc:myGoods,
-              words:"法国PELLIOT秋冬新品户外冲锋衣",
-              color:"黄色",
-              size:"L",
-              quantity:3,
+              imageSrc:[myGoods,myGoods,myGoods],
               goodsCode:"03200001",
               amount:3,
               priceNum:596,
@@ -203,9 +179,10 @@
   }
   .center{
     background-color: #fff;
-    display: flex;
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
+    white-space:nowrap;
+    overflow-x:auto;
   } 
   .center .image{
     
@@ -213,6 +190,7 @@
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
+    margin-right: .3rem;
   }
   .center .goodsExplain{
     padding: .1rem 0 0 .3rem;

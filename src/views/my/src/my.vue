@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.myBox
+  div.myBox.mescroll#myMescroll
     div.head
       p.top
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
@@ -37,7 +37,7 @@
           img(src="../../../assets/img/my_waitforreceiving@2x.png")
         li
           img(src="../../../assets/img/my_remaintobeevaluated@2x.png")
-        li
+        li(@click="$router.push('/my/applyAfterSale')")
           img(src="../../../assets/img/my_aftersale@2x.png")
     div.myTreasure
       ul.top
@@ -53,23 +53,15 @@
           img(src="../../../assets/img/my_cashcoupon@2x.png")
     div.recommend
       img(src="../../../assets/img/my_recommend@2x.png")
-    div.goodsList
-      ul.goods
-        li(v-for="item in goodsDetails").details
-          ul
-            li.img
-              img(v-bind:src="item.imgSrc")
-            li.goodsMsg
-              span {{item.goodsMsg}}
-            li.price
-              span {{item.price | price-filter}}
-            li.region
-              span {{item.region}}
-              span {{item.buyerNum}} 人已购买
-    div(@click="topFunction()")#returnTop
-      img(src="../../../assets/img/my_top@2x.png")
-    .downOver 已到最底部
-
+    .bottomList
+        ul.goodsList#box
+          li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
+            img(src="../../../assets/img/my_goods.png")
+            .wrapWords
+              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
+              .price ￥516.22
+              .bottom <span>江苏南京</span><span>2555人购买</span>
+    .bottomPlaceholder
 </template>
 
 <script>
@@ -78,6 +70,7 @@ import my_goods from '../../../assets/img/my_goods.png'
     name: "my",
     data() {
       return{
+        recommendGoods: [],
         name:this.$route.query.routeParams,
         goodsDetails:[
           {
@@ -108,35 +101,27 @@ import my_goods from '../../../assets/img/my_goods.png'
 
     },
     mounted(){
-      // 当网页向下滑动 40px 出现"返回顶部" 按钮
-      window.onscroll = function() {scrollFunction()};
-
-      function scrollFunction() {
-          if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
-              document.getElementById("returnTop").style.display = "block";
-          } else {
-              document.getElementById("returnTop").style.display = "none";
-          }
-      }
-
-
+      this.$mescrollInt("myMescroll",this.upCallback);
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
     },
     methods: {
       // 点击按钮，返回顶部
-      topFunction:function () {
-        var timer = setInterval(function(){
-            var top = document.body.scrollTop || document.documentElement.scrollTop;
-            var speed = top / 4;
-            if (document.body.scrollTop!=0) {
-                document.body.scrollTop -= speed;
-            }else {
-                document.documentElement.scrollTop -= speed;
-            }
-            if (top == 0) {
-                clearInterval(timer);
-            }
-        },30);
-      },
+      // topFunction:function () {
+      //   var timer = setInterval(function(){
+      //       var top = document.body.scrollTop || document.documentElement.scrollTop;
+      //       var speed = top / 4;
+      //       if (document.body.scrollTop!=0) {
+      //           document.body.scrollTop -= speed;
+      //       }else {
+      //           document.documentElement.scrollTop -= speed;
+      //       }
+      //       if (top == 0) {
+      //           clearInterval(timer);
+      //       }
+      //   },30);
+      // },
 
       routergoUser:function(){
         this.$router.push({
@@ -154,6 +139,37 @@ import my_goods from '../../../assets/img/my_goods.png'
               routeParams: this.name
            }
         });
+      },
+
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if(page.num === 1) self.recommendGoods = []
+          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        setTimeout(function () {
+//            axios.get("xxxxxx", {
+//          params: {
+//            num: pageNum, //页码
+//            size: pageSize //每页长度
+//          }
+//        })
+//        .then(function(response) {
+          successCallback&&successCallback({});//成功回调
+          successCallback&&successCallback({});//成功回调
+          successCallback&&successCallback({});//成功回调
+          successCallback&&successCallback({});//成功回调
+//        })
+//        .catch(function(error) {
+//          errorCallback&&errorCallback()//失败回调
+//        });
+        },500)
       }
 
     }
@@ -307,67 +323,48 @@ import my_goods from '../../../assets/img/my_goods.png'
 		width: 5rem;
 	}
 	/*我的推荐--结束*/
-	/*商品列表--开始*/
-	.goodsList{
-		padding: 0 .3rem .4rem 0;
-    background-color: #fff;
-	}
-	.goodsList ul.goods{
-		display: flex;
-    flex-wrap: wrap;
-	}
-	.goodsList ul.goods li.details{
-		width: 4.5rem;
-    border: 1px solid rgb(153,153,153);
-		border-radius: .3rem;
-    margin: .4rem 0 0 .35rem;
-    padding-bottom: .2rem;
-	}
-	.goodsList ul.goods li.details img{
-		border-top-left-radius: .3rem;
-		border-top-right-radius: .3rem;
-		width: 4.46rem;
-	}
-
-  .goodsList li.details li.goodsMsg{
-    font-size: .4rem;
-    padding: 0 .2rem;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  .goodsList li.details li.price{
-    font-weight: bold;
-    color: rgb(245,0,87);
-    font-size: .4rem;
-    margin-top: .2rem;
-    padding: 0 .15rem;
-  }
-  .goodsList li.details li.region{
-    margin-top: .2rem;
-    padding: 0 .2rem;
+	/*商品大图展示--开始*/
+  .goodsList {
     display: flex;
     justify-content: space-between;
-    color: rgb(153,153,153);
-    font-size: .3rem;
+    flex-wrap: wrap;
+    padding: .2rem;
+    background: rgb(242,242,242);
   }
-	/*商品列表--结束*/
-  /*返回顶部的样式--开始*/
-  #returnTop{
-    width: 1.5rem;
+  .goodsList li{
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 49%;
+    float: left;
+    margin-bottom: .2rem;
+  }
+  .goodsList li img {
+    width: 100%;
+  }
+  .text{
+    margin: .1rem;
+  }
+  .goodsList .price{
+    margin: .2rem .1rem;
+    color: rgb(246,0,87);
+    font-weight: 600;
+    font-size: .4rem;
+  }
+  .bottom{
+    margin: .1rem;
+    display: flex;
+    justify-content: space-between;
+    color: #aaaaaa;
+  }
+  /*商品大图展示--结束*/
+  .bottomPlaceholder {
+    height: 1.5rem;
+  }
+  #myMescroll{
+    top: 0;
+    bottom: 0;
+    height: auto;
     position: fixed;
-    right: 0;
-    bottom: 2rem;
-    display: none;
   }
-  #returnTop img{
-    width: 1rem;
-    vertical-align: top;
-  }
-  /*返回顶部的样式--开始*/
-  /*已到最底部--开始*/
-  .downOver{
-    text-align: center;
-  }
-  /*已到最底部--结束*/
 </style>

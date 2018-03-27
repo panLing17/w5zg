@@ -36,5 +36,6 @@ a{text-decoration:none}
   bottom: 2rem;
   right: .5rem;
   width: 1rem;
+  z-index: 200;
 }
 </style>
