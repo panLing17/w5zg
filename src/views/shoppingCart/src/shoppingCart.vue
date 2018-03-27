@@ -14,30 +14,64 @@
           p 快递配送
           span(class="animated", :class="{swing:flag}") 1
       p(:style="{left:nowTab*50+'%'}")
-    goods-card.goodsCard(v-for="i in 2", :key="i", @tab="changeType")
+    transition(name="fade", mode="out-in")
+      router-view
+    .title
+      .line
+      p 推荐
+    w-recommend(:listData="recommendGoods", background="white")
+    .settlement
+      .left
+        w-checkbox(v-model="isdefault")
+        p 全选
+      .right
+        .prive 合计：￥200.00
+        .button 结算(5)
 </template>
 
 <script>
   import goodsCard from './goodsCard'
+  import disableGoods from './disableGoods'
   export default {
     name: 'home',
     data () {
       return {
         flag: false,
-        nowTab: 0
+        isdefault: false,
+        nowTab: 0,
+        recommendGoods: [
+          {
+            image: ''
+          },
+          {
+            image: ''
+          },
+          {
+            image: ''
+          },
+          {
+            image: ''
+          }
+        ]
       }
     },
     headers:{'X-Requested-with':'XMLHttpRequest'},
-    components:{goodsCard},
+    components:{goodsCard, disableGoods},
     mounted () {
-    },
-    // 防止页面切换导致的返回顶部按钮回不去，在实例销毁前主动干掉
-    beforeDestroy () {
-      this.mescroll.hideTopBtn();
+      if (this.$route.path === '/shoppingCart') {
+        this.nowTab = 0
+      } else {
+        this.nowTab = 1
+      }
     },
     methods: {
       tabChange (num) {
         this.nowTab = num
+        if (num === 1) {
+          this.$router.push('/shoppingCart/express')
+        } else {
+          this.$router.push('/shoppingCart')
+        }
       },
       changeType () {
         this.flag = true
@@ -52,6 +86,7 @@
 <style scoped>
   .shoppingCartBox {
     background-color: rgb(242,242,242);
+    padding-bottom: 3rem;
   }
   .slider {
     margin-left: 30%;
@@ -62,6 +97,7 @@
   /* 类型切换 */
   .cartTypeTab {
     position: relative;
+    z-index: 2;
     padding: 0 .2rem;
     background-color: white;
   }
@@ -99,8 +135,56 @@
   .tabChecked span{
     background-color: rgb(244,0,84) !important;
   }
-  /* 商品卡片 */
-  .goodsCard {
-    margin-top: .2rem;
+  /* 华丽的分割线 */
+  .title{
+    height: .8rem;
+    width: 100%;
+    position: relative;
+    display: flex;
+    background: #f2f2f2;
+    justify-content: center;
+    align-items: center;
+  }
+  .line{
+    height: 1px;
+    width: 3rem;
+    background: #999;
+  }
+  .title p{
+    position: absolute;
+    background: #f2f2f2 ;
+    padding: 0 .2rem;
+  }
+  /* 提交部分 */
+  .settlement {
+    display: flex;
+    justify-content: space-between;
+    height: 1.2rem;
+    width: 100%;
+    background-color: white;
+    position: fixed;
+    bottom: 1.5rem;
+  }
+  .settlement .left{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: .2rem;
+  }
+  .settlement .right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .settlement .right .button {
+    width: 3rem;
+    height: 100%;
+    font-size: .3rem;
+    margin-left: .2rem;
+    color: white;
+    background: rgb(244,0,84);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>

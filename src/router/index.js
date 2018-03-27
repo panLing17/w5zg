@@ -131,7 +131,19 @@ const router = new Router ({
             {
               path: '/',
               name: '购物车',
-              component: ShoppingCart.shoppingCart
+              component: ShoppingCart.shoppingCart,
+              children: [
+                {
+                  path: '/',
+                  name: '购物车',
+                  component: ShoppingCart.giveSelf
+                },
+                {
+                  path: '/shoppingCart/express',
+                  name: '购物车',
+                  component: ShoppingCart.express
+                }
+              ]
             }
           ]
         }, {

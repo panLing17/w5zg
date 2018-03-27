@@ -1,37 +1,23 @@
 <template lang="pug">
-  transition( leave-active-class="animated rotateOutUpLeft")
+  transition( leave-active-class="animated rotateOutUpRight")
     .goodsCardBox(v-if="list.length>0")
-      .title
-        w-checkbox(v-model="isdefault")
-        p PELLIOT旗舰店
       transition-group(tag="div", name="leftOut")
         .goodsBox(v-for="(i,index) in list", :key="index")
-          transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
-            .main(v-if="flag", key="spec")
-              .checkbox
-                w-checkbox(v-model="isdefault")
-              img(src="../../../../static/img/1.jpg")
-              .info
-                .text
-                  .name 法国PELLIOT秋冬产品充分一男女
-                  .spec
-                    span 红色
-                    span L
-                .price
-                  span ￥596.00
-              .mainRight
-                img(src="../../../assets/img/edit@3x.png", @click="edit(false)")
-                p x1
-            .main(v-else, key="change")
-              .checkbox
-                w-checkbox(v-model="isdefault")
-              img(src="../../../../static/img/1.jpg")
-              .specChange
-                .specData
-                  p 黑色,L
-                  img(src="../../../assets/img/next@2x.png")
-                w-counter(v-model="content", :min="1", width="4rem")
-              .specOk(@click="edit(true)") 完成
+          .main
+            .checkbox
+              w-checkbox(v-model="isdefault")
+            img(src="../../../../static/img/1.jpg")
+            .info
+              .text
+                .name 法国PELLIOT秋冬产品充分一男女
+                .spec
+                  span 红色
+                  span L
+              .price
+                span ￥596.00
+            .mainRight
+              img(src="../../../assets/img/edit@3x.png")
+              p x1
           .bottom
             .left(@click="changeType") <img src="../../../assets/img/switch@2x.png"/>门店自提
             .right
@@ -45,8 +31,6 @@
     data () {
       return {
         isdefault: false,
-        content: 1,
-        flag: true,
         list: [
           {},
           {},
@@ -58,9 +42,6 @@
       changeType () {
         this.$emit('tab')
         this.list.splice(0,1)
-      },
-      edit (k) {
-        this.flag = k
       }
     }
   }
@@ -68,8 +49,7 @@
 
 <style scoped>
   .goodsCardBox{
-    background-color: white;
-    padding: 0 .2rem;
+
   }
   .title{
     font-weight: 600;
@@ -83,6 +63,8 @@
   }
   .goodsBox {
     background-color: white;
+    margin-top: .1rem;
+    padding: 0 .2rem;
   }
   .main{
     height: 2.2rem;
@@ -100,42 +82,6 @@
     height: 2rem;
     border-radius: .2rem;
   }
-  /* 修改规格 */
-  .specChange{
-    flex-grow: 1;
-    padding-left: .3rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .specData {
-    width: 4rem;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    border-radius: 10px;
-    border: solid 1px #aaa;
-    justify-content: space-between;
-  }
-  .specData p{
-    line-height: 30px;
-    padding: 0 .2rem;
-  }
-  .specData img {
-    height: .4rem;
-    margin-right: .2rem;
-  }
-  .specOk {
-    width: 1.8rem;
-    height: 100%;
-    background-color: rgb(255,128,171) ;
-    color: white;
-    font-size: .4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  /* */
   .info{
     flex-grow: 1;
     padding-left: .3rem;
@@ -190,7 +136,7 @@
   }
   .leftOut-enter, .leftOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translate(-100%,-1000%) scale(.1,.1);
+    transform: translate(100%,-1000%) scale(.1,.1);
     opacity: 0;
   }
 </style>

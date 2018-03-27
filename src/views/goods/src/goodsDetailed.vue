@@ -58,7 +58,6 @@
 </template>
 
 <script>
-  import wRecommend from '../../home/src/bottomList'
   import selectSize from './selectSize'
   import disType from './disType'
   import citySelect from './citySelect'
@@ -94,7 +93,7 @@
         ]
       }
     },
-    components: {wRecommend,selectSize,citySelect,disType,storeSelect},
+    components: {selectSize,citySelect,disType,storeSelect},
     mounted () {
     },
     methods:{
