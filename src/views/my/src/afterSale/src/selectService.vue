@@ -193,6 +193,7 @@
   .onlyRefund .refundCenter .bottom,
   .aRefundReturn .refundCenter .bottom{
     color: rgb(153,153,153);
+    margin-top: .1rem;
   }
   .onlyRefund .right,
   .aRefundReturn .right{
@@ -201,7 +202,7 @@
   .onlyRefund .right img,
   .aRefundReturn .right img{
     width: .5rem;
-    margin-top: .2rem;
+    margin-top: .3rem;
     margin-right: .1rem;
   }
   /*退款退货和仅退款--结束*/

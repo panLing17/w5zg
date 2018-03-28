@@ -32,6 +32,7 @@
           .amount x
             span 1
           .price ￥596.00
+          .btn 物流信息
       .bottom(v-show="flag")
         span.shop 提货门店: 
         span 门店南京市 建邺区 新街口 中央广场    
@@ -269,6 +270,7 @@
     white-space:nowrap;
     overflow-x:auto;
     display: flex;
+    position: relative;
   } 
   .center .image{
     
@@ -301,6 +303,18 @@
     font-size: .45rem;
     color: rgb(244,0,87);
     margin-left: -.1rem;
+  }
+  .center .goodsDetails .btn{
+    width: 2rem;
+    height: .8rem;
+    border-radius: .8rem;
+    border: 1px solid rgb(153,153,153);
+    text-align: center;
+    line-height: .8rem;
+    font-size: .4rem;
+    position: absolute;
+    top: 2rem;
+    right: .3rem;
   }
   .bottom{
     height: .8rem;

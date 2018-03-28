@@ -8,12 +8,12 @@
         li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index)") {{item}}
     .allBrandList
       ul(v-for="(key,value,oIndex) in letterBrandList")
-        li.letters(:id="'anchor-'+oIndex") {{value}}
-        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event)") {{item}}
+        li.letters(:id="'anchorz-'+oIndex") {{value}}
+        li.letterBrands(v-for="(item,index) in key" v-if="index<=num" @click="selects($event)") {{item.bi_name}}
         li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
     ul.letter
       li #
-      li(v-for="(item,index) in letter" @click="goAnchor('#anchor-'+index)") {{item}} 
+      li(v-for="(item,index) in letter" @click="goAnchorz('#anchorz-'+index)") {{item}} 
       li #             
 </template>
 
@@ -47,8 +47,8 @@
           }
         },
         mounted(){
-          window.onscroll = function() {};
-
+          // window.onscroll = function() {};
+          this.loading();
         },
         methods:{
           check(index){
@@ -60,12 +60,13 @@
             };
             this.$emit('ievent',data); 
           },
-          goAnchor:function(selector) {
+          goAnchorz:function(selector) {
             var anchor = this.$el.querySelector(selector);
             console.log(anchor);
             var heightTop = document.documentElement.scrollTop || document.body.scrollTop;
             console.log(heightTop);
-            heightTop = (anchor.offsetTop - 60)+"px"; 
+            heightTop = anchor.offsetTop - 60;
+            console.log(heightTop); 
           },
           viewMore:function(key,e,oIndex){
             console.log(key);
@@ -79,12 +80,26 @@
               this.num = key.list.length;
               key.words = "收起更多";
             }
+          },
+          loading(){
+            let self = this;
+            self.$ajax({
+              method:"post",
+              url:this.$apiMember2 + "goods/brand/all",
+              params:{},
+            }).then(function(res){
+              console.log(res.data.data);
+              self.letterBrandList = res.data.data;
+            })
           }
         }
     }
 </script>
 
 <style scoped>
+.wrapToggle{
+  overflow: scroll;
+}
 .active{
   color: #fff !important;
   background-color: rgb(255,128,171) !important;
@@ -168,7 +183,7 @@
   width: .4rem;
   text-align: center;
   position: fixed;
-  top: 2rem;
+  top: 2.8rem;
   right: 0;
   z-index: 102;
 }
