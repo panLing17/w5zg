@@ -2,7 +2,7 @@
   transition( leave-active-class="animated rotateOutUpLeft")
     .goodsCardBox(v-if="list.length>0")
       .title
-        w-checkbox(v-model="isdefault")
+        <!---w-checkbox(v-model="isdefault")--->
         p PELLIOT旗舰店
       transition-group(tag="div", name="leftOut")
         .goodsBox(v-for="(i,index) in list", :key="index")
