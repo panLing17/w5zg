@@ -40,7 +40,7 @@
       .righter
         filtrate(@ievent="ievent" v-show="filtrateFlag" @showSon="showSon")
         allBrand(v-show="allBrandFlag")
-
+    .bottomPlaceholder
 </template>
 
 <script>
@@ -370,5 +370,10 @@
     overflow: scroll;
   }
   /*蒙板--结束*/
-
+  .bottomPlaceholder {
+    height: 1.5rem;
+  }
+  .scrollWarpClass{
+    z-index: 103 !important;
+  }
 </style>
