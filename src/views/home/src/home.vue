@@ -1,22 +1,23 @@
 <template lang="pug">
-  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}")
+  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="false")
     nav-bar(background="rgb(245,0,87)")
-      .topLeft(slot="left" @click="goToCitySearch()")
-        img(src="../../../assets/img/homeLocation@2x.png")
+      .topLeft(slot="left", @click="goToCitySearch()")
+        img(src="../../../assets/img/home定位按钮@2x.png")
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称" @focus="jump")
         img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')")
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
-    carousel(:indicators="true", :auto="5000", v-if="list.length > 0", :responsive="0", style="height:5rem")
-      div(v-for="tag in list", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
-        img(:src="tag.image" , style="width:100%;height:5rem")
+    carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
+      div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
+        img(:src="tag.ac_phone_image" , style="width:100%;height:5rem")
     hot-button
     l-news.news(:newsData="news")
     .title
       .line
       p 活动
+    w-upload(url="goodsRejected/rejectedImage")
     w-activity(:listData="activityGoods")
     .title
       .line
@@ -83,12 +84,7 @@
             image: ''
           }
         ],
-        list: [
-          {image: 'static/img/1.jpg'},
-          {image: 'static/img/2.jpg'},
-          {image: 'static/img/3.jpg'},
-          {image: 'static/img/4.jpg'},
-          {image: 'static/img/5.jpg'}
+        banner: [
         ]
       }
     },
@@ -106,6 +102,10 @@
       if (city.innerText.length == 4) {
         city.style.fontSize = .4 + "rem";
       }
+      // 获取banner
+      this.getBanner()
+      // 获取活动
+      this.getCtivity ()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -113,6 +113,32 @@
     methods: {
       jump:function(){
         this.$router.push('/home/searchHistory');
+      },
+      // 轮播图获取
+      getBanner () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/advertiseContentList',
+          params: {
+            acCataType: 111
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          self.banner = response.data.data
+        })
+      },
+      // 获取活动
+      getCtivity () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/AcActivityList',
+          params: {},
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          self.activityGoods = response.data.data
+        })
       },
       goToCitySearch:function(){
         this.$router.push({

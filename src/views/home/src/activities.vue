@@ -1,14 +1,8 @@
 <template lang="pug">
   .activities
     ul.goodsList
-      li
-        img(src="../../../assets/img/p2.jpg")
-      li
-        img(src="../../../assets/img/p2.jpg")
-      li
-        img(src="../../../assets/img/p2.jpg")
-      li
-        img(src="../../../assets/img/p2.jpg")
+      li(v-for="i in listData")
+        img(:src="i")
     .columLine
     .rowLine
 </template>

@@ -57,7 +57,7 @@
           // 储存登录信息
           self.$store.commit('userDataChange',response.data.data)
           // 本地储token
-          localStorage.setItem('token',response.data.data.W5MALLTOKEN)
+          localStorage.setItem('token',response.data.data)
           // 跳转至首页
           self.$router.push('/my')
         })
