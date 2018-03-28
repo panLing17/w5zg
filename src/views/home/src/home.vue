@@ -17,6 +17,7 @@
     .title
       .line
       p 活动
+    w-upload(url="goodsRejected/rejectedImage")
     w-activity(:listData="activityGoods")
     .title
       .line
