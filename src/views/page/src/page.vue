@@ -23,7 +23,7 @@
               li(v-for="list in items.goods").wrapImg
                 img(:src="list.img")
                 .words(v-show="wordsShow") {{list.words}}
-
+    button(@click="request()")
 </template>
 
 <script>
@@ -40,6 +40,7 @@
     name: "page",
     data(){
       return {
+        images: 123,
         flag:false,
         wordsShow:true,
         num:0,
@@ -260,6 +261,18 @@
         }
         this.num = index;
         document.documentElement.scrollTop = 0;
+      },
+
+      request(){
+        let self = this;
+        console.log(self);
+        this.$ajax({
+          method:"post",
+          url:this.$apiMember2 + "goods/brand/all",
+          params:{}
+        }).then(function(res){
+          console.log(res.data.data);
+        });
       }
     }
   }
@@ -408,4 +421,11 @@
     color: rgb(153,153,153);
   }
   /*中间内容右边--结束*/
+  button{
+    width: 1rem;
+    height: 1rem;
+    position: absolute;
+    left: .2rem;
+    top: 12rem;
+  }
 </style>
