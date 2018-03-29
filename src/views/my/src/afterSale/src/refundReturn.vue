@@ -6,7 +6,7 @@
       .topCenter(slot="center") {{title}}
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content(v-for="(item,index) in goodsList") 
+    .content(v-for="(item,index) in goodsList")
       .center
         .image
           img(:src="item.imgSrc")
@@ -20,15 +20,15 @@
     .goodsStatus(@click="goodsTypes()" v-if="shows")
       ul
         li 货物状态
-        li 
+        li
           span 仅退款
           img(src="../../../../../assets/img/right.png")
     .returnType(@click="returnTypes()" v-else="shows")
       ul
         li 退货方式
-        li 
+        li
           span 快递退货
-          img(src="../../../../../assets/img/right.png")      
+          img(src="../../../../../assets/img/right.png")
     .refundReason(@click="reason1()" v-if="shows")
       ul
         li 退款原因
@@ -38,7 +38,7 @@
       ul
         li 退货原因
         li
-          img(src="../../../../../assets/img/right.png")      
+          img(src="../../../../../assets/img/right.png")
     .amount
       .top
         ul
@@ -60,8 +60,8 @@
     .refundExplain
       ul
         li 退款说明:
-        li 
-          input(placeholder="请输入···")          
+        li
+          input(placeholder="请输入···")
     .upload
     .submit 提交
     goodsType(:show="statusFlag", @selectType="", @close="closeGoodsType()")
@@ -71,13 +71,13 @@
 </template>
 <script>
   import myGoods from '../../../../../assets/img/my_goods.png'
-  import goodsType from './selectGoodsStatus'
-  import reason1 from './returnReasonOnly'
-  import reason2 from './returnReason'
-  import returnStyle from './returnStyle'
+  // import goodsType from './selectGoodsStatus'
+  // import reason1 from './returnReasonOnly'
+  // import reason2 from './returnReason'
+  // import returnStyle from './returnStyle'
   export default {
     name: 'refundReturn',
-    components:{goodsType,reason1,reason2,returnStyle},
+    // components:{goodsType,reason1,reason2,returnStyle},
     data () {
       return {
         shows:true,
@@ -96,7 +96,7 @@
             amount:1,
             checked:false
           }
-        ]  
+        ]
       }
     },
     mounted () {
@@ -173,7 +173,7 @@
     position: absolute;
     top: 44%;
     left: .3rem;
-  } 
+  }
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;

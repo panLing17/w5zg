@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="false")
+  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}")
     nav-bar(background="rgb(245,0,87)")
       .topLeft(slot="left", @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
@@ -17,7 +17,7 @@
     .title
       .line
       p 活动
-    w-upload(url="goodsRejected/rejectedImage")
+    w-upload(url="goodsRejected/rejectedImage", @success="a", @delete="a")
     w-activity(:listData="activityGoods")
     .title
       .line
@@ -111,6 +111,9 @@
       this.mescroll.hideTopBtn();
     },
     methods: {
+      a (data) {
+        console.log(data)
+      },
       jump:function(){
         this.$router.push('/home/searchHistory');
       },
