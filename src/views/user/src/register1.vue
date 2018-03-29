@@ -59,7 +59,6 @@
           self.phoneError = ''
         }
 
-
         // 发送ajax请求校验手机号重复
         self.$ajax({
           method: 'get',
@@ -101,6 +100,8 @@
                 window.clearInterval(interval)
               }
             }, 1000)
+          }else{
+            self.getPicCode()
           }
         })
       },

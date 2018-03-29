@@ -38,7 +38,7 @@
       checkPwd () {
         //校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^[A-Za-z0-9]{6,32}$/;
-        if(!reg.test(this.form.password)){
+        if(!reg.test(this.form.pwd)){
           this.passwordError = $code('268')
           return
         }
@@ -46,10 +46,8 @@
         this.pwdStatus = true
       },
       sureBtn () {
-        console.log(this.form.mobile)
-        console.log(this.form.checkCode)
         let self = this
-        if (self.form.mobile == '' || self.form.password == '') {
+        if (self.form.mobile == '' || self.form.pwd == '') {
           self.phoneError = ''
           self.checkCodeError = ''
           return

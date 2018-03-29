@@ -6,10 +6,10 @@
       .topCenter(slot="center") 忘记密码
       .topRight(slot="right")
     .form
-      w-input(label="手机验证码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
-      w-input(label="输入新密码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
-      w-input(label="确认新密码：", label-width="2.5rem", placeholder="", :type="passwordType", v-model="form.password", required)
-      button.regButton(@click="$router.push('/')") 确定
+      w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", required)
+      w-input(label="输入新密码：", label-width="2.5rem", placeholder="请输入新密码", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
+      w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码", v-model="qrPassword", required, :error="qrPasswordError")
+      button.regButton(@click="sureBtn") 确定
 </template>
 
 <script>
@@ -19,10 +19,56 @@
       return {
         showPassword: false,
         passwordType: 'password',
+        qrPassword: '',
+        qrPasswordError: '',
+        pwdStatus: false,
         form: {
           mobile: '',
-          password: ''
+          pwd: '',
+          vcode: ''
         }
+      }
+    },
+    mounted () {
+      this.form.mobile = this.$route.query.mobile
+    },
+    methods: {
+      checkPwd () {
+        this.pwdStatus = false
+        //校验规则 正则表达式  只允许输入 数字跟字母
+        var reg = /^[A-Za-z0-9]{6,32}$/;
+        if(!reg.test(this.form.pwd)){
+          this.passwordError = $code('268')
+          return
+        }
+        this.passwordError = ''
+        this.pwdStatus = true
+      },
+      sureBtn () {
+        let self = this
+        if (self.form.mobile == '' || self.form.pwd == '' || self.form.vcode == '') {
+          self.phoneError = ''
+          self.checkCodeError = ''
+          return
+        }
+
+        if(!this.pwdStatus){
+          return
+        }
+
+        if(self.form.pwd != self.qrPassword){
+          self.qrPasswordError = $code('269')
+        }
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/resetPassword',
+          params: self.form
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            // 成功跳转页面
+            self.$router.push({path: '/my'})
+          }
+        })
       }
     }
   }
