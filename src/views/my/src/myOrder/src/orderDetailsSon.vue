@@ -1,11 +1,14 @@
 <template lang="pug">
-  .orderDetails.mescroll#orderMescroll
+  .orderDetailsSon.mescroll#orderSMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png").msg
+    .stateDiv
+      .goodsState 待发货
+      .payTime 请在23时59分59秒内发货
     .goodsReceipt
       .consignee
         img(src="../../../../../assets/img/citySearch@2x.png")
@@ -17,7 +20,7 @@
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
     .content(v-for="(item,index) in orderDetail")
-      .top(@click="$router.push('/my/orderDetailsSon')")
+      .top
         .left
           span.orderNum 订单编号:
           span.num {{item.orderNum}}  
@@ -32,7 +35,7 @@
           .amount x
             span 1
           .price ￥596.00
-          .btn(v-if="showFlag" @click="judgeBtn()") 物流信息
+          .smallBtn(@click="$router.push('/my/applyAfterSale')") {{smallBtn}}
       .bottom(v-show="flag")
         span.shop 提货门店: 
         span 门店南京市 建邺区 新街口 中央广场    
@@ -90,7 +93,8 @@
     .bottomPlaceholder
     .fixedBtn
       .leftBtn {{leftBtn}}
-      .rightBtn {{rightBtn}}                                                    
+      .centerBtn {{centerBtn}}
+      .rightBtn {{rightBtn}}                                                     
 </template>
 
 <script>
@@ -99,9 +103,10 @@
       name: "orderDetails",
       data(){
         return{
-          leftBtn:"取消订单",
-          rightBtn:"支付",
-          showFlag:false,
+          smallBtn:"申请退货",
+          leftBtn:"提醒发货",
+          centerBtn:"批量退款",
+          rightBtn:"物流信息",
           flag:false,
           recommendGoods: [],
           orderDetail:[
@@ -128,35 +133,12 @@
 
       },
       mounted(){
-        this.$mescrollInt("orderMescroll",this.upCallback);
-        this.judgeState();//判断状态
+        this.$mescrollInt("orderSMescroll",this.upCallback);
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
       },
       methods:{
-        judgeBtn(){
-          var btn = document.getElementsByClassName("btn")[0];
-          console.log(btn.innerHTML == "物流信息");
-          if (btn.innerHTML == "物流信息") {
-            this.$router.push('/my/checkLogistics');
-          }
-        },
-          
-
-        judgeState(){
-          console.log(this.$route.query.state);
-          console.log(this.$route.query.id);
-          var states = this.$route.query.state;
-          if (states == "待发货") {
-            this.leftBtn = "批量退款";
-            this.rightBtn = "提醒发货";
-            this.showFlag = true;
-            var rightBtns = document.getElementsByClassName("rightBtn")[0];
-            rightBtns.style.backgroundColor = "white";
-            rightBtns.style.color = "rgb(244,0,87)";
-          }
-        },
 
         copyText() {
           var li=document.getElementsByClassName("selects");
@@ -206,7 +188,7 @@
 </script>
 
 <style scoped>
-  .orderDetails{
+  .orderDetailsSon{
     background-color: rgb(242,242,242);
     width: 100%;
     min-height: 100vh;
@@ -228,6 +210,21 @@
     margin-left: .2rem;
     margin-top: -.1rem;
   }
+  /*订单的状态信息--开始*/
+  .stateDiv{
+    height: 2.8rem;
+    background: linear-gradient(left,rgb(255,113,161),rgb(249,39,114));
+    color: #fff;
+    padding: .5rem .3rem 0;
+  }
+  .stateDiv .goodsState{
+    font-size: .45rem;
+  }
+  .stateDiv .payTime{
+    margin-top: .2rem;
+    font-size: .35rem;
+  }
+  /*订单的状态信息--结束*/
   /*收货人的信息--开始*/
   .goodsReceipt{
     background-color: #fff;
@@ -332,7 +329,7 @@
     color: rgb(244,0,87);
     margin-left: -.1rem;
   }
-  .center .goodsDetails .btn{
+  .center .goodsDetails .smallBtn{
     width: 2rem;
     height: .8rem;
     border-radius: .8rem;
@@ -343,7 +340,6 @@
     position: absolute;
     top: 2rem;
     right: .3rem;
-    z-index: 102;
   }
   .bottom{
     height: .8rem;
@@ -475,7 +471,6 @@
     height: auto;
     position: fixed;
   }
-
   /*底部的两个按钮--开始*/
   .fixedBtn{
     z-index: 102;
@@ -496,8 +491,10 @@
     text-align: center;
     line-height: 1rem;
     font-size: .4rem;
+    margin-left: .3rem;
   }
-  .fixedBtn .leftBtn{
+  .fixedBtn .leftBtn,
+  .fixedBtn .centerBtn{
     color: rgb(161,161,161);
     border: 1px solid rgb(161,161,161);
   }
@@ -505,7 +502,6 @@
     color: #fff;
     border: 1px solid rgb(244,0,87);
     background-color: rgb(244,0,87);
-    margin-left: .3rem;
   }
   /*底部的两个按钮--结束*/
 </style>

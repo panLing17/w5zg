@@ -1,9 +1,9 @@
 <template lang="pug">
-  .orderManage
+  .refundAfterSale
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 订单管理
+      .topCenter(slot="center") 退款/售后
       .topRight(slot="right")
         img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search
         img(src="../../../../../assets/img/msg_0.png").msg
@@ -16,7 +16,7 @@
           span.orderNum 订单编号:
           span.num {{item.orderNum}}
         .right#state {{item.status}}  
-      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.status,id:index}})")
+      .center(@click="$router.push('/my/orderDetails')")
         .image
           img(:src="items" v-for="items in item.imageSrc")   
       .bottom
@@ -36,13 +36,13 @@
 <script>
     import myGoods from '../../../../../assets/img/my_goods.png'
     export default {
-      name: "orderManage",
+      name: "refundAfterSale",
       data(){
         return{
           num:0,
           statusFlag1:false,
           statusFlag2:true,
-          status:["全部","待付款","待发货","待收货","待评价"],
+          status:["全部","申请中","退款中","已退款","已完成"],
           orderDetail:[
             {
               orderNum:"2018031401",
@@ -115,7 +115,7 @@
     background-color: #fff !important;
     color: rgb(244,0,87) !important;
   }
-  .orderManage{
+  .refundAfterSale{
     background-color: rgb(242,242,242);
     width: 100%;
     min-height: 100vh;
