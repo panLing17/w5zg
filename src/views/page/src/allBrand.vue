@@ -85,7 +85,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiMember2 + "goods/brand/all",
+              url:this.$apiApp + "goods/brand/all",
               params:{},
             }).then(function(res){
               console.log(res.data.data);

@@ -37,7 +37,7 @@
           img(src="../../../assets/img/my_waitforreceiving@2x.png")
         li
           img(src="../../../assets/img/my_remaintobeevaluated@2x.png")
-        li(@click="$router.push('/my/applyAfterSale')")
+        li(@click="$router.push('/my/refundAfterSale')")
           img(src="../../../assets/img/my_aftersale@2x.png")
     div.myTreasure
       ul.top

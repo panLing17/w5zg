@@ -16,7 +16,7 @@
           span.orderNum 订单编号:
           span.num {{item.orderNum}}
         .right#state {{item.status}}  
-      .center(@click="$router.push('/my/orderDetails')")
+      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.status,id:index}})")
         .image
           img(:src="items" v-for="items in item.imageSrc")   
       .bottom

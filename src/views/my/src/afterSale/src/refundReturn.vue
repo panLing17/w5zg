@@ -63,7 +63,7 @@
         li 
           input(placeholder="请输入···")          
     .upload
-    .submit 提交
+    .submit(@click="$router.push('/my')") 提交
     goodsType(:show="statusFlag", @selectType="", @close="closeGoodsType()")
     reason1(:show="reasonFlag1", @close="closeReason1()")
     reason2(:show="reasonFlag2", @close="closeReason2()")

@@ -232,6 +232,16 @@ const router = new Router ({
               component: MyOrder.orderDetails
             },
             {
+              path: '/my/orderDetailsSon',
+              name: '子订单详情',
+              component: MyOrder.orderDetailsSon
+            },
+            {
+              path: '/my/checkLogistics',
+              name: '查看物流',
+              component: MyOrder.checkLogistics
+            },
+            {
               path: '/my/applyAfterSale',
               name: '申请售后',
               component: AfterSale.applyAfterSale
@@ -245,6 +255,11 @@ const router = new Router ({
               path: '/my/refundReturn',
               name: '申请退款退货',
               component: AfterSale.refundReturn
+            },
+            {
+              path: '/my/refundAfterSale',
+              name: '申请退款退货',
+              component: AfterSale.refundAfterSale
             }
           ]
         }

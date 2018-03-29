@@ -17,11 +17,11 @@
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
     .content(v-for="(item,index) in orderDetail")
-      .top
+      .top(@click="$router.push('/my/orderDetailsSon')")
         .left
           span.orderNum 订单编号:
           span.num {{item.orderNum}}  
-      .center(@click="$router.push('/my/orderDetails')")
+      .center
         .image
           img(:src="item.imageSrc")
         .goodsDetails
@@ -32,7 +32,7 @@
           .amount x
             span 1
           .price ￥596.00
-          .btn 物流信息
+          .btn(v-if="showFlag" @click="judgeBtn()") 物流信息
       .bottom(v-show="flag")
         span.shop 提货门店: 
         span 门店南京市 建邺区 新街口 中央广场    
@@ -87,7 +87,10 @@
               .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
               .price ￥516.22
               .bottom <span>江苏南京</span><span>2555人购买</span>
-    .bottomPlaceholder                                                     
+    .bottomPlaceholder
+    .fixedBtn
+      .leftBtn {{leftBtn}}
+      .rightBtn {{rightBtn}}                                                    
 </template>
 
 <script>
@@ -96,6 +99,9 @@
       name: "orderDetails",
       data(){
         return{
+          leftBtn:"取消订单",
+          rightBtn:"支付",
+          showFlag:false,
           flag:false,
           recommendGoods: [],
           orderDetail:[
@@ -123,12 +129,34 @@
       },
       mounted(){
         this.$mescrollInt("orderMescroll",this.upCallback);
+        this.judgeState();//判断状态
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
       },
       methods:{
+        judgeBtn(){
+          var btn = document.getElementsByClassName("btn")[0];
+          console.log(btn.innerHTML == "物流信息");
+          if (btn.innerHTML == "物流信息") {
+            this.$router.push('/my/checkLogistics');
+          }
+        },
+          
 
+        judgeState(){
+          console.log(this.$route.query.state);
+          console.log(this.$route.query.id);
+          var states = this.$route.query.state;
+          if (states == "待发货") {
+            this.leftBtn = "批量退款";
+            this.rightBtn = "提醒发货";
+            this.showFlag = true;
+            var rightBtns = document.getElementsByClassName("rightBtn")[0];
+            rightBtns.style.backgroundColor = "white";
+            rightBtns.style.color = "rgb(244,0,87)";
+          }
+        },
 
         copyText() {
           var li=document.getElementsByClassName("selects");
@@ -315,6 +343,7 @@
     position: absolute;
     top: 2rem;
     right: .3rem;
+    z-index: 102;
   }
   .bottom{
     height: .8rem;
@@ -446,4 +475,37 @@
     height: auto;
     position: fixed;
   }
+
+  /*底部的两个按钮--开始*/
+  .fixedBtn{
+    z-index: 102;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.4rem;
+    display: flex;
+    justify-content: flex-end;
+    background-color: #fff;
+    padding: .2rem .3rem;
+  }
+  .fixedBtn div{
+    width: 2.3rem;
+    height: 1rem;
+    border-radius: 1rem;
+    text-align: center;
+    line-height: 1rem;
+    font-size: .4rem;
+  }
+  .fixedBtn .leftBtn{
+    color: rgb(161,161,161);
+    border: 1px solid rgb(161,161,161);
+  }
+  .fixedBtn .rightBtn{
+    color: #fff;
+    border: 1px solid rgb(244,0,87);
+    background-color: rgb(244,0,87);
+    margin-left: .3rem;
+  }
+  /*底部的两个按钮--结束*/
 </style>
