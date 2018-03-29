@@ -47,6 +47,16 @@ const actions = {
         context.commit('userDataChange',response.data.data)
       }
     })
+  },
+  getDictionaries (context,data) {
+    let vm = new Vue({})
+    axios({
+      method: 'get',
+      url: vm.$apiMember + 'dic/all',
+      params: {}
+    }).then(function (response) {
+      $codeList = response.data.data
+    })
   }
 }
 export default new Vuex.Store({

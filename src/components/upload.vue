@@ -31,7 +31,8 @@
         default: 'imagefile'
       },
       url: {
-        type: String
+        type: String,
+        default: ''
       },
       max: {
         type: Number,
@@ -39,7 +40,9 @@
       },
       type: {
         type: Array,
-        default: ['png', 'jpg']
+        default() {
+          return ['png', 'jpg']
+        }
       }
     },
     methods:{

@@ -8,7 +8,22 @@
 
 <script>
 export default {
-  name: 'app'
+  name: 'app',
+  mounted () {
+    this.getDictionaries()
+  },
+  methods:{
+    getDictionaries () {
+      let self = this
+      self.$ajax({
+        method: 'get',
+        url: self.$apiMember + 'dic/all',
+        params: {}
+      }).then(function (response) {
+        $codeList = response.data.data
+      })
+    }
+  }
 }
 </script>
 

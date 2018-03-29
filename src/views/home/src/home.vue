@@ -17,7 +17,6 @@
     .title
       .line
       p 活动
-    w-upload(url="goodsRejected/rejectedImage", @success="a", @delete="a")
     w-activity(:listData="activityGoods")
     .title
       .line
@@ -111,9 +110,6 @@
       this.mescroll.hideTopBtn();
     },
     methods: {
-      a (data) {
-        console.log(data)
-      },
       jump:function(){
         this.$router.push('/home/searchHistory');
       },
