@@ -8,7 +8,7 @@
     .form
       w-input(label="新密码：", label-width="2rem", placeholder="请输入密码", :type="passwordType", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
       w-input(label="确认密码：", label-width="2rem", placeholder="请再次输入密码", :type="passwordType", v-model="qrPassword", required,:error="qrPasswordError")
-      button.regButton(@click="sureBtn") 确定
+      button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 确定
 </template>
 
 <script>
@@ -21,7 +21,7 @@
         qrPassword: '',
         passwordError: '',
         qrPasswordError: '',
-        pwdStatus: false,
+        pwdStatus: true,
         form: {
           mobile: '',
           pwd: '',
@@ -36,6 +36,7 @@
     },
     methods: {
       checkPwd () {
+        this.pwdStatus = true
         //校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^[A-Za-z0-9]{6,32}$/;
         if(!reg.test(this.form.pwd)){
@@ -43,7 +44,7 @@
           return
         }
         this.passwordError = ''
-        this.pwdStatus = true
+        this.pwdStatus = false
       },
       sureBtn () {
         let self = this
@@ -53,7 +54,7 @@
           return
         }
 
-        if(!this.pwdStatus){
+        if(this.pwdStatus){
           return
         }
 
@@ -104,6 +105,9 @@
     border: none;
     outline: none;
     border-radius: .5rem;
+  }
+  .regButtonGray {
+    background-color: rgb(192, 192, 192) !important;
   }
   .tips{
     margin-top: .2rem;
