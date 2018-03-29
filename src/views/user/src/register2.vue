@@ -39,7 +39,7 @@
         //校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^[A-Za-z0-9]{6,32}$/;
         if(!reg.test(this.form.password)){
-          this.passwordError = '密码必须由6-16位字母、数字组成'
+          this.passwordError = $code('268')
           return
         }
         this.passwordError = ''
@@ -60,7 +60,7 @@
         }
 
         if(self.form.pwd != self.qrPassword){
-          self.qrPasswordError = '新密码”与“确认密码”不一致！'
+          self.qrPasswordError = $code('269')
         }
         self.$ajax({
           method: 'post',

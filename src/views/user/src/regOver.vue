@@ -6,7 +6,7 @@
       .topRight(slot="right")
     .text
       h1 注册成功
-      h2 {{countDown}}秒后跳转到"我的"页面
+      h2 {{countDown}}秒后跳转到首页
       button(@click="returnIndex") 返回首页
 </template>
 
@@ -19,7 +19,8 @@
       }
     },
     mounted: function () {
-      this.jumpMyPage()
+      // this.jumpMyPage()
+      console.log($codeList)
     },
     methods: {
       returnIndex () {

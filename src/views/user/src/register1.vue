@@ -53,7 +53,7 @@
         }
 
         if(!reg.test(self.form.mobile)){
-          self.phoneError = '手机号格式错误!'
+          self.phoneError = $code('261')
           return
         }else{
           self.phoneError = ''
