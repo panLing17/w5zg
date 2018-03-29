@@ -294,17 +294,30 @@ router.beforeEach ((to, from, next) => {
     }
     vm.$store.dispatch('login', form)
   } */
+  // 获取字典(目前实现方式有弊端)
+  if ($codeList === '') {
+    let vm = new Vue({
+      store
+    })
+    vm.$store.dispatch('getDictionaries')
+  }
   // 购物车及我的页面权限处理
-  // if (to.name === '我的' || to.name === '购物车') {
-  //   if (!localStorage.hasOwnProperty('token')) {
-  //     Message.warning('请先登录')
-  //     next({path:'/login'})
-  //   } else {
-  //     next()
-  //   }
-  // } else {
-  //   next()
-  // }
-  next()
+  if (to.name === '我的' || to.name === '购物车') {
+    if (!localStorage.hasOwnProperty('token')) {
+      Message.warning('请先登录')
+      next({path:'/login'})
+    } else {
+      next()
+    }
+  } else {
+    // 轮循解决字典异步问题(不满意)
+    let polling = setInterval(()=>{
+      if ($codeList !== '') {
+        clearInterval(polling)
+        next()
+      }
+    },10)
+  }
+
 })
 export default router

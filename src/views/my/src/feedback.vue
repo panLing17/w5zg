@@ -9,8 +9,7 @@
     textarea(placeholder="请描述您要反馈的问题和意见").input
     .label 上传图片
     .upload
-      input(type="file")
-      img(src="../../../assets/img/camera@3x.png")
+      w-upload(url="goodsRejected/rejectedImage", :max="2")
     .label 手机号
     input(placeholder="请输入你的手机号", style="padding:.4rem .2rem").input
     .bottomButton
@@ -19,7 +18,14 @@
 
 <script>
   export default {
-    name: "feedback"
+    name: "feedback",
+    data () {
+      return {
+        form: {
+
+        }
+      }
+    }
   }
 </script>
 

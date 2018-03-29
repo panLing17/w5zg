@@ -10,8 +10,10 @@ import store from '../vuex/store'
 // 过滤请求
 axios.interceptors.request.use((config) => {
   // 如果没有token追加一条token
-  if (!config.params.W5MALLTOKEN && config.url.indexOf('member/login') === -1) {
-    config.params.W5MALLTOKEN = localStorage.getItem('token')
+  if (config.data === undefined) {
+    if (!config.params.W5MALLTOKEN && config.url.indexOf('member/login') === -1) {
+      config.params.W5MALLTOKEN = localStorage.getItem('token')
+    }
   }
   return config
 })

@@ -14,6 +14,9 @@ Vue.component('w-recommend', recommend)
 // 数字选择器
 import wCounter from './counter'
 Vue.component('w-counter', wCounter)
+// 图片上传
+import upload from './upload'
+Vue.component('w-upload', upload)
 // 轮播
 import Carousel from 'vue-m-carousel'
 Vue.component('w-checkbox', wCheckbox)
