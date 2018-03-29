@@ -11,7 +11,7 @@
         img(src="../../../assets/img/msg.png")
     carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
       div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
-        img(:src="tag.ac_phone_image" , style="width:100%;height:5rem")
+        img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
     hot-button
     l-news.news(:newsData="news")
     .title
@@ -61,14 +61,7 @@
         ],
         loadingMoreFlag: false,
         page: 1,
-        news: [
-          {title:'新闻1'},
-          {title:'新闻2'},
-          {title:'新闻3'},
-          {title:'新闻4'},
-          {title:'新闻5'},
-          {title:'新闻6'}
-        ],
+        news: [],
         titlePhoto: [
           {
             image: ''
@@ -103,6 +96,8 @@
       }
       // 获取banner
       this.getBanner()
+      // 获取新闻
+      this.getNews()
       // 获取活动
       this.getCtivity ()
     },
@@ -125,6 +120,22 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           self.banner = response.data.data
+        })
+      },
+      // 获取新闻
+      getNews () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/acInformationByCataId',
+          params: {
+            page: 1,
+            rows: 10,
+            cataId: 1
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          self.news = response.data.data
         })
       },
       // 获取活动

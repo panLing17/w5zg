@@ -6,14 +6,14 @@
       .topCenter(slot="center") 意见反馈
       .topRight(slot="right")
     .label 问题和意见
-    textarea(placeholder="请描述您要反馈的问题和意见").input
+    textarea(placeholder="请描述您要反馈的问题和意见", v-model="form.content").input
     .label 上传图片
     .upload
       w-upload(url="goodsRejected/rejectedImage", :max="2")
     .label 手机号
-    input(placeholder="请输入你的手机号", style="padding:.4rem .2rem").input
+    input(placeholder="请输入你的手机号", style="padding:.4rem .2rem", v-model="form.title").input
     .bottomButton
-      w-button 提交
+      w-button(@click="submit") 提交
 </template>
 
 <script>
@@ -22,8 +22,22 @@
     data () {
       return {
         form: {
-
+          title: '',
+          content: ''
         }
+      }
+    },
+    methods:{
+      submit () {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'feedback',
+          params: self.form
+        }).then(function (response) {
+          self.$message.success(response.data.msg)
+          self.$router.push('/my')
+        })
       }
     }
   }

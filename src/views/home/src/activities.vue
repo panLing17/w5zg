@@ -2,7 +2,7 @@
   .activities
     ul.goodsList
       li(v-for="i in listData")
-        img(:src="i")
+        img(:src="i.image | img-filter")
     .columLine
     .rowLine
 </template>

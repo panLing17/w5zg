@@ -56,8 +56,12 @@
     },
     methods: {
       changeType () {
-        this.$emit('tab')
-        this.list.splice(0,1)
+        // 回调参数，执行删除动画效果
+        let fun =()=> {
+          this.list.splice(0,1)
+        }
+        // 参数1 代表此请求来自快递配送
+        this.$emit('tab',1,fun)
       },
       edit (k) {
         this.flag = k

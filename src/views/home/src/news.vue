@@ -3,7 +3,7 @@
       img(src="../../../assets/img/HEADLINE@3x.png")
       div
         ul#newsList
-          li(v-for="(item,index) in newsData ") {{item.title}}
+          li(v-for="(item,index) in newsData ") {{item.i_title}}
 </template>
 
 <script>

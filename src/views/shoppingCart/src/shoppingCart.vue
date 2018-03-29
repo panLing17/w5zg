@@ -32,6 +32,7 @@
 <script>
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
+  import citySelect from './citySelect'
   export default {
     name: 'home',
     data () {
@@ -56,7 +57,7 @@
       }
     },
     headers:{'X-Requested-with':'XMLHttpRequest'},
-    components:{goodsCard, disableGoods},
+    components:{goodsCard, disableGoods, citySelect},
     mounted () {
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0

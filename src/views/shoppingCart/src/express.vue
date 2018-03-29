@@ -6,22 +6,25 @@
         span 失效商品
         .delete 清空失效商品
       disable-goods
+    city-select(:show='selectFlag', @close="selectClose")
 </template>
 
 <script>
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
+  import citySelect from './citySelect'
   export default {
     name: 'express',
     data () {
       return {
         flag: false,
         isdefault: false,
+        selectFlag: true,
         nowTab: 1
       }
     },
     headers:{'X-Requested-with':'XMLHttpRequest'},
-    components:{goodsCard, disableGoods},
+    components:{goodsCard, disableGoods, citySelect},
     mounted () {
     },
     methods: {
@@ -33,11 +36,24 @@
           this.$router.push('shopping/giveSelf')
         }
       },
-      changeType () {
+      changeType (type,next) {
+        // 显示城市选择
+        this.selectFlag = true
+        this.deleteGoods = next
         this.flag = true
         setTimeout(()=>{
           this.flag = false
         },1000)
+      },
+      // 由changeType的回调函数所重定义的列表删除时间（本地效果，并无数据交互）
+      deleteGoods () {
+      },
+      // 关闭选择城市
+      selectClose () {
+        // 关闭选择框
+        this.selectFlag = false
+        // 执行删除动画
+        this.deleteGoods()
       }
     }
   }
