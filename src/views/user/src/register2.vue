@@ -6,7 +6,7 @@
       .topCenter(slot="center") 注册
       .topRight(slot="right")
     .form
-      w-input(label="登录密码：", label-width="2rem", placeholder="请输入密码", :type="passwordType", v-model="form.password", required,:error="passwordError")
+      w-input(label="新密码：", label-width="2rem", placeholder="请输入密码", :type="passwordType", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
       w-input(label="确认密码：", label-width="2rem", placeholder="请再次输入密码", :type="passwordType", v-model="qrPassword", required,:error="qrPasswordError")
       button.regButton(@click="sureBtn") 确定
 </template>
@@ -21,36 +21,55 @@
         qrPassword: '',
         passwordError: '',
         qrPasswordError: '',
+        pwdStatus: false,
         form: {
           mobile: '',
-          password: ''
+          pwd: '',
+          checkCode: '',
+          regWay: '103'
         }
       }
     },
     mounted () {
       this.form.mobile = this.$route.query.mobile
+      this.form.checkCode = this.$route.query.vcode
     },
     methods: {
+      checkPwd () {
+        //校验规则 正则表达式  只允许输入 数字跟字母
+        var reg = /^[A-Za-z0-9]{6,32}$/;
+        if(!reg.test(this.form.password)){
+          this.passwordError = '密码必须由6-16位字母、数字组成'
+          return
+        }
+        this.passwordError = ''
+        this.pwdStatus = true
+      },
       sureBtn () {
+        console.log(this.form.mobile)
+        console.log(this.form.checkCode)
         let self = this
         if (self.form.mobile == '' || self.form.password == '') {
           self.phoneError = ''
           self.checkCodeError = ''
           return
         }
-        if(self.form.password != self.qrPassword){
-          self.qrPasswordError = '请保证两次密码一致'
+
+        if(!this.pwdStatus){
+          return
+        }
+
+        if(self.form.pwd != self.qrPassword){
+          self.qrPasswordError = '新密码”与“确认密码”不一致！'
         }
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/register',
           params: self.form
         }).then(function (response) {
-          if (response.data.code != '081') {
-            self.checkCodeError = response.data.msg
-          } else {
+          if (response.data.optSuc) {
             // 成功跳转页面
-            this.$router.push({path: '/regOver')
+            self.$router.push({path: '/regOver'})
           }
         })
       }

@@ -6,13 +6,35 @@
       .topRight(slot="right")
     .text
       h1 注册成功
-      h2 5秒后跳转到"我的"页面
-      button 返回首页
+      h2 {{countDown}}秒后跳转到"我的"页面
+      button(@click="returnIndex") 返回首页
 </template>
 
 <script>
   export default {
-    name: 'reg-over'
+    name: 'reg-over',
+    data (){
+      return {
+        countDown: 5
+      }
+    },
+    mounted: function () {
+      this.jumpMyPage()
+    },
+    methods: {
+      returnIndex () {
+        this.$router.push({path: '/home'})
+      },
+      jumpMyPage (){
+        let self = this
+        let interval = window.setInterval(function () {
+          if ((self.countDown--) <= 0) {
+            self.$router.push({path: '/my'})
+            window.clearInterval(interval)
+          }
+        }, 1000)
+      }
+    }
   }
 </script>
 
