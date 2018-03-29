@@ -50,7 +50,7 @@
             self.checkCodeError = response.data.msg
           } else {
             // 成功跳转页面
-            this.$router.push({path: '/regOver')
+            this.$router.push({path: '/regOver'})
           }
         })
       }

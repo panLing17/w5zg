@@ -8,10 +8,7 @@ Vue.prototype.$apiApp = process.env.API_ROOT + ':8031/'
 Vue.prototype.$apiTransaction = process.env.API_ROOT + ':8061/'
 
 
-global.$codeList = {
-  111: '请求错误',
-  112: '未登录'
-}
+global.$codeList = ''
 global.$code = function (e) {
   if ($codeList[e]) {
     return $codeList[e]
