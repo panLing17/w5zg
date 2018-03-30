@@ -1,12 +1,12 @@
 <template lang="pug">
   .expressBox
-    goods-card.goodsCard(v-for="i in 2", :key="i", @tab="changeType")
+    goods-card.goodsCard(v-for="(i,index) in list", :key="index", @tab="changeType", :list="i.children")
     .disableGoodsBox
       .title
         span 失效商品
         .delete 清空失效商品
       disable-goods
-    city-select(:show='selectFlag', @close="selectClose")
+    city-select(:show='selectFlag', @close="selectClose", @submit="submit")
 </template>
 
 <script>
@@ -19,8 +19,23 @@
       return {
         flag: false,
         isdefault: false,
-        selectFlag: true,
-        nowTab: 1
+        selectFlag: false,
+        nowTab: 1,
+        nowGoodsId: '',
+        list:[
+          {
+            children: [
+              {},
+              {}
+            ]
+          },
+          {
+            children: [
+              {},
+              {}
+            ]
+          }
+        ]
       }
     },
     headers:{'X-Requested-with':'XMLHttpRequest'},
@@ -36,7 +51,8 @@
           this.$router.push('shopping/giveSelf')
         }
       },
-      changeType (type,next) {
+      changeType (type,next,index) {
+        console.log(type)
         // 显示城市选择
         this.selectFlag = true
         this.deleteGoods = next
@@ -50,6 +66,11 @@
       },
       // 关闭选择城市
       selectClose () {
+        // 关闭选择框
+        this.selectFlag = false
+      },
+      // 确定选择城市
+      submit () {
         // 关闭选择框
         this.selectFlag = false
         // 执行删除动画

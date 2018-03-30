@@ -3,57 +3,54 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 添加收货地址
+      .topCenter(slot="center") {{title}}
       .topRight(slot="right")
     ul.form
       li
-        label 联系人&nbsp; <input type="text" v-model="name">
+        label 联系人&nbsp; <input type="text" v-model="form.name">
       li
-        label 联系电话 <input type="text" v-model="mobile">
+        label 联系电话 <input type="text" v-model="form.phone">
     ul.form.bottomForm
       li
         label(@click="show=!show") 地址&nbsp;&nbsp; <input type="text" v-model="locationName" placeholder='请选择' disabled="disabled">
         img(src="" )
       li(style="height:2rem")
-        label.detailed(style="height:2rem") 详细地址 <textarea v-model="address"></textarea>
+        label.detailed(style="height:2rem") 详细地址 <textarea v-model="form.detailedAddr"></textarea>
       li
-        label 邮政编码 <input type="text" v-model="mobile" placeholder='(选填)'>
+        label 邮政编码 <input type="text" v-model="zipCode" placeholder='(选填)'>
       li.checkbox
         a(@click.stop="locationDefault(item.addressId , item.isdefault)")
           w-checkbox(v-model="isdefault")
         span 设为默认
     .bottomButton
-      w-button 保存
-    city-select(:show="show", @close="show=!show")
+      w-button(@click="locationSave") 保存
+    city-select(:show="show", @close="show=false", @change="cityChange")
 </template>
 
 <script>
-  import locationList from '../../../utils/locationJson.js'
   import citySelect from './citySelect'
   export default {
     name: "localhost-add",
     data(){
       return {
+        title: '添加收货地址',
         show: false,
-        title:'',
-        selectType: '选择省',
-        locationBox: false ,
-        locationList: [],
-        addressId: '',
-        name: '',
-        mobile: '',
         isdefault: false,
-        locationName: ' ',
-        provinceName: ' ',
-        cityName: ' ',
-        areaName: ' ',
-        address: '',
-        type: '0',
+        locationName: '',
+        zipCode: '',
+        form: {
+          name: '',
+          phone: '',
+          province: '',
+          city: '',
+          county: '',
+          detailedAddr: '',
+          isDefault: ''
+        }
       }
     },
     components: {citySelect},
     mounted(){
-      this.getProvince()
       this.getBase()
       this.$route.query.id ? this.addressId = this.$route.query.id : this.addressId =''
     },
@@ -62,80 +59,28 @@
         this.$router.go(-1)
       },
       getBase () {
-        if (this.$route.query.id) {
-          this.title = '修改收货地址'
-          this.name = this.$store.state.transfer.name
-          this.mobile = this.$store.state.transfer.mobile
-          this.provinceName = this.$store.state.transfer.provice
-          this.cityName = this.$store.state.transfer.city
-          this.areaName = this.$store.state.transfer.area
-          this.address = this.$store.state.transfer.address
-          this.locationName = this.provinceName +''+  this.cityName + ''+ this.areaName
-          this.type = '1'
-        } else {
-          this.title = '添加收货地址'
-        }
       },
-      hideSelect () {
-        this.locationBox = false
-        this.locationList = []
-      },
-      getProvince () {
-        this.selectType = '选择省'
-        for(let i in locationList){
-          this.locationList.push(i)
-        }
-      },
-      goLocalhostAdd(){
-        this.$router.push("/my/localhostAdd")
-      },
-      locationSelect () {
-        this.locationBox = true
-        this.getProvince()
-      },
-      locationNext (name) {
-        this.locationList = []
-        if (this.selectType === '选择区') {
-          this.areaName = name
-          this.locationName = this.provinceName+this.cityName+this.areaName
-          this.locationBox = false
-        }
-        if (this.selectType === '选择市') {
-          this.cityName = name
-          this.selectType = '选择区'
-          for(let b in locationList[this.provinceName][name]){
-            this.locationList.push(locationList[this.provinceName][name][b])
-          }
-        }
-        if (this.selectType === '选择省') {
-          this.provinceName = name
-          this.selectType = '选择市'
-          for(let a in locationList[name]){
-            this.locationList.push(a)
-          }
-        }
+      // 选择城市结束
+      cityChange (data) {
+        this.locationName = [data.pro.name,data.city.name,data.area.name].join('，')
+        this.form.province = data.pro.number
+        this.form.city = data.city.number
+        this.form.county = data.area.number
+        this.show = false
       },
       locationSave () {
-        let _this = this
-        _this.$ajax({
+        let self = this
+        if (this.isdefault) {
+          this.form.isDefault = '011'
+        } else {
+          this.form.isDefault = '012'
+        }
+        self.$ajax({
           method: 'post',
-          url: 'memberAddress/addOrEditAddressForAndroid',
-          params: {
-            addressId: _this.addressId,
-            name: _this.name,
-            mobile: _this.mobile,
-            provinceName: _this.provinceName,
-            cityName: _this.cityName,
-            areaName: _this.areaName,
-            address: _this.address,
-            isdefault: '0',
-            type: _this.type
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          url: self.$apiMember + 'receivingAddress/address',
+          params: self.form,
         }).then(function (response) {
-          if (response.data.code === '100') {
-            _this.$router.push('/my/localhostAdmin')
-          }
+          self.$router.push('/my/localAdmin')
         })
       }
     }

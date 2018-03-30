@@ -19,6 +19,7 @@
       change () {
         if (!this.disabled) {
           this.$emit('cMsg', !this.msg)
+          this.$emit('change')
         }
       },
       update () {
