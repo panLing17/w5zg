@@ -20,9 +20,10 @@
         if (!this.disabled) {
           this.$emit('cMsg', !this.msg)
         }
+        this.$emit('change', !this.msg)
       },
       update () {
-        this.$emit('change')
+        
       }
     }
   }

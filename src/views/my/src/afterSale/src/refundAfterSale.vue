@@ -16,21 +16,23 @@
           span.orderNum 订单编号:
           span.num {{item.orderNum}}
         .right#state {{item.status}}  
-      .center(@click="$router.push('/my/orderDetails')")
+      .center(@click="$router.push('/my/returnDetails')")
         .image
-          img(:src="items" v-for="items in item.imageSrc")   
+          img(:src="item.imageSrc")
+        .goodsDetails
+            .words {{item.words}}
+            .property
+              span.color {{item.color}}
+              span.size {{item.size}}
+            .amount x
+              span {{item.amount}}   
       .bottom
-        .left(v-if="item.status === '待备货'")
-          .goodsCode 提货码: {{item.goodsCode}}
+        .left
+          .returnState {{item.returnState}}
         .right
-          .total
-            .totalNumber
-              span.amount 共计 {{item.amount}} 件商品
-              span.price 合计 :
-                strong.priceNum {{item.priceNum | price-filter}}
-          .button(v-if="item.status === '待付款' || '待发货' || '待收货'",v-show="item.status !== '备货中'")
-            .cancel {{item.buttonL}}
-            .pay(:class="{a:item.status === '待发货'}") {{item.buttonR}}       
+          .button
+            .cancel(@click="$router.push('/my/express')" v-show="item.status === '退款中'") {{item.buttonL}}
+            .pay(:class="{a:item.status === '待发货'}" @click="$router.push('/my/returnDetails')") {{item.buttonR}}       
 </template>
 
 <script>
@@ -46,40 +48,51 @@
           orderDetail:[
             {
               orderNum:"2018031401",
-              status:"待付款",
-              imageSrc:[myGoods,myGoods,myGoods,myGoods],
-              amount:4,
-              priceNum:596,
-              buttonL:"取消订单",
-              buttonR:"支付"
+              status:"申请中",
+              imageSrc:myGoods,
+              returnState:"等待确认",
+              words:"法国PELLIOT秋冬新品户外冲锋衣男",
+              color:"黄色",
+              size:"L",
+              amount:1,
+              buttonL:"发货",
+              buttonR:"查看详情"
             },
             {
               orderNum:"2018031402",
-              status:"备货中",
-              imageSrc:[myGoods,myGoods,myGoods,myGoods,myGoods,myGoods],
-              goodsCode:"03200001",
-              amount:6,
-              priceNum:596
+              status:"退款中",
+              imageSrc:myGoods,
+              returnState:"等待买家发货",
+              words:"法国PELLIOT秋冬新品户外冲锋衣男",
+              color:"黄色",
+              size:"L",
+              amount:1,
+              buttonL:"发货",
+              buttonR:"查看详情"
             },
             {
               orderNum:"2018031403",
-              status:"待发货",
-              imageSrc:[myGoods,myGoods,myGoods,myGoods,myGoods],
-              goodsCode:"03200001",
-              amount:5,
-              priceNum:596,
-              buttonL:"提醒发货",
-              buttonR:"物流信息"
+              status:"已完成",
+              imageSrc:myGoods,
+              returnState:"退货退款完成",
+              words:"法国PELLIOT秋冬新品户外冲锋衣男",
+              color:"黄色",
+              size:"L",
+              amount:1,
+              buttonL:"发货",
+              buttonR:"查看详情"
             },
             {
               orderNum:"2018031404",
-              status:"待自提",
-              imageSrc:[myGoods,myGoods,myGoods],
-              goodsCode:"03200001",
-              amount:3,
-              priceNum:596,
-              buttonL:"提醒发货",
-              buttonR:"物流信息"
+              status:"已完成",
+              imageSrc:myGoods,
+              returnState:"退货退款完成",
+              words:"法国PELLIOT秋冬新品户外冲锋衣男",
+              color:"黄色",
+              size:"L",
+              amount:1,
+              buttonL:"发货",
+              buttonR:"查看详情"
             }
           ]
         }
@@ -93,15 +106,6 @@
       methods:{
         check(index){
           this.num = index;
-          for (var i = this.orderDetail.length - 1; i >= 0; i--) {
-            console.log(this.orderDetail[i]);
-            if (index == 1) {
-              if(this.orderDetail[i].status !== "待付款"){
-                continue;
-              }
-            }
-          }
-          
         }
       }
     }
@@ -181,8 +185,7 @@
     background-color: #fff;
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
-    white-space:nowrap;
-    overflow-x:auto;
+    display: flex;
   } 
   .center .image{
     
@@ -192,29 +195,28 @@
     border-radius: .2rem;
     margin-right: .3rem;
   }
-  .center .goodsExplain{
-    padding: .1rem 0 0 .3rem;
-    width: 100%;
+  .center .goodsDetails{
+    margin-left: .3rem;
   }
-  .center .goodsExplain .words{
-    font-size: .37rem;
+  .center .goodsDetails .words{
+    font-size: .35rem;
   }
-  .center .goodsExplain .cont{
-    width: 100%;
-    margin-top: .6rem;
-    display: flex;
-    justify-content: space-between;
+  .center .goodsDetails .property{
+    margin-top: .1rem;
+    font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsExplain .cont .property span{
-    margin-right: .3rem;
+  .center .goodsDetails .property span.size{
+    margin-left: .3rem;
   }
-  .center .goodsExplain .cont .quantity span{
+  .center .goodsDetails .amount{
+    margin-top: 1rem;
     font-size: .35rem;
+    color: rgb(153,153,153);
   }
   .bottom{
     background-color: #fff;
-    padding: .3rem .3rem .4rem 0;
+    padding: .2rem .2rem .2rem 0;
   }
   .bottom:after{
     content: "";
@@ -225,9 +227,10 @@
     float: left;
     padding-left: .3rem;
   }
-  .bottom .left .goodsCode{
+  .bottom .left .returnState{
     font-size: .4rem;
     color: rgb(244,0,87);
+    line-height: 1rem;
   }
   .bottom .right{
     float: right;
@@ -245,12 +248,11 @@
     font-weight: 400;
   }
   .bottom .right .button{
-    margin-top: .4rem;
     display: flex;
     justify-content: space-around;
   }
   .bottom .right .button div{
-    width: 2.5rem;
+    width: 2.2rem;
     height: 1rem;
     border-radius: 1rem;
     text-align: center;
@@ -262,9 +264,10 @@
     border: 1px solid rgb(161,161,161);
   }
   .bottom .right .button .pay{
-    color: #fff;
+    color: rgb(244,0,87);
     border: 1px solid rgb(244,0,87);
-    background-color: rgb(244,0,87);
+    background-color: #fff;
+    margin-left: .3rem;
   }
   /*订单内容--结束*/
 </style>

@@ -8,7 +8,7 @@
             img(:src="item.url | img-filter", @click="item.edit = !item.edit")
             .delete(v-if="item.edit", @click="item.edit = !item.edit")
               p(@click="remove(index)") 删除
-          img(src="../assets/img/camera@3x.png", v-else, key="two")
+          img(src="../assets/img/add@2x.png", v-else, key="two" style="width:1rem; vertical-align:middle")
 </template>
 
 <script>
@@ -108,6 +108,7 @@
     overflow: hidden;
     display: inline-block;
     margin-right: .2rem;
+    background-color: rgb(234,234,234);
   }
   .uploadBox input{
     width: 100%;
@@ -120,6 +121,8 @@
   .box {
     width: 2rem;
     height: 2rem;
+    line-height: 2rem;
+    text-align: center;
   }
   .box img{
     width: 100%;

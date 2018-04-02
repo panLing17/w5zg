@@ -1,15 +1,20 @@
 <template lang="pug">
   div.myBox.mescroll#myMescroll
-    div.head
-      p.top
+    .head
+      .top
+        .lefter
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
-          img(src="../../../assets/img/my_account@2x.png" @click="routergoUser()")
+        .righter
+          img(src="../../../assets/img/message@2x.png")
+          img(src="../../../assets/img/my_account@2x.png" @click="routergoUser()" v-if="false")
+          img(src="../../../assets/img/consumerdetails@2x.png" v-else="true")      
       p.center
           ul.headPic
-            li(@click="routergoUser()") 头像
+            li(@click="routergoUser()")
+              img(src="../../../assets/img/headshot@2x.png")
           ul.userName
             li {{name}}
-          ul.balance
+          ul.balance(v-if="false")
             li 余额:
             li 8888.88
             li 元
@@ -31,26 +36,33 @@
       ul.bottom
         li
           img(src="../../../assets/img/my_obligation@2x.png")
+          .character 待付款
         li
           img(src="../../../assets/img/my_readyfordelivery@2x.png")
+          .character 待发货
         li
-          img(src="../../../assets/img/my_waitforreceiving@2x.png")
+          img(src="../../../assets/img/my_waitforreceiving2@2x.png")
+          .character 待收货
         li
-          img(src="../../../assets/img/my_remaintobeevaluated@2x.png")
+          img(src="../../../assets/img/my_remaintobeevaluated2@2x.png")
+          .character 待评价
         li(@click="$router.push('/my/refundAfterSale')")
-          img(src="../../../assets/img/my_aftersale@2x.png")
+          img(src="../../../assets/img/my_aftersale2@2x.png")
+          .character 退货/售后
     div.myTreasure
       ul.top
         li 我的财富
         li
-          img(src="../../../assets/img/my_more@2x.png")
       ul.bottom
         li
           img(src="../../../assets/img/my_bankcard@2x.png")
+          .words 银行卡
         li
           img(src="../../../assets/img/my_card@2x.png")
-        li
+          .words 现金券
+        li(v-if="true")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
+          .words 通用劵
     div.recommend
       img(src="../../../assets/img/my_recommend@2x.png")
     .bottomList
@@ -194,16 +206,18 @@ import my_goods from '../../../assets/img/my_goods.png'
   .head .top{
     width: 100%;
     margin-top: 1rem;
+    padding: 0 .3rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
   }
-  .head .top img{
+  .head .top .lefter img{
     width: .7rem;
-    height: .7rem;
-    margin-left: .5rem;
   }
-  .head .top img:nth-child(2){
-    margin-right: .5rem;
+  .head .top .righter img{
+    width: .7rem;
+  }
+  .head .top .righter img:nth-child(2){
+    margin-left: .2rem;
   }
   .head .center{
     display: flex;
@@ -212,12 +226,14 @@ import my_goods from '../../../assets/img/my_goods.png'
   .head .center .headPic{
     width: 1.6rem;
     height: 1.6rem;
-    background: #aaa;
     margin-left: .5rem;
     margin-top: .4rem;
     border-radius: 50%;
     text-align: center;
     line-height: 1.6rem;
+  }
+  .head .center .headPic img{
+    width: 1.6rem;
   }
   .head .center .userName{
     display: flex;
@@ -296,22 +312,44 @@ import my_goods from '../../../assets/img/my_goods.png'
 	}
 	.myOrderForm ul.bottom{
 		display: flex;
-		justify-content: space-between;
-		padding: .4rem .4rem 0 .1rem;
+		justify-content: space-around;
+		padding: .4rem .2rem 0;
+    text-align: center;
 	}
+  .myOrderForm ul.bottom li:nth-child(2),
+  .myOrderForm ul.bottom li:nth-child(3),
+  .myOrderForm ul.bottom li:nth-child(4){
+    margin-left: .7rem;
+  }
+  .myOrderForm ul.bottom li:nth-child(5){
+    margin-left: .3rem;
+  }
 	.myOrderForm ul.bottom li img{
-		width: 1.7rem;
+		width: .7rem;
 	}
+  .myOrderForm ul.bottom li .character{
+    text-align: center;
+    color: rgb(51,51,51);
+    font-size: .35rem;
+  }
 	/*我的订单和我的财富--结束*/
 	/*我的财富独有的样式--开始*/
 	.myTreasure ul.bottom{
 		display: flex;
-		justify-content: space-between;
-		padding: .4rem 1.2rem 0;
+		justify-content: flex-start;
+		padding: .4rem 1rem 0;
 	}
+  .myTreasure ul.bottom li{
+    text-align: center;
+    margin-right: 2.1rem;
+  }
 	.myTreasure ul.bottom li img{
-		width: 1.3rem;
+		width: 1.2rem;
 	}
+  .myTreasure ul.bottom li .words{
+    color: rgb(51,51,51);
+    font-size: .35rem;
+  }
 	/*我的财富独有的样式--结束*/
 	/*我的推荐--开始*/
 	.recommend{

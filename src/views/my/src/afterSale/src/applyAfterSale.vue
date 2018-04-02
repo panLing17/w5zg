@@ -9,7 +9,7 @@
     .content(v-for="(item,index) in goodsList") 
       .center
         .check
-          w-checkbox(v-model="item.checked")
+          w-checkbox(v-model="item.checked", @change="check")
         .image
           img(:src="item.imgSrc")
         .goodsDetails
@@ -20,9 +20,9 @@
           .amount x
             span {{item.amount}}
     .totalCheck
-      w-checkbox(@cMsg="cMsg()" v-model="msg")
+      w-checkbox(@change="cMsg" v-model="msg")
       span 全选
-    .next(@click="$router.push('/my/selectService')") 下一步              
+    .next(@click="flag && $router.push('/my/selectService')") 下一步              
 </template>
 <script>
   import myGoods from '../../../../../assets/img/my_goods.png'
@@ -30,6 +30,7 @@
     name: 'applyAfterSale',
     data () {
       return {
+        flag:true,
         msg: false,
         goodsList:[
           {
@@ -63,20 +64,44 @@
       this.check();
     },
     methods: {
-      cMsg(){
-        for (var i = this.goodsList.length - 1; i >= 0; i--) {
-          this.goodsList[i].checked = true;
-          this.msg = true; 
+      cMsg(flag){
+        this.goodsList.forEach((now)=>{
+          now.checked = flag;
+          this.msg = flag;
+          if (flag == false) {
+            var next = document.getElementsByClassName("next")[0];
+            next.style.backgroundColor = "rgb(153,153,153)";
+            this.flag = false;
+          }
+          if (flag == true) {
+            var next = document.getElementsByClassName("next")[0];
+            next.style.backgroundColor = "rgb(244,0,87)";
+            this.flag = true;
+          }
+        });
+      },
+
+      check(a){
+        let n = 0;
+        this.goodsList.forEach((now)=>{
+          console.log(now);
+          if (now.checked === false) {
+            this.msg = false;
+            var next = document.getElementsByClassName("next")[0];
+            next.style.backgroundColor = "rgb(153,153,153)";
+            this.flag = false;
+          } else {
+            n += 1;
+            var next = document.getElementsByClassName("next")[0];
+            next.style.backgroundColor = "rgb(244,0,87)";
+            this.flag = true;
+          }
+        });
+        if (n === this.goodsList.length) {
+          this.msg = true;
         }
       },
 
-      check(){
-        for (var i = this.goodsList.length - 1; i >= 0; i--) {
-          if(this.goodsList[i].checked != true){
-            this.msg = false;
-          } 
-        }
-      }
     }
   }
 </script>

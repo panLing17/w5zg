@@ -44,9 +44,9 @@
         ul
           li.num 数量
           li.addSub
-            .sub -
+            .sub(@click="sub()") -
             .input 1
-            .add +
+            .add(@click="add()") +
       .bottom
         ul
           li.money
@@ -63,21 +63,25 @@
         li
           input(placeholder="请输入···")
     .upload
+      .up
+        span 上传凭证
+        span (最多可上传9张图片)
+      w-upload
     .submit(@click="$router.push('/my')") 提交
-    goodsType(:show="statusFlag", @selectType="", @close="closeGoodsType()")
+    goodsType(:show="statusFlag", @selectType="selectOne", @close="closeGoodsType()")
     reason1(:show="reasonFlag1", @close="closeReason1()")
     reason2(:show="reasonFlag2", @close="closeReason2()")
     returnStyle(:show="typeFlag" @close="closeType()")
 </template>
 <script>
   import myGoods from '../../../../../assets/img/my_goods.png'
-  // import goodsType from './selectGoodsStatus'
-  // import reason1 from './returnReasonOnly'
-  // import reason2 from './returnReason'
-  // import returnStyle from './returnStyle'
+  import goodsType from './selectGoodsStatus'
+  import reason1 from './returnReasonOnly'
+  import reason2 from './returnReason'
+  import returnStyle from './returnStyle'
   export default {
     name: 'refundReturn',
-    // components:{goodsType,reason1,reason2,returnStyle},
+    components:{goodsType,reason1,reason2,returnStyle},
     data () {
       return {
         shows:true,
@@ -112,6 +116,35 @@
           this.title = "申请退款退货";
           this.shows = false;
         }
+      },
+      //选择货物状态
+      selectOne(num){
+        console.log(num);
+        if (num == 1) {
+          this.shows = false;
+          this.statusFlag = false;
+        }
+      },
+      //加减
+      sub(){
+        var oInput = document.getElementsByClassName("input")[0];
+        console.log(parseInt(oInput.innerText));
+        var rel = parseInt(oInput.innerText);
+        rel--;
+        if (rel<=1) {
+          rel = 1;
+        }
+        oInput.innerText = rel;
+      },
+      add(){
+        var oInput = document.getElementsByClassName("input")[0];
+        console.log(parseInt(oInput.innerText));
+        var rel = parseInt(oInput.innerText);
+        rel++;
+        if (rel>=10) {
+          rel = 10;
+        }
+        oInput.innerText = rel;
       },
 
       goodsTypes(){
@@ -295,6 +328,23 @@
     border: 0;
   }
   /*退款说明--结束*/
+  /*图片上传--开始*/
+  .upload{
+    margin-top: .3rem;
+    padding: .2rem .3rem;
+    background-color: #fff;
+  }
+  .upload .up{
+    margin-bottom: .2rem;
+  }
+  .upload .up span:nth-child(1){
+    font-size: .4rem;
+  }
+  .upload .up span:nth-child(2){
+    margin-left: .1rem;
+    color: rgb(153,153,153);
+  }
+  /*图片上传--结束*/
   /*提交--开始*/
   .submit{
     width: 6.5rem;
