@@ -1,7 +1,7 @@
 <template lang="pug">
   transition(name="fade" , mode="out-in")
-    .confirmBg(v-if="visible")
-      .windowBox
+    .confirmBg(v-if="visible", @click="visible = false")
+      .windowBox( @click.stop="")
         .title {{title}}
         .tips {{message}}
         .bottom

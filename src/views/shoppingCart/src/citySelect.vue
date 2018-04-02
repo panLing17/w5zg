@@ -5,8 +5,16 @@
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
-          span 选择门店
           img(src="../../../assets/img/cancle@3x.png", @click="close")
+          span 选择门店
+          .submit(@click="submit") 确定
+        .content
+          .left
+            ul
+              li(v-for="(i,index) in 10", :class="{leftChecked:index===leftChecked}", @click="leftClick(index, i)") {{i}}
+          .right
+            ul
+              li(v-for="(i,index) in 3", :class="{rightChecked:index===rightChecked}", @click="rightClick(index, i)") {{i}}
 </template>
 
 <script>
@@ -14,8 +22,14 @@
     name: "city-select",
     data () {
       return {
-        // 当前选择的类型，0为选择省，1为市，2为区
-        selectType: 0
+        // 当前选中的左半部分标签
+        leftChecked: 1,
+        // 左半部分选中的id
+        leftId: '',
+        // 当前选中的右半部分标签
+        rightChecked: 1,
+        // 右半部分选中的id
+        rightId: '',
       }
     },
     props: {
@@ -28,11 +42,16 @@
       close () {
         this.$emit('close')
       },
-      typeClick (type) {
-        this.selectType = type
+      submit () {
+        this.$emit('submit')
       },
-      tab (num) {
-        this.selectType = num
+      leftClick (index, id) {
+        this.leftChecked = index
+        this.leftId = id
+      },
+      rightClick (index, id) {
+        this.rightChecked = index
+        this.rightId = id
       }
     }
   }
@@ -64,15 +83,52 @@
   }
   .title {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    height: 1rem;
+    height: 1.2rem;
     font-size: .4rem;
     position: relative;
+    padding: 0 .2rem;
+    border-bottom: solid 1px #aaa;
   }
   .title img{
-    position: absolute;
-    right: .2rem;
     width: .4rem;
+  }
+  .title .submit{
+    font-size: .3rem;
+    color: rgb(245,0,87);
+  }
+  /* 弹出部分选择主体 */
+  .content {
+    display: flex;
+    height: 100%;
+    background: rgb(242,242,242);
+  }
+  .content .left {
+    width: 3.5rem;
+    height: 100%;
+    padding-left: .2rem;
+    overflow-y: auto;
+    background: white;
+  }
+  .content .right {
+    flex-grow: 1;
+    width: 0;
+  }
+  .content li{
+    padding-left: .4rem;
+    width: 100%;
+    height: 1rem;
+    line-height: 1rem;
+    transition: background-color .3s, color .3s;
+  }
+  /* 左部选中样式 */
+  .leftChecked {
+    color: rgb(245,0,87);
+    background-color: rgb(242,242,242);
+  }
+  /* 右部选中样式 */
+  .rightChecked {
+    color: rgb(245,0,87);
   }
 </style>

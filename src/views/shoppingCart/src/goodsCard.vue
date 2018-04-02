@@ -42,16 +42,16 @@
 <script>
   export default {
     name: "goods-card",
+    props:{
+      list:{
+        type: Array
+      }
+    },
     data () {
       return {
         isdefault: false,
         content: 1,
-        flag: true,
-        list: [
-          {},
-          {},
-          {}
-        ]
+        flag: true
       }
     },
     methods: {
