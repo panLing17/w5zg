@@ -5,48 +5,41 @@
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
-          span 门店提货
+          span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
         .tabBox
           transition-group(enter-active-class="animated bounceInLeft", leave-active-class="animated fadeOut").tab
-            li(v-if="selectType > 0 || selectType === 0 ", :class="{selected:selectType === 0}", key="0", @click="tab(0)") 江苏省
-            li(v-if="selectType > 1 || selectType === 1 ", :class="{selected:selectType === 1}", key="1", @click="tab(1)") 江苏市
-            li(v-if="selectType > 2 || selectType === 2 ", :class="{selected:selectType === 2}", key="2", @click="tab(2)") 江苏区
-          .slider(:style="{marginLeft:2 * selectType + 'rem'}")
+            li(v-if="selectType > 0 || selectType === 0 ", :class="{selected:selectType === 0}", key="0", @click="tab(0)") {{provinceName}}
+            li(v-if="selectType > 1 || selectType === 1 ", :class="{selected:selectType === 1}", key="1", @click="tab(1)") {{cityName}}
+            li(v-if="selectType > 2 || selectType === 2 ", :class="{selected:selectType === 2}", key="2", @click="tab(2)") {{areaName}}
+          .slider(:style="{marginLeft:3 * selectType + 'rem'}")
         ul.list
-          li(@click="selectType+=1") 南京
-          li(@click="selectType-=1") 北京
-          li 南京
-          li 北京
-          li(@click="selectType+=1") 南京
-          li(@click="selectType-=1") 北京
-          li 南京
-          li 北京
-          li(@click="selectType+=1") 南京
-          li(@click="selectType-=1") 北京
-          li 南京
-          li 北京
-          li(@click="selectType+=1") 南京
-          li(@click="selectType-=1") 北京
-          li 南京
-          li 北京
-          li(@click="selectType+=1") 南京
-          li(@click="selectType-=1") 北京
-          li 南京
-          li 北京
-          li(@click="selectType+=1") 南京
-          li(@click="selectType-=1") 北京
-          li 南京
-          li 北京
+          li(v-for="item in provinceList", @click="getCity(item.pro_no,item.pro_name)") {{item.pro_name}}
+        ul.list
+          li(v-for="item in cityList", @click="getStore(item.city_no,item.city_name)") {{item.city_name}}
+        ul.list
+          li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_name}}
 </template>
 
 <script>
   export default {
-    name: "city-select",
+    name: "store-select",
     data () {
       return {
         // 当前选择的类型，0为选择省，1为市，2为区
-        selectType: 0
+        selectType: 0,
+        provinceName: '请选择',
+        cityName: '请选择',
+        areaName: '请选择',
+        // 选中的省编码
+        proNumber: '',
+        // 选中的市编码
+        cityNumber: '',
+        // 选中的区编码
+        areaNumber: '',
+        provinceList: [],
+        cityList: [],
+        storeList: []
       }
     },
     props: {
@@ -54,6 +47,9 @@
         type: Boolean,
         default: false
       }
+    },
+    mounted () {
+      this.getProvince()
     },
     methods:{
       close () {
@@ -64,6 +60,87 @@
       },
       tab (num) {
         this.selectType = num
+        switch (num) {
+          case 0:
+            this.cityList = []
+            this.areaList = []
+            break
+          case 1:
+            this.areaList = []
+        }
+      },
+      getProvince () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/allProvince',
+          params: {
+          },
+        }).then(function (response) {
+          self.provinceList = response.data.data
+        })
+      },
+      getCity (number,proName) {
+        // 记录选中的省的编码
+        this.proNumber = number
+        // 清空市与区数据
+        this.cityList = []
+        this.areaList = []
+        // 当前选项卡名称改变
+        this.provinceName = proName
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/cityProvince',
+          params: {
+            pro_no: number
+          },
+        }).then(function (response) {
+          self.cityList = response.data.data
+          self.selectType = 1
+        })
+      },
+      getStore (number, cityName) {
+        // 记录选中的市的编码
+        this.cityNumber = number
+        // 当前选项卡名称改变
+        this.cityName = cityName
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/store',
+          params: {
+            gskuId: self.$store.state.skuId,
+            gspuId: self.$route.query.id,
+            provinceNo: self.proNumber ,
+            cityNo: number
+          },
+        }).then(function (response) {
+          self.storeList = response.data.data.storeList
+          self.selectType = 2
+        })
+      },
+      selectOver (number, storeName) {
+        // 记录选中的区的编码
+        this.areaNumber = number
+        // 当前选项卡名称改变
+        this.areaName = storeName
+        // 事件派发，将省市区名字以及编号返回
+        let data = {
+          pro:{
+            number: this.proNumber,
+            name: this.provinceName
+          },
+          city:{
+            number: this.cityNumber,
+            name: this.cityName
+          },
+          store:{
+            id: number,
+            name: storeName
+          }
+        }
+        this.$emit('change', data)
       }
     }
   }
@@ -87,7 +164,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 7rem;
+    height: 70%;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -111,7 +188,7 @@
     border-bottom: solid 1px #ccc;
   }
   .tab li{
-    width: 2rem;
+    width: 3rem;
     height: 1rem;
     display: flex;
     justify-content: center;
@@ -123,14 +200,16 @@
     color: rgb(245,0,87) !important ;
   }
   .list {
-    padding-left: .3rem;
     line-height: .8rem;
+    text-align: center;
+    float: left;
+    width: 3rem;
+    height: 10rem;
     overflow-y: auto;
-    height: 5rem;
   }
   .slider {
     height: 1px;
-    width: 2rem;
+    width: 3rem;
     margin-top: -1px;
     margin-left: 0;
     background: rgb(245,0,87);

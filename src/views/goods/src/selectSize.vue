@@ -9,27 +9,23 @@
             li(v-for="item in list")
               img(:src="item.image")
         .goodsData(:class="{smallGoodsData:smallPhotoFlag}")
-          .price ￥569.00
-          .store 库存12222
+          .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.counter_price | price-filter}}
+          .price(v-else) {{0 | price-filter}}
+          .store 库存{{realGoodsData.storage_num}}
           .size 选择 颜色 尺寸
         ul.spec
-          li
-            .title 尺寸
+          li(v-for="item in spec")
+            .title {{item.specName}}
             ul.content
-              li M
-              li XXl
-              p(style="clear:both")
-          li
-            .title 颜色
-            ul.content
-              li 红色
+              li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index}", @click="item.valueIndex=index;getStoreNum()") {{i}}
               p(style="clear:both")
         .count
           span 数量
           w-counter(v-model="content", :min="1")
     .buttons(v-if="show")
       .left 加入购物车
-      .right(@click="buy") 立即购买
+      .right(@click="buy", v-if="onlySelectSpec") 确认选择
+      .right(@click="buy", v-else) 立即购买
 </template>
 
 <script>
@@ -40,13 +36,19 @@
         startY: '',
         moveY: '',
         smallPhotoFlag: false,
-        content: 1
+        content: 1,
+        realGoodsData: {},
       }
     },
     props: {
       photos: {
         type: Array,
         default:[]
+      },
+      spec: Array,
+      onlySelectSpec: {
+        type: Boolean,
+        default: false
       },
       show: {
         type: Boolean,
@@ -62,7 +64,7 @@
       }
     },
     mounted () {
-
+      this.getStoreNum()
     },
     methods:{
       close () {
@@ -71,9 +73,45 @@
       removeTouchDisable () {
         this.$emit('buy')
       },
+      // 校验库存与获得skuId
+      getStoreNum () {
+        // 获取选中的规格
+        let specData = {
+          'cityId': this.$store.state.location.city.id,
+          'gspu_id': this.$route.query.id,
+          'specList': [
+          ]
+        }
+        this.spec.forEach((now)=>{
+          specData.specList.push({
+            'gspec_name': now.specName,
+            'gspec_value': now.specValue[now.valueIndex]
+          })
+        })
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/sku/detail',
+          data: specData
+        }).then(function (response) {
+          self.realGoodsData = response.data.data
+          // vuex中保存skuId
+          self.$store.commit('getSkuId',response.data.data.gsku_id)
+        })
+      },
       buy () {
-        this.$emit('buy')
-        this.$router.push('/confirmOrder')
+        // 将数量与价格传过去
+        let data = {
+          price: this.realGoodsData.counter_price,
+          content: this.content
+        }
+        if (this.realGoodsData.storage_num>0) {
+          // 此条为了恢复屏幕触摸事件
+          this.$emit('buy', data)
+        } else {
+          this.$message.error('商品没有库存了')
+        }
+
       },
       // 触摸开始
       touchStart (e) {
@@ -247,9 +285,15 @@
   .spec .content li{
     float: left;
     padding: .2rem .3rem;
-    background: pink;
+    border:  solid 1px pink;
     margin-left: .4rem;
     border-radius: .2rem;
+    transition: background-color .3s, color .3s;
+  }
+  /* 规格选中 */
+  .specChecked {
+    background: pink;
+    color: white !important;
   }
   /* 选择数量部分 */
   .count {

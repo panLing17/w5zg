@@ -6,50 +6,156 @@
       .topCenter(slot="center") 确认订单
       .topRight(slot="right")
     .title
-      .stud 联系人
-    .location
+      .stud {{$route.query.since?'提货人':'联系人'}}
+    .location(v-if="$route.query.since")
+      ul.locationInput
+        li
+          label 提货人
+            input(type="text", placeholder="请输入提货人姓名", v-model="name")
+        li
+          label 联系方式
+            input(type="text", placeholder="请输入提货人联系方式", v-model="phone")
+    .location(v-if="!$route.query.since&&JSON.stringify(giveGoodsAddress) !== '{}'", @click="goSelectLocation")
       .content
         .nameAndMobile
-          p 收件人：老张
-          p 手机号：13655526262
+          p 收件人：{{giveGoodsAddress.ra_name}}
+          p 手机号：{{giveGoodsAddress.ra_phone}}
         .giveGoodsLocation
           .label 收货地址
-          .info 江苏南京软件园，4002-1一楼四厅588室 江苏南京软件园，4002-1一楼四厅588室
+          .info {{giveGoodsAddress.ra_detailed_addr}}
       .icon
         img(src="../../../assets/img/next@2x.png")
-    goods-card.goods-card(v-for="i in 2", :key="i")
+    .location(v-if="!$route.query.since&&JSON.stringify(giveGoodsAddress) === '{}'")
+      .addLocation
+        p 添加收货地址
+    goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
     .allPrice
-      .goodsNum 共计4件商品
+      .goodsNum 共计{{content}}件商品
       .price
         span 合计
-        p ￥596.00
+        p {{price | price-filter}}
     ul.switchList
       li
         .left 网金卡
         .right
           span 已抵扣100.00
-          toggle-button(v-model="myDataVariable", color="rgb(244,0,87)")
+          toggle-button(v-model="netCardFlag", color="rgb(244,0,87)")
       li
         .left 通用卷 <span>您有通用卷500，可抵扣100</span>
         .right
-          toggle-button(v-model="myDataVariable", color="rgb(244,0,87)")
+          toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)")
     .submit
-      .left 实付：￥500.00
-      .right 提交订单
+      .left 实付：{{price | price-filter}}
+      .right(@click="submit") 提交订单
+    location-select(:show="flag", :location="locationList", @close="locationSelectClose")
 </template>
 
 <script>
   import goodsCard from './goodsCard'
+  import locationSelect from './locationSelect'
+  import {mapState} from 'vuex'
   export default {
     name: 'confirm-order',
     data () {
       return {
-        myDataVariable:false
+        flag: false,
+        netCardFlag:false,
+        commonTicketFlag:false,
+        price: 0,
+        content: 0,
+        name: '',
+        phone: '',
+        locationList:[
+          {}
+        ]
       }
     },
-    components:{goodsCard},
+    computed:mapState(['transfer','giveGoodsAddress']),
+    components:{goodsCard,locationSelect},
+    mounted () {
+      this.getLocation()
+      this.computedPrice()
+    },
     methods:{
+      submit () {
+        // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单
+        if (this.$route.query.type === 'direct') {
+          if (this.$route.query.since) {
+            this.directSince()
+          } else {
+            this.directDistribution()
+          }
+        } else {
 
+        }
+      },
+      /* 立即购买快递配送订单生成 */
+      directDistribution () {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiTransaction + 'order/nowSendOrder',
+          params: {
+            gskuId: self.$store.state.skuId,
+            netCardFlag: netCardFlag,
+            commonTicketFlag: commonTicketFlag,
+            deliveryId: self.giveGoodsAddress.id,
+            buyNum: self.content
+          }
+        }).then(function (response) {
+          self.$message.success('成功生成订单')
+        })
+      },
+      /* 立即购买自提订单生成 */
+      directSince () {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiTransaction + 'order/submitNowCarryOrder',
+          params: {
+            gskuId: self.$store.state.skuId,
+            netCardFlag: netCardFlag,
+            commonTicketFlag: commonTicketFlag,
+            carryPerson: self.name,
+            carryPhone: self.phone,
+            buyNum: self.content,
+            bsId: self.$store.state.location.store.id
+          }
+        }).then(function (response) {
+          self.$message.success('成功生成订单')
+        })
+      },
+      getLocation () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'receivingAddress/address/city',
+          params: {
+            cityNo: self.$store.state.location.city.id
+          }
+        }).then(function (response) {
+          if (response.data.data.length>0) {
+            self.locationList = response.data.data
+            self.$store.commit('giveGoodsAddressChange',response.data.data[0])
+          }
+        })
+      },
+      computedPrice () {
+        this.transfer.forEach((now)=>{
+          this.price += now.price*now.number
+          this.content += now.number-0
+        })
+      },
+      locationSelectClose () {
+        this.flag = false
+      },
+      goSelectLocation () {
+        this.flag = true
+      }
     }
   }
 </script>
@@ -58,6 +164,7 @@
   .confirmOrderBox {
     background:rgb(242,242,242);
     padding-bottom: 2rem;
+    min-height: 100vh;
   }
   .title{
     background: white;
@@ -196,5 +303,44 @@
     align-items: center;
     background-color: rgb(244,0,87);
     color: white;
+  }
+  .addLocation {
+    width: 100%;
+    height: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .addLocation p{
+    border: solid 1px #ddd;
+    color: rgb(247,0,84);
+    width: 3rem;
+    height: 1rem;
+    text-align: center;
+    line-height: 1rem;
+    border-radius: 1.5rem;
+  }
+    /* 自提部分地址样式 */
+  .locationInput {
+    width: 100%;
+  }
+  .locationInput li{
+    height: 1rem;
+    width: 100%;
+  }
+  .locationInput li:first-child{
+    border-bottom: solid 1px #eee;
+  }
+  .locationInput li label{
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .locationInput li label input{
+    width: 7.5rem;
+    outline: none;
+    border: none;
+
   }
 </style>

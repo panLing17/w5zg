@@ -6,6 +6,8 @@ Vue.prototype.$apiMember = process.env.API_ROOT + ':8051/'
 Vue.prototype.$apiApp = process.env.API_ROOT + ':8031/'
 // 交易相关
 Vue.prototype.$apiTransaction = process.env.API_ROOT + ':8061/'
+// 商品相关
+Vue.prototype.$apiGoods = process.env.API_ROOT + ':8041/'
 
 
 global.$codeList = ''
