@@ -1,5 +1,5 @@
 <template lang="pug">
-  .checkLogistics
+  .checkLogistics.mescroll#logisticsMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
@@ -30,7 +30,18 @@
             img(:src="item.imgSrc")
     .packDrop(@click="packDrop()")
       span {{packDrops}}
-      img(src="../../../../../assets/img/pack.png")                         
+      img(src="../../../../../assets/img/pack.png")
+    .recommend
+      img(src="../../../../../assets/img/my_recommend@2x.png")
+    .bottomList
+        ul.goodsList#box
+          li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
+            img(src="../../../../../assets/img/my_goods.png")
+            .wrapWords
+              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
+              .price ￥516.22
+              .bottom <span>江苏南京</span><span>2555人购买</span>
+    .bottomPlaceholder                           
 </template>
 
 <script>
@@ -41,6 +52,7 @@
       data(){
         return{
           packDrops:"点击收起详情",
+          recommendGoods: [],
           states:[
             {
               time:"03-19 13:25",
@@ -74,7 +86,7 @@
 
       },
       mounted(){
-
+        this.$mescrollInt("logisticsMescroll",this.upCallback);
       },
       methods:{
         packDrop(){
@@ -89,7 +101,39 @@
             logisticsMsg.style.height = null;
             logisticsMsg.style.overflow = null;
           }
+        },
+
+        upCallback: function(page) {
+          let self = this;
+          this.getListDataFromNet(page.num, page.size, function(curPageData) {
+            if(page.num === 1) self.recommendGoods = []
+            self.recommendGoods = self.recommendGoods.concat(curPageData)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function() {
+            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr();
+          })
+        },
+        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+          setTimeout(function () {
+  //            axios.get("xxxxxx", {
+  //          params: {
+  //            num: pageNum, //页码
+  //            size: pageSize //每页长度
+  //          }
+  //        })
+  //        .then(function(response) {
+            successCallback&&successCallback({});//成功回调
+            successCallback&&successCallback({});//成功回调
+            successCallback&&successCallback({});//成功回调
+            successCallback&&successCallback({});//成功回调
+  //        })
+  //        .catch(function(error) {
+  //          errorCallback&&errorCallback()//失败回调
+  //        });
+          },500)
         }
+
       }
     }
 </script>
@@ -170,6 +214,7 @@
     margin-top: -.1rem;
     margin-left: .2rem;
     font-size: .4rem;
+    color: rgb(244,0,87);
   }
   .logisticsAddress .address strong{
     margin-left: .2rem;
@@ -228,6 +273,7 @@
     font-size: .35rem;
     text-align: center;
     color: rgb(153,153,153);
+    padding-bottom: .1rem;
   }
   .packDrop img{
     width: .6rem;
@@ -235,4 +281,59 @@
     margin-top: -.1rem;
   }
   /*点击收起下拉--结束*/
+  /*我的推荐--开始*/
+  .recommend{
+    height: 1rem;
+    line-height: 1.2rem;
+    text-align: center;
+  }
+  .recommend img{
+    width: 5rem;
+  }
+  /*我的推荐--结束*/
+  /*商品大图展示--开始*/
+  .goodsList {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: .2rem;
+    background: #fff;
+  }
+  .goodsList li{
+    border: solid 1px #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 49%;
+    float: left;
+    margin-bottom: .2rem;
+  }
+  .goodsList li img {
+    width: 100%;
+  }
+  .text{
+    margin: .1rem;
+  }
+  .goodsList .price{
+    margin: .2rem .1rem;
+    color: rgb(246,0,87);
+    font-weight: 600;
+    font-size: .4rem;
+  }
+  .wrapWords .bottom{
+    margin: .1rem;
+    display: flex;
+    justify-content: space-between;
+    color: #aaaaaa;
+  }
+  /*商品大图展示--结束*/
+  .bottomPlaceholder {
+    height: 1.5rem;
+  }
+  #logisticsMescroll{
+    top: 0;
+    bottom: 0;
+    height: auto;
+    position: fixed;
+  }
+
 </style>

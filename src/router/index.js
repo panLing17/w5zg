@@ -247,6 +247,11 @@ const router = new Router ({
               component: AfterSale.applyAfterSale
             },
             {
+              path: '/my/returnDetails',
+              name: '退货详情',
+              component: AfterSale.returnDetails
+            },
+            {
               path: '/my/selectService',
               name: '选择服务方式',
               component: AfterSale.selectService
@@ -260,6 +265,16 @@ const router = new Router ({
               path: '/my/refundAfterSale',
               name: '申请退款退货',
               component: AfterSale.refundAfterSale
+            },
+            {
+              path: '/my/express',
+              name: '填写快递',
+              component: AfterSale.express
+            },
+            {
+              path: '/my/checkAddressee',
+              name: '填写收件人',
+              component: AfterSale.checkAddressee
             }
           ]
         }
@@ -302,22 +317,22 @@ router.beforeEach ((to, from, next) => {
     vm.$store.dispatch('getDictionaries')
   }
   // 购物车及我的页面权限处理
-  if (to.name === '我的' || to.name === '购物车') {
-    if (!localStorage.hasOwnProperty('token')) {
-      Message.warning('请先登录')
-      next({path:'/login'})
-    } else {
-      next()
-    }
-  } else {
-    // 轮循解决字典异步问题(不满意)
-    let polling = setInterval(()=>{
-      if ($codeList !== '') {
-        clearInterval(polling)
-        next()
-      }
-    },10)
-  }
-
+  // if (to.name === '我的' || to.name === '购物车') {
+  //   if (!localStorage.hasOwnProperty('token')) {
+  //     Message.warning('请先登录')
+  //     next({path:'/login'})
+  //   } else {
+  //     next()
+  //   }
+  // } else {
+  //   // 轮循解决字典异步问题(不满意)
+  //   let polling = setInterval(()=>{
+  //     if ($codeList !== '') {
+  //       clearInterval(polling)
+  //       next()
+  //     }
+  //   },10)
+  // }
+  next()
 })
 export default router

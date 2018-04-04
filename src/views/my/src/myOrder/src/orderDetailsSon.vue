@@ -19,6 +19,19 @@
       .address
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
+    .pickUpGoodsCode
+      span 提货码
+      strong SHXNJ251    
+    .itemStatus
+      .left
+        .image
+          img(src="../../../../../assets/img/pick@2x.png" v-if="false")
+          img(src="../../../../../assets/img/send@2x.png" v-else="true" style="margin-top:.1rem")
+        .refundCenter
+          .top 买家已提货
+          .bottom 2018-03-16 13:30:30
+      .right
+        img(src="../../../../../assets/img/right.png")     
     .content(v-for="(item,index) in orderDetail")
       .top
         .left
@@ -64,7 +77,7 @@
       ul
         li.code.selects
           span 订单号:
-          span 2018022400001
+          span.orderNums 2018022400001
         li.orderTime.selects
           span 下单时间:
           span 2018-02-24
@@ -94,7 +107,8 @@
     .fixedBtn
       .leftBtn {{leftBtn}}
       .centerBtn {{centerBtn}}
-      .rightBtn {{rightBtn}}                                                     
+      .rightBtn(@click="$router.push('/my/checkLogistics')") {{rightBtn}}
+
 </template>
 
 <script>
@@ -139,18 +153,11 @@
         this.mescroll.hideTopBtn();
       },
       methods:{
-
         copyText() {
-          var li=document.getElementsByClassName("selects");
-          for(var i=0;i<li.length;i++){        
-            var span=li[i].getElementsByTagName("span");    
-            for(var j=0;j<span.length;j++){
-              span[j].select();        
-              document.execCommand("copy"); // 执行浏览器复制命令
-              alert("复制成功");    
-            }
-          }
-          
+          var orderNums = document.getElementsByClassName("orderNums")[0];
+          //orderNums.select();        
+          document.execCommand("Copy"); // 执行浏览器复制命令
+          alert("复制成功");      
         },
 
         upCallback: function(page) {
@@ -183,6 +190,7 @@
   //        });
           },500)
         }
+
       }
     }
 </script>
@@ -264,6 +272,55 @@
     width: 7rem;
   }
   /*收货人的信息--结束*/
+  /*提货码--开始*/
+  .pickUpGoodsCode{
+    height: 2rem;
+    line-height: 2rem;
+    background-color: #fff;
+    margin-top: .2rem;
+    padding-left: .8rem;
+    color: rgb(244,0,87); 
+  }
+  .pickUpGoodsCode span{
+    font-size: .4rem;
+  }
+  .pickUpGoodsCode strong{
+    font-size: .4rem;
+  }
+  /*提货码--结束*/
+  /*买家商品的状态--开始*/
+  .itemStatus{
+    background-color: #fff;
+    display: flex;
+    justify-content: space-between;
+    padding: .2rem 0 .2rem .3rem;
+    margin-top: .2rem;
+  }
+  .itemStatus .left{
+    display: flex;
+  }
+  .itemStatus .left img{
+    width: .5rem;
+  }
+  .itemStatus .refundCenter{
+    margin-left: .2rem;
+  }
+  .itemStatus .refundCenter .top{
+    font-size: .4rem;
+  }
+  .itemStatus .refundCenter .bottom{
+    color: rgb(153,153,153);
+    margin-top: .1rem;
+  }
+  .itemStatus .right{
+    margin-left: .6rem;
+  }
+  .itemStatus .right img{
+    width: .6rem;
+    margin-top: .3rem;
+    margin-right: .1rem;
+  }
+  /*买家商品的状态--结束*/
   /*商品的详情--开始*/
   .content{
     margin-top: .2rem;
@@ -341,7 +398,7 @@
     top: 2rem;
     right: .3rem;
   }
-  .bottom{
+  .wrapWords .bottom{
     height: .8rem;
     line-height: .8rem;
     background-color: #fff;
