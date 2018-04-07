@@ -1,7 +1,7 @@
 <template lang="pug">
   .expressBox
-    self-goods.goodsCard( @tab="changeType")
-    .disableGoodsBox
+    self-goods.goodsCard( @tab="changeType", :goodsList="goodsList")
+    .disableGoodsBox(v-if="disableGoodsList.length>0")
       .title
         span 失效商品
         .delete 清空失效商品
@@ -17,12 +17,14 @@
       return {
         flag: false,
         isdefault: false,
-        nowTab: 1
+        nowTab: 1,
+        goodsList: [],
+        disableGoodsList: []
       }
     },
-    headers:{'X-Requested-with':'XMLHttpRequest'},
     components:{selfGoods, disableGoods},
     mounted () {
+      this.getData()
     },
     methods: {
       tabChange (num) {
@@ -33,11 +35,51 @@
           this.$router.push('shopping/giveSelf')
         }
       },
-      changeType () {
-        this.flag = true
-        setTimeout(()=>{
-          this.flag = false
-        },1000)
+      getData () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/carryShoppingCartList',
+          params: {},
+        }).then(function (response) {
+          response.data.data.carryList.forEach((now)=>{
+            now.checked = false
+            now.editClose = true
+          })
+          self.goodsList = response.data.data.carryList
+          self.disableGoods = response.data.data.failureList
+        })
+      },
+      changeType (data,fun) {
+        this.$confirm({
+          title: '更换配送方式',
+          message: '确定要更换为快递配送吗？',
+          confirm: () => {
+            // 执行删除动画
+            fun()
+            // 执行删除请求
+            let self = this
+            self.$ajax({
+              method: 'post',
+              url: self.$apiApp + 'shoppingCart/shoppingCartDeliveryWays',
+              params: {
+                scId: data.sc_id,
+                gskuId: data.gsku_id,
+                provinceNo: self.$store.state.location.province.id,
+                cityNo: self.$store.state.location.city.id,
+                deliveryWays: 167
+              },
+            }).then(function (response) {
+              let goodsNum = self.$store.state.shoppingCartGoodsNum
+              goodsNum.carryNum-=1
+              goodsNum.sendNum+=1
+              self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+            })
+          },
+          noConfirm: () => {
+
+          }
+        })
       }
     }
   }

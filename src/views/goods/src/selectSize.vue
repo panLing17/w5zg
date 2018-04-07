@@ -23,8 +23,8 @@
           span 数量
           w-counter(v-model="content", :min="1")
     .buttons(v-if="show")
-      .left 加入购物车
-      .right(@click="buy", v-if="onlySelectSpec") 确认选择
+      .left(@click="buy") 加入购物车
+      .right(@click="close", v-if="onlySelectSpec") 确认选择
       .right(@click="buy", v-else) 立即购买
 </template>
 

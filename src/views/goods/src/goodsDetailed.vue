@@ -49,7 +49,7 @@
       p 推荐
     w-recommend(:listData="recommendGoods", background="white")
     .buttons
-      .left 加入购物车
+      .left(@click="shoppingCartAdd") 加入购物车
       .right(@click="buy") 立即购买
     select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable")
     dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
@@ -73,6 +73,7 @@
         disTypeName: '快递配送',
         selectCity: false,
         selectStoreFlag: false,
+        shoppingCartFlag: false,
         banner: [],
         goodsData: {},
         spec: [],
@@ -276,8 +277,38 @@
             }
           })
         }
+        if (this.shoppingCartFlag) {
+          // 如果操作来自添加购物车按钮
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods+ 'goods/shoppingCart/add',
+            params: {
+              gskuId: self.$store.state.skuId,
+              deliveryWays: 167,
+              province: self.$store.state.location.province.id,
+              city: self.$store.state.location.city.id,
+              storeId: '',
+              goodsNum: self.content
+            }
+          }).then(function (response) {
+            self.$message.success('添加购物车成功')
+          })
+        }
+      },
+      shoppingCartAdd () {
+        this.ofBuy = false
+        this.shoppingCartFlag = true
+        // 并且，告诉组件，此操作有后续操作
+        this.onlySelectSpec = false
+        this.selectFlag = true
+        this.onTouchMove(true)
+        document.body.style.overflow='hidden'
+        document.body.style.height="100vh"
       },
       buy () {
+        // 关闭购物车flag
+        this.shoppingCartFlag = false
         // 此生明，这次选择地址等一系列操作来自购买按钮
         this.ofBuy = true
         // 并且，告诉组件，此操作有后续操作
@@ -301,6 +332,8 @@
         // 并且，告诉组件，此操作仅仅为了选择规格
         this.onlySelectSpec = true
         this.selectFlag = true
+        // 重置购物车flag
+        this.shoppingCartFlag = false
       },
       // 移除禁止触摸事件,并将购买商品数量与价格赋值
       removeTouchDisable (data) {

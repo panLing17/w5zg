@@ -22,6 +22,11 @@ const state = {
   },
   // skuId(规格ID)
   skuId: '',
+  // 购物车商品数量
+  shoppingCartGoodsNum: {
+    carryNum:0,
+    sendNum:0
+  },
   // 推荐商品数据
   recommendGoods: [],
   // 收货地址
@@ -42,6 +47,14 @@ const mutations = {
   },
   getSkuId (state, data) {
     state.skuId = data
+  },
+  shoppingCartGoodsNumChange (state, data) {
+    if (data.hasOwnProperty('carryNum')) {
+      state.shoppingCartGoodsNum.carryNum = data.carryNum
+    }
+    if (data.hasOwnProperty('sendNum')) {
+      state.shoppingCartGoodsNum.sendNum = data.sendNum
+    }
   },
   giveGoodsAddressChange (state, data) {
     state.giveGoodsAddress = data
