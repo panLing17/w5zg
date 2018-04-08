@@ -1,8 +1,9 @@
 <template lang="pug">
   .loading
-    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut", :duration="{ enter: 500, leave: 300 }")
+    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut", :duration="{ enter: 50, leave: 300 }")
       .bg(v-if="show", :style="{height:height}")
         .box
+          img(src="../../assets/img/loading@2x.png")
 </template>
 
 <script>
@@ -40,12 +41,15 @@
     align-items: center;
   }
   .box{
-    height: 50px;
-    width: 50px;
-    background: red;
+    height: 80px;
+    width: 80px;
     transform: rotate(0deg);
     animation: f 1.5s infinite;
     animation-direction: revert;
+  }
+  .box img{
+    width: 100%;
+    height: 100%;
   }
   @keyframes f {
     from {transform: rotate(0deg)}

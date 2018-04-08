@@ -14,19 +14,20 @@
           p 快递配送
           span(class="animated", :class="{swing:flag}") {{shoppingCartGoodsNum.sendNum}}
       p(:style="{left:nowTab*50+'%'}")
-    transition(name="fade", mode="out-in")
-      router-view
-    .title
-      .line
-      p 推荐
-    w-recommend(:listData="recommendGoods", background="white")
-    .settlement
-      .left
-        w-checkbox(v-model="isdefault")
-        p 全选
-      .right
-        .prive 合计：￥200.00
-        .button 结算(5)
+    .content(v-loading="loading")
+      transition(name="fade", mode="out-in")
+        router-view(style="min-height:calc(100vh - 6rem)")
+      .title
+        .line
+        p 推荐
+      w-recommend(:listData="recommendGoods", background="white")
+      .settlement
+        .left
+          w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
+          p 全选
+        .right
+          .prive 合计：{{computedPrice | price-filter}}
+          .button 结算(5)
 </template>
 
 <script>
@@ -39,6 +40,7 @@
     data () {
       return {
         flag: false,
+        loading: true,
         isdefault: false,
         nowTab: 0,
         recommendGoods: [
@@ -57,9 +59,8 @@
         ]
       }
     },
-    headers:{'X-Requested-with':'XMLHttpRequest'},
     components:{goodsCard, disableGoods, citySelect},
-    computed: mapState(['shoppingCartGoodsNum']),
+    computed: mapState(['shoppingCartGoodsNum','computedPrice','shoppingCartAllChecked']),
     mounted () {
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0
@@ -68,6 +69,12 @@
       }
       // 获取商品数量
       this.getGoodsNum()
+      // loading加载
+      let s = 500  // 基础秒数
+      let math = Math.random() * 2000 // 随机秒数
+      setTimeout(()=>{
+        this.loading = false
+      },s+math)
     },
     methods: {
       getGoodsNum () {
@@ -82,6 +89,9 @@
       },
       tabChange (num) {
         this.nowTab = num
+        this.$store.commit('computedPriceChange', 0)
+        this.$store.commit('shoppingCartSelectedChange', [])
+        this.$store.commit('allCheckedChange', false)
         if (num === 1) {
           this.$router.push('/shoppingCart/express')
         } else {
@@ -93,6 +103,9 @@
         setTimeout(()=>{
           this.flag = false
         },1000)
+      },
+      allChecked (e) {
+        this.$store.commit('allCheckedChange',e)
       }
     }
   }
@@ -102,6 +115,7 @@
   .shoppingCartBox {
     background-color: rgb(242,242,242);
     padding-bottom: 3rem;
+    min-height: 100vh;
   }
   .slider {
     margin-left: 30%;
@@ -149,6 +163,10 @@
   }
   .tabChecked span{
     background-color: rgb(244,0,84) !important;
+  }
+  /* 内容区域 */
+  .content {
+    min-height: calc(100vh - 4rem);
   }
   /* 华丽的分割线 */
   .title{
