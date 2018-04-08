@@ -12,7 +12,7 @@
     carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
       div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
         img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
-    hot-button
+    hot-button(:list="hotButton")
     l-news.news(:newsData="news")
     .title
       .line
@@ -38,27 +38,9 @@
         loading: 0,
         date: 1,
         cityName:this.$route.query.routeParams,
-        activityGoods: [
-          {image: 'static/img/1.jpg'},
-          {image: 'static/img/2.jpg'},
-          {image: 'static/img/3.jpg'},
-          {image: 'static/img/4.jpg'},
-          {image: 'static/img/5.jpg'}
-        ],
-        recommendGoods: [
-          {
-            image: ''
-          },
-          {
-            image: ''
-          },
-          {
-            image: ''
-          },
-          {
-            image: ''
-          }
-        ],
+        activityGoods: [],
+        recommendGoods: [],
+        hotButton: [],
         loadingMoreFlag: false,
         page: 1,
         news: [],
@@ -99,7 +81,9 @@
       // 获取新闻
       this.getNews()
       // 获取活动
-      this.getCtivity ()
+      this.getCtivity()
+      // 获取分类
+      this.getHotButton()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -117,9 +101,20 @@
           params: {
             acCataType: 111
           },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           self.banner = response.data.data
+        })
+      },
+      // 获取分类
+      getHotButton () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/acTitleCategoryList',
+          params: {
+          },
+        }).then(function (response) {
+          self.hotButton = response.data.data
         })
       },
       // 获取新闻
@@ -133,7 +128,6 @@
             rows: 10,
             cataId: 1
           },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           self.news = response.data.data
         })
@@ -145,7 +139,6 @@
           method: 'get',
           url: self.$apiApp + 'index/AcActivityList',
           params: {},
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           self.activityGoods = response.data.data
         })
@@ -177,7 +170,6 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        setTimeout(function () {
 //          	axios.get("xxxxxx", {
 //					params: {
 //						num: pageNum, //页码
@@ -185,15 +177,18 @@
 //					}
 //				})
 //				.then(function(response)
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-//				})
-//				.catch(function(error) {
-//					errorCallback&&errorCallback()//失败回调
-//				});
-        },10)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
       },
       GetQueryString(url, name) {
         var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i')

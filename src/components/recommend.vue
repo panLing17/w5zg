@@ -1,11 +1,11 @@
 <template lang="pug">
   .bottomList
     ul.goodsList(:style="{background:background}")
-      li(v-for="item in listData" , @click="goGoods(item.goodsId)")
-        img(src="../assets/img/my_goods.png")
-        .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
-        .price ￥516.22
-        .bottom <span>江苏南京</span><span>2555人购买</span>
+      li(v-for="item in listData" , @click="goGoods(item.gspu_id)")
+        img(:src="item.gi_image_url | img-filter")
+        .text {{item.goods_name}}
+        .price {{item.price}}
+        .bottom <span>{{item.city}}</span><span>{{item.gi_salenum}}人购买</span>
 </template>
 
 <script>

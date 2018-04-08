@@ -9,10 +9,10 @@
       ul
         li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
           p 门店自提
-          span(class="animated", :class="{rubberBand:flag}") 1
+          span(class="animated", :class="{rubberBand:flag}") {{shoppingCartGoodsNum.carryNum}}
         li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
           p 快递配送
-          span(class="animated", :class="{swing:flag}") 1
+          span(class="animated", :class="{swing:flag}") {{shoppingCartGoodsNum.sendNum}}
       p(:style="{left:nowTab*50+'%'}")
     transition(name="fade", mode="out-in")
       router-view
@@ -33,6 +33,7 @@
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
+  import {mapState} from 'vuex'
   export default {
     name: 'home',
     data () {
@@ -58,14 +59,27 @@
     },
     headers:{'X-Requested-with':'XMLHttpRequest'},
     components:{goodsCard, disableGoods, citySelect},
+    computed: mapState(['shoppingCartGoodsNum']),
     mounted () {
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0
       } else {
         this.nowTab = 1
       }
+      // 获取商品数量
+      this.getGoodsNum()
     },
     methods: {
+      getGoodsNum () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/countCartNum',
+          params: {},
+        }).then(function (response) {
+          self.$store.commit('shoppingCartGoodsNumChange',response.data.data)
+        })
+      },
       tabChange (num) {
         this.nowTab = num
         if (num === 1) {

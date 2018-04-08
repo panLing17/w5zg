@@ -1,12 +1,12 @@
 <template lang="pug">
   .expressBox
-    goods-card.goodsCard(v-for="(i,index) in list", :key="index", @tab="changeType", :list="i.children")
-    .disableGoodsBox
+    goods-card.goodsCard(v-for="(i,index) in goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name")
+    .disableGoodsBox(v-if="disableGoods.length>0")
       .title
         span 失效商品
         .delete 清空失效商品
       disable-goods
-    city-select(:show='selectFlag', @close="selectClose", @submit="submit")
+    city-select(:show='selectFlag', :goodsList="nowGoodsDataList", @close="selectClose", @submit="submit")
 </template>
 
 <script>
@@ -22,27 +22,36 @@
         selectFlag: false,
         nowTab: 1,
         nowGoodsId: '',
-        list:[
-          {
-            children: [
-              {},
-              {}
-            ]
-          },
-          {
-            children: [
-              {},
-              {}
-            ]
-          }
-        ]
+        goodsList: [],
+        nowGoodsDataList:{},
+        disableGoods: []
       }
     },
-    headers:{'X-Requested-with':'XMLHttpRequest'},
     components:{goodsCard, disableGoods, citySelect},
     mounted () {
+      this.getData()
     },
     methods: {
+      getData () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+          params: {},
+        }).then(function (response) {
+          // 转为数组
+          let array = []
+          for (let i in response.data.data.send) {
+            response.data.data.send[i].shoppingCartVOList.forEach((now)=>{
+              now.checked = false
+              now.editClose = true
+            })
+            array.push(response.data.data.send[i])
+          }
+          self.goodsList = array
+          self.disableGoods = response.data.data.failure
+        })
+      },
       tabChange (num) {
         this.nowTab = num
         if (num === 1) {
@@ -51,9 +60,9 @@
           this.$router.push('shopping/giveSelf')
         }
       },
-      changeType (type,next,index) {
-        console.log(type)
-        // 显示城市选择
+      changeType (data,next,index) {
+        this.nowGoodsDataList = data
+        // 显示门店选择
         this.selectFlag = true
         this.deleteGoods = next
         this.flag = true
@@ -70,11 +79,32 @@
         this.selectFlag = false
       },
       // 确定选择城市
-      submit () {
+      submit (cityId,storeId) {
         // 关闭选择框
         this.selectFlag = false
-        // 执行删除动画
-        this.deleteGoods()
+        if (storeId !== '') {
+          // 执行删除动画
+          this.deleteGoods()
+          // 执行切换请求
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiApp + 'shoppingCart/shoppingCartDeliveryWays',
+            params: {
+              scId: self.nowGoodsDataList.sc_id,
+              gskuId: self.nowGoodsDataList.gsku_id,
+              provinceNo: self.$store.state.location.province.id,
+              cityNo: cityId,
+              deliveryWays: 168,
+              bsId: storeId
+            },
+          }).then(function (response) {
+            let goodsNum = self.$store.state.shoppingCartGoodsNum
+            goodsNum.carryNum+=1
+            goodsNum.sendNum-=1
+            self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          })
+        }
       }
     }
   }

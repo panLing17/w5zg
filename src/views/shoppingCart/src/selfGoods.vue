@@ -1,62 +1,62 @@
 <template lang="pug">
   transition( leave-active-class="animated rotateOutUpRight")
-    .goodsCardBox(v-if="list.length>0")
+    .goodsCardBox(v-if="goodsList.length>0")
       transition-group(tag="div", name="leftOut")
-        .goodsBox(v-for="(i,index) in list", :key="index")
+        .goodsBox(v-for="(i,index) in goodsList", :key="index")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
-            .main(v-if="flag", key="spec")
+            .main(v-if="i.editClose", key="spec")
               .checkbox
-                w-checkbox(v-model="isdefault")
+                w-checkbox(v-model="i.checked")
               img(src="../../../../static/img/1.jpg")
               .info
                 .text
-                  .name 法国PELLIOT秋冬产品充分一男女
+                  .name {{i.gi_name}}
                   .spec
-                    span 红色
-                    span L
+                    span(v-for="item in i.specVOList") {{item.gspec_value}}
                 .price
-                  span ￥596.00
+                  span {{i.now_price | price-filter}}
               .mainRight
-                img(src="../../../assets/img/edit@3x.png", @click="edit(false)")
-                p x1
+                img(src="../../../assets/img/edit@3x.png", @click="edit(false,index)")
+                p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
-                w-checkbox(v-model="isdefault")
+                w-checkbox(v-model="i.checked")
               img(src="../../../../static/img/1.jpg")
               .specChange
                 .specData
                   p 黑色,L
                   img(src="../../../assets/img/next@2x.png")
-                w-counter(v-model="content", :min="1", width="4rem")
-              .specOk(@click="edit(true)") 完成
+                w-counter(v-model="i.goods_num", :min="1", width="4rem")
+              .specOk(@click="edit(true,index)") 完成
           .bottom
-            .left(@click="changeType") <img src="../../../assets/img/switch@2x.png"/>门店自提
+            .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>门店自提
             .right
-              span 江苏省 南京市
+              span {{i.pro_Name}} {{i.city_name}}
               img
 </template>
 
 <script>
   export default {
     name: "goods-card",
+    props: {
+      goodsList: Array
+    },
     data () {
       return {
         flag: true,
-        isdefault: false,
-        list: [
-          {},
-          {},
-          {}
-        ]
+        isdefault: false
       }
     },
     methods: {
-      changeType () {
-        this.$emit('tab')
-        this.list.splice(0,1)
+      changeType (index,data) {
+        let fun = ()=>{
+          this.goodsList.splice(index,1)
+        }
+        this.$emit('tab',data,fun)
+
       },
-      edit (k) {
-        this.flag = k
+      edit (k,index) {
+        this.goodsList[index].editClose = k
       }
     }
   }

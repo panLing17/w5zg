@@ -6,14 +6,31 @@ const state = {
   userData: '',
   shoppingCount: 0,
   viewDirection: 'slide-fade',
-  locationId: {
-    provinceId: 330000,
-    cityId: 330300,
-    areaId: 330303
+  location: {
+    province:{
+      name: '江苏省',
+      id: 320000
+    },
+    city:{
+      name: '南京市',
+      id: 320100
+    },
+    area:{
+      name: '玄武区',
+      id: 320102
+    }
+  },
+  // skuId(规格ID)
+  skuId: '',
+  // 购物车商品数量
+  shoppingCartGoodsNum: {
+    carryNum:0,
+    sendNum:0
   },
   // 推荐商品数据
   recommendGoods: [],
-  giveGoodsAddress: [],
+  // 收货地址
+  giveGoodsAddress: {},
   nowLocation: [116.397428, 39.90923],
   // 数据中转（修改数据、查看详情等。用来带数据）
   transfer:[],
@@ -22,11 +39,22 @@ const mutations = {
   transferGive (state, data) {
     state.transfer = data
   },
-  getLocationId (state, data) {
-    state.locationId = data
+  getLocation (state, data) {
+    state.location = data
   },
   getRecommendGoods (state, data) {
-    state.recommendGoods =data
+    state.recommendGoods = data
+  },
+  getSkuId (state, data) {
+    state.skuId = data
+  },
+  shoppingCartGoodsNumChange (state, data) {
+    if (data.hasOwnProperty('carryNum')) {
+      state.shoppingCartGoodsNum.carryNum = data.carryNum
+    }
+    if (data.hasOwnProperty('sendNum')) {
+      state.shoppingCartGoodsNum.sendNum = data.sendNum
+    }
   },
   giveGoodsAddressChange (state, data) {
     state.giveGoodsAddress = data

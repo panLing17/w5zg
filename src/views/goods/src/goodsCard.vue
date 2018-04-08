@@ -1,67 +1,101 @@
 <template lang="pug">
-    .goodsCardBox
-      .title PELLIOT旗舰店
-      .main
-        img(src="../../../../static/img/1.jpg")
-        .info
-          .text
-            .name 法国PELLIOT秋冬产品充分一男女
-            .spec
-              span 红色
-              span L
-          .price
-            span ￥596.00
-            span X1
-      .bottom
-        .left 运费
-        .right
-          span 包邮
-          img
+  .goodsCardBox
+    .title {{data.storeName}}
+    .main
+      img(:src="data.photo | img-filter")
+      .info
+        .text
+          .name {{data.goodsName}}
+          .spec
+            span(v-for="item in data.spec") {{item}}
+        .price
+          span {{data.price | price-filter}}
+          span X{{data.number}}
+    .bottom(v-if="since")
+      .left 门店自提
+      .right
+        span {{data.storeLocation.pro.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
+        img(src="../../../assets/img/next@2x.png")
+    .bottom(v-else)
+      .left 运费
+      .right
+        span 包邮
+        img
 </template>
 
 <script>
-    export default {
-        name: "goods-card"
+  export default {
+    name: 'goods-card',
+    props: {
+      data: Object,
+      // 根据此判断是否是自提订单
+      since: Boolean
     }
+  }
 </script>
 
 <style scoped>
-  .goodsCardBox{
+  .goodsCardBox {
     background-color: white;
     padding: 0 .2rem;
   }
-  .title{
+
+  .title {
     font-weight: 600;
     height: .8rem;
     display: flex;
     align-items: center;
   }
-  .main{
+
+  .main {
     height: 2rem;
     display: flex;
   }
-  .main>img{
+
+  .main > img {
     width: 2rem;
     height: 2rem;
     border-radius: .2rem;
   }
-  .info{
+
+  .info {
     flex-grow: 1;
     padding-left: .3rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-  .price{
+
+  .price {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
-  .bottom{
+  .spec {
+    color: #999;
+  }
+  .spec span{
+    margin-right: .2rem;
+  }
+  .price span:first-child{
+    font-size: .4rem;
+    font-weight: 600;
+    color: rgb(246,0,87);
+  }
+  .bottom {
     margin-top: .3rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: .8rem;
     border-top: solid 1px #eee;
+  }
+  .bottom .right {
+    display: flex;
+    align-items: center;
+  }
+  .bottom .right img{
+    height: .4rem;
+    margin-left: .2rem;
   }
 </style>

@@ -11,10 +11,10 @@
         .content
           .left
             ul
-              li(v-for="(i,index) in 10", :class="{leftChecked:index===leftChecked}", @click="leftClick(index, i)") {{i}}
+              li(v-for="(i,index) in cityList", :class="{leftChecked:index===leftChecked}", @click="leftClick(index, i.city_no)") {{i.city_name}}
           .right
             ul
-              li(v-for="(i,index) in 3", :class="{rightChecked:index===rightChecked}", @click="rightClick(index, i)") {{i}}
+              li(v-for="(i,index) in storeList", :class="{rightChecked:index===rightChecked}", @click="rightClick(index, i.bs_id)") {{i.bs_name}}
 </template>
 
 <script>
@@ -22,12 +22,14 @@
     name: "city-select",
     data () {
       return {
+        cityList: [],
+        storeList: [],
         // 当前选中的左半部分标签
-        leftChecked: 1,
+        leftChecked: -1,
         // 左半部分选中的id
         leftId: '',
         // 当前选中的右半部分标签
-        rightChecked: 1,
+        rightChecked: -1,
         // 右半部分选中的id
         rightId: '',
       }
@@ -36,22 +38,57 @@
       show: {
         type: Boolean,
         default: false
-      }
+      },
+      goodsList: Object
+    },
+    mounted () {
+      this.getCity()
     },
     methods:{
       close () {
+        this.leftChecked = -1
+        this.storeList = []
         this.$emit('close')
       },
       submit () {
-        this.$emit('submit')
+        this.$emit('submit', this.leftId,this.rightId)
       },
       leftClick (index, id) {
         this.leftChecked = index
         this.leftId = id
+        this.storeList = []
+        this.getStore(id)
       },
       rightClick (index, id) {
         this.rightChecked = index
         this.rightId = id
+      },
+      getCity () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/cityProvince',
+          params: {
+            pro_no: self.$store.state.location.province.id
+          },
+        }).then(function (response) {
+          self.cityList = response.data.data
+        })
+      },
+      getStore (cityId) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/store',
+          params: {
+            gskuId: self.goodsList.gsku_id,
+            gspuId: self.goodsList.gspu_id,
+            provinceNo: self.$store.state.location.province.id ,
+            cityNo: cityId
+          },
+        }).then(function (response) {
+          self.storeList = response.data.data.storeList
+        })
       }
     }
   }

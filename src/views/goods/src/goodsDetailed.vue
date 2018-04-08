@@ -6,18 +6,18 @@
           img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
         .topCenter(slot="center") 商品
         .topRight(slot="right")
-      carousel(:indicators="true", :auto="5000", v-if="list.length > 0", :responsive="0", style="height:8rem")
-        div(v-for="tag in list", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
-          img(:src="tag.image" , style="width:100%;height:8rem")
+      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
+        div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
+          img(:src="tag.gi_img_url" , style="width:100%;height:8rem")
     .goodsInfo
-      .goodsName  阿迪达斯死地打啊那地方240-555￥硕大的运动服老人服大妈动服老人服大妈
-      .price ￥566.00 <span>专柜价</span>
-      .salePrice 零售价：￥500
+      .goodsName  {{goodsData.gi_name}}
+      .price {{goodsData.counter_interval}} <span>专柜价</span>
+      .salePrice 零售价：{{goodsData.retail_interval}}
     .numberBox
       ul.number
-        li 邮费8
-        li 邮费8
-        li 邮费8
+        li 邮费{{goodsData.goi_freight}}
+        li 库存{{goodsData.storage_num}}
+        li 已售{{goodsData.gi_salenum}}
     ul.card
       li
         .label <span class="wang">网金卡</span>
@@ -25,20 +25,20 @@
       li
         .label <span class="tong">通用券</span>
         .text 222222222222222222222222222
-    .size
+    .size(@click="onlySelectSpecFun")
       .left 规格
       img(src="../../../assets/img/right.png").right
     .distribution(@click="distribution")
       .top
         .left 配送方式
         .right
-          span 快速配送
+          span {{disTypeName}}
           span(style="color: rgb(246,0,88);") 有货<img src="../../../assets/img/right.png">
       .bottom
         .location
           img(src="../../../assets/img/citySearch.png")
-          span 南京市
-          span 玄武区
+          span {{location.province.name}}
+          span {{location.city.name}}
         .hour 下单完成后将在xx小时内发货
     .title
       .line
@@ -49,12 +49,12 @@
       p 推荐
     w-recommend(:listData="recommendGoods", background="white")
     .buttons
-      .left 加入购物车
+      .left(@click="shoppingCartAdd") 加入购物车
       .right(@click="buy") 立即购买
-    select-size(:show="selectFlag", :photos="list", @close="selectClose", @buy="removeTouchDisable")
+    select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable")
     dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
-    store-select(:show="selectStoreFlag", @close="closeSelectStore")
-    city-select(:show="selectCity", @close="closeSelectCity")
+    store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
+    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
 </template>
 
 <script>
@@ -62,21 +62,30 @@
   import disType from './disType'
   import citySelect from './citySelect'
   import storeSelect from './storeSelect'
+  import {mapState} from 'vuex'
   export default {
     name: "goods-detailed",
     data () {
       return {
         selectFlag: false,
+        selectSizeShow: false,
         disTypeFlag: false,
+        disTypeName: '快递配送',
         selectCity: false,
         selectStoreFlag: false,
-        list: [
-          {image: 'static/img/1.jpg'},
-          {image: 'static/img/2.jpg'},
-          {image: 'static/img/3.jpg'},
-          {image: 'static/img/4.jpg'},
-          {image: 'static/img/5.jpg'}
-        ],
+        shoppingCartFlag: false,
+        banner: [],
+        goodsData: {},
+        spec: [],
+        // 购买商品数量
+        content: 1,
+        // 商品价格
+        price: 0,
+        // 门店ID
+        storeId: '',
+        // 根据此属性判断，选择地址等一系列是否来自立即购买按钮
+        ofBuy: false,
+        onlySelectSpec: true,
         recommendGoods: [
           {
             image: ''
@@ -93,11 +102,217 @@
         ]
       }
     },
+    computed:mapState(['location']),
     components: {selectSize,citySelect,disType,storeSelect},
     mounted () {
+      this.getGoodsDetailed()
+      this.getBanner()
+      this.getSpec()
     },
     methods:{
+      // 获取商品详情
+      getGoodsDetailed () {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/detail',
+          params: {
+            gspuId: self.$route.query.id
+          }
+        }).then(function (response) {
+          self.goodsData = response.data.data
+        })
+      },
+      // 获取banner
+      getBanner () {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/img',
+          params: {
+            gspuId: self.$route.query.id
+          }
+        }).then(function (response) {
+          self.banner = response.data.data
+        })
+      },
+      // 获取规格
+      getSpec () {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/spec',
+          params: {
+            gspuId: self.$route.query.id
+          }
+        }).then(function (response) {
+          response.data.data.forEach((now,index)=>{
+            now.valueIndex = 0
+          })
+          self.spec = response.data.data
+          // 渲染选择规格组件
+          self.selectSizeShow = true
+        })
+      },
+      // 门店选择变化后
+      storeChange (data) {
+        console.log(data)
+        let locationData = {
+          province:{
+            name: data.pro.name,
+            id: data.pro.number
+          },
+          city:{
+            name: data.city.name,
+            id: data.city.number
+          },
+          store:{
+            name: data.store.name,
+            id: data.store.id
+          }
+        }
+        this.storeId = data.store.id
+        this.$store.commit('getLocation',locationData)
+        this.selectStoreFlag = false
+        // 如果操作来自购买按钮
+        if (this.ofBuy) {
+          /* let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiTransaction + 'order/submitNowCarryOrder',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (response) {
+            response.data.data.forEach((now,index)=>{
+              now.valueIndex = 0
+            })
+            self.spec = response.data.data
+          }) */
+          // 规格
+          let spec = []
+          this.spec.forEach((now)=>{
+            spec.push(now.specValue[now.valueIndex])
+          })
+          // 订单页需要展示及用到的数据
+          let orderData = [{
+            storeName: data.store.name,
+            storeLocation: data,
+            photo: this.banner[0].gi_img_url,
+            spec: spec,
+            number: this.content,
+            goodsName: this.goodsData.gi_name,
+            price: this.price
+          }]
+          // 传入中转
+          this.$store.commit('transferGive', orderData)
+          this.$router.push({path: '/confirmOrder', query:{since:true,type:'direct'}})
+        }
+      },
+      // 选择城市变化后
+      cityChange (data) {
+        let locationData = {
+          province:{
+            name: data.pro.name,
+            id: data.pro.number
+          },
+          city:{
+            name: data.city.name,
+            id: data.city.number
+          },
+          area:{
+            name: data.area.name,
+            id:  data.area.number
+          }
+        }
+        this.$store.commit('getLocation',locationData)
+        this.selectCity = false
+        // 重新渲染选择规格组件，触发库存等数据的请求
+        this.selectSizeShow = false
+        setTimeout(()=>{
+          this.selectSizeShow = true
+        },50)
+        // 如果操作来自购买按钮
+        if (this.ofBuy) {
+          // 规格
+          let spec = []
+          this.spec.forEach((now)=>{
+            spec.push(now.specValue[now.valueIndex])
+          })
+          // 订单页需要展示及用到的数据
+          let orderData = [{
+            storeName: 'xx旗舰店',
+            storeLocation: data,
+            photo: this.banner[0].gi_img_url,
+            spec: spec,
+            number: this.content,
+            goodsName: this.goodsData.gi_name,
+            price: this.price
+          }]
+          // 发送请求判断库存
+          let specData = {
+            'cityId': this.$store.state.location.city.id,
+            'gspu_id': this.$route.query.id,
+            'specList': [
+            ]
+          }
+          this.spec.forEach((now)=>{
+            specData.specList.push({
+              'gspec_name': now.specName,
+              'gspec_value': now.specValue[now.valueIndex]
+            })
+          })
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/sku/detail',
+            data: specData
+          }).then(function (response) {
+            if (response.data.data.storage_num>0) {
+              // 传入中转
+              self.$store.commit('transferGive', orderData)
+              self.$router.push({path: '/confirmOrder', query:{since:false,type:'direct'}})
+            } else {
+              self.$message.error('库存不足')
+            }
+          })
+        }
+        if (this.shoppingCartFlag) {
+          // 如果操作来自添加购物车按钮
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods+ 'goods/shoppingCart/add',
+            params: {
+              gskuId: self.$store.state.skuId,
+              deliveryWays: 167,
+              province: self.$store.state.location.province.id,
+              city: self.$store.state.location.city.id,
+              storeId: '',
+              goodsNum: self.content
+            }
+          }).then(function (response) {
+            self.$message.success('添加购物车成功')
+          })
+        }
+      },
+      shoppingCartAdd () {
+        this.ofBuy = false
+        this.shoppingCartFlag = true
+        // 并且，告诉组件，此操作有后续操作
+        this.onlySelectSpec = false
+        this.selectFlag = true
+        this.onTouchMove(true)
+        document.body.style.overflow='hidden'
+        document.body.style.height="100vh"
+      },
       buy () {
+        // 关闭购物车flag
+        this.shoppingCartFlag = false
+        // 此生明，这次选择地址等一系列操作来自购买按钮
+        this.ofBuy = true
+        // 并且，告诉组件，此操作有后续操作
+        this.onlySelectSpec = false
         this.selectFlag = true
         this.onTouchMove(true)
         document.body.style.overflow='hidden'
@@ -109,10 +324,25 @@
         document.body.style.overflow='auto'
       },
       distribution () {
+        // 此生明，这次选择地址等一系列操作《《不不不不》》来自购买按钮
+        this.ofBuy = false
         this.disTypeFlag = true
       },
-      // 移除禁止触摸事件
-      removeTouchDisable () {
+      onlySelectSpecFun () {
+        // 并且，告诉组件，此操作仅仅为了选择规格
+        this.onlySelectSpec = true
+        this.selectFlag = true
+        // 重置购物车flag
+        this.shoppingCartFlag = false
+      },
+      // 移除禁止触摸事件,并将购买商品数量与价格赋值
+      removeTouchDisable (data) {
+        this.price = data.price
+        this.content = data.content
+        // 打开类型选择
+        this.disTypeFlag = true
+        // 关闭规格选择
+        this.selectFlag = false
         this.onTouchMove(false)
         document.body.style.overflow='auto'
       },
@@ -133,8 +363,10 @@
         this.disTypeClose()
         if (data === 1) {
           this.selectCity = true
+          this.disTypeName = '快递配送'
         } else {
           this.selectStoreFlag = true
+          this.disTypeName = '门店自提'
         }
       },
       onTouchMove(inFlag) {
