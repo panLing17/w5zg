@@ -27,6 +27,12 @@ const state = {
     carryNum:0,
     sendNum:0
   },
+  // 购物车全选
+  shoppingCartAllChecked: false,
+  // 购物车已选商品
+  shoppingCartSelected: [],
+  // 结算价格
+  computedPrice: 0,
   // 推荐商品数据
   recommendGoods: [],
   // 收货地址
@@ -55,6 +61,18 @@ const mutations = {
     if (data.hasOwnProperty('sendNum')) {
       state.shoppingCartGoodsNum.sendNum = data.sendNum
     }
+  },
+  // 全选变化
+  allCheckedChange (state, data) {
+    state.shoppingCartAllChecked = data
+  },
+  // 结算价格变化
+  computedPriceChange (state, data) {
+    state.computedPrice = data
+  },
+  // 选中商品变化
+  shoppingCartSelectedChange (state, data) {
+    state.shoppingCartSelected = data
   },
   giveGoodsAddressChange (state, data) {
     state.giveGoodsAddress = data

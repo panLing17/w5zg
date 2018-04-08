@@ -156,7 +156,6 @@
       },
       // 门店选择变化后
       storeChange (data) {
-        console.log(data)
         let locationData = {
           province:{
             name: data.pro.name,
@@ -207,6 +206,24 @@
           // 传入中转
           this.$store.commit('transferGive', orderData)
           this.$router.push({path: '/confirmOrder', query:{since:true,type:'direct'}})
+        }
+        if (this.shoppingCartFlag) {
+          // 如果操作来自添加购物车按钮
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods+ 'goods/shoppingCart/add',
+            params: {
+              gskuId: self.$store.state.skuId,
+              deliveryWays: 168,
+              province: self.$store.state.location.province.id,
+              city: self.$store.state.location.city.id,
+              storeId: self.storeId,
+              goodsNum: self.content
+            }
+          }).then(function (response) {
+            self.$message.success('添加购物车成功')
+          })
         }
       },
       // 选择城市变化后

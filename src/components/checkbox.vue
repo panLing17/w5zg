@@ -19,12 +19,11 @@
       change () {
         if (!this.disabled) {
           this.$emit('cMsg', !this.msg)
-          this.$emit('change')
+          this.$emit('change',!this.msg)
         }
-        this.$emit('change', !this.msg)
       },
       update () {
-        
+
       }
     }
   }
