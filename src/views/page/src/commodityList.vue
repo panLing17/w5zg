@@ -65,7 +65,12 @@
         change1: false,
         change2: false,
         recommendGoods: [],
-        style: false
+        style: false,
+        brandId: "",
+        minPrice: "",
+        maxPrice: "",
+        pickUps: "",
+        checkFlag:false
       }
     },
     mounted(){
@@ -116,12 +121,23 @@
       },
 
       ievent(data){
+        console.log(data);
         var mask = document.getElementsByClassName("mask")[0];
         console.log(data.flag);
         if (data.flag == true) {
           mask.style.left = "100%";
           mask.style.transition = "left opacity .2s";
         }
+        if (data.pickUps == "可自提") {
+          this.pickUps = 1;
+        }
+        if (data.pickUps == "不可自提") {
+          this.pickUps = 2;
+        }
+        this.brandId = data.brandId;
+        this.maxPrice = data.maxPrice;
+        this.minPrice = data.minPrice;
+        this.checkFlag = true;
       },
 
       showSon(data){
@@ -226,19 +242,93 @@
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         let self = this;
- 
+
+        //无关键字时
         self.$ajax({
-          method:"post",
-          url:self.$apiTest + "goodsSearch/spus",
-          params: {
-            page: pageNum, //页码
-            rows: pageSize //每页长度
-          }
-       })
-       .then(function(response) {
-          console.log(response.data.data);
-          successCallback&&successCallback(response.data.data);//成功回调
-       })
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params: {
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              params:{}
+            }
+         })
+         .then(function(response) {
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+         })
+        //综合排序
+        if (self.change1 == true) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params: {
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:1,
+              sortType:1
+            }
+         })
+         .then(function(response) {
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+         })
+        }
+
+        //销量排序
+        if (self.change2 == true) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params: {
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:2,
+              sortType:1
+            }
+         })
+         .then(function(response) {
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+         })
+        }
+        //价格排序 倒序
+        if (self.checked == true) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params:{
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:3,
+              sortType:1
+            }
+          }).then(function(response){
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+          })
+        }
+        //价格排序 正序
+        if (self.check == false) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params:{
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:3,
+              sortType:2
+            }
+          }).then(function(response){
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+          })
+        }
+
+        //筛选选择完后
+        if (self.checkFlag) {
+          
+        }
 //        .catch(function(error) {
 //          errorCallback&&errorCallback()//失败回调
 //        });
