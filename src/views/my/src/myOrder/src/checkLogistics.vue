@@ -19,7 +19,7 @@
       .address 
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
-    .logisticsMsg
+    .logisticsMsg(:class="fadeInUp")
       ul
         li(v-for="(item,index) in states")
           .time

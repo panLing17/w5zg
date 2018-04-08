@@ -93,7 +93,7 @@
   .paymentPassword ul.wrap li.left,
   .paymentPattern ul.wrap li.left,
   .cellPhoneNum ul.wrap li.left{
-    font-size: .45rem;
+    font-size: .4rem;
   }
   .loginPassword ul.wrap li.right img,
   .paymentPassword ul.wrap li.right img,
@@ -109,7 +109,7 @@
   .paymentPattern ul.wrap li.right span.bind,
   .cellPhoneNum ul.wrap li.right span.bind{
     display: inline-block;
-    font-size: .4rem;
+    font-size: .35rem;
     color: rgb(153,153,153);
   }
   /*微信,QQ,支付宝,微博共同样式--结束*/

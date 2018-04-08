@@ -5,7 +5,7 @@
         img(src="../../../assets/img/page三角0.png")
         span.city {{cityName}}
       .topCenter(slot="center")
-        searchInput(placeholder="请输入商品名称")
+        searchInput(placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
         img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png")
@@ -14,16 +14,15 @@
         ul
           li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index)") {{item}}
       .right(:class="{styles:flag}")
-        ul(v-for="(item,index) in productList" v-show="index == num").tabs
-          li(v-for="items in item.kind").tabsList
-            .title(@click="$router.push('/page/commodityList')")
-              span.point(v-show="wordsShow")
-              span.letter {{items.title}}
+        ul(v-for="(item,index) in productList").tabs
+          li.tabsList
+            .title
+              span.point
+              span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="list in items.goods").wrapImg
-                img(:src="list.img")
-                .words(v-show="wordsShow") {{list.words}}
-    button(@click="request()")
+              li(v-for="items in item.childList" @click="$router.push('/page/commodityList')").wrapImg
+                img(:src="items.gc_url")
+                .words {{items.gc_keywords}}
 </template>
 
 <script>
@@ -45,189 +44,11 @@
         wordsShow:true,
         num:0,
         cityName:this.$route.query.routeParams,
-        pageName:["运动","男装","女装","鞋子","箱包","品牌"],
-        productList:[
-          {
-            kind:[
-              {
-                title:"运动服",
-                goods:[
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"}
-                ]
-              },
-              {
-                title:"运动男装",
-                goods:[
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"}
-                ]
-              }
-            ]
-          },
-          {
-            kind:[
-              {
-                title:"男装外衣",
-                goods:[
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"}
-                ]
-              },
-              {
-                title:"男装上衣",
-                goods:[
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"}
-                ]
-              }
-            ]
-          },
-          {
-            kind:[
-              {
-                title:"女装外衣",
-                goods:[
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"}
-                ]
-              },
-              {
-                title:"女装上衣",
-                goods:[
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"}
-                ]
-              }
-            ]
-          },
-          {
-            kind:[
-              {
-                title:"跑步鞋",
-                goods:[
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"},
-                  {img:jacket,words:"休闲上衣"}
-                ]
-              },
-              {
-                title:"篮球鞋",
-                goods:[
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"}
-                ]
-              }
-            ]
-          },
-          {
-            kind:[
-              {
-                title:"双肩包",
-                goods:[
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"},
-                  {img:downCoat,words:"休闲上衣"}
-                ]
-              },
-              {
-                title:"单肩包",
-                goods:[
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"},
-                  {img:coat,words:"休闲上衣"}
-                ]
-              }
-            ]
-          },
-          {
-            kind:[
-              {
-                title:"推荐品牌",
-                goods:[
-                  {img:logo1,words:"休闲上衣"},
-                  {img:logo2,words:"休闲上衣"},
-                  {img:logo3,words:"休闲上衣"},
-                  {img:logo4,words:"休闲上衣"},
-                  {img:logo5,words:"休闲上衣"},
-                  {img:logo1,words:"休闲上衣"},
-                  {img:logo2,words:"休闲上衣"},
-                  {img:logo3,words:"休闲上衣"},
-                  {img:logo4,words:"休闲上衣"},
-                  {img:logo5,words:"休闲上衣"},
-                  {img:logo1,words:"休闲上衣"}
-                ]
-              },
-              {
-                title:"服饰内衣",
-                goods:[
-                  {img:logo3,words:"休闲上衣"},
-                  {img:logo4,words:"休闲上衣"},
-                  {img:logo5,words:"休闲上衣"},
-                  {img:logo1,words:"休闲上衣"},
-                  {img:logo2,words:"休闲上衣"},
-                  {img:logo3,words:"休闲上衣"},
-                  {img:logo4,words:"休闲上衣"},
-                  {img:logo5,words:"休闲上衣"},
-                  {img:logo1,words:"休闲上衣"},
-                  {img:logo2,words:"休闲上衣"},
-                  {img:logo3,words:"休闲上衣"}
-                ]
-              }
-            ]
-          }
-        ]
+        pageName:[],
+        productList:[]
       }
     },
     mounted(){
-      window.onscroll = function() {};
 
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
@@ -239,6 +60,11 @@
       if (city.innerText.length == 4) {
         city.style.fontSize = .4 + "rem";
       }
+
+      //一级分类
+      this.request();
+      //第一个二级分类
+      this.one();
     },
     methods:{
       goToCitySearch:function(){
@@ -250,28 +76,58 @@
         });
       },
 
+      //第一个二级分类
+      one(){
+        let self =this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsClass/class/firstId",
+          params:{firstId:1}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.productList = res.data.data;
+          console.log(self.productList);
+        })
+      },
+
+
       tab(item,index){
         console.log(item);
-        if (item == "品牌") {
-          this.flag = true;
-          this.wordsShow = false;
-        }else{
-          this.flag = false;
-          this.wordsShow = true;
-        }
+        console.log(index);
+        // if (item == "品牌") {
+        //   this.flag = true;
+        //   this.wordsShow = false;
+        // }else{
+        //   this.flag = false;
+        //   this.wordsShow = true;
+        // }
         this.num = index;
-        document.documentElement.scrollTop = 0;
+
+        let self =this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsClass/class/firstId",
+          params:{firstId:parseInt(index)+1}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.productList = res.data.data;
+          console.log(self.productList);
+        })
       },
 
       request(){
         let self = this;
         console.log(self);
-        this.$ajax({
+        self.$ajax({
           method:"post",
-          url:this.$apiApp + "goods/brand/all",
-          params:{}
+          url:this.$apiTest + "goodsClass/class/hierarchy",
+          params:{hierarchy:1}
         }).then(function(res){
           console.log(res.data.data);
+          for(var i in res.data.data){
+            console.log(res.data.data[i]);
+            self.pageName.push(res.data.data[i].gc_name);
+          }
         });
       }
     }
@@ -351,19 +207,19 @@
   /*顶部搜索--结束*/
   /*中间内容部分左边--开始*/
   .content{
-    display: flex;
-    height: inherit;
-    position: relative;
+    height: 100vh;
     padding-bottom: 2rem;
   }
   .content .left{
     width: 21%;
-    height: 100%;
-    position: fixed;
+    /*height: 100%;*/
+    /*position: absolute;
     top: 1.3rem;
     left: 0;
-    bottom: 0;
+    bottom: 0;*/
+    float: left;
     background-color: rgb(242,242,242);
+    overflow-y: scroll;
   }
   .content .left ul li{
     width: 100%;
@@ -379,12 +235,14 @@
   /*中间内容右边--开始*/
   .right{
     width: 79%;
-    height: inherit;
+    height: 100vh;
     background-color: #fff;
-    position: absolute;
+    /*position: absolute;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: 0;*/
+    float: right;
+    overflow-y: scroll;
   }
   .right ul.tabs{
     padding-top: .45rem;
@@ -404,7 +262,6 @@
   }
   .right ul.tabs ul.listOfGoods{
     display: flex;
-    justify-content: space-between;
     flex-wrap: wrap;
     margin-top: .5rem;
     padding: 0 .3rem;
@@ -412,6 +269,8 @@
   .right ul.tabs ul.listOfGoods li{
     width: 1.9rem;
     margin-bottom: .4rem;
+    margin-left: .3rem;
+    margin-right: .2rem;
   }
   .right ul.tabs ul.listOfGoods li img{
     width: 1.9rem;
@@ -421,11 +280,4 @@
     color: rgb(153,153,153);
   }
   /*中间内容右边--结束*/
-  button{
-    width: 1rem;
-    height: 1rem;
-    position: absolute;
-    left: .2rem;
-    top: 12rem;
-  }
 </style>

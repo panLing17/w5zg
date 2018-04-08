@@ -28,25 +28,36 @@
         li.right
           span.day 2018-03-08
           img(src="../../../assets/img/next@2x.png")
-    .select(v-show="shows")
-      ul
-        li.first(@click="type($event)") 
-        li.second(@click="type($event)") 
-        li.cancel(@click="type($event)") 取消                       
+    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
+      .bg(v-if="show", @click="close")      
+    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")      
+      .select(v-show="shows")
+        ul
+          li.first(@click="type($event)") 
+          li.second(@click="type($event)") 
+          li.cancel(@click="type($event)") 取消
+    pdSelectBox
+    pdSelectItem
+    .oDiv(ref="refCon")                                  
 </template>
 
 <script>
-
+  import pdSelectBox from './selectBox.vue'
+  import pdSelectItem from './selectitem.vue'
   export default {
     name: "userinfo",
+    components:{pdSelectBox,pdSelectItem},
     data(){
       return{
+        show:'',
         shows:'',
         name:this.$route.query.routeParams
       }
     },
     created(){
-      
+      this.$nextTick(()=>{
+        console.log(this.$refs.refCon);
+      })
     },
     methods:{
       select:function(num){
@@ -111,6 +122,15 @@
 </script>
 
 <style scoped>
+  .bg {
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 101;
+  }
   .userinfo{
     width: 100%;
     min-height: 100vh;
@@ -195,14 +215,12 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.3);
-    /*display: none;*/
   }
   .select ul{
     width: 100%;
     height: 5rem;
     position: absolute;
     bottom: 1.6rem;
-    border: 1px solid #aaa;
     padding-top: .37rem;
   }
   .select ul li{

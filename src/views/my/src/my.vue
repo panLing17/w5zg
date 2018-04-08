@@ -34,16 +34,16 @@
         li
           img(src="../../../assets/img/my_more@2x.png")
       ul.bottom
-        li
+        li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
           img(src="../../../assets/img/my_obligation@2x.png")
           .character 待付款
-        li
+        li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
           img(src="../../../assets/img/my_readyfordelivery@2x.png")
           .character 待发货
-        li
+        li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
           img(src="../../../assets/img/my_waitforreceiving2@2x.png")
           .character 待收货
-        li
+        li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
           img(src="../../../assets/img/my_remaintobeevaluated2@2x.png")
           .character 待评价
         li(@click="$router.push('/my/refundAfterSale')")
@@ -362,12 +362,12 @@ import my_goods from '../../../assets/img/my_goods.png'
 	}
 	/*我的推荐--结束*/
 	/*商品大图展示--开始*/
-  .goodsList {
+  .goodsList{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
     padding: .2rem;
-    background: rgb(242,242,242);
+    background: #fff;
   }
   .goodsList li{
     border: solid 1px #ccc;

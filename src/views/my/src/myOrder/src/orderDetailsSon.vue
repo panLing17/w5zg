@@ -286,6 +286,7 @@
   }
   .pickUpGoodsCode strong{
     font-size: .4rem;
+    margin-left: 2rem;
   }
   /*提货码--结束*/
   /*买家商品的状态--开始*/

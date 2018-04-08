@@ -88,20 +88,29 @@
 
       },
       mounted(){
-        
+        this.jump();  
       },
       methods:{
+        //判断上一页点击的索引值
+        jump(){
+          console.log(this.$route.query.id);
+          if (this.$route.query.id == 1) {
+            this.num = 1;
+          }
+          if (this.$route.query.id == 2) {
+            this.num = 2;
+          }
+          if (this.$route.query.id == 3) {
+            this.num = 3;
+          }
+          if (this.$route.query.id == 4) {
+            this.num = 4;
+          }
+        },
+
+        //点击tab切换
         check(index){
           this.num = index;
-          for (var i = this.orderDetail.length - 1; i >= 0; i--) {
-            console.log(this.orderDetail[i]);
-            if (index == 1) {
-              if(this.orderDetail[i].status !== "待付款"){
-                continue;
-              }
-            }
-          }
-          
         }
       }
     }

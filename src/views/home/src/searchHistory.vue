@@ -13,8 +13,9 @@
         li.left 历史搜索
         li.right(@click="clear")
           img(src="../../../assets/img/searchHistory_clear.png") 
-      ul.cont(v-show="flag")
-        li(v-for="(item,index) in record" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}        
+      ul.cont(v-if="flag")
+        li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}
+      .empty(v-else="flag") 暂无搜索历史          
     .discover
       ul.top
         li.left 搜索发现
@@ -22,7 +23,7 @@
           img(src="../../../assets/img/searchHistory显示图层.png" v-show="show")
           img(src="../../../assets/img/searchHistory隐藏图层.png" v-show="hide") 
       ul.cont(v-show="show")
-        li(v-for="(item,index) in record" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
+        li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
         
           
 </template>
@@ -37,7 +38,8 @@
         flag:true,
         show:true,
         hide:false,
-        record:["nike 2018 最新款跑步鞋","波司登羽绒服","眼霜","波司登羽绒服","眼霜"]
+        record1:[],
+        record2:[]
       }
     },
     props: {
@@ -50,7 +52,39 @@
         default: 'placeholder'
       }
     },
+    mounted(){
+      //历史搜索
+      this.historys();
+      //搜索发现
+      this.searchDiscover();
+    },
     methods: {
+      historys(){
+        let self =this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsSearch/queryGoodsHistoryList",
+          params:{}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.record1 = res.data.data;
+          console.log(self.record1);
+        })
+      },
+      searchDiscover(){
+        let self = this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsSearch/searchDiscovery",
+          params:{}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.record2 = res.data.data;
+          console.log(self.record2);
+        })
+      },
+
+
       handFocus () {
         this.$emit('focus', this.msg)
       },
@@ -66,12 +100,14 @@
 
       change1: function(item,index){
         this.selected1 = index;
+        this.selected2 = null;
         var targetWords = document.getElementsByTagName("input")[0];
         targetWords.value = item;
       },
 
       change2: function(item,index){
         this.selected2 = index;
+        this.selected1 = null;
         var targetWords = document.getElementsByTagName("input")[0];
         targetWords.value = item;
       }
@@ -81,6 +117,7 @@
 
 <style scoped>
 .searchHistory{
+  width: 100%;
   position: absolute;
   z-index: 100;
   min-height: 100vh;
@@ -155,6 +192,11 @@
   margin-right: .2rem;
   margin-top: .45rem;
   color: rgb(51,51,51);
+}
+
+.empty{
+  width: 100%;
+  text-align: center;
 }
 /*历史搜索--结束*/
 
