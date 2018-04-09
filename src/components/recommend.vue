@@ -4,7 +4,7 @@
       li(v-for="item in listData" , @click="goGoods(item.gspu_id)")
         img(:src="item.gi_image_url | img-filter")
         .text {{item.goods_name}}
-        .price {{item.price}}
+        .price {{item.price | price-filter}}
         .bottom <span>{{item.city}}</span><span>{{item.gi_salenum}}人购买</span>
 </template>
 

@@ -60,7 +60,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:self.$apiTest + "goods/recommendBrand",
+              url:self.$apiClassify + "goods/recommendBrand",
               params:{}
             }).then(function(res){
               console.log(res.data.data);
@@ -111,7 +111,7 @@
           },
           hide(){
             let data = {
-              flag : true,
+              flag1 : true,
               brandId : this.brandNameId,
               minPrice : this.minVal,
               maxPrice : this.maxVal,

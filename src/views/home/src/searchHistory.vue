@@ -5,8 +5,8 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="$router.push('/home/searchResult')")
-          input(:type="type",placeholder="请输入商品名称" @focus="handFocus")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
+          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg")
       .topRight(slot="right" @click="$router.go(-1)") 取消
     .history
       ul.top
@@ -39,7 +39,8 @@
         show:true,
         hide:false,
         record1:[],
-        record2:[]
+        record2:[],
+        msg:""
       }
     },
     props: {
@@ -59,11 +60,16 @@
       this.searchDiscover();
     },
     methods: {
+      searchGoods(){
+        console.log(this.msg);
+        let self = this;
+        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true}});
+      },
       historys(){
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiTest + "goodsSearch/queryGoodsHistoryList",
+          url:self.$apiClassify + "goodsSearch/queryGoodsHistoryList",
           params:{}
         }).then(function(res){
           console.log(res.data.data);
@@ -75,7 +81,7 @@
         let self = this;
         self.$ajax({
           method:"post",
-          url:this.$apiTest + "goodsSearch/searchDiscovery",
+          url:this.$apiClassify + "goodsSearch/searchDiscovery",
           params:{}
         }).then(function(res){
           console.log(res.data.data);
@@ -101,15 +107,13 @@
       change1: function(item,index){
         this.selected1 = index;
         this.selected2 = null;
-        var targetWords = document.getElementsByTagName("input")[0];
-        targetWords.value = item;
+        this.msg = item;
       },
 
       change2: function(item,index){
         this.selected2 = index;
         this.selected1 = null;
-        var targetWords = document.getElementsByTagName("input")[0];
-        targetWords.value = item;
+        this.msg = item;
       }
     }
   }
