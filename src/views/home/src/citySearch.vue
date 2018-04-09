@@ -77,7 +77,7 @@
       goAnchor:function(selector) {
         console.log("1");
         var anchor = this.$el.querySelector(selector);
-        document.documentElement.scrollTop = anchor.offsetTop - 60;  
+        document.documentElement.scrollTop = anchor.offsetTop - 60; 
       },
 
       selects:function(e){
@@ -120,9 +120,9 @@
                 routeParams: str
              }    
           });
-        }
-          
+        }   
       }
+
     }
   }
 </script>

@@ -9,7 +9,7 @@
     .allBrandList
       ul(v-for="(key,value,oIndex) in letterBrandList")
         li.letters(:id="'anchorz-'+oIndex") {{value}}
-        li.letterBrands(v-for="(item,index) in key" v-if="index<=num" @click="selects($event)") {{item.bi_name}}
+        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event)") {{item.bi_name}}
         li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
     ul.letter
       li #
@@ -35,20 +35,41 @@
             support:["可自提","不可自提"],
             letter:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
             letterBrandList:{
-              "A":{list:["阿坝","阿拉善","阿里","安康","安庆","鞍山","安顺","安阳","澳门"],words:"查看更多"},
-              "B":{list:["北京","白银","保定","宝鸡","保山","包头","巴中","北海","蚌埠","本溪","毕节","滨州","百色","亳州"],words:"查看更多"},
-              "C":{list:["重庆","成都","长沙","长春","沧州","常德","昌都","长治","常州","巢湖","潮州","承德","郴州","赤峰","池州","崇左","楚雄","滁州","朝阳"],words:"查看更多"},
-              "D":{list:["大连","东莞","大理","丹东","大庆","大同","大兴安岭","德宏","德阳","德州","定西","迪庆","东营"],words:"查看更多"},
-              "E":{list:["鄂尔多斯","恩施","鄂州"],words:"查看更多"},
-              "F":{list:["福州","防城港","佛山","抚顺","抚州","阜新","阜阳"],words:"查看更多"},
-              "G":{list:["广州","桂林","贵阳","甘南","赣州","甘孜","广安","广元","贵港","果洛"],words:"查看更多"},
-              "H":{list:["杭州","哈尔滨","合肥","海口","呼和浩特","海北","海东","海南","海西","邯郸","汉中","鹤壁","河池","鹤岗","黑河","衡水","衡阳","河源","贺州","红河","淮安","淮北","怀化","淮南","黄冈","黄南","黄山","黄石","惠州","葫芦岛","呼伦贝尔","湖州","菏泽"],words:"查看更多"}
+              "A":{list:[],words:"查看更多"},
+              "B":{list:[],words:"查看更多"},
+              "C":{list:[],words:"查看更多"},
+              "D":{list:[],words:"查看更多"},
+              "E":{list:[],words:"查看更多"},
+              "F":{list:[],words:"查看更多"},
+              "G":{list:[],words:"查看更多"},
+              "H":{list:[],words:"查看更多"},
+              "I":{list:[],words:"查看更多"},
+              "J":{list:[],words:"查看更多"},
+              "K":{list:[],words:"查看更多"},
+              "L":{list:[],words:"查看更多"},
+              "M":{list:[],words:"查看更多"},
+              "N":{list:[],words:"查看更多"},
+              "O":{list:[],words:"查看更多"},
+              "P":{list:[],words:"查看更多"},
+              "Q":{list:[],words:"查看更多"},
+              "R":{list:[],words:"查看更多"},
+              "S":{list:[],words:"查看更多"},
+              "T":{list:[],words:"查看更多"},
+              "U":{list:[],words:"查看更多"},
+              "V":{list:[],words:"查看更多"},
+              "W":{list:[],words:"查看更多"},
+              "X":{list:[],words:"查看更多"},
+              "Y":{list:[],words:"查看更多"},
+              "Z":{list:[],words:"查看更多"}
             }
           }
         },
         mounted(){
           // window.onscroll = function() {};
+          //商品字母列表
           this.loading();
+          //搜索的历史
+          this.history();
         },
         methods:{
           check(index){
@@ -85,12 +106,49 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiApp + "goods/brand/all",
+              url:this.$apiTest + "goods/brand/all",
               params:{},
             }).then(function(res){
               console.log(res.data.data);
-              self.letterBrandList = res.data.data;
+              self.letterBrandList.A.list = res.data.data.a;
+              self.letterBrandList.B.list = res.data.data.b;
+              self.letterBrandList.C.list = res.data.data.c;
+              self.letterBrandList.D.list = res.data.data.d;
+              self.letterBrandList.E.list = res.data.data.e;
+              self.letterBrandList.F.list = res.data.data.f;
+              self.letterBrandList.G.list = res.data.data.g;
+              self.letterBrandList.H.list = res.data.data.h;
+              self.letterBrandList.I.list = res.data.data.i;
+              self.letterBrandList.J.list = res.data.data.j;
+              self.letterBrandList.K.list = res.data.data.k;
+              self.letterBrandList.L.list = res.data.data.l;
+              self.letterBrandList.M.list = res.data.data.m;
+              self.letterBrandList.N.list = res.data.data.n;
+              self.letterBrandList.O.list = res.data.data.o;
+              self.letterBrandList.P.list = res.data.data.p;
+              self.letterBrandList.Q.list = res.data.data.q;
+              self.letterBrandList.R.list = res.data.data.r;
+              self.letterBrandList.S.list = res.data.data.s;
+              self.letterBrandList.T.list = res.data.data.t;
+              self.letterBrandList.U.list = res.data.data.u;
+              self.letterBrandList.V.list = res.data.data.v;
+              self.letterBrandList.W.list = res.data.data.w;
+              self.letterBrandList.X.list = res.data.data.x;
+              self.letterBrandList.Y.list = res.data.data.y;
+              self.letterBrandList.Z.list = res.data.data.z;
             })
+          },
+
+          history(){
+            let self = this;
+            self.$ajax({
+              method:"post",
+              url:this.$apiClassify + "goodsSearch/queryGoodsHistoryList",
+              params:{},
+            }).then(function(res){
+              console.log(res.data.data);
+              self.brandList = res.data.data;
+            });  
           }
         }
     }

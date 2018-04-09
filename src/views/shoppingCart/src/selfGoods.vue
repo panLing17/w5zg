@@ -6,7 +6,7 @@
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec")
               .checkbox
-                w-checkbox(v-model="i.checked")
+                w-checkbox(v-model="i.checked", @change="selectedChange")
               img(src="../../../../static/img/1.jpg")
               .info
                 .text
@@ -20,7 +20,7 @@
                 p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
-                w-checkbox(v-model="i.checked")
+                w-checkbox(v-model="i.checked", @change="selectedChange")
               img(src="../../../../static/img/1.jpg")
               .specChange
                 .specData
@@ -29,7 +29,7 @@
                 w-counter(v-model="i.goods_num", :min="1", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
-            .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>门店自提
+            .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>快递配送
             .right
               span {{i.pro_Name}} {{i.city_name}}
               img
@@ -38,8 +38,26 @@
 <script>
   export default {
     name: "goods-card",
+    data () {
+      return {
+        watchFlag: true
+      }
+    },
     props: {
       goodsList: Array
+    },
+    computed:{
+      allClick(){
+        return this.$store.state.shoppingCartAllChecked
+      }
+    },
+    watch: {
+      allClick() {
+        this.goodsList.forEach((now) => {
+          now.checked = this.allClick
+        })
+        this.computedPrice()
+      }
     },
     data () {
       return {
@@ -57,6 +75,29 @@
       },
       edit (k,index) {
         this.goodsList[index].editClose = k
+      },
+      // 勾选变化
+      selectedChange () {
+        this.computedPrice()
+      },
+      // 计算已选总价, 并将选中数据加入vuex
+      computedPrice () {
+        let allPrice = 0
+        let checked = []
+        this.goodsList.forEach((now)=>{
+          if (now.checked) {
+            allPrice = allPrice + now.goods_num*now.now_price
+            checked.push(now)
+          }
+        })
+        this.$store.commit('computedPriceChange', allPrice)
+        this.$store.commit('shoppingCartSelectedChange', checked)
+        // 判断已选数据与总数据长度
+        if (checked.length === this.goodsList.length) {
+          this.$store.commit('allCheckedChange', true)
+        } else {
+          // this.$store.commit('allCheckedChange', false)
+        }
       }
     }
   }

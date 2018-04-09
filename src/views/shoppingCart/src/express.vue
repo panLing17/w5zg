@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox
-    goods-card.goodsCard(v-for="(i,index) in goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name")
+    goods-card.goodsCard(v-for="(i,index) in goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
         span 失效商品
@@ -28,10 +28,37 @@
       }
     },
     components:{goodsCard, disableGoods, citySelect},
+    computed:{
+      allClick(){
+        return this.$store.state.shoppingCartAllChecked
+      }
+    },
+    watch: {
+      allClick() {
+        this.goodsList.forEach((now)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            sonNow.checked = this.$store.state.shoppingCartAllChecked
+          })
+        })
+        this.selectChange()
+      }
+    },
     mounted () {
       this.getData()
     },
     methods: {
+      // 勾选变化后
+      selectChange () {
+        let price = 0
+        this.goodsList.forEach((now)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            if (sonNow.checked) {
+              price = price + sonNow.goods_num*sonNow.now_price
+            }
+          })
+        })
+        this.$store.commit('computedPriceChange', price)
+      },
       getData () {
         let self = this
         self.$ajax({

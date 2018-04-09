@@ -6,17 +6,18 @@
         img(src="../../../assets/img/right.png")
       .brandList
         ul
-          li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index)") {{item}}
+          li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event)") {{item.bi_name}}
+            .brandNameId(v-show="false") {{item.bi_id}}
       .price 价格区间
       .priceContent
         input(type="text" placeholder="最小金额" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
         span ~
         input(type="text" placeholder="最大金额" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").max
         ul
-          li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index)") {{item}}
+          li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index,$event)").sections {{item}}
       .support 支持自提
         ul
-          li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index)") {{item}}  
+          li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}  
     .button(v-show="downList")
       .reset(@click="reset()") 重置
       .affirm(@click="hide()") 确认             
@@ -33,6 +34,10 @@
         },
         data(){
           return{
+            brandNameId:"",
+            minVal:"",
+            maxVal:"",
+            pickUp:"",
             downList:true,
             brandName:false,
             num:9,
@@ -41,33 +46,55 @@
             num3:null,
             brandList:["阿迪达斯","耐克","金利来","丹尼尔·惠灵顿","阿迪达斯","耐克","金利来","丹尼尔·惠灵顿"],
             price:["0~500","500~1000","1000~2000","2000~5000","5000以上"],
-            support:["可自提","不可自提"],
-            letter:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
-            letterBrandList:{
-              "A":{list:["阿坝","阿拉善","阿里","安康","安庆","鞍山","安顺","安阳","澳门"],words:"查看更多"},
-              "B":{list:["北京","白银","保定","宝鸡","保山","包头","巴中","北海","蚌埠","本溪","毕节","滨州","百色","亳州"],words:"查看更多"},
-              "C":{list:["重庆","成都","长沙","长春","沧州","常德","昌都","长治","常州","巢湖","潮州","承德","郴州","赤峰","池州","崇左","楚雄","滁州","朝阳"],words:"查看更多"},
-              "D":{list:["大连","东莞","大理","丹东","大庆","大同","大兴安岭","德宏","德阳","德州","定西","迪庆","东营"],words:"查看更多"},
-              "E":{list:["鄂尔多斯","恩施","鄂州"],words:"查看更多"},
-              "F":{list:["福州","防城港","佛山","抚顺","抚州","阜新","阜阳"],words:"查看更多"},
-              "G":{list:["广州","桂林","贵阳","甘南","赣州","甘孜","广安","广元","贵港","果洛"],words:"查看更多"},
-              "H":{list:["杭州","哈尔滨","合肥","海口","呼和浩特","海北","海东","海南","海西","邯郸","汉中","鹤壁","河池","鹤岗","黑河","衡水","衡阳","河源","贺州","红河","淮安","淮北","怀化","淮南","黄冈","黄南","黄山","黄石","惠州","葫芦岛","呼伦贝尔","湖州","菏泽"],words:"查看更多"}
-            }
+            support:["可自提","不可自提"]
           }
         },
         mounted(){
-          window.onscroll = function() {};
+          //品牌名
+          this.brandNames();
           document.getElementsByClassName("filtrate")[0].style.overflow = "scroll";
         },
         methods:{
-          check(index){
+          //加载品牌名
+          brandNames(){
+            let self = this;
+            self.$ajax({
+              method:"post",
+              url:self.$apiTest + "goods/recommendBrand",
+              params:{}
+            }).then(function(res){
+              console.log(res.data.data);
+              self.brandList = res.data.data;
+            })
+          },
+          //点击品牌名
+          check(index,e){
+            console.log(e.target.children[0].innerText);
             this.num1 = index;
+            this.brandNameId = e.target.children[0].innerText;
           },
-          checks(index){
+          //点击价格区间
+          checks(index,e){
             this.num2 = index;
+            console.log(e.target.innerText);
+            var rel = e.target.innerText.split("~");
+            console.log(parseInt(rel[1]));
+            var min = document.getElementsByClassName("min")[0];
+            var max = document.getElementsByClassName("max")[0];
+            min.value = parseInt(rel[0]);
+            this.minVal = min.value;
+            if (isNaN(parseInt(rel[1]))) {
+              max.value = "";
+              this.maxVal = max.value;
+            } else {
+              max.value = parseInt(rel[1]);
+              this.maxVal = max.value;
+            }
           },
-          toggle(index){
+          //自提不自提
+          toggle(index,e){
             this.num3 = index;
+            this.pickUp = e.target.innerText;
           },
           reset(){
             this.num1 = null;
@@ -76,13 +103,22 @@
             var min = document.getElementsByClassName("min")[0];
             var max = document.getElementsByClassName("max")[0];
             min.value = "";
-            max.value = ""; 
+            max.value = "";
+            this.minVal = min.value;
+            this.maxVal = max.value;
+            this.pickUp = "";
+            this.brandNameId = ""; 
           },
           hide(){
             let data = {
-              flag : true
+              flag : true,
+              brandId : this.brandNameId,
+              minPrice : this.minVal,
+              maxPrice : this.maxVal,
+              pickUps : this.pickUp
             };
-            this.$emit('ievent',data); 
+            this.$emit('ievent',data);
+
           },
           down(){
             let data = {
@@ -90,23 +126,8 @@
             };    
             this.$emit("showSon",data);
           },
-          goAnchor:function(selector) {
-            var anchor = this.$el.querySelector(selector);
-            document.documentElement.scrollTop = anchor.offsetTop - 60;  
-          },
-          viewMore:function(key,e,oIndex){
-            console.log(key);
-            console.log(oIndex);
-            console.log(e.target.innerText);  
-            if(e.target.innerText == "收起更多"){
-              this.num = 9;
-              key.words = "查看更多";
-            }
-            if(e.target.innerText == "查看更多") {
-              this.num = key.list.length;
-              key.words = "收起更多";
-            }
-          }
+          
+
         }
     }
 </script>
@@ -202,7 +223,7 @@
 .button{
   position: fixed;
   width: 70%;
-  height: 1.3rem;
+  height: 1.35rem;
   border: 1px solid rgb(244,0,87);
   display: flex;
 }
@@ -210,7 +231,7 @@
   width: 50%;
   text-align: center;
   font-size: .4rem;
-  line-height: 1.3rem;
+  line-height: 1.35rem;
 }
 .button .reset{
   color: rgb(244,0,87);

@@ -22,7 +22,7 @@
         disableGoodsList: []
       }
     },
-    components:{selfGoods, disableGoods},
+    components: {selfGoods, disableGoods},
     mounted () {
       this.getData()
     },

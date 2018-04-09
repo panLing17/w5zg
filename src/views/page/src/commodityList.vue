@@ -4,7 +4,7 @@
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
-        searchInput(placeholder="请输入商品名称")
+        searchInput(placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png")
     .content
@@ -30,11 +30,11 @@
       .bottomList
         ul.goodsList#box
           li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../assets/img/my_goods.png")
+            img(:src="item.gi_image_url | img-filter")
             .wrapWords
-              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
-              .price ￥516.22
-              .bottom <span>江苏南京</span><span>2555人购买</span>
+              .text {{item.gi_name}}
+              .price ￥{{item.price}}
+              .bottom <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
     .mask
       .lefter
       .righter
@@ -65,17 +65,38 @@
         change1: false,
         change2: false,
         recommendGoods: [],
-        style: false
+        style: false,
+        brandId: "",
+        minPrice: "",
+        maxPrice: "",
+        pickUps: "",
+        checkFlag:false
       }
     },
     mounted(){
-      window.onscroll = function() {};
+      //window.onscroll = function() {};
       this.$mescrollInt("pageMescroll",this.upCallback);
+      //商品展示
+      //this.exhibition();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods:{
+      //商品的展示
+      exhibition(){
+        let self = this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsSearch/spus",
+          params:{}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.recommendGoods = res.data.data;
+          console.log(self.recommendGoods);
+        })
+      },
+
       // 筛选左滑
       leftScroll(){
         var _this = this;
@@ -100,12 +121,23 @@
       },
 
       ievent(data){
+        console.log(data);
         var mask = document.getElementsByClassName("mask")[0];
         console.log(data.flag);
         if (data.flag == true) {
           mask.style.left = "100%";
           mask.style.transition = "left opacity .2s";
         }
+        if (data.pickUps == "可自提") {
+          this.pickUps = 1;
+        }
+        if (data.pickUps == "不可自提") {
+          this.pickUps = 2;
+        }
+        this.brandId = data.brandId;
+        this.maxPrice = data.maxPrice;
+        this.minPrice = data.minPrice;
+        this.checkFlag = true;
       },
 
       showSon(data){
@@ -115,20 +147,42 @@
           this.allBrandFlag = true;
         }
       },
-
+      //综合排序
       changes1:function(){
         this.change1 = !this.change1;
         this.change2 = false;
         this.change = false;
         this.check = true;
         this.checked = false;
+
+        let self = this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsSearch/spus",
+          params:{sortFieldType:1}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.recommendGoods = res.data.data;
+        })
       },
+      //销量排序
       changes2:function(){
         this.change2 = !this.change2;
         this.change1 = false;
         this.change = false;
         this.check = true;
         this.checked = false;
+
+        let self = this;
+        self.$ajax({
+          method:"post",
+          url:this.$apiTest + "goodsSearch/spus",
+          params:{sortFieldType:2}
+        }).then(function(res){
+          console.log(res.data.data);
+          self.recommendGoods = res.data.data;
+        })
+
       },
       exchange:function(){
         this.flag = !this.flag;
@@ -144,6 +198,7 @@
           box.setAttribute("class",classVal);
         }
       },
+      //价格排序
       liftOrSort(){
         this.checked = !this.checked;
         this.check = !this.check;
@@ -151,6 +206,28 @@
         this.change = true;
         this.change1 = false;
         this.change2 = false;
+        if (this.checked == true) {
+          let self = this;
+          self.$ajax({
+            method:"post",
+            url:this.$apiTest + "goodsSearch/spus",
+            params:{sortFieldType:3,sortType:1}
+          }).then(function(res){
+            console.log(res.data.data);
+            self.recommendGoods = res.data.data;
+          })
+        }
+        if (this.check == false) {
+          let self = this;
+          self.$ajax({
+            method:"post",
+            url:this.$apiTest + "goodsSearch/spus",
+            params:{sortFieldType:3,sortType:2}
+          }).then(function(res){
+            self.recommendGoods = res.data.data;
+          })
+        }
+        
       },
       upCallback: function(page) {
         let self = this;
@@ -164,23 +241,98 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        setTimeout(function () {
-//            axios.get("xxxxxx", {
-//          params: {
-//            num: pageNum, //页码
-//            size: pageSize //每页长度
-//          }
-//        })
-//        .then(function(response) {
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-//        })
+        let self = this;
+
+        //无关键字时
+        self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params: {
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              params:{}
+            }
+         })
+         .then(function(response) {
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+         })
+        //综合排序
+        if (self.change1 == true) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params: {
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:1,
+              sortType:1
+            }
+         })
+         .then(function(response) {
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+         })
+        }
+
+        //销量排序
+        if (self.change2 == true) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params: {
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:2,
+              sortType:1
+            }
+         })
+         .then(function(response) {
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+         })
+        }
+        //价格排序 倒序
+        if (self.checked == true) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params:{
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:3,
+              sortType:1
+            }
+          }).then(function(response){
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+          })
+        }
+        //价格排序 正序
+        if (self.check == false) {
+          self.$ajax({
+            method:"post",
+            url:self.$apiTest + "goodsSearch/spus",
+            params:{
+              page: pageNum, //页码
+              rows: pageSize, //每页长度
+              sortFieldType:3,
+              sortType:2
+            }
+          }).then(function(response){
+            console.log(response.data.data);
+            successCallback&&successCallback(response.data.data);//成功回调
+          })
+        }
+
+        //筛选选择完后
+        if (self.checkFlag) {
+          
+        }
 //        .catch(function(error) {
 //          errorCallback&&errorCallback()//失败回调
 //        });
-        },500)
+
       },
     }
   }
@@ -220,13 +372,16 @@
   /*中间内容部分顶部左边--开始*/
   .content{
     padding-bottom: 2rem;
+    overflow: hidden;
   }
   .content ul.wrap{
     display: flex;
     justify-content: space-between;
+    width: 100%;
     height: 1.2rem;
     padding: 0 .3rem;
     background-color: #fff;
+    position: fixed;
   }
   ul.wrap li{
     font-size: .4rem;
@@ -278,6 +433,9 @@
   }
   /*中间内容部分顶部右边--结束*/
   /*商品大图展示--开始*/
+  .bottomList{
+    margin-top: 1.2rem;
+  }
   .goodsList {
     display: flex;
     justify-content: space-between;

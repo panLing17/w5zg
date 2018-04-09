@@ -9,7 +9,7 @@
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec")
               .checkbox
-                w-checkbox(v-model="i.checked")
+                w-checkbox(v-model="i.checked", @change="selectChange")
               img(src="../../../../static/img/1.jpg")
               .info
                 .text
@@ -23,7 +23,7 @@
                 p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
-                w-checkbox(v-model="i.checked")
+                w-checkbox(v-model="i.checked", @change="selectChange")
               img(src="../../../../static/img/1.jpg")
               .specChange
                 .specData
@@ -64,6 +64,9 @@
       },
       edit (k,index) {
         this.list[index].editClose = k
+      },
+      selectChange () {
+        this.$emit('selectChange')
       }
     }
   }
