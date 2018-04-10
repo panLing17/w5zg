@@ -5,11 +5,13 @@
     p.hot 热门
     .brandList
       ul
-        li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index)") {{item}}
+        li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event)") {{item.bi_name}}
+          .hot(v-show="false") {{item.bi_id}}
     .allBrandList
       ul(v-for="(key,value,oIndex) in letterBrandList")
         li.letters(:id="'anchorz-'+oIndex") {{value}}
         li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event)") {{item.bi_name}}
+          .conceal(v-show="false") {{item.bi_id}}
         li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
     ul.letter
       li #
@@ -28,6 +30,7 @@
         },
         data(){
           return{
+            brandNameId:"",
             num:9,
             num1:null,
             brandList:["阿迪达斯","耐克","金利来","丹尼尔·惠灵顿","阿迪达斯","耐克","金利来","丹尼尔·惠灵顿"],
@@ -72,8 +75,16 @@
           this.history();
         },
         methods:{
-          check(index){
+          //选择热门品牌
+          check(index,e){
             this.num1 = index;
+            console.log(e.target.children[0].innerText);
+            this.brandNameId = e.target.children[0].innerText;
+            let data = {
+              flag2:true,
+              brandId2:this.brandNameId
+            }
+            this.$emit('searchBrandHot',data);
           },
           hide(){
             let data = {
@@ -106,7 +117,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiTest + "goods/brand/all",
+              url:this.$apiClassify + "goods/brand/all",
               params:{},
             }).then(function(res){
               console.log(res.data.data);
@@ -143,12 +154,23 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiClassify + "goodsSearch/queryGoodsHistoryList",
+              url:this.$apiClassify + "goods/recommendBrand",
               params:{},
             }).then(function(res){
               console.log(res.data.data);
               self.brandList = res.data.data;
             });  
+          },
+
+          //选择字母列表品牌名
+          selects(e){
+            console.log(e.target.children[0].innerText);
+            this.brandNameId = e.target.children[0].innerText;
+            let data = {
+              flag2:true,
+              brandId2:this.brandNameId
+            }
+            this.$emit('searchBrand',data);
           }
         }
     }

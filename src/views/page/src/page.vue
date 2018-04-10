@@ -81,7 +81,7 @@
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiTest + "goodsClass/class/firstId",
+          url:this.$apiClassify + "goodsClass/class/firstId",
           params:{firstId:1}
         }).then(function(res){
           console.log(res.data.data);
@@ -106,7 +106,7 @@
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiTest + "goodsClass/class/firstId",
+          url:this.$apiClassify + "goodsClass/class/firstId",
           params:{firstId:parseInt(index)+1}
         }).then(function(res){
           console.log(res.data.data);
@@ -120,7 +120,7 @@
         console.log(self);
         self.$ajax({
           method:"post",
-          url:this.$apiTest + "goodsClass/class/hierarchy",
+          url:this.$apiClassify + "goodsClass/class/hierarchy",
           params:{hierarchy:1}
         }).then(function(res){
           console.log(res.data.data);

@@ -16,8 +16,8 @@
         li.right
           ul
             li.showStyle(@click="exchange()")
-              img(src="../../../assets/img/pageBigList.png" v-show="!flag")
-              img(src="../../../assets/img/pageList.png" v-show="flag")
+              img(src="../../../assets/img/pageBigList.png" v-show="!flags")
+              img(src="../../../assets/img/pageList.png" v-show="flags")
             li.price(@click="liftOrSort()")
               .priceWords(:class="{active:change}") 价格
               .topDown
@@ -34,19 +34,16 @@
             .wrapWords
               .text {{item.gi_name}}
               .price ￥{{item.price}}
-              .bottom <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
+              .bottom <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>             
     .mask
-      .lefter
+      .lefter(@click="lefterBack()")
       .righter
         filtrate(@ievent="ievent" v-show="filtrateFlag" @showSon="showSon")
-        allBrand(v-show="allBrandFlag")
+        allBrand(v-show="allBrandFlag" @searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
     .bottomPlaceholder
 </template>
 
 <script>
-  import jacket from '../../../assets/img/page_jacket.png'
-  import downCoat from '../../../assets/img/page_downCoat.png'
-  import coat from '../../../assets/img/page_coat.png'
   import filtrate from './filtrate.vue'
   import allBrand from './allBrand.vue'
 
@@ -58,7 +55,7 @@
         filtrateFlag: true,
         allBrandFlag: false,
         mescroll: null,
-        flag: false,
+        flags: false,
         check: true,
         checked: false,
         change: false,
@@ -66,11 +63,15 @@
         change2: false,
         recommendGoods: [],
         style: false,
-        brandId: "",
-        minPrice: "",
-        maxPrice: "",
-        pickUps: "",
-        checkFlag:false
+        brandId: "", //品牌的id
+        minPrice: "", //开始价格区间
+        maxPrice: "", //结束价格区间
+        pickUps: "", //自提不自提
+        checkFlag:false, 
+        noKey:true,
+        order:"", //字段排序
+        keyWord:this.$route.query.msg, //关键字
+        sort:"", //正序倒序
       }
     },
     mounted(){
@@ -86,21 +87,39 @@
       //商品的展示
       exhibition(){
         let self = this;
+        console.log(self.pickUps);
+        console.log(self.minPrice);
+        console.log(self.maxPrice);
+        console.log(self.brandId);
+        console.log(self.keyWord);
+        console.log(self.sort);
+        console.log(self.order);
         self.$ajax({
           method:"post",
-          url:this.$apiTest + "goodsSearch/spus",
-          params:{}
+          url:this.$apiClassify + "goodsSearch/spus",
+          params:{
+            carryType: self.pickUps, //自提不自提
+            startPrice: self.minPrice, //开始价格区间
+            endPrice: self.maxPrice, //结束价格区间
+            bi_id: self.brandId, //品牌的id
+            sortType: self.sort, //正序倒序
+            keywords: self.keyWord, //关键字
+            sortFieldType: self.order //字段排序
+          }
         }).then(function(res){
           console.log(res.data.data);
           self.recommendGoods = res.data.data;
           console.log(self.recommendGoods);
         })
       },
-
+      //进入商品详情
+      goGoods(goodsId){
+        this.$router.push('/goodsDetailed');
+      },
       // 筛选左滑
       leftScroll(){
         var _this = this;
-        this.$mescrollInt("",this.upCallback);
+        //this.$mescrollInt("",this.upCallback);
         this.filtrateFlag = true;
         this.allBrandFlag = false;
         var mask = document.getElementsByClassName("mask")[0];
@@ -111,35 +130,70 @@
         mask.style.left = 0;
         mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
-        lefter.onclick = function(){
-          _this.$mescrollInt("pageMescroll",this.upCallback);
+      },
+      lefterBack(){
+        //_this.$mescrollInt("pageMescroll",this.upCallback);
+        var mask = document.getElementsByClassName("mask")[0];
+        var commodityList = document.getElementsByClassName("commodityList")[0];
+        mask.style.left = "100%";
+        mask.style.opacity = 0;
+        mask.style.transition = "left .3s, opacity .3s";
+        commodityList.style.overflow = "scroll";
+      },
+      //从筛选传值过来
+      ievent(data){
+        console.log(data);
+        var mask = document.getElementsByClassName("mask")[0];
+        var commodityList = document.getElementsByClassName("commodityList")[0];
+        console.log(data.flag1);
+        if (data.flag1 == true) {
           mask.style.left = "100%";
           mask.style.opacity = 0;
           mask.style.transition = "left .3s, opacity .3s";
           commodityList.style.overflow = "scroll";
+          if (data.pickUps == "可自提") {
+            this.pickUps = 1;
+          }
+          if (data.pickUps == "不可自提") {
+            this.pickUps = 2;
+          }
+          this.brandId = data.brandId;
+          this.maxPrice = data.maxPrice;
+          this.minPrice = data.minPrice;
+          this.checkFlag = true;
+          console.log(this.pickUps);
         }
+        this.request();  
       },
 
-      ievent(data){
-        console.log(data);
+      //从字母列表传来的值
+      searchBrand(data){
         var mask = document.getElementsByClassName("mask")[0];
-        console.log(data.flag);
-        if (data.flag == true) {
+        var commodityList = document.getElementsByClassName("commodityList")[0];
+        console.log(data.flag2);
+        if (data.flag2 == true) {
           mask.style.left = "100%";
-          mask.style.transition = "left opacity .2s";
+          mask.style.opacity = 0;
+          mask.style.transition = "left .3s, opacity .3s";
+          commodityList.style.overflow = "scroll";
+          this.brandId = data.brandId2;
         }
-        if (data.pickUps == "可自提") {
-          this.pickUps = 1;
-        }
-        if (data.pickUps == "不可自提") {
-          this.pickUps = 2;
-        }
-        this.brandId = data.brandId;
-        this.maxPrice = data.maxPrice;
-        this.minPrice = data.minPrice;
-        this.checkFlag = true;
+        this.request();  
       },
-
+      //热门品牌
+      searchBrandHot(data){
+        var mask = document.getElementsByClassName("mask")[0];
+        var commodityList = document.getElementsByClassName("commodityList")[0];
+        console.log(data.flag2);
+        if (data.flag2 == true) {
+          mask.style.left = "100%";
+          mask.style.opacity = 0;
+          mask.style.transition = "left .3s, opacity .3s";
+          commodityList.style.overflow = "scroll";
+          this.brandId = data.brandId2;
+        }
+        this.request();
+      },
       showSon(data){
         console.log(data.a);
         if (data.a == 1) {
@@ -154,16 +208,13 @@
         this.change = false;
         this.check = true;
         this.checked = false;
-
-        let self = this;
-        self.$ajax({
-          method:"post",
-          url:this.$apiTest + "goodsSearch/spus",
-          params:{sortFieldType:1}
-        }).then(function(res){
-          console.log(res.data.data);
-          self.recommendGoods = res.data.data;
-        })
+        if (this.change1 == true){
+          this.order = 1;
+        } else{
+          this.order = "";
+        }
+        this.order = 1;
+        this.request();
       },
       //销量排序
       changes2:function(){
@@ -172,17 +223,8 @@
         this.change = false;
         this.check = true;
         this.checked = false;
-
-        let self = this;
-        self.$ajax({
-          method:"post",
-          url:this.$apiTest + "goodsSearch/spus",
-          params:{sortFieldType:2}
-        }).then(function(res){
-          console.log(res.data.data);
-          self.recommendGoods = res.data.data;
-        })
-
+        this.order = 2;
+        this.request();
       },
       exchange:function(){
         this.flag = !this.flag;
@@ -206,28 +248,15 @@
         this.change = true;
         this.change1 = false;
         this.change2 = false;
-        if (this.checked == true) {
-          let self = this;
-          self.$ajax({
-            method:"post",
-            url:this.$apiTest + "goodsSearch/spus",
-            params:{sortFieldType:3,sortType:1}
-          }).then(function(res){
-            console.log(res.data.data);
-            self.recommendGoods = res.data.data;
-          })
-        }
+
+        this.order = 3;
         if (this.check == false) {
-          let self = this;
-          self.$ajax({
-            method:"post",
-            url:this.$apiTest + "goodsSearch/spus",
-            params:{sortFieldType:3,sortType:2}
-          }).then(function(res){
-            self.recommendGoods = res.data.data;
-          })
+          this.sort = 2;
         }
-        
+        if (this.check == true) {
+          this.sort = 1;
+        }
+        this.request(); 
       },
       upCallback: function(page) {
         let self = this;
@@ -242,98 +271,63 @@
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         let self = this;
-
-        //无关键字时
+        console.log(self.$route.query.msg);
+        console.log(self.checkFlag);
+        
+        console.log(self.pickUps);
+        console.log(self.minPrice);
+        console.log(self.maxPrice);
+        console.log(self.brandId);
         self.$ajax({
-            method:"post",
-            url:self.$apiTest + "goodsSearch/spus",
-            params: {
-              page: pageNum, //页码
-              rows: pageSize, //每页长度
-              params:{}
-            }
-         })
-         .then(function(response) {
-            console.log(response.data.data);
+          method:"post",
+          url:self.$apiClassify + "goodsSearch/spus",
+          params:{
+            page: pageNum, //页码
+            rows: pageSize, //每页长度
+            carryType: self.pickUps, //自提不自提
+            startPrice: self.minPrice, //开始价格区间
+            endPrice: self.maxPrice, //结束价格区间
+            bi_id: self.brandId, //品牌的id
+            sortType: self.sort, //正序倒序
+            keywords: self.keyWord, //关键字
+            sortFieldType: self.order //字段排序
+          }
+        }).then(function(response){
+          console.log(response);
+          if(response.data.data.length<=0){
+            self.$router.push('/home/searchResult');
+          } else{
             successCallback&&successCallback(response.data.data);//成功回调
-         })
-        //综合排序
-        if (self.change1 == true) {
-          self.$ajax({
-            method:"post",
-            url:self.$apiTest + "goodsSearch/spus",
-            params: {
-              page: pageNum, //页码
-              rows: pageSize, //每页长度
-              sortFieldType:1,
-              sortType:1
-            }
-         })
-         .then(function(response) {
-            console.log(response.data.data);
-            successCallback&&successCallback(response.data.data);//成功回调
-         })
-        }
+          }
+        })
 
-        //销量排序
-        if (self.change2 == true) {
-          self.$ajax({
-            method:"post",
-            url:self.$apiTest + "goodsSearch/spus",
-            params: {
-              page: pageNum, //页码
-              rows: pageSize, //每页长度
-              sortFieldType:2,
-              sortType:1
-            }
-         })
-         .then(function(response) {
-            console.log(response.data.data);
-            successCallback&&successCallback(response.data.data);//成功回调
-         })
-        }
-        //价格排序 倒序
-        if (self.checked == true) {
-          self.$ajax({
-            method:"post",
-            url:self.$apiTest + "goodsSearch/spus",
-            params:{
-              page: pageNum, //页码
-              rows: pageSize, //每页长度
-              sortFieldType:3,
-              sortType:1
-            }
-          }).then(function(response){
-            console.log(response.data.data);
-            successCallback&&successCallback(response.data.data);//成功回调
-          })
-        }
-        //价格排序 正序
-        if (self.check == false) {
-          self.$ajax({
-            method:"post",
-            url:self.$apiTest + "goodsSearch/spus",
-            params:{
-              page: pageNum, //页码
-              rows: pageSize, //每页长度
-              sortFieldType:3,
-              sortType:2
-            }
-          }).then(function(response){
-            console.log(response.data.data);
-            successCallback&&successCallback(response.data.data);//成功回调
-          })
-        }
-
-        //筛选选择完后
-        if (self.checkFlag) {
-          
-        }
 //        .catch(function(error) {
 //          errorCallback&&errorCallback()//失败回调
 //        });
 
       },
+
+      //请求
+      request(){
+        let self = this;
+        self.$ajax({
+          method:"post",
+          url:self.$apiClassify + "goodsSearch/spus",
+          params:{
+            page: 1, //页码
+            rows: 20, //每页长度
+            carryType: self.pickUps, //自提不自提
+            startPrice: self.minPrice, //开始价格区间
+            endPrice: self.maxPrice, //结束价格区间
+            bi_id: self.brandId, //品牌的id
+            sortType: self.sort, //正序倒序
+            keywords: self.keyWord, //关键字
+            sortFieldType: self.order //字段排序
+          }
+        }).then(function(response){
+          self.recommendGoods = response.data.data;//成功回调
+        })
+      }
     }
   }
 </script>

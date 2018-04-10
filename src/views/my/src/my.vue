@@ -7,13 +7,13 @@
         .righter
           img(src="../../../assets/img/message@2x.png")
           img(src="../../../assets/img/my_account@2x.png" @click="routergoUser()" v-if="false")
-          img(src="../../../assets/img/consumerdetails@2x.png" v-else="true")      
+          img(src="../../../assets/img/consumerdetails@2x.png" v-else="true")
       p.center
           ul.headPic
             li(@click="routergoUser()")
-              img(src="../../../assets/img/headshot@2x.png")
+              img(:src="this.userHeadPortrait | img-filter")
           ul.userName
-            li {{name}}
+            li {{userNiceName}}
           ul.balance(v-if="false")
             li 余额:
             li 8888.88
@@ -83,6 +83,8 @@ import my_goods from '../../../assets/img/my_goods.png'
     data() {
       return{
         recommendGoods: [],
+        userNiceName:'1231312',
+        userHeadPortrait: '',
         name:this.$route.query.routeParams,
         goodsDetails:[
           {
@@ -114,6 +116,7 @@ import my_goods from '../../../assets/img/my_goods.png'
     },
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
+      this.getUserInfo()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -134,7 +137,21 @@ import my_goods from '../../../assets/img/my_goods.png'
       //       }
       //   },30);
       // },
-
+      getUserInfo:function(){
+        let self = this
+        // 发送ajax请求校验手机号重复
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/info',
+          params: {}
+        }).then(function (response) {
+          // 提示用户信息
+          if (response.data.optSuc) {
+            self.userNiceName = response.data.data.mi_nickname
+            self.userHeadPortrait = response.data.data.mi_head_sculpture
+          }
+        })
+      },
       routergoUser:function(){
         this.$router.push({
            name: '我的用户资料',

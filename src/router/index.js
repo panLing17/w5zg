@@ -20,6 +20,8 @@ import MyOrder from '../views/my/src/myOrder/index.js'
 import AfterSale from '../views/my/src/afterSale/index.js'
 // 商品相关
 import Goods from '../views/goods/index.js'
+// 账户
+import MyAccount from '../views/my/src/myAccount/index.js'
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -279,6 +281,78 @@ const router = new Router ({
               path: '/my/checkAddressee',
               name: '填写收件人',
               component: AfterSale.checkAddressee
+            },
+            {
+              path: '/my/grantCard',
+              name: '发放网金卡',
+              component: MyAccount.grantCard
+            },
+            {
+              path: '/my/accountCashB',
+              name: '我的现金券B',
+              component: MyAccount.accountCashB
+            },
+            {
+              path: '/my/cashDetailB',
+              name: '现金券明细B',
+              component: MyAccount.cashDetailB
+            },
+            {
+              path: '/my/grantCardRandom',
+              name: '随机发放网金卡',
+              component: MyAccount.grantCardRandom
+            },
+            {
+              path: '/my/accountCardC',
+              name: '我的网金卡C',
+              component: MyAccount.accountCardC,
+              children:[
+                {
+                  path: '',
+                  component: MyAccount.useDetail
+                },
+                {
+                  path: '/my/useDetail/:id',
+                  name: '现金券使用详情C',
+                  component: MyAccount.useDetail
+                }
+              ]
+            },
+            {
+              path: '/my/cashDetailC',
+              name: '现金券明细C',
+              component:MyAccount.cashDetailC
+            },
+            {
+              path: '/my/accountUniversalC',
+              name: '通用券C',
+              component:MyAccount.accountUniversalC
+            },
+            {
+              path: '/my/accountB',
+              name: '我的账户B',
+              component:MyAccount.accountB
+            },
+            {
+              path: '/my/accountDetail/:id',
+              name: '账户明细',
+              component:MyAccount.accountDetail,
+              children: [
+                {
+                  path: '',
+                  component:MyAccount.accountDetailContent
+                },
+                {
+                  path: '/my/accountDetailContent/:id',
+                  name: '账户明细内容',
+                  component:MyAccount.accountDetailContent
+                }
+              ]
+            },
+            {
+              path: '/my/withdrawals',
+              name: '提现',
+              component:MyAccount.withdrawals
             }
           ]
         }
