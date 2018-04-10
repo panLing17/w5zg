@@ -349,6 +349,21 @@ const router = new Router ({
               path: '/my/withdrawals',
               name: '提现',
               component:MyAccount.withdrawals
+            },
+            {
+              path: '/my/chooseBankCard',
+              name: '选择银行卡',
+              component:MyAccount.chooseBankCard
+            },
+            {
+              path: '/my/addBankCard',
+              name: '添加银行卡',
+              component: MyAccount.addBankCard
+            },
+            {
+              path: '/my/addBankConfirm',
+              name: '添加银行卡验证页',
+              component: MyAccount.addBankConfirm
             }
           ]
         }
