@@ -7,11 +7,11 @@
       .topRight(slot="right")
     .content
       ul.list
-        li.item(v-for="(item, index) in data", @click="change(index)")
+        li.item(v-for="(item, index) in bankData", @click="change(index)")
           .icon
           .center
-            .name {{item.bankName}}
-            .type  {{item.type}}
+            .name {{item.tb_bank_name}}
+            .type  储蓄卡
             .cardNo **** **** **** {{item.cardNo}}
           img.checked(src="../../../../../assets/img/checked@2x.png", v-if="item.isChecked")
       .add
@@ -23,7 +23,7 @@
       name: "chooseBankCard",
       data () {
         return {
-          data: [
+          bankData: [
             {
               bankName:'中国工商银行',
               type: '储蓄卡',
@@ -45,14 +45,30 @@
           ]
         }
       },
+      mounted () {
+        this.getBankCartData()
+      },
       methods: {
         change (index) {
-          this.data.forEach((item, i) => {
+          this.bankData.forEach((item, i) => {
             if (i == index) {
               item.isChecked = true;
             }else {
               item.isChecked = false;
             }
+          })
+        },
+        getBankCartData () {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiMember + 'memberBank/bankNames',
+            params: {},
+          }).then(function (response) {
+            response.data.data.forEach((now)=>{
+              now.isChecked = false
+            })
+            self.bankData = response.data.data
           })
         }
       }
