@@ -62,6 +62,9 @@
         li(v-if="false")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
           .words 通用劵
+    .title
+      .line
+      p 推荐      
     w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
 </template>
@@ -385,5 +388,25 @@
     bottom: 0;
     height: auto;
     position: fixed;
+  }
+  /*推荐*/
+  .title{
+    height: .8rem;
+    width: 100%;
+    position: relative;
+    display: flex;
+    background: #f2f2f2;
+    justify-content: center;
+    align-items: center;
+  }
+  .line{
+    height: 1px;
+    width: 3rem;
+    background: #999;
+  }
+  .title p{
+    position: absolute;
+    background: #f2f2f2 ;
+    padding: 0 .2rem;
   }
 </style>
