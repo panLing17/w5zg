@@ -132,7 +132,7 @@
   .mask {
     width: 100%;
     height: calc(100% - 1.3rem);
-    position: absolute;
+    position: fixed;
     top: 1.3rem;
     left: 0;
     z-index: 101;
@@ -148,8 +148,11 @@
   .filterBoxWrapper {
     width: 100%;
     overflow: hidden;
-    position: absolute;
+    position: fixed;
     height: 3.5rem;
+    top:1.3rem;
+    left:0;
+    z-index: 150;
   }
   .filterBox {
     position: absolute;

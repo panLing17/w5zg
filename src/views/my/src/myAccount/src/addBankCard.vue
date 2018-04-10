@@ -15,26 +15,26 @@
         .block
           .left 支行名称
           .right
-            input(type="text", placeholder="请输入支行名称")
+            input(type="text", placeholder="请输入支行名称", v-model="form.branchName")
         .block
           .left 银行卡号
           .right
-            input(type="number", placeholder="请输入银行卡号")
+            input(type="number", placeholder="请输入银行卡号", v-model="form.bankCard")
       .title 持卡人信息
       .blockWrapper
         .block
           .left 持卡人
           .right
-            input(type="text", placeholder="请输入持卡人姓名")
+            input(type="text", placeholder="请输入持卡人姓名", v-model="form.bankCardOwnerName")
         .block
           .left 身份证号
           .right
-            input(type="text", placeholder="请输入身份证号")
+            input(type="text", placeholder="请输入身份证号", v-model="form.bankCardOwnerIdentity")
         .block
           .left 手机号
           .right
-            input(type="number", placeholder="请输入手机号")
-      .bottomBtn(@click="$router.push('/my/addBankConfirm')") 下一步
+            input(type="number", placeholder="请输入手机号", v-model="form.bankCardOwnerPhone")
+      .bottomBtn(@click="save") 完成
     transition(name="fade")
       .mask(v-show="chooseShow", @click="chooseShow=false")
     transition(name="fold")
@@ -46,7 +46,7 @@
           i.top
           i.bottom
           ul.list
-            li.item(v-for="(item,index) in bankList", :class="{'active':chooseActive===index}", @click="chooseActive=index") {{item.text}}
+            li.item(v-for="(item,index) in bankList", :class="{'active':chooseActive===index}", @click="selectedBank(index,item.tb_id, item.tb_bank_name)") {{item.tb_bank_name}}
 </template>
 
 <script>
@@ -710,19 +710,56 @@
           ],
           chooseShow:false,
           chooseActive: -1,
-          chooseBank:''
+          chooseBank:'',
+          form: {
+            bankId: '',
+            branchName: '',
+            bankCard: '',
+            bankCardOwnerName: '',
+            bankCardOwnerPhone: '',
+            bankCardOwnerIdentity: ''
+          }
         }
       },
       computed: {
       },
+      mounted () {
+        this.getBankList()
+      },
       methods: {
+        selectedBank (index, id, name) {
+          this.chooseActive = index
+          this.form.bankId = id
+          this.chooseBank = name
+        },
         confirm () {
-          if (this.bankList[this.chooseActive]) {
+          /* if (this.bankList[this.chooseActive]) {
             this.chooseBank = this.bankList[this.chooseActive].text;
           }else {
             this.chooseBank = '';
-          }
+          } */
           this.chooseShow = false;
+        },
+        getBankList () {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiMember + 'memberBank/bankNames',
+            params: self.form,
+          }).then(function (response) {
+            self.bankList = response.data.data
+          })
+        },
+        save () {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiMember + 'memberBank/memberbankcard',
+            params: self.form,
+          }).then(function (response) {
+            self.$message.success('添加成功')
+            self.$router.go(-1)
+          })
         }
       }
     }
@@ -798,7 +835,7 @@
   .mask {
     width: 100%;
     height: calc(100% - 1.3rem);
-    position: absolute;
+    position: fixed;
     top: 1.3rem;
     left: 0;
     z-index: 101;
