@@ -13,13 +13,37 @@
             label 验证码：
             input(type="text")
           .right
-            .btn 59s
+            .btn {{timerText}}
       .bottomBtn 完成
 </template>
 
 <script>
     export default {
-        name: "addBankConfirm"
+      name: "addBankConfirm",
+      data ()  {
+        return {
+          timerText: '60 s'
+        }
+      },
+      mounted() {
+        this.$nextTick(() => {
+          this.timer();
+        })
+      },
+      methods: {
+        timer () {
+          let count = 60;
+          let _this = this;
+          let timer = setInterval(() => {
+            count--;
+            _this.timerText = count + ' s';
+            if (count<0) {
+              clearInterval(timer);
+              _this.timerText = '再次发送'
+            }
+          },1000);
+        }
+      }
     }
 </script>
 
@@ -32,10 +56,52 @@
     z-index: 100;
   }
   .infoWrapper {
-    padding: .53rem .8rem .26rem;
+    padding: .53rem .8rem 0;
     background: #fff;
   }
-  .infoWrapper
+  .infoWrapper .dec{
+    font-size: .4rem;
+    color: rgb(153,153,153);
+    line-height: 1.8;
+    border-bottom: 1px solid rgb(153,153,153);
+    padding-bottom: .2rem;
+  }
+  .block {
+    display: flex;
+    padding: .26rem 0;
+  }
+  .block .left {
+    flex: 1;
+    line-height: 1rem;
+    display: inline-flex;
+
+  }
+  .left label{
+    font-size: .4rem;
+    color: rgb(51,51,51);
+    flex: none;
+  }
+  .left input {
+    flex: none;
+    width: 60%;
+    font-size: .4rem;
+    color: rgb(51,51,51);
+    border: none;
+    outline: none;
+  }
+  .block .right {
+    flex: none;
+  }
+  .block .right .btn {
+    width: 2.24rem;
+    height: 1rem;
+    background: rgb(245,0,87);
+    color: #fff;
+    border-radius: .53rem;
+    text-align: center;
+    line-height: 1rem;
+    font-size: .37rem;
+  }
   .bottomBtn {
     width: 68%;
     height: 1rem;
