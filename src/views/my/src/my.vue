@@ -14,9 +14,9 @@
               img(:src="this.userHeadPortrait | img-filter")
           ul.userName
             li {{userNiceName}}
-          ul.balance(v-if="false")
+          ul.balance(v-if="isOrgUser")
             li 余额:
-            li 8888.88
+            li {{userAccountBalance}}
             li 元
     div.fav_att_foot
       ul.left
@@ -26,7 +26,7 @@
         li 0
         li 关注店铺
       ul.right
-        li 22
+        li {{footmarkNum}}
         li 足迹
     div.myOrderForm
       ul.top(@click="$router.push('/my/orderManage')")
@@ -63,21 +63,11 @@
         li(v-if="true")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
           .words 通用劵
-    div.recommend
-      img(src="../../../assets/img/my_recommend@2x.png")
-    .bottomList
-        ul.goodsList#box
-          li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../assets/img/my_goods.png")
-            .wrapWords
-              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
-              .price ￥516.22
-              .bottom <span>江苏南京</span><span>2555人购买</span>
+    w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
 </template>
 
 <script>
-import my_goods from '../../../assets/img/my_goods.png'
   export default {
     name: "my",
     data() {
@@ -85,58 +75,23 @@ import my_goods from '../../../assets/img/my_goods.png'
         recommendGoods: [],
         userNiceName:'1231312',
         userHeadPortrait: '',
+        isOrgUser: false,
+        userAccountBalance: 0,
+        footmarkNum: 0,
         name:this.$route.query.routeParams,
-        goodsDetails:[
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':568,
-            'region':'江苏南京',
-            'buyerNum':'167'
-          },
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':379,
-            'region':'浙江杭州',
-            'buyerNum':'200'
-          },
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':299,
-            'region':'安徽合肥',
-            'buyerNum':'101'
-          },
-        ]
-
-
+        page: 1,
       }
 
     },
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
       this.getUserInfo()
+      this.getFootmarkNum()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods: {
-      // 点击按钮，返回顶部
-      // topFunction:function () {
-      //   var timer = setInterval(function(){
-      //       var top = document.body.scrollTop || document.documentElement.scrollTop;
-      //       var speed = top / 4;
-      //       if (document.body.scrollTop!=0) {
-      //           document.body.scrollTop -= speed;
-      //       }else {
-      //           document.documentElement.scrollTop -= speed;
-      //       }
-      //       if (top == 0) {
-      //           clearInterval(timer);
-      //       }
-      //   },30);
-      // },
       getUserInfo:function(){
         let self = this
         // 发送ajax请求校验手机号重复
@@ -149,6 +104,23 @@ import my_goods from '../../../assets/img/my_goods.png'
           if (response.data.optSuc) {
             self.userNiceName = response.data.data.mi_nickname
             self.userHeadPortrait = response.data.data.mi_head_sculpture
+            self.isOrgUser = response.data.data.isOrg
+            if(response.data.data.isOrg){
+              self.userAccountBalance = response.data.data.accoutBalance
+            }
+          }
+        })
+      },
+      getFootmarkNum:function(){
+        let self = this
+        // 发送ajax请求校验手机号重复
+        self.$ajax({
+          method: 'POST',
+          url: self.$apiClassify + 'logGoodsBrowse/count',
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.footmarkNum = response.data.data
           }
         })
       },
@@ -160,7 +132,6 @@ import my_goods from '../../../assets/img/my_goods.png'
            }
         });
       },
-
       routergoSet:function(){
         this.$router.push({
            name: '我的设置',
@@ -169,7 +140,6 @@ import my_goods from '../../../assets/img/my_goods.png'
            }
         });
       },
-
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
@@ -182,23 +152,18 @@ import my_goods from '../../../assets/img/my_goods.png'
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        setTimeout(function () {
-//            axios.get("xxxxxx", {
-//          params: {
-//            num: pageNum, //页码
-//            size: pageSize //每页长度
-//          }
-//        })
-//        .then(function(response) {
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-//        })
-//        .catch(function(error) {
-//          errorCallback&&errorCallback()//失败回调
-//        });
-        },500)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
       }
 
     }
