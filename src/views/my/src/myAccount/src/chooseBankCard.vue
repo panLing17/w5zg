@@ -9,13 +9,14 @@
       ul.list
         li.item(v-for="(item, index) in bankData", @click="change(index)")
           .icon
+            img(:src="item.bank_icon | img-filter")
           .center
-            .name {{item.tb_bank_name}}
-            .type  储蓄卡
-            .cardNo **** **** **** {{item.cardNo}}
+            .name {{item.bank_card_owner_name}}
+            .type  {{item.mbc_type}}
+            .cardNo **** **** **** {{item.bank_card.slice(item.bank_card.length-5,item.bank_card.length-1)}}
           img.checked(src="../../../../../assets/img/checked@2x.png", v-if="item.isChecked")
       .add
-        img(src="../../../../../assets/img/newbankcard@2x.png")
+        img(src="../../../../../assets/img/newbankcard@2x.png", @click="$router.push('/my/addBankCard')")
 </template>
 
 <script>
@@ -62,7 +63,7 @@
           let self = this
           self.$ajax({
             method: 'get',
-            url: self.$apiMember + 'memberBank/bankNames',
+            url: self.$apiMember + 'memberBank/memberbankcards',
             params: {},
           }).then(function (response) {
             response.data.data.forEach((now)=>{
@@ -79,7 +80,7 @@
   .chooseBankCard {
     background: rgb(242,242,242);
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     position: absolute;
     z-index: 100;
   }
@@ -107,6 +108,11 @@
     background: #65aadd;
     align-self: flex-start;
     margin-top: .4rem;
+    overflow: hidden;
+  }
+  .item .icon img{
+    width: 100%;
+    height: 100%;
   }
   .item .center {
     margin-left: .26rem;
@@ -134,7 +140,7 @@
   }
   .add {
     flex: 0;
-    padding-bottom: .26rem;
+    padding: .26rem 0;
     text-align: center;
   }
   .add img {

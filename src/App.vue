@@ -52,7 +52,6 @@ export default {
       });
       //解析定位结果
       function onComplete(data) {
-        console.log(data)
         var str=[]
         str.push(data.position.getLng());
         str.push( data.position.getLat());
@@ -61,7 +60,8 @@ export default {
         // 编码逆解析
         geocoder.getAddress([data.position.lng,data.position.lat],function(status,result){
           if(status=='complete'){
-            console.log(result)
+            alert(result.regeocode.addressComponent.adcode)
+            _this.getLocationId(result.regeocode.addressComponent.adcode)
             let province = result.regeocode.addressComponent.province
             let city = result.regeocode.addressComponent.city
             let district = result.regeocode.addressComponent.district
@@ -78,22 +78,31 @@ export default {
         _this.$message.error('定位失败,请开启定位')
       }
     },
-    getLocationId(province,city,area) {
+    getLocationId (adCode) {
       let _this = this
       _this.$ajax({
-        method: 'post',
-        url: 'location/findByNames',
+        method: 'get',
+        url: _this.$apiApp + 'area/areaInfo',
         params: {
-          provinceName: province,
-          cityName: city,
-          areaName: area,
+          adCode: adCode
         },
-        headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
       }).then(function (response) {
-        if (response.data.code === '100') {
-          // 保存省市区id
-          _this.$store.commit('getLocationId', response.data.data[0])
+        alert(JSON.stringify(response.data.data))
+        let data = {
+          province:{
+            name: response.data.data.provinceName,
+            id: response.data.data.provinceNo
+          },
+          city:{
+            name: response.data.data.cityName,
+            id: response.data.data.cityNo
+          },
+          area:{
+            name: '玄武区',
+            id: 320102
+          }
         }
+        _this.$store.commit('getLocation', data)
       })
     },
     getUserData () {

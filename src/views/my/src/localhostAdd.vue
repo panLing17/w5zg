@@ -80,9 +80,9 @@
       locationSave () {
         let self = this
         if (this.isdefault) {
-          this.form.isDefault = '011'
+          this.form.isDefault = '0'
         } else {
-          this.form.isDefault = '012'
+          this.form.isDefault = '1'
         }
         self.$ajax({
           method: 'post',

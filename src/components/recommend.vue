@@ -35,12 +35,21 @@
     width: 49%;
     float: left;
     margin-bottom: .2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .goodsList li img {
     width: 100%;
   }
   .text{
     margin: .1rem;
+    height: .8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .price{
     margin: .2rem .1rem;
