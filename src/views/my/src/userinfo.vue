@@ -9,43 +9,46 @@
         li.left 头像
         li.right
           span.pic
-          img(src="../../../assets/img/next@2x.png") 
+            img(:src="userData.mi_head_sculpture | img-filter")
+          img(src="../../../assets/img/next@2x.png")
     .nickname
       ul.wrap(@click="routergo()")
         li.left 昵称
         li.right
-          span.name {{name}}
+          span.name {{userData.mi_name}}
           img(src="../../../assets/img/next@2x.png")
     .gender
       ul.wrap(@click="select(3)")
         li.left 性别
         li.right
-          span.sex 男
+          span.sex {{userData.mi_sex}}
           img(src="../../../assets/img/next@2x.png")
     .birthDay
       ul.wrap
         li.left 出生日期
         li.right
-          span.day 2018-03-08
+          span.day {{userData.mi_birthday}}
           img(src="../../../assets/img/next@2x.png")
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close")      
-    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")      
+      .bg(v-if="show", @click="close")
+    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .select(v-show="shows")
         ul
-          li.first(@click="type($event)") 
-          li.second(@click="type($event)") 
+          li.first(@click="type($event)")
+          li.second(@click="type($event)")
           li.cancel(@click="type($event)") 取消
     pdSelectBox
     pdSelectItem
-    .oDiv(ref="refCon")                                  
+    .oDiv(ref="refCon")
 </template>
 
 <script>
   import pdSelectBox from './selectBox.vue'
   import pdSelectItem from './selectitem.vue'
+  import {mapState} from  'vuex'
   export default {
     name: "userinfo",
+    computed: mapState(['userData']),
     components:{pdSelectBox,pdSelectItem},
     data(){
       return{
@@ -88,12 +91,12 @@
           inputs.setAttribute("type","file");
           second.append(inputs);
         }
-      }, 
+      },
 
 
       type:function(e){
         if (e.target.innerHTML=="男"||e.target.innerHTML=="女") {
-          document.getElementsByClassName("sex")[0].innerHTML = e.target.innerHTML;    
+          document.getElementsByClassName("sex")[0].innerHTML = e.target.innerHTML;
         }
           this.shows = false;
       },
@@ -103,16 +106,16 @@
            name: '我的昵称',
            query: {
               routeParams: this.name
-           }    
+           }
         });
       },
-      
+
       routerback:function(){
         this.$router.push({
            name: '我的',
            query: {
               routeParams: this.name
-           }    
+           }
         });
       },
 
@@ -186,6 +189,13 @@
     background-color: #aaa;
     border-radius: 50%;
     vertical-align: middle;
+  }
+  .pic img{
+    width: 100% !important;
+    height: 100% !important;
+    vertical-align: baseline !important;
+    margin-left: 0 !important;
+    margin-top: 0 !important;
   }
   /*用户头像独立样式--结束*/
   /*昵称,性别,出生日期共同的样式--开始*/

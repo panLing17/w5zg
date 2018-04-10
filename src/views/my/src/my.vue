@@ -53,23 +53,24 @@
         li 我的财富
         li
       ul.bottom
-        li
+        li(@click="goBankCard")
           img(src="../../../assets/img/my_bankcard@2x.png")
           .words 银行卡
-        li
+        li(@click="goNetKingCard")
           img(src="../../../assets/img/my_card@2x.png")
           .words 现金券
-        li(v-if="false")
+        li(v-if="userData.member_type === '091'", @click="goAllCard")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
           .words 通用劵
     .title
       .line
-      p 推荐      
+      p 推荐
     w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
 </template>
 
 <script>
+  import {mapState} from  'vuex'
   export default {
     name: "my",
     data() {
@@ -83,8 +84,8 @@
         name:this.$route.query.routeParams,
         page: 1,
       }
-
     },
+    computed: mapState(['userData']),
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
       this.getUserInfo()
@@ -166,8 +167,33 @@
         }).then(function (response) {
           successCallback&&successCallback(response.data.data);//成功回调
         })
+      },
+      // 前往银行卡
+      goBankCard () {
+        this.$router.push('/my/chooseBankCard')
+      },
+      // 前往网金卡
+      goNetKingCard () {
+        // 前往小B端
+        if (this.$store.state.userData.member_type === '092') {
+          this.$router.push('/my/accountCashB')
+        }
+        // 前往小C端
+        if (this.$store.state.userData.member_type === '091') {
+          this.$router.push('/my/accountCardC')
+        }
+      },
+      // 前往通用券
+      goAllCard () {
+        // 前往小B端
+        if (this.$store.state.userData.member_type === '092') {
+          this.$router.push('/my/chooseBankCard')
+        }
+        // 前往小C端
+        if (this.$store.state.userData.member_type === '091') {
+          this.$router.push('/my/accountUniversalC')
+        }
       }
-
     }
   }
 </script>
