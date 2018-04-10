@@ -368,6 +368,11 @@ const router = new Router ({
               path: '/my/addBankConfirm',
               name: '添加银行卡验证页',
               component: MyAccount.addBankConfirm
+            },
+            {
+              path: '/my/revenue',
+              name: '预计收入明细',
+              component:MyAccount.revenue
             }
           ]
         }
