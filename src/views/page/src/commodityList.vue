@@ -227,7 +227,7 @@
         this.request();
       },
       exchange:function(){
-        this.flag = !this.flag;
+        this.flags = !this.flags;
         this.style = !this.style;
         var box = document.getElementById("box");
         var classVal = box.getAttribute('class');
