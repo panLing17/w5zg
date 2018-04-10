@@ -59,7 +59,7 @@
         li
           img(src="../../../assets/img/my_card@2x.png")
           .words 现金券
-        li(v-if="true")
+        li(v-if="false")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
           .words 通用劵
     w-recommend#dataId(:listData="recommendGoods")
@@ -186,7 +186,7 @@
   }
   .head .top{
     width: 100%;
-    margin-top: 1rem;
+    margin-top: .2rem;
     padding: 0 .3rem;
     display: flex;
     justify-content: space-between;
@@ -325,7 +325,7 @@
     margin-right: .5rem;
   }
 	.myTreasure ul.bottom li img{
-		width: 1.2rem;
+		width: .8rem;
 	}
   .myTreasure ul.bottom li .words{
     color: rgb(51,51,51);
