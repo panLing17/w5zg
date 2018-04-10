@@ -6,7 +6,7 @@
       .topCenter(slot="center") 通用券
       .topRight(slot="right")
     .balanceBox
-      .balance 2000.00
+      .balance {{balance | number}}
       .balanceDec 余额
     .tabBox
       .left 消费记录
@@ -19,13 +19,13 @@
       ul.detailList
         li(v-for="item in cashDetail")
           .block.top
-            .left 订单号: {{item.orderNo}}
-            .right {{item.price}}
-          .block.center
-            .left(v-if="item.project") {{item.project}}
+            // 订单号
+            .left 订单号: {{item.order_id}}
+            // 交易金额 trade_in_out 126为支出 125为收入
+            .right {{item.trade_in_out==='126'?'-':'+'}}{{item.tran_money | number}}
           .block.bottom
-            .left 余额: {{item.balance}}
-            .right {{item.date}}
+            .left 余额: {{item.trade_balance_money | number}}
+            .right {{item.creation_time}}
     .nodata(v-if="!cashDetail") 暂无相关记录
 </template>
 
@@ -34,56 +34,60 @@
       name: "accountUniversalC",
       data () {
         return {
-          cashDetail: [
-            {
-              orderNo:'2015548574874',
-              price:'+400.00',
-              project: '个性休闲修身西装',
-              balance: '200.00',
-              date: '2018-4-5 12:00'
-            },
-            {
-              orderNo:'2015548574874',
-              price:'+400.00',
-              balance: '200.00',
-              date: '2018-4-5 12:00'
-            },
-            {
-              orderNo:'2015548574874',
-              price:'+400.00',
-              project: '个性休闲修身西装',
-              balance: '200.00',
-              date: '2018-4-5 12:00'
-            }
-          ],
-          itemActive: 0
+          logs:[],
+          cashDetail: null,
+          itemActive: 0,
+          balance: 0.00
+        }
+      },
+      created () {
+        this.getBalance();
+        this.getLogs();
+      },
+      filters: {
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
         }
       },
       methods: {
+        getBalance () {
+          this.balance = this.$store.state.userData.cash_balance;
+        },
+        // 获取订单流水记录
+        getLogs () {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'logAccount/logs',
+            params: {}
+          }).then(function (response) {
+            _this.logs = _this.cashDetail = response.data.data;
+          })
+        },
+        // 过滤
         itemChange (index) {
           this.itemActive = index;
-          this.cashDetail = [
-            {
-              orderNo:'1111111',
-              price:'+400.00',
-              project: '个性休闲修身西装',
-              balance: '200.00',
-              date: '2018-4-5 12:00'
-            },
-            {
-              orderNo:'222222',
-              price:'+400.00',
-              balance: '200.00',
-              date: '2018-4-5 12:00'
-            },
-            {
-              orderNo:'333333',
-              price:'+400.00',
-              project: '个性休闲修身西装',
-              balance: '200.00',
-              date: '2018-4-5 12:00'
-            }
-          ]
+          this.cashDetail = [];
+          switch (parseInt(index)) {
+            case 0:
+              this.cashDetail = this.logs;
+              break;
+            case 1:
+              this.logs.forEach((item, i) => {
+                if (item.trade_in_out === '125') {
+                  this.cashDetail.push(item);
+                }
+              });
+              break;
+            case 2:
+              this.logs.forEach((item, i) => {
+                if (item.trade_in_out === '126') {
+                  this.cashDetail.push(item);
+                }
+              });
+              break;
+          }
         }
       }
     }

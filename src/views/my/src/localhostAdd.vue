@@ -51,14 +51,23 @@
     },
     components: {citySelect},
     mounted(){
-      this.getBase()
-      this.$route.query.id ? this.addressId = this.$route.query.id : this.addressId =''
+      if (this.$route.query.id) {
+        this.getBase()
+      }
     },
     methods:{
       goBack(){
         this.$router.go(-1)
       },
       getBase () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'receivingAddress/address',
+          params: {},
+        }).then(function (response) {
+
+        })
       },
       // 选择城市结束
       cityChange (data) {
@@ -71,9 +80,9 @@
       locationSave () {
         let self = this
         if (this.isdefault) {
-          this.form.isDefault = '011'
+          this.form.isDefault = '0'
         } else {
-          this.form.isDefault = '012'
+          this.form.isDefault = '1'
         }
         self.$ajax({
           method: 'post',

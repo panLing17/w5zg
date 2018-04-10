@@ -17,7 +17,7 @@
               w-checkbox(v-model="item.ra_default", @change="defaultChange(item.ra_default,index,item.id)")
             span 设为默认
           li.changeDelete(@click.stop="")
-            span(@click="") 编辑
+            span(@click="changeLocation(item.id)") 编辑
             span(@click="makeSure(item.id,index)") 删除
     .bottom
       w-button(@click="$router.push('/my/localAdd')") <img src="../../../assets/img/add@3x.png"/>新增收货地址
@@ -59,9 +59,6 @@
       },
       goBack (){
         this.$router.go(-1)
-      },
-      goLocalhostAdd(){
-        this.$router.push("/my/localhostAdd")
       },
       getData () {
         let self = this
@@ -118,9 +115,8 @@
           }
         })
       },
-      changeLocation (data) {
-        this.$store.commit('transferGive', data)
-        this.$router.push({path: '/my/localhostAdd', query:{id:data.addressId}})
+      changeLocation (id) {
+        this.$router.push({path: '/my/localAdd', query:{id:id}})
       }
     }
   }

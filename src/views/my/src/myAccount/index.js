@@ -10,7 +10,11 @@ import accountB from './src/accountB'
 import accountDetail from './src/accountDetail'
 import accountDetailContent from './src/accountDetailContent'
 import withdrawals from './src/withdrawals'
+import chooseBankCard from './src/chooseBankCard'
+import addBankCard from './src/addBankCard'
+import addBankConfirm from './src/addBankConfirm'
+import revenue from './src/revenue'
 
 export default {
-  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals
+  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue
 }

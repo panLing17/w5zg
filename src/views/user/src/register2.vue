@@ -8,7 +8,7 @@
     .form
       w-input(label="新密码：", label-width="2rem", placeholder="请输入密码", :type="passwordType", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
       w-input(label="确认密码：", label-width="2rem", placeholder="请再次输入密码", :type="passwordType", v-model="qrPassword", required,:error="qrPasswordError")
-      button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 确定
+      button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 提交
 </template>
 
 <script>

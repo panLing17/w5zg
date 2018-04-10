@@ -189,12 +189,12 @@ const router = new Router ({
             },
             {
               path: '/my/updatePassword1',
-              name: '我的修改登录密码1',
+              name: '修改登录密码与支付密码',
               component: My.updatePassword1
             },
             {
               path: '/my/updatePassword2',
-              name: '我的修改登录密码2',
+              name: '修改登录登录密码与支付密码验证码验证',
               component: My.updatePassword2
             },
             {
@@ -353,6 +353,26 @@ const router = new Router ({
               path: '/my/withdrawals',
               name: '提现',
               component:MyAccount.withdrawals
+            },
+            {
+              path: '/my/chooseBankCard',
+              name: '选择银行卡',
+              component:MyAccount.chooseBankCard
+            },
+            {
+              path: '/my/addBankCard',
+              name: '添加银行卡',
+              component: MyAccount.addBankCard
+            },
+            {
+              path: '/my/addBankConfirm',
+              name: '添加银行卡验证页',
+              component: MyAccount.addBankConfirm
+            },
+            {
+              path: '/my/revenue',
+              name: '预计收入明细',
+              component:MyAccount.revenue
             }
           ]
         }

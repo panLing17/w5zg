@@ -107,7 +107,7 @@
       },
       nextStep() {
         let self = this
-        if (self.form.mobile == '' || self.form.checkCode == '' || self.nextStepStatus) {
+        if (self.form.mobile == '' || self.form.vcode == '' || self.nextStepStatus) {
           self.phoneError = ''
           self.checkCodeError = ''
           return

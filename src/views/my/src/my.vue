@@ -1,13 +1,13 @@
 <template lang="pug">
-  div.myBox.mescroll#myMescroll
+  div.myBox.mescroll#myMescroll(:class="{positionFixed: positionFixed}")
     .head
       .top
         .lefter
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
         .righter
-          img(src="../../../assets/img/message@2x.png")
-          img(src="../../../assets/img/my_account@2x.png" @click="routergoUser()" v-if="false")
-          img(src="../../../assets/img/consumerdetails@2x.png" v-else="true")
+          img(src="../../../assets/img/message@2x.png", v-if="false")
+          img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
+          img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountDetail/:id')", v-else)
       p.center
           ul.headPic
             li(@click="routergoUser()")
@@ -53,23 +53,24 @@
         li 我的财富
         li
       ul.bottom
-        li
+        li(@click="goBankCard")
           img(src="../../../assets/img/my_bankcard@2x.png")
           .words 银行卡
-        li
+        li(@click="goNetKingCard")
           img(src="../../../assets/img/my_card@2x.png")
           .words 现金券
-        li(v-if="false")
+        li(v-if="userData.member_type === '091'", @click="goAllCard")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
           .words 通用劵
     .title
       .line
-      p 推荐      
+      p 推荐
     w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
 </template>
 
 <script>
+  import {mapState} from  'vuex'
   export default {
     name: "my",
     data() {
@@ -82,18 +83,29 @@
         footmarkNum: 0,
         name:this.$route.query.routeParams,
         page: 1,
+        // 切换动画hack
+        positionFixed: false
       }
-
     },
+    computed: mapState(['userData']),
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
       this.getUserInfo()
       this.getFootmarkNum()
+      // 切换动画HACK
+      this.animateHack()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods: {
+      /* 切换动画修复 */
+      animateHack () {
+        setTimeout(()=>{
+          this.positionFixed = true
+        },500)
+      },
+      /* 获取用户信息 */
       getUserInfo:function(){
         let self = this
         // 发送ajax请求校验手机号重复
@@ -125,14 +137,6 @@
             self.footmarkNum = response.data.data
           }
         })
-      },
-      routergoUser:function(){
-        this.$router.push({
-           name: '我的用户资料',
-           query: {
-              routeParams: this.name
-           }
-        });
       },
       routergoSet:function(){
         this.$router.push({
@@ -166,8 +170,33 @@
         }).then(function (response) {
           successCallback&&successCallback(response.data.data);//成功回调
         })
+      },
+      // 前往银行卡
+      goBankCard () {
+        this.$router.push('/my/chooseBankCard')
+      },
+      // 前往网金卡
+      goNetKingCard () {
+        // 前往小B端
+        if (this.$store.state.userData.member_type === '092') {
+          this.$router.push('/my/accountCashB')
+        }
+        // 前往小C端
+        if (this.$store.state.userData.member_type === '091') {
+          this.$router.push('/my/accountCardC')
+        }
+      },
+      // 前往通用券
+      goAllCard () {
+        // 前往小B端
+        if (this.$store.state.userData.member_type === '092') {
+          this.$router.push('/my/chooseBankCard')
+        }
+        // 前往小C端
+        if (this.$store.state.userData.member_type === '091') {
+          this.$router.push('/my/accountUniversalC')
+        }
       }
-
     }
   }
 </script>
@@ -182,7 +211,7 @@
   /*头部--开始*/
   .head{
     width: 100%;
-    height: 5rem;
+    height: 4.5rem;
     background: url("../../../assets/img/my_bg.png") no-repeat;
     background-size: 100% 100%;
     overflow: hidden;
@@ -387,6 +416,8 @@
     top: 0;
     bottom: 0;
     height: auto;
+  }
+  .positionFixed{
     position: fixed;
   }
   /*推荐*/

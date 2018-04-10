@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .content
       .contentTop
-        .haveWrapper(v-if="true")
+        .haveWrapper(v-if="true", @click="$router.push('/my/chooseBankCard')")
           .icon
           .info
             .name 中国工商银行
