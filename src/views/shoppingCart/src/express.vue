@@ -5,13 +5,13 @@
       .title
         span 失效商品
         .delete 清空失效商品
-      disable-goods
+      disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
     city-select(:show='selectFlag', :goodsList="nowGoodsDataList", @close="selectClose", @submit="submit")
 </template>
 
 <script>
   import goodsCard from './goodsCard'
-  import disableGoods from './disableGoods'
+  import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
   export default {
     name: 'express',
@@ -50,14 +50,17 @@
       // 勾选变化后
       selectChange () {
         let price = 0
+        let checked = []
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
             if (sonNow.checked) {
               price = price + sonNow.goods_num*sonNow.now_price
+              checked.push(sonNow)
             }
           })
         })
         this.$store.commit('computedPriceChange', price)
+        this.$store.commit('shoppingCartSelectedChange', checked)
       },
       getData () {
         let self = this

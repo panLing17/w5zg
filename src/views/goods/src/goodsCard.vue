@@ -11,7 +11,7 @@
         .price
           span {{data.price | price-filter}}
           span X{{data.number}}
-    .bottom(v-if="since")
+    .bottom(v-if="since === 'true'")
       .left 门店自提
       .right
         span {{data.storeLocation.pro.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
@@ -29,7 +29,7 @@
     props: {
       data: Object,
       // 根据此判断是否是自提订单
-      since: Boolean
+      since: String
     }
   }
 </script>

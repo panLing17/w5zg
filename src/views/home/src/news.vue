@@ -35,6 +35,11 @@
             ]
           }
         },
+      watch: {
+        newsData: function () {
+          this.animate()
+        }
+      },
       methods:{
         animate(){
           let n=this.newsData.length;

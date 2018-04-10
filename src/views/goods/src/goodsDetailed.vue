@@ -8,7 +8,7 @@
         .topRight(slot="right")
       carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
         div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
-          img(:src="tag.gi_img_url" , style="width:100%;height:8rem")
+          img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
     .goodsInfo
       .goodsName  {{goodsData.gi_name}}
       .price {{goodsData.counter_interval}} <span>专柜价</span>
@@ -205,7 +205,7 @@
           }]
           // 传入中转
           this.$store.commit('transferGive', orderData)
-          this.$router.push({path: '/confirmOrder', query:{since:true,type:'direct'}})
+          this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
         }
         if (this.shoppingCartFlag) {
           // 如果操作来自添加购物车按钮
@@ -288,7 +288,7 @@
             if (response.data.data.storage_num>0) {
               // 传入中转
               self.$store.commit('transferGive', orderData)
-              self.$router.push({path: '/confirmOrder', query:{since:false,type:'direct'}})
+              self.$router.push({path: '/confirmOrder', query:{since:'false',type:'direct'}})
             } else {
               self.$message.error('库存不足')
             }

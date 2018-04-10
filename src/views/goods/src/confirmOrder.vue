@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .title
       .stud {{$route.query.since?'提货人':'联系人'}}
-    .location(v-if="$route.query.since")
+    .location(v-if="$route.query.since === 'true'")
       ul.locationInput
         li
           label 提货人
@@ -15,7 +15,7 @@
         li
           label 联系方式
             input(type="text", placeholder="请输入提货人联系方式", v-model="phone")
-    .location(v-if="!$route.query.since&&JSON.stringify(giveGoodsAddress) !== '{}'", @click="goSelectLocation")
+    .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) !== '{}'", @click="goSelectLocation")
       .content
         .nameAndMobile
           p 收件人：{{giveGoodsAddress.ra_name}}
@@ -25,9 +25,9 @@
           .info {{giveGoodsAddress.ra_detailed_addr}}
       .icon
         img(src="../../../assets/img/next@2x.png")
-    .location(v-if="!$route.query.since&&JSON.stringify(giveGoodsAddress) === '{}'")
+    .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) === '{}'")
       .addLocation
-        p 添加收货地址
+        p(@click="$router.push('/my/localAdd')") 添加收货地址
     goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
     .allPrice
       .goodsNum 共计{{content}}件商品
@@ -80,13 +80,17 @@
       submit () {
         // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单
         if (this.$route.query.type === 'direct') {
-          if (this.$route.query.since) {
+          if (this.$route.query.since === 'true') {
             this.directSince()
           } else {
             this.directDistribution()
           }
         } else {
-
+          if (this.$route.query.since === 'true') {
+            this.shoppingCartSince()
+          } else {
+            this.shoppingCartDistribution()
+          }
         }
       },
       /* 立即购买快递配送订单生成 */
@@ -106,6 +110,7 @@
           }
         }).then(function (response) {
           self.$message.success('成功生成订单')
+          self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
       /* 立即购买自提订单生成 */
@@ -127,6 +132,56 @@
           }
         }).then(function (response) {
           self.$message.success('成功生成订单')
+          self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
+        })
+      },
+      /* 购物车自提订单生成 */
+      shoppingCartSince () {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
+        let self = this
+        let cartId = []
+        this.$store.state.transfer.forEach((now)=>{
+          cartId.push(now.cartId)
+        })
+        cartId = cartId.join(',')
+        this.$ajax({
+          method: 'post',
+          url: self.$apiTransaction + 'order/submitCarryOrder',
+          params: {
+            gcIdArray: cartId,
+            netCardFlag: netCardFlag,
+            commonTicketFlag: commonTicketFlag,
+            carryPerson: self.name,
+            carryPhone: self.phone
+          }
+        }).then(function (response) {
+          self.$message.success('成功生成订单')
+          self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
+        })
+      },
+      /* 购物车配送订单生成 */
+      shoppingCartDistribution () {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
+        let self = this
+        let cartId = []
+        this.$store.state.transfer.forEach((now)=>{
+          cartId.push(now.cartId)
+        })
+        cartId = cartId.join(',')
+        this.$ajax({
+          method: 'post',
+          url: self.$apiTransaction + 'order/submitSendOrder',
+          params: {
+            gcIdArray: cartId,
+            netCardFlag: netCardFlag,
+            commonTicketFlag: commonTicketFlag,
+            deliveryId: self.giveGoodsAddress.id
+          }
+        }).then(function (response) {
+          self.$message.success('成功生成订单')
+          self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
       getLocation () {

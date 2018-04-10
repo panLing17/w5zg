@@ -2,10 +2,10 @@
   div.box
     ul
       li(v-for="item in list.slice(0,4)")
-        img(:src="item.tcUrl | img-filter" , @click="goGoods('特价商品')")
+        img(:src="item.tcTitlePicture | img-filter" , @click="goGoods('特价商品')")
     ul
       li(v-for="item in list.slice(4,7)")
-        img(:src="item.tcUrl | img-filter" )
+        img(:src="item.tcTitlePicture | img-filter" )
 </template>
 
 <script>
