@@ -12,6 +12,7 @@ export default {
   mounted () {
     this.getDictionaries()
     this.getLocation()
+    this.getUserData()
   },
   methods:{
     getDictionaries () {
@@ -93,6 +94,16 @@ export default {
           // 保存省市区id
           _this.$store.commit('getLocationId', response.data.data[0])
         }
+      })
+    },
+    getUserData () {
+      let self = this
+      self.$ajax({
+        method: 'get',
+        url: self.$apiMember + 'member/api/currentMember',
+        params: {}
+      }).then(function (response) {
+        self.$store.commit('userDataChange' ,response.data.data)
       })
     }
   }

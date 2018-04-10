@@ -8,6 +8,7 @@
       ul.wrap(@click="routergoUser()")
         li.left
           span.pic
+            img(:src="userData.mi_head_sculpture | img-filter")
         li.right
           span.name {{name}}
           img(src="../../../assets/img/next@2x.png")
@@ -39,7 +40,7 @@
     .logOut 退出登录
 </template>
 <script>
-
+  import {mapState} from  'vuex'
   export default {
     name: 'settings',
     data () {
@@ -47,6 +48,7 @@
         name:this.$route.query.routeParams
       }
     },
+    computed: mapState(['userData']),
     mounted () {
 
     },
@@ -163,6 +165,10 @@
   	display: inline-block;
   	font-size: .4rem;
   	color: rgb(153,153,153);
+  }
+  .pic img {
+    width: 100%;
+    height: 100%;
   }
   /*用户头像独立样式--结束*/
   /*昵称,性别,出生日期共同的样式--开始*/
