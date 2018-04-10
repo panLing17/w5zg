@@ -188,9 +188,7 @@
 .discover ul.cont li{
   display: inline-block;
   width: auto;
-  height: .8rem;
-  line-height: .8rem;
-  padding: 0 .3rem;
+  padding: .2rem .3rem;
   background-color: rgb(242,242,242);
   border-radius: .25rem;
   margin-right: .2rem;

@@ -1,5 +1,5 @@
 <template lang="pug">
-  .orderManage
+  .orderManage.mescroll#orderManageMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
@@ -9,28 +9,30 @@
         img(src="../../../../../assets/img/msg_0.png").msg
     .orderStatus
       ul.wrapStatus
-        li(v-for="(item,index) in status" @click="check(index)" :class="{active:index == num}").status {{item}}
+        li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num}").status {{item}}
     .content(v-for="(item,index) in orderDetail")
       .top
         .left
           span.orderNum 订单编号:
-          span.num {{item.orderNum}}
-        .right#state {{item.status}}  
-      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.status,id:index}})")
+          span.num {{item.total_order_no}}
+        .right#state {{item.order_status}}  
+      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,id:index,orderId:item.total_order_id}})")
         .image
-          img(:src="items" v-for="items in item.imageSrc")   
+          img(:src="items | img-filter" v-for="items in item.logoList")
+        .goodsDetails
+          .words
       .bottom
-        .left(v-if="item.status === '待备货'")
+        .left(v-if="item.order_status === '待备货'")
           .goodsCode 提货码: {{item.goodsCode}}
         .right
           .total
             .totalNumber
-              span.amount 共计 {{item.amount}} 件商品
+              span.amount 共计 {{item.totalCount}} 件商品
               span.price 合计 :
-                strong.priceNum {{item.priceNum | price-filter}}
-          .button(v-if="item.status === '待付款' || '待发货' || '待收货'",v-show="item.status !== '备货中'")
-            .cancel {{item.buttonL}}
-            .pay(:class="{a:item.status === '待发货'}") {{item.buttonR}}       
+                strong.priceNum {{item.oi_pay_price | price-filter}}
+      .button
+        .cancel(@click="buttonLeft($event)") {{buttonL}}
+        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}") {{buttonR}}       
 </template>
 
 <script>
@@ -39,56 +41,23 @@
       name: "orderManage",
       data(){
         return{
+          state:"",
           num:0,
           statusFlag1:false,
           statusFlag2:true,
           status:["全部","待付款","待发货","待收货","待评价"],
-          orderDetail:[
-            {
-              orderNum:"2018031401",
-              status:"待付款",
-              imageSrc:[myGoods,myGoods,myGoods,myGoods],
-              amount:4,
-              priceNum:596,
-              buttonL:"取消订单",
-              buttonR:"支付"
-            },
-            {
-              orderNum:"2018031402",
-              status:"备货中",
-              imageSrc:[myGoods,myGoods,myGoods,myGoods,myGoods,myGoods],
-              goodsCode:"03200001",
-              amount:6,
-              priceNum:596
-            },
-            {
-              orderNum:"2018031403",
-              status:"待发货",
-              imageSrc:[myGoods,myGoods,myGoods,myGoods,myGoods],
-              goodsCode:"03200001",
-              amount:5,
-              priceNum:596,
-              buttonL:"提醒发货",
-              buttonR:"物流信息"
-            },
-            {
-              orderNum:"2018031404",
-              status:"待自提",
-              imageSrc:[myGoods,myGoods,myGoods],
-              goodsCode:"03200001",
-              amount:3,
-              priceNum:596,
-              buttonL:"提醒发货",
-              buttonR:"物流信息"
-            }
-          ]
+          orderDetail:[],
+          buttonL:"",
+          buttonR:"",
+
         }
       },
       created(){
 
       },
       mounted(){
-        this.jump();  
+        this.jump();
+        this.$mescrollInt("orderManageMescroll",this.upCallback);  
       },
       methods:{
         //判断上一页点击的索引值
@@ -96,27 +65,145 @@
           console.log(this.$route.query.id);
           if (this.$route.query.id == 1) {
             this.num = 1;
+            this.state = 1;
           }
           if (this.$route.query.id == 2) {
             this.num = 2;
+            this.state = 2;
           }
           if (this.$route.query.id == 3) {
             this.num = 3;
+            this.state = 4;
           }
           if (this.$route.query.id == 4) {
             this.num = 4;
+            this.state = 3;
           }
+          this.request();
         },
 
         //点击tab切换
-        check(index){
+        check(item,index){
+          console.log(item);
           this.num = index;
+          if (item == "待付款") {
+            this.state = 1;
+          }
+          if (item == "待发货") {
+            this.state = 2;
+          }
+          if (item == "待收货") {
+            this.state = 4;
+          }
+          if (item == "待评价") {
+            this.state = 3;
+          }
+          this.request();
+        },
+        //判断两个按钮上的文字
+        buttonLeft(e){
+          if (e.target.innerText == "物流信息") {
+            this.$router.push('/my/checkLogistics');
+          }
+          if (e.target.innerText == "支付") {}
+        },
+        buttonRight(e,id,price){
+          if (e.target.innerText == "物流信息") {
+            this.$router.push('/my/checkLogistics');
+          }
+          if (e.target.innerText == "支付") {
+            alert(id,price);
+            this.$router.push({
+              path:'/payment',
+              query:{
+                id:id,
+                price:price
+              }
+            })
+          }
+        },
+
+        upCallback: function(page) {
+          let self = this;
+          this.getListDataFromNet(page.num, page.size, function(curPageData) {
+            if(page.num === 1) self.orderDetail = []
+            self.orderDetail = self.orderDetail.concat(curPageData)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function() {
+            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr();
+          })
+        },
+        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+          let self = this;
+          self.$ajax({
+            method: 'post',
+            url:self.$apiTransaction + 'order/orderByStatus',
+            params: {
+              status: this.state,
+              page: pageNum,
+              rows: pageSize
+            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }).then(function (response) {
+            console.log(response);
+            successCallback&&successCallback(response.data.data);//成功回调
+            for (var i = 0; i < response.data.data.length; i++) {
+              console.log(response.data.data[i].order_status);
+              if (response.data.data[i].order_status === "待付款") {
+                self.buttonL = "取消订单";
+                self.buttonR = "支付";
+              }
+              if (response.data.data[i].order_status === "待提货/待收货") {
+                self.buttonL = "物流信息";
+                self.buttonR = "确认收货";
+              }
+            }
+          })
+        },
+
+        request(){
+          let self = this;
+          self.$ajax({
+            method: 'post',
+            url:self.$apiTransaction + 'order/orderByStatus',
+            params:{
+              status:this.state,
+              page: 1,
+              rows: 10
+            }
+          }).then(function(response){
+            console.log(response.data.data);
+            self.orderDetail = response.data.data;
+            for (var i in response.data.data) {
+              console.log(response.data.data[i].order_status);
+              console.log(response.data.data[i].order_status === "待付款");
+              if (response.data.data[i].order_status == "待付款") {
+                self.buttonL = "取消订单";
+                self.buttonR = "支付";
+              }
+              if (response.data.data[i].order_status == "待收货/待提货") {
+                self.buttonL = "物流信息";
+                self.buttonR = "确认收货";
+              }
+              if (response.data.data[i].order_status == "待发货/待备货") {
+                self.buttonL = "提醒物流";
+                self.buttonR = "物流信息";
+              }
+            }
+          })
         }
       }
     }
 </script>
 
 <style scoped>
+  #orderManageMescroll{
+    top: 0;
+    bottom: 0;
+    height: auto;
+    position: fixed;
+  }
   .active{
     color: rgb(244,0,87) !important;
   }
@@ -151,6 +238,10 @@
     background-color: #fff;
     height: 1rem;
     padding: 0 .3rem;
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 200;
   }
   .orderStatus ul.wrapStatus{
     display: flex;
@@ -164,7 +255,7 @@
   /*订单的状态--结束*/
   /*订单内容--开始*/
   .content{
-    margin-top: .3rem;
+    margin-bottom: .3rem;
   }
   .content .top{
     height: .8rem;
@@ -253,24 +344,26 @@
     font-size: .4rem;
     font-weight: 400;
   }
-  .bottom .right .button{
-    margin-top: .4rem;
+  .button{
+    padding-bottom: .3rem;
+    background-color: #fff;
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-end;
   }
-  .bottom .right .button div{
+  .button div{
     width: 2.5rem;
     height: 1rem;
     border-radius: 1rem;
     text-align: center;
-    line-height: 1rem;
+    line-height: .95rem;
     font-size: .4rem;
+    margin-right: .3rem;
   }
-  .bottom .right .button .cancel{
+  .button .cancel{
     color: rgb(161,161,161);
     border: 1px solid rgb(161,161,161);
   }
-  .bottom .right .button .pay{
+  .button .pay{
     color: #fff;
     border: 1px solid rgb(244,0,87);
     background-color: rgb(244,0,87);

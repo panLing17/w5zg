@@ -16,8 +16,8 @@
       .address
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
-    .content(v-for="(item,index) in orderDetail")
-      .top(@click="$router.push('/my/orderDetailsSon')")
+    .content(v-for="(item,index) in orderDetail" @click="judgeSon()")
+      .top
         .left
           span.orderNum 订单编号:
           span.num {{item.orderNum}}  
@@ -32,7 +32,7 @@
           .amount x
             span 1
           .price ￥596.00
-          .btn(v-if="showFlag" @click="judgeBtn()") 物流信息
+          .btn(v-if="showFlag" @click.stop="judgeBtn()") 物流信息
       .bottom(v-show="flag")
         span.shop 提货门店: 
         span 门店南京市 建邺区 新街口 中央广场    
@@ -90,7 +90,8 @@
     .bottomPlaceholder
     .fixedBtn
       .leftBtn {{leftBtn}}
-      .rightBtn {{rightBtn}}                                                    
+      .rightBtn {{rightBtn}}
+
 </template>
 
 <script>
@@ -99,6 +100,7 @@
       name: "orderDetails",
       data(){
         return{
+          orderId:this.$route.query.orderId,
           leftBtn:"取消订单",
           rightBtn:"支付",
           showFlag:false,
@@ -128,19 +130,40 @@
 
       },
       mounted(){
-        this.$mescrollInt("orderMescroll",this.upCallback);
+        //this.$mescrollInt("orderMescroll",this.upCallback);
         this.judgeState();//判断状态
+        this.orderDetailShow();//订单详情展示
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
       },
       methods:{
+        //订单详情展示
+        orderDetailShow(){
+          console.log(this.$route.query.orderId);
+          let self = this;
+          self.$ajax({
+            method:"post",
+            url:self.$apiTransaction + "order/detail",
+            params:{
+              orderTotalId:self.$route.query.orderId
+            }
+          }).then(function(res){
+            console.log(res);
+          })
+        },
+        //跳到子订单详情页
+        judgeSon(){
+          this.$router.push('/my/orderDetailsSon');
+        },  
+        //按照按钮上的文字跳转页面
         judgeBtn(){
           var btn = document.getElementsByClassName("btn")[0];
           console.log(btn.innerHTML == "物流信息");
           if (btn.innerHTML == "物流信息") {
             this.$router.push('/my/checkLogistics');
           }
+          
         },
           
 
@@ -148,7 +171,7 @@
           console.log(this.$route.query.state);
           console.log(this.$route.query.id);
           var states = this.$route.query.state;
-          if (states == "待发货") {
+          if (states == "待发货/待备货") {
             this.leftBtn = "批量退款";
             this.rightBtn = "提醒发货";
             this.showFlag = true;
@@ -343,7 +366,7 @@
     position: absolute;
     top: 2rem;
     right: .3rem;
-    z-index: 102;
+    z-index: 120;
   }
   .bottom{
     height: .8rem;

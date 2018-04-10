@@ -21,7 +21,7 @@
               span.letter {{item.gc_name}}
             ul.listOfGoods
               li(v-for="items in item.childList" @click="$router.push('/page/commodityList')").wrapImg
-                img(:src="items.gc_url")
+                img(:src="items.gc_url | img-filter")
                 .words {{items.gc_keywords}}
 </template>
 
