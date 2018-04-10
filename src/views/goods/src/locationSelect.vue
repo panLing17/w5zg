@@ -17,7 +17,7 @@
                 .label 收货地址
                 .info {{item.ra_detailed_addr}}
           .button
-            w-button 新增收货地址
+            w-button(@click="$router.push('/my/localAdd')") 新增收货地址
 </template>
 
 <script>

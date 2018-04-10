@@ -1,8 +1,9 @@
 <template lang="pug">
-  .shoppingCartBox
+  .shoppingCartBox#shoppingCartMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        .sanjiao
+        span {{location.city.name}}
       .topCenter(slot="center") 购物车
       .topRight(slot="right")
     .cartTypeTab
@@ -27,7 +28,7 @@
           p 全选
         .right
           .prive 合计：{{computedPrice | price-filter}}
-          .button 结算(5)
+          .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
 </template>
 
 <script>
@@ -60,8 +61,10 @@
       }
     },
     components:{goodsCard, disableGoods, citySelect},
-    computed: mapState(['shoppingCartGoodsNum','computedPrice','shoppingCartAllChecked']),
+    computed: mapState(['shoppingCartGoodsNum','computedPrice','shoppingCartAllChecked','shoppingCartSelected', 'location']),
     mounted () {
+      // mescroll初始化
+      this.$mescrollInt("shoppingCartMescroll",this.upCallback);
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0
       } else {
@@ -77,6 +80,38 @@
       },s+math)
     },
     methods: {
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if(page.num === 1) self.recommendGoods = []
+          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+//          	axios.get("xxxxxx", {
+//					params: {
+//						num: pageNum, //页码
+//						size: pageSize //每页长度
+//					}
+//				})
+//				.then(function(response)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
+      },
       getGoodsNum () {
         let self = this
         self.$ajax({
@@ -106,12 +141,63 @@
       },
       allChecked (e) {
         this.$store.commit('allCheckedChange',e)
+      },
+      // 前往确认订单
+      goConfirmOrder () {
+        let data= []
+        this.$store.state.shoppingCartSelected.forEach((now)=>{
+          let spec = []
+          now.specVOList.forEach((n)=>{
+            spec.push(n.gspec_value)
+          })
+          data.push({
+            number: now.goods_num,
+            spec: spec,
+            price: now.now_price,
+            goodsName: now.gi_name,
+            storeName: now.store_name,
+            photo: now.logo,
+            cartId: now.sc_id,
+            storeLocation: {
+              pro: {
+                name: now.pro_Name,
+                id: now.province
+              },
+              city: {
+                name: now.city_name,
+                id: now.city
+              },
+              store: {
+                name: now.store_name,
+                id: now.store_id
+              }
+            }
+          })
+        })
+        this.$store.commit('transferGive',data)
+        let since = ''
+        this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+        console.log(this.$store.state.transfer)
+        this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
       }
     }
   }
 </script>
 
 <style scoped>
+  .sanjiao {
+    width: 0;
+    height: 0;
+    border-width: .3rem;
+    border-style: solid;
+    border-color: transparent transparent transparent #aaaaaa;
+  }
+  .topLeft {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+  }
+  /*  */
   .shoppingCartBox {
     background-color: rgb(242,242,242);
     padding-bottom: 3rem;
@@ -167,6 +253,7 @@
   /* 内容区域 */
   .content {
     min-height: calc(100vh - 4rem);
+    position: relative;
   }
   /* 华丽的分割线 */
   .title{
