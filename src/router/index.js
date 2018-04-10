@@ -58,6 +58,10 @@ const router = new Router ({
       name: '确认订单',
       component: Goods.confirmOrder
     }, {
+      path: '/payment',
+      name: '支付',
+      component: Goods.payment
+    }, {
       path: '/',
       name: '应用',
       component: Main,

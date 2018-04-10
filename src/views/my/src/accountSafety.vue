@@ -5,14 +5,14 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 账户安全
     .loginPassword
-      ul.wrap
+      ul.wrap(@click="routergoUpdate1()")
         li.left 登录密码设置
-        li.right(@click="routergoUpdate1()")
+        li.right
           img(src="../../../assets/img/next@2x.png")
     .paymentPassword
-      ul.wrap
+      ul.wrap(@click="routergoUpdate2()")
         li.left 支付密码设置
-        li.right(@click="routergoUpdate2()")
+        li.right
           img(src="../../../assets/img/next@2x.png")
     .paymentPattern
       ul.wrap

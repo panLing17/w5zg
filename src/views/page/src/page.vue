@@ -227,8 +227,8 @@
     line-height: 1.5rem;
     text-align: center;
     color: rgb(51,51,51);
-    font-size: .45rem;
-    font-weight: bold;
+    font-size: .4rem;
+    font-weight: 600;
     border-bottom: 1px solid #fff;
   }
   /*中间内容左边--结束*/

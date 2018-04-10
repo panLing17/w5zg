@@ -1,11 +1,11 @@
 <template lang="pug">
   transition( leave-active-class="animated flipOutX")
-    .goodsCardBox(v-if="list.length>0")
-      // .title
-        p {{i.store_name}}
+    .goodsCardBox
+      .title
+        p {{list.si_name}}
         img(src="../../../assets/img/searchHistory_clear.png")
       transition-group(tag="div", name="leftOut")
-        .goodsBox(v-for="(i,index) in list", :key="index")
+        .goodsBox(v-for="(i,index) in list.shoppingCartVOList", :key="index")
           .main
             .checkbox
               img(src="../../../assets/img/Invalid@3x.png")

@@ -16,6 +16,9 @@ $vm = new $view()
 $vm.$mount()
 Vue.directive('loading', function (el, binding) {
   // 记录原本的定位，销毁后重新赋值
+  /* if (el.clientHeight > document.body.clientHeight) {
+    $vm.height = document.body.clientHeight
+  } */
   let oldPosition = el.style.position
   $vm.show = binding.value
   if (binding.value) {

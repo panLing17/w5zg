@@ -5,7 +5,7 @@
       .title
         span 失效商品
         .delete 清空失效商品
-      disable-goods
+      disable-goods(:list="disableGoodsList")
 </template>
 
 <script>
@@ -47,7 +47,7 @@
             now.editClose = true
           })
           self.goodsList = response.data.data.carryList
-          self.disableGoods = response.data.data.failureList
+          self.disableGoodsList = response.data.data.failureList
         })
       },
       changeType (data,fun) {

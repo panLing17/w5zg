@@ -14,9 +14,9 @@
               img(:src="this.userHeadPortrait | img-filter")
           ul.userName
             li {{userNiceName}}
-          ul.balance(v-if="false")
+          ul.balance(v-if="isOrgUser")
             li 余额:
-            li 8888.88
+            li {{userAccountBalance}}
             li 元
     div.fav_att_foot
       ul.left
@@ -26,13 +26,12 @@
         li 0
         li 关注店铺
       ul.right
-        li 22
+        li {{footmarkNum}}
         li 足迹
     div.myOrderForm
       ul.top(@click="$router.push('/my/orderManage')")
         li 我的订单
-        li
-          img(src="../../../assets/img/my_more@2x.png")
+        li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 >
       ul.bottom
         li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
           img(src="../../../assets/img/my_obligation@2x.png")
@@ -60,24 +59,17 @@
         li
           img(src="../../../assets/img/my_card@2x.png")
           .words 现金券
-        li(v-if="true")
+        li(v-if="false")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
           .words 通用劵
-    div.recommend
-      img(src="../../../assets/img/my_recommend@2x.png")
-    .bottomList
-        ul.goodsList#box
-          li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../assets/img/my_goods.png")
-            .wrapWords
-              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
-              .price ￥516.22
-              .bottom <span>江苏南京</span><span>2555人购买</span>
+    .title
+      .line
+      p 推荐      
+    w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
 </template>
 
 <script>
-import my_goods from '../../../assets/img/my_goods.png'
   export default {
     name: "my",
     data() {
@@ -85,58 +77,23 @@ import my_goods from '../../../assets/img/my_goods.png'
         recommendGoods: [],
         userNiceName:'1231312',
         userHeadPortrait: '',
+        isOrgUser: false,
+        userAccountBalance: 0,
+        footmarkNum: 0,
         name:this.$route.query.routeParams,
-        goodsDetails:[
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':568,
-            'region':'江苏南京',
-            'buyerNum':'167'
-          },
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':379,
-            'region':'浙江杭州',
-            'buyerNum':'200'
-          },
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':299,
-            'region':'安徽合肥',
-            'buyerNum':'101'
-          },
-        ]
-
-
+        page: 1,
       }
 
     },
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
       this.getUserInfo()
+      this.getFootmarkNum()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods: {
-      // 点击按钮，返回顶部
-      // topFunction:function () {
-      //   var timer = setInterval(function(){
-      //       var top = document.body.scrollTop || document.documentElement.scrollTop;
-      //       var speed = top / 4;
-      //       if (document.body.scrollTop!=0) {
-      //           document.body.scrollTop -= speed;
-      //       }else {
-      //           document.documentElement.scrollTop -= speed;
-      //       }
-      //       if (top == 0) {
-      //           clearInterval(timer);
-      //       }
-      //   },30);
-      // },
       getUserInfo:function(){
         let self = this
         // 发送ajax请求校验手机号重复
@@ -149,6 +106,23 @@ import my_goods from '../../../assets/img/my_goods.png'
           if (response.data.optSuc) {
             self.userNiceName = response.data.data.mi_nickname
             self.userHeadPortrait = response.data.data.mi_head_sculpture
+            self.isOrgUser = response.data.data.isOrg
+            if(response.data.data.isOrg){
+              self.userAccountBalance = response.data.data.accoutBalance
+            }
+          }
+        })
+      },
+      getFootmarkNum:function(){
+        let self = this
+        // 发送ajax请求校验手机号重复
+        self.$ajax({
+          method: 'POST',
+          url: self.$apiClassify + 'logGoodsBrowse/count',
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.footmarkNum = response.data.data
           }
         })
       },
@@ -160,7 +134,6 @@ import my_goods from '../../../assets/img/my_goods.png'
            }
         });
       },
-
       routergoSet:function(){
         this.$router.push({
            name: '我的设置',
@@ -169,7 +142,6 @@ import my_goods from '../../../assets/img/my_goods.png'
            }
         });
       },
-
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
@@ -182,23 +154,18 @@ import my_goods from '../../../assets/img/my_goods.png'
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        setTimeout(function () {
-//            axios.get("xxxxxx", {
-//          params: {
-//            num: pageNum, //页码
-//            size: pageSize //每页长度
-//          }
-//        })
-//        .then(function(response) {
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-          successCallback&&successCallback({});//成功回调
-//        })
-//        .catch(function(error) {
-//          errorCallback&&errorCallback()//失败回调
-//        });
-        },500)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
       }
 
     }
@@ -222,7 +189,7 @@ import my_goods from '../../../assets/img/my_goods.png'
   }
   .head .top{
     width: 100%;
-    margin-top: 1rem;
+    margin-top: .2rem;
     padding: 0 .3rem;
     display: flex;
     justify-content: space-between;
@@ -353,15 +320,15 @@ import my_goods from '../../../assets/img/my_goods.png'
 	/*我的财富独有的样式--开始*/
 	.myTreasure ul.bottom{
 		display: flex;
-		justify-content: flex-start;
+		justify-content: space-around;
 		padding: .4rem 1rem 0;
 	}
   .myTreasure ul.bottom li{
     text-align: center;
-    margin-right: 2.1rem;
+    margin-right: .5rem;
   }
 	.myTreasure ul.bottom li img{
-		width: 1.2rem;
+		width: .8rem;
 	}
   .myTreasure ul.bottom li .words{
     color: rgb(51,51,51);
@@ -421,5 +388,25 @@ import my_goods from '../../../assets/img/my_goods.png'
     bottom: 0;
     height: auto;
     position: fixed;
+  }
+  /*推荐*/
+  .title{
+    height: .8rem;
+    width: 100%;
+    position: relative;
+    display: flex;
+    background: #f2f2f2;
+    justify-content: center;
+    align-items: center;
+  }
+  .line{
+    height: 1px;
+    width: 3rem;
+    background: #999;
+  }
+  .title p{
+    position: absolute;
+    background: #f2f2f2 ;
+    padding: 0 .2rem;
   }
 </style>
