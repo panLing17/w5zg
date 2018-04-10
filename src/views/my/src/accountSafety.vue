@@ -14,21 +14,15 @@
         li.left 支付密码设置
         li.right
           img(src="../../../assets/img/next@2x.png")
-    .paymentPattern
-      ul.wrap
-        li.left 支付方式
-        li.right
-          span.bind 选择默认支付方式
-          img(src="../../../assets/img/next@2x.png")
     .cellPhoneNum
       ul.wrap(@click="$router.push('/my/changeMobile1')")
         li.left 更换手机号
         li.right
-          span.bind 手机号
+          span.bind {{userData.mi_phone}}
           img(src="../../../assets/img/next@2x.png")
 </template>
 <script>
-
+  import {mapState} from  'vuex'
   export default {
     name: 'accountSafety',
     data () {
@@ -36,13 +30,14 @@
 
       }
     },
+    computed: mapState(['userData']),
     mounted () {
 
     },
     methods: {
       routergoUpdate1:function(){
         this.$router.push({
-           name: '我的修改登录密码1',
+           name: '修改登录密码与支付密码',
            query: {
               routeParams: 1
            }
@@ -50,7 +45,7 @@
       },
       routergoUpdate2:function(){
         this.$router.push({
-           name: '我的修改登录密码1',
+           name: '修改登录密码与支付密码',
            query: {
               routeParams: 2
            }

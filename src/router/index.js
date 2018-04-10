@@ -189,13 +189,8 @@ const router = new Router ({
             },
             {
               path: '/my/updatePassword1',
-              name: '我的修改登录密码1',
+              name: '修改登录密码与支付密码',
               component: My.updatePassword1
-            },
-            {
-              path: '/my/updatePassword2',
-              name: '我的修改登录密码2',
-              component: My.updatePassword2
             },
             {
               path: '/my/changeMobile1',
