@@ -11,21 +11,21 @@
       .filterBoxWrapper
         transition(name="fold")
           .filterBox(v-show="filterShow")
-            .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 全部
-            .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 收入
-            .btn(:class="{'active':filterActive===3}", @click="filterChange(3)") 支出
+            .btn(:class="{'active':filterActive===0}", @click="filterChange(0)") 全部
+            .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 收入
+            .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 支出
       .detailBox(v-if="cashDetail")
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
               .left {{item.type===1 ? '消费记录':'消费退款'}}
-              .right {{item.type===1 ? '-'+item.price+'.00':'+'+item.price+'.00'}}
+              .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
-              .left(v-if="item.cardNo") 流水单号: {{item.cardNo}}
-              .right(v-if="item.payType") {{item.payType===1?'支付宝':'微信'}}
+              .left 流水单号: {{item.cardNo}}
+              .right {{item.trade_type | tradeType}}
             .block.bottom
               .left(v-if="item.userId") {{item.type===1 ? '订单号:':'退货单号:'}} {{item.userId}}
-              .right {{item.time}}
+              .right {{item.creation_time}}
       .nodata(v-if="!cashDetail") 暂无相关记录流水
 </template>
 
@@ -34,37 +34,70 @@
         name: "cashDetailB",
         data() {
           return {
-            cashDetail: [
-              {
-                'type': 1,
-                'price': 2000,
-                'cardNo':'201803151515',
-                'payType':1,
-                'userId':'135*******96',
-                'time':'2018-3-5 19:06'
-              },
-              {
-                'type': 2,
-                'price': 2000,
-                'payType':2,
-                'userId':'135*******96',
-                'time':'2018-3-5 19:06'
-              },
-              {
-                'type': 2,
-                'price': 2000,
-                'payType':1,
-                'time':'2018-3-5 19:06'
-              }
-            ],
+            logs:[],
+            cashDetail: null,
             filterShow: false,
-            filterActive: 1
+            filterActive: 0
           }
         },
+      created () {
+         this.getCashDetail();
+      },
+      filters: {
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
+        },
+        tradeType (value) {
+          let text = '';
+          if (value === '121') {
+            text = '购物';
+          }else if (value === '122') {
+            text = '提现';
+          }else if(value === '123') {
+            text = '充值';
+          }else if (value === '124') {
+            text = '退款';
+          }
+          return text;
+        }
+      },
       methods: {
+        getCashDetail () {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'logNetcard/logs',
+            params:{}
+          }).then(function (response) {
+            _this.logs = _this.cashDetail = response.data.data;
+          })
+        },
         filterChange (index) {
           this.filterActive = index;
           this.filterShow = false;
+          this.cashDetail = [];
+          console.log(index)
+          switch (parseInt(index)) {
+            case 0:
+              this.cashDetail = this.logs;
+              break;
+            case 1:
+              this.logs.forEach((item, i) => {
+                if (item.trade_in_out === '125') {
+                  this.cashDetail.push(item);
+
+                }
+              });
+              break;
+            case 2:
+              this.logs.forEach((item, i) => {
+                if (item.trade_in_out === '126') {
+                  this.cashDetail.push(item);
+                }
+              });
+              break;
+          }
         },
         openFilter () {
           this.filterShow = true;
@@ -84,7 +117,7 @@
   .mask {
     width: 100%;
     height: calc(100% - 1.3rem);
-    position: absolute;
+    position: fixed;
     top: 1.3rem;
     left: 0;
     z-index: 101;
@@ -100,7 +133,10 @@
   .filterBoxWrapper {
     width: 100%;
     overflow: hidden;
-    position: absolute;
+    position: fixed;
+    top: 1.3rem;
+    left: 0;
+    z-index: 150;
     height: 1.8rem;
   }
   .filterBox {

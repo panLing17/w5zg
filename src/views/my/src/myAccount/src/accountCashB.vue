@@ -16,7 +16,21 @@
 
 <script>
   export default {
-    name: "accountCardB"
+    name: "accountCardB",
+    created () {
+      this.getBalance();
+    },
+    methods: {
+      getBalance () {
+        this.$ajax({
+          method: 'get',
+          url: this.$apiTransaction + 'netcard/netcard/totalBalance',
+          params: {}
+        }).then(function (response) {
+          console.log(response.data.data)
+        })
+      }
+    }
   }
 </script>
 

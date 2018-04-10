@@ -1,17 +1,18 @@
 <template lang="pug">
   .useDetailBox
-    ul.contentList
+    ul.contentList(v-if="data")
       li.item(v-for="(item,index) in data")
-        p.info ID: {{item.id}}
-        p.info.last {{item.date}}
+        p.info ID: {{item.tn_serial_number}}
+        p.info.last {{item.tn_start_time}}
         p.balance(:style="{'color':balanceColor}")
           span.left 余额
-          span.right ￥{{item.balance}}
-        p.total 总额 ￥{{item.total}}
-        p.dec.first 商户ID：{{item.comId}}
-        p.dec.last {{item.expire}} 前使用
+          span.right ￥{{item.tn_balance | number}}
+        p.total 总额 ￥{{item.tn_amount | number}}
+        p.dec.first 商户ID：{{item.tn_contract_id}}
+        p.dec.last {{item.tn_end_time}} 前使用
         img.icon(:src="iconImg(index)")
         img.bg(:src="bgImg")
+    .nodata(v-if="!data") 暂无相关记录
 </template>
 
 <script>
@@ -20,41 +21,28 @@
       data () {
         return {
           selectType: 0,
-          data: [
-            {
-              useType: '1',
-              id: '201812321312',
-              date: '2018-3-15',
-              balance: '200.00',
-              total: '200.00',
-              comId: '201852536XC',
-              expire: '2018-4-15'
-            },
-            {
-              useType: '2',
-              id: '201812321312',
-              date: '2018-3-15',
-              balance: '50.00',
-              total: '200.00',
-              comId: '201852536XC',
-              expire: '2018-4-15'
-            },
-            {
-              useType: '2',
-              id: '201812321312',
-              date: '2018-3-15',
-              balance: '150.00',
-              total: '200.00',
-              comId: '201852536XC',
-              expire: '2018-4-15'
-            }
-          ]
+          data: null
+        }
+      },
+      created () {
+        this.getData(1);
+      },
+      filters: {
+        number(value) {
+          return Number(value).toFixed(2);
         }
       },
       watch: {
         '$route' (to, from) {
           this.selectType = to.params.id;
-          console.log(this.selectType)
+          if (this.selectType == 0) {
+            this.getData(1);
+          }else if (this.selectType == 1) {
+            this.getData(0);
+          }else {
+            this.getData(2);
+          }
+
         }
       },
       computed : {
@@ -84,21 +72,28 @@
         }
       },
       methods: {
+        getData (status) {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'netcard/netcards',
+            params: {status:status}
+          }).then(function (response) {
+            _this.data = response.data.data;
+          })
+        },
         iconImg(index) {
           let img = '';
-          switch (parseInt(this.data[index].useType)) {
-            case 1:
+          if (this.selectType == 0) {
+            if (this.data[index].tn_amount == this.data[index].tn_balance ) {
               img = require('../../../../../assets/img/unused@2x.png');
-              break;
-            case 2:
+            }else {
               img = require('../../../../../assets/img/someues@2x.png');
-              break;
-            case 3:
-              img = require('../../../../../assets/img/havebeenuesd@2x.png');
-              break;
-            case 4:
-              img = require('../../../../../assets/img/outofdate@2x.png');
-              break;
+            }
+          }else if (this.selectType == 1) {
+            img = require('../../../../../assets/img/havebeenuesd@2x.png');
+          }else {
+            img = require('../../../../../assets/img/outofdate@2x.png');
           }
           return img;
         }
@@ -177,5 +172,15 @@
   }
   .dec.last {
     padding-bottom: .26rem;
+  }
+  .nodata {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    color: rgb(153,153,153);
+    font-size: .4rem;
   }
 </style>
