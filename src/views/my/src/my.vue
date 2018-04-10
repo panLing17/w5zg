@@ -5,7 +5,7 @@
         .lefter
           img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
         .righter
-          img(src="../../../assets/img/message@2x.png")
+          img(src="../../../assets/img/message@2x.png", v-if="false")
           img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
           img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountDetail/:id')", v-else)
       p.center

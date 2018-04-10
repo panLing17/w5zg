@@ -4,7 +4,7 @@
       .label(:style="{width:labelWidth}")
         span.required(v-if="required") *
         span {{label}}
-      input(:type="type", :placeholder="placeholder", v-model="msg", @input="changeValue", @change="handChange", @focus="handFocus", @blur="handBlur")
+      input(:type="type", :placeholder="placeholder", v-model="msg", @input="changeValue", @change="handChange", @focus="handFocus", @blur="handBlur", v-bind="$attrs", v-on="$listeners")
     .button(v-if="inputButton", :class="{cover:buttonCover}")
       slot(name="button")
     transition(name="fade", mode="out-in")
