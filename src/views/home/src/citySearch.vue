@@ -36,7 +36,7 @@
         letter:["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"],
         num:9,
         selected:0,
-        hotCityList:["上海","北京","广州","深圳","杭州","武汉","南京","成都","重庆","西安","苏州","郑州"],
+        hotCityList:["上海","北京","广州","深圳","杭州","武汉","南京","成都","重庆","西安","苏州","郑州","啥的黄金卡的空间","卡时间段看见"],
         letterCityList:{
           "A":{list:["阿坝","阿拉善","阿里","安康","安庆","鞍山","安顺","安阳","澳门"],words:"查看更多"},
           "B":{list:["北京","白银","保定","宝鸡","保山","包头","巴中","北海","蚌埠","本溪","毕节","滨州","百色","亳州"],words:"查看更多"},
@@ -187,20 +187,23 @@
     background-color: #fff;
   }
   .hotCityList ul{
-    height: 4rem;
+    /*height: 4rem;*/
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-content: space-around;
   }
   .hotCityList ul li{
-    width: 2rem;
+    /*width: 2rem;*/
     height: .9rem;
     text-align: center;
     line-height: .9rem;
     font-size: .4rem;
     background-color: rgb(242,242,242);
     border-radius: .2rem;
+    padding: 0 .5rem;
+    margin-right: .2rem;
+    margin-bottom: .2rem;
   }
   /*热门城市--结束*/
   /*按英文字母表排序的城市--开始*/

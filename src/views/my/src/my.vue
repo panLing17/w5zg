@@ -31,8 +31,7 @@
     div.myOrderForm
       ul.top(@click="$router.push('/my/orderManage')")
         li 我的订单
-        li
-          img(src="../../../assets/img/my_more@2x.png")
+        li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 >
       ul.bottom
         li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
           img(src="../../../assets/img/my_obligation@2x.png")
@@ -353,12 +352,12 @@ import my_goods from '../../../assets/img/my_goods.png'
 	/*我的财富独有的样式--开始*/
 	.myTreasure ul.bottom{
 		display: flex;
-		justify-content: flex-start;
+		justify-content: space-around;
 		padding: .4rem 1rem 0;
 	}
   .myTreasure ul.bottom li{
     text-align: center;
-    margin-right: 2.1rem;
+    margin-right: .5rem;
   }
 	.myTreasure ul.bottom li img{
 		width: 1.2rem;
