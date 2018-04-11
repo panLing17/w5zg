@@ -9,7 +9,7 @@
       li(v-for="(item,index) in list", :key="index")
         div.listTop
           p <span>收货人:{{item.ra_name}}</span> <span>联系方式:{{item.ra_phone}}</span>
-          p {{item.ra_detailed_addr + item.ra_small_town}}
+          p {{item.province_name}} {{item.city_name}} {{item.county_name}} {{item.ra_detailed_addr}}
           p 邮政编码：{{item.ra_province}}
         ul.listButton
           li.checkbox
@@ -17,7 +17,7 @@
               w-checkbox(v-model="item.ra_default", @change="defaultChange(item.ra_default,index,item.id)")
             span 设为默认
           li.changeDelete(@click.stop="")
-            span(@click="changeLocation(item.id)") 编辑
+            span(@click="changeLocation(item)") 编辑
             span(@click="makeSure(item.id,index)") 删除
     .bottom
       w-button(@click="$router.push('/my/localAdd')") <img src="../../../assets/img/add@3x.png"/>新增收货地址
@@ -115,8 +115,10 @@
           }
         })
       },
-      changeLocation (id) {
-        this.$router.push({path: '/my/localAdd', query:{id:id}})
+      changeLocation (item) {
+        this.$router.push({path: '/my/localAdd', query:{id:item.id}})
+        this.$store.commit('transferGive',item)
+        console.log(item)
       }
     }
   }

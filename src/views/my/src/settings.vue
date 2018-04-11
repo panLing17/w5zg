@@ -37,7 +37,7 @@
         li.left 关于我们
         li.right
           img(src="../../../assets/img/next@2x.png")
-    .logOut 退出登录
+    .logOut(@click="logout") 退出登录
 </template>
 <script>
   import {mapState} from  'vuex'
@@ -84,6 +84,10 @@
                 document.body.appendChild(layer);
                 setTimeout("document.body.removeChild(layer)",2000);
             }
+      },
+      logout () {
+        localStorage.clear()
+        this.$router.push('/my')
       }
     }
   }

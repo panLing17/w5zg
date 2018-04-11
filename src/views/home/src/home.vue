@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}")
+  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
     nav-bar(background="rgb(245,0,87)")
       .topLeft(slot="left", @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
@@ -35,7 +35,7 @@
         // 整页的固定定位，如果一直有的话会影响页面切换效果
         positionFixed: false,
         mescroll: null,
-        loading: 0,
+        loadingFlag: 0,
         date: 1,
         cityName:this.$route.query.routeParams,
         activityGoods: [],
@@ -103,6 +103,7 @@
           },
         }).then(function (response) {
           self.banner = response.data.data
+          self.loadingFlag += 1
         })
       },
       // 获取分类
@@ -115,6 +116,7 @@
           },
         }).then(function (response) {
           self.hotButton = response.data.data
+          self.loadingFlag += 1
         })
       },
       // 获取新闻
@@ -130,6 +132,7 @@
           },
         }).then(function (response) {
           self.news = response.data.data
+          self.loadingFlag += 1
         })
       },
       // 获取活动
@@ -141,6 +144,7 @@
           params: {},
         }).then(function (response) {
           self.activityGoods = response.data.data
+          self.loadingFlag += 1
         })
       },
       goToCitySearch:function(){
