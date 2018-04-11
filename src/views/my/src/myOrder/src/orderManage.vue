@@ -86,6 +86,9 @@
         check(item,index){
           console.log(item);
           this.num = index;
+          if (item == "全部") {
+            this.state = "";
+          }
           if (item == "待付款") {
             this.state = 1;
           }
@@ -105,7 +108,6 @@
           if (e.target.innerText == "物流信息") {
             this.$router.push('/my/checkLogistics');
           }
-          if (e.target.innerText == "支付") {}
         },
         buttonRight(e,id,price){
           if (e.target.innerText == "物流信息") {

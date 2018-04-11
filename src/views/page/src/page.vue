@@ -12,7 +12,7 @@
     .content
       .left
         ul
-          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index)") {{item}}
+          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index,item.gc_id)") {{item.gc_name}}
       .right(:class="{styles:flag}")
         ul(v-for="(item,index) in productList").tabs
           li.tabsList
@@ -20,7 +20,7 @@
               span.point
               span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push('/page/commodityList')").wrapImg
+              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{thirdId:items.gc_id}})").wrapImg
                 img(:src="items.gc_url | img-filter")
                 .words {{items.gc_keywords}}
 </template>
@@ -39,6 +39,7 @@
     name: "page",
     data(){
       return {
+        goodsId: "",
         images: 123,
         flag:false,
         wordsShow:true,
@@ -64,7 +65,7 @@
       //一级分类
       this.request();
       //第一个二级分类
-      this.one();
+      //this.one();
     },
     methods:{
       goToCitySearch:function(){
@@ -77,12 +78,13 @@
       },
 
       //第一个二级分类
-      one(){
+      one(id){
+        console.log(id);
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsClass/class/firstId",
-          params:{firstId:1}
+          url:this.$apiGoods + "goodsClass/class/firstId",
+          params:{firstId:id}
         }).then(function(res){
           console.log(res.data.data);
           self.productList = res.data.data;
@@ -91,9 +93,9 @@
       },
 
 
-      tab(item,index){
+      tab(item,index,id){
         console.log(item);
-        console.log(index);
+        console.log(id);
         // if (item == "品牌") {
         //   this.flag = true;
         //   this.wordsShow = false;
@@ -106,8 +108,8 @@
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsClass/class/firstId",
-          params:{firstId:parseInt(index)+1}
+          url:this.$apiGoods + "goodsClass/class/firstId",
+          params:{firstId:id}
         }).then(function(res){
           console.log(res.data.data);
           self.productList = res.data.data;
@@ -115,19 +117,19 @@
         })
       },
 
+      //展示左侧商品导航
       request(){
         let self = this;
         console.log(self);
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsClass/class/hierarchy",
+          url:this.$apiGoods + "goodsClass/class/hierarchy",
           params:{hierarchy:1}
         }).then(function(res){
           console.log(res.data.data);
-          for(var i in res.data.data){
-            console.log(res.data.data[i]);
-            self.pageName.push(res.data.data[i].gc_name);
-          }
+          self.pageName = res.data.data;
+          self.goodsName = res.data.data[0].gc_id;
+          self.one(res.data.data[0].gc_id);
         });
       }
     }
@@ -159,7 +161,7 @@
   }
   /*品牌名的页面--结束*/
   .active{
-    background-color: #fff;
+    background-color: #fff !important;
     color: rgb(244,0,87) !important;
   }
   .page{
@@ -213,15 +215,16 @@
   .content .left{
     width: 21%;
     /*height: 100%;*/
-    /*position: absolute;
+    position: fixed;
     top: 1.3rem;
     left: 0;
-    bottom: 0;*/
+    bottom: 0;
     float: left;
-    background-color: rgb(242,242,242);
-    overflow-y: scroll;
+    /*background-color: rgb(242,242,242);*/
+    /*overflow-y: scroll;*/
   }
   .content .left ul li{
+    background-color: rgb(242,242,242);
     width: 100%;
     height: 1.5rem;
     line-height: 1.5rem;
@@ -230,6 +233,7 @@
     font-size: .4rem;
     font-weight: 600;
     border-bottom: 1px solid #fff;
+    overflow-y: scroll;
   }
   /*中间内容左边--结束*/
   /*中间内容右边--开始*/

@@ -60,7 +60,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:self.$apiClassify + "goods/recommendBrand",
+              url:self.$apiGoods + "goods/recommendBrand",
               params:{}
             }).then(function(res){
               console.log(res.data.data);
@@ -109,16 +109,25 @@
             this.pickUp = "";
             this.brandNameId = ""; 
           },
+          //点击确认提交
           hide(){
-            let data = {
-              flag1 : true,
-              brandId : this.brandNameId,
-              minPrice : this.minVal,
-              maxPrice : this.maxVal,
-              pickUps : this.pickUp
-            };
+            if (this.num1 == null) {
+                var data = {
+                flag1 : false,
+                minPrice : this.minVal,
+                maxPrice : this.maxVal,
+                pickUps : this.pickUp
+              };
+            } else{
+                var data = {
+                flag1 : true,
+                brandId : this.brandNameId,
+                minPrice : this.minVal,
+                maxPrice : this.maxVal,
+                pickUps : this.pickUp
+              };
+            }
             this.$emit('ievent',data);
-
           },
           down(){
             let data = {
@@ -127,7 +136,6 @@
             this.$emit("showSon",data);
           },
           
-
         }
     }
 </script>

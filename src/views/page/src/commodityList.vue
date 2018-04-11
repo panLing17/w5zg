@@ -63,7 +63,7 @@
         change2: false,
         recommendGoods: [],
         style: false,
-        brandId: "", //品牌的id
+        brandId: this.$route.query.thirdId, //品牌的id
         minPrice: "", //开始价格区间
         maxPrice: "", //结束价格区间
         pickUps: "", //自提不自提
@@ -79,11 +79,17 @@
       this.$mescrollInt("pageMescroll",this.upCallback);
       //商品展示
       //this.exhibition();
+      //id缓存
+      this.setlocal();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods:{
+      //将上个页面传过来的ID存入缓存
+      setlocal(){
+        localStorage.setItem("setId",this.$route.query.thirdId);
+      },
       //商品的展示
       exhibition(){
         let self = this;
@@ -96,7 +102,7 @@
         console.log(self.order);
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsSearch/spus",
+          url:this.$apiGoods + "goodsSearch/spus",
           params:{
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
@@ -158,6 +164,22 @@
             this.pickUps = 2;
           }
           this.brandId = data.brandId;
+          this.maxPrice = data.maxPrice;
+          this.minPrice = data.minPrice;
+          this.checkFlag = true;
+          console.log(this.pickUps);
+        }
+        if (data.flag1 == false) {
+          mask.style.left = "100%";
+          mask.style.opacity = 0;
+          mask.style.transition = "left .3s, opacity .3s";
+          commodityList.style.overflow = "scroll";
+          if (data.pickUps == "可自提") {
+            this.pickUps = 1;
+          }
+          if (data.pickUps == "不可自提") {
+            this.pickUps = 2;
+          }
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
@@ -280,7 +302,7 @@
         console.log(self.brandId);
         self.$ajax({
           method:"post",
-          url:self.$apiClassify + "goodsSearch/spus",
+          url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: pageNum, //页码
             rows: pageSize, //每页长度
@@ -312,7 +334,7 @@
         let self = this;
         self.$ajax({
           method:"post",
-          url:self.$apiClassify + "goodsSearch/spus",
+          url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: 1, //页码
             rows: 20, //每页长度

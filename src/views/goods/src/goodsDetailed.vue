@@ -43,7 +43,7 @@
     .title
       .line
       p 详情
-    .content
+    .content(v-html="desc")
     .title
       .line
       p 推荐
@@ -77,6 +77,8 @@
         banner: [],
         goodsData: {},
         spec: [],
+        // 详细描述（富文本）
+        desc: '',
         // 购买商品数量
         content: 1,
         // 商品价格
@@ -106,6 +108,7 @@
     components: {selectSize,citySelect,disType,storeSelect},
     mounted () {
       this.getGoodsDetailed()
+      this.getGoodsDesc()
       this.getBanner()
       this.getSpec()
       // mescroll初始化
@@ -126,6 +129,19 @@
           }
         }).then(function (response) {
           self.goodsData = response.data.data
+        })
+      },
+      // 获取商品描述
+      getGoodsDesc () {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/desc',
+          params: {
+            gspuId: self.$route.query.id
+          }
+        }).then(function (response) {
+          self.desc = response.data.data
         })
       },
       // 获取banner
@@ -637,5 +653,14 @@
     bottom: 0;
     height: auto;
     position: fixed;
+  }
+</style>
+<style>
+  /* 商品描述 */
+  .content {
+    width: 100%;
+  }
+  .content img{
+    max-width: 100%;
   }
 </style>

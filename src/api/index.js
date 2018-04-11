@@ -61,7 +61,7 @@ axios.interceptors.response.use(
   //       return response.data;
   //     }
   (error) => {
-    console.log(error.response.status) // for debug
+    // console.log(error.response.status) // for debug
     if (error.response.status === 800) {
       let vm = new Vue({
         router
