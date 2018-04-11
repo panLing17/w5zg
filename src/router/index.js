@@ -343,7 +343,7 @@ const router = new Router ({
                   component:MyAccount.accountDetailContent
                 },
                 {
-                  path: '/my/accountDetailContent/:id',
+                  path: '/my/accountDetailContent/:id/:type',
                   name: '账户明细内容',
                   component:MyAccount.accountDetailContent
                 }
