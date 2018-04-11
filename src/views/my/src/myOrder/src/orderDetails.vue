@@ -11,8 +11,8 @@
         img(src="../../../../../assets/img/citySearch@2x.png")
         .addressee
           span.man 收件人:
-            strong kariley
-          span.phone 135****6807  
+            strong {{recipients}}
+          span.phone {{phone}} 
       .address
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
@@ -100,6 +100,8 @@
       name: "orderDetails",
       data(){
         return{
+          recipients: "", //收件人
+          phone: "", //收件人手机号
           orderId:this.$route.query.orderId,
           leftBtn:"取消订单",
           rightBtn:"支付",
@@ -146,10 +148,12 @@
             method:"post",
             url:self.$apiTransaction + "order/detail",
             params:{
-              orderTotalId:self.$route.query.orderId
+              orderTotalId:1
             }
           }).then(function(res){
-            console.log(res);
+            console.log(res.data.data);
+            self.recipients = res.data.data[0].receiveName;
+            self.phone = res.data.data[0].receivePhone;
           })
         },
         //跳到子订单详情页
@@ -366,7 +370,7 @@
     position: absolute;
     top: 2rem;
     right: .3rem;
-    z-index: 120;
+    z-index: 100;
   }
   .bottom{
     height: .8rem;

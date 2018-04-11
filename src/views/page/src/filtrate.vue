@@ -60,7 +60,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:self.$apiClassify + "goods/recommendBrand",
+              url:self.$apiGoods + "goods/recommendBrand",
               params:{}
             }).then(function(res){
               console.log(res.data.data);
