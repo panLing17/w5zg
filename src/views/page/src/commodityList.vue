@@ -96,7 +96,7 @@
         console.log(self.order);
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsSearch/spus",
+          url:this.$apiGoods + "goodsSearch/spus",
           params:{
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
@@ -280,7 +280,7 @@
         console.log(self.brandId);
         self.$ajax({
           method:"post",
-          url:self.$apiClassify + "goodsSearch/spus",
+          url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: pageNum, //页码
             rows: pageSize, //每页长度
@@ -312,7 +312,7 @@
         let self = this;
         self.$ajax({
           method:"post",
-          url:self.$apiClassify + "goodsSearch/spus",
+          url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: 1, //页码
             rows: 20, //每页长度

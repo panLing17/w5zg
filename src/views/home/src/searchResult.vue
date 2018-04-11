@@ -70,7 +70,7 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiClassify +  'goodsSearch/goodsRecommendationList',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
           params: {
             page: pageNum,
             rows: pageSize

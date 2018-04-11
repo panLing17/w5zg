@@ -117,7 +117,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiClassify + "goods/brand/all",
+              url:this.$apiGoods + "goods/brand/all",
               params:{},
             }).then(function(res){
               console.log(res.data.data);
@@ -154,7 +154,7 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiClassify + "goods/recommendBrand",
+              url:this.$apiGoods + "goods/recommendBrand",
               params:{},
             }).then(function(res){
               console.log(res.data.data);

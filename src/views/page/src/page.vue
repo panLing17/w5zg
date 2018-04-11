@@ -12,7 +12,7 @@
     .content
       .left
         ul
-          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index)") {{item}}
+          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index,item.gc_id)") {{item.gc_name}}
       .right(:class="{styles:flag}")
         ul(v-for="(item,index) in productList").tabs
           li.tabsList
@@ -39,6 +39,7 @@
     name: "page",
     data(){
       return {
+        goodsId: "",
         images: 123,
         flag:false,
         wordsShow:true,
@@ -64,7 +65,7 @@
       //一级分类
       this.request();
       //第一个二级分类
-      this.one();
+      //this.one();
     },
     methods:{
       goToCitySearch:function(){
@@ -77,12 +78,13 @@
       },
 
       //第一个二级分类
-      one(){
+      one(id){
+        console.log(id);
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsClass/class/firstId",
-          params:{firstId:1}
+          url:this.$apiGoods + "goodsClass/class/firstId",
+          params:{firstId:id}
         }).then(function(res){
           console.log(res.data.data);
           self.productList = res.data.data;
@@ -91,9 +93,9 @@
       },
 
 
-      tab(item,index){
+      tab(item,index,id){
         console.log(item);
-        console.log(index);
+        console.log(id);
         // if (item == "品牌") {
         //   this.flag = true;
         //   this.wordsShow = false;
@@ -106,8 +108,8 @@
         let self =this;
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsClass/class/firstId",
-          params:{firstId:parseInt(index)+1}
+          url:this.$apiGoods + "goodsClass/class/firstId",
+          params:{firstId:id}
         }).then(function(res){
           console.log(res.data.data);
           self.productList = res.data.data;
@@ -115,19 +117,19 @@
         })
       },
 
+      //展示左侧商品导航
       request(){
         let self = this;
         console.log(self);
         self.$ajax({
           method:"post",
-          url:this.$apiClassify + "goodsClass/class/hierarchy",
+          url:this.$apiGoods + "goodsClass/class/hierarchy",
           params:{hierarchy:1}
         }).then(function(res){
           console.log(res.data.data);
-          for(var i in res.data.data){
-            console.log(res.data.data[i]);
-            self.pageName.push(res.data.data[i].gc_name);
-          }
+          self.pageName = res.data.data;
+          self.goodsName = res.data.data[0].gc_id;
+          self.one(res.data.data[0].gc_id);
         });
       }
     }
