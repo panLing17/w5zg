@@ -34,33 +34,35 @@
         name: "cashDetailB",
         data() {
           return {
-            cashDetail: [
-              {
-                'type': 1,
-                'price': 2000,
-                'cardNo':'201803151515',
-                'expire':'2018-06-12',
-                'userId':'135*******96',
-                'time':'2018-3-5 19:06'
-              },
-              {
-                'type': 2,
-                'price': 2000,
-                'expire':'2018-06-12',
-                'userId':'135*******96',
-                'time':'2018-3-5 19:06'
-              },
-              {
-                'type': 2,
-                'price': 2000,
-                'time':'2018-3-5 19:06'
-              }
-            ],
+            cashDetail: null,
             filterShow: false,
             filterActive: 1
           }
         },
+      watch: {
+        // 模态框出现禁止页面滑动
+        filterShow (cur, old) {
+          if (cur) {
+            document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+          }else {
+            document.getElementsByTagName('body')[0].style.overflow = 'auto';
+          }
+        }
+      },
+      created () {
+        this.getCashDetail();
+      },
       methods: {
+        getCashDetail () {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'logNetcard/logs',
+            params:{}
+          }).then(function (response) {
+            _this.logs = _this.cashDetail = response.data.data;
+          })
+        },
         filterChange (index) {
           this.filterActive = index;
           this.filterShow = false;

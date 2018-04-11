@@ -43,6 +43,16 @@
       created () {
          this.getCashDetail();
       },
+      watch: {
+        // 模态框出现禁止页面滑动
+        filterShow (cur, old) {
+          if (cur) {
+            document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+          }else {
+            document.getElementsByTagName('body')[0].style.overflow = 'auto';
+          }
+        }
+      },
       filters: {
         // 保留两位小数点
         number (value) {
@@ -77,7 +87,6 @@
           this.filterActive = index;
           this.filterShow = false;
           this.cashDetail = [];
-          console.log(index)
           switch (parseInt(index)) {
             case 0:
               this.cashDetail = this.logs;

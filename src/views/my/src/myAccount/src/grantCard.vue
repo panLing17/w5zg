@@ -9,17 +9,40 @@
       .item
         .itemDec 手机号：
         .itemContent
-          input(placeholder="请输入领卡手机号", type="number")
+          input(placeholder="请输入领卡手机号", type="number", v-model="form.mobile")
       .item
         .itemDec 金额：
         .itemContent
-          input(placeholder="请输入发放金额", type="number")
-    .confirmBtn 确认
+          input(placeholder="请输入发放金额", type="number", v-model="form.money")
+    .confirmBtn(@click="grant") 确认
 </template>
 
 <script>
     export default {
-        name: "grantCard"
+      name: "grantCard",
+      data () {
+        return {
+          form: {
+            mobile: '',
+            money: ''
+          }
+        }
+      },
+      methods:{
+        grant () {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'netcard/sendNetCard',
+            params:{
+              mobile: this.form.mobile,
+              money: Number(this.form.money)
+            }
+          }).then(function (response) {
+            console.log(response.data.data)
+          })
+        }
+      }
     }
 </script>
 
