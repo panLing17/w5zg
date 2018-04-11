@@ -18,13 +18,13 @@
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
-              .left {{item.type===1 ? '消费记录':'消费退款'}}
+              .left {{item.trade_type | tradeType}}
               .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
-              .left 流水单号: {{item.cardNo}}
-              .right {{item.trade_type | tradeType}}
+              .left 商户ID：{{item.source_id}}
+              .right 现金券ID:{{item.netcard_id}}
             .block.bottom
-              .left(v-if="item.userId") {{item.type===1 ? '订单号:':'退货单号:'}} {{item.userId}}
+              .left(v-if="item.order_id") 订单号：{{item.order_id}}
               .right {{item.creation_time}}
       .nodata(v-if="!cashDetail") 暂无相关记录流水
 </template>
@@ -61,13 +61,11 @@
         tradeType (value) {
           let text = '';
           if (value === '121') {
-            text = '购物';
-          }else if (value === '122') {
-            text = '提现';
-          }else if(value === '123') {
-            text = '充值';
+            text = '现金券消费';
+          }else if(value === '1212') {
+            text = '商家发放';
           }else if (value === '124') {
-            text = '退款';
+            text = '现金券退款';
           }
           return text;
         }

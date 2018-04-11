@@ -18,14 +18,14 @@
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
-              .left {{item.type===1 ? '现金券发放':'现金券收入'}}
-              .right {{item.type===1 ? '-'+item.price+'.00':'+'+item.price+'.00'}}
+              .left {{item.trade_in_out=='126' ? '现金券发放':'现金券收入'}}
+              .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
               .left(v-if="item.cardNo") 卡号: {{item.cardNo}}
               .right(v-if="item.expire") 到期日: {{item.expire}}
             .block.bottom
               .left(v-if="item.userId") 用户ID: {{item.userId}}
-              .right {{item.time}}
+              .right {{item.creation_time}}
       .nodata(v-if="!cashDetail") 暂无相关记录流水
 </template>
 
@@ -47,6 +47,12 @@
           }else {
             document.getElementsByTagName('body')[0].style.overflow = 'auto';
           }
+        }
+      },
+      filters: {
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
         }
       },
       created () {
