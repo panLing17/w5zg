@@ -161,7 +161,7 @@
   }
   /*品牌名的页面--结束*/
   .active{
-    background-color: #fff;
+    background-color: #fff !important;
     color: rgb(244,0,87) !important;
   }
   .page{
@@ -215,15 +215,16 @@
   .content .left{
     width: 21%;
     /*height: 100%;*/
-    /*position: absolute;
+    position: fixed;
     top: 1.3rem;
     left: 0;
-    bottom: 0;*/
+    bottom: 0;
     float: left;
-    background-color: rgb(242,242,242);
-    overflow-y: scroll;
+    /*background-color: rgb(242,242,242);*/
+    /*overflow-y: scroll;*/
   }
   .content .left ul li{
+    background-color: rgb(242,242,242);
     width: 100%;
     height: 1.5rem;
     line-height: 1.5rem;
@@ -232,6 +233,7 @@
     font-size: .4rem;
     font-weight: 600;
     border-bottom: 1px solid #fff;
+    overflow-y: scroll;
   }
   /*中间内容左边--结束*/
   /*中间内容右边--开始*/
