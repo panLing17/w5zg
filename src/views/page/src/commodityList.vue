@@ -63,14 +63,14 @@
         change2: false,
         recommendGoods: [],
         style: false,
-        brandId: this.$route.query.thirdId, //品牌的id
+        brandId: "", //品牌的id
         minPrice: "", //开始价格区间
         maxPrice: "", //结束价格区间
         pickUps: "", //自提不自提
         checkFlag: false, 
         noKey: true,
         order: "", //字段排序
-        keyWord: this.$route.query.msg, //关键字
+        keyWord: "", //关键字
         sort: "", //正序倒序
       }
     },
@@ -78,17 +78,22 @@
       //window.onscroll = function() {};
       this.$mescrollInt("pageMescroll",this.upCallback);
       //商品展示
-      //this.exhibition();
-      //id缓存
-      this.setlocal();
+      this.exhibition();
+      //根据判断是哪个页面传过来的关键字
+      this.keywordsSearch();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods:{
-      //将上个页面传过来的ID存入缓存
-      setlocal(){
-        localStorage.setItem("setId",this.$route.query.thirdId);
+      //根据判断是哪个页面传过来的关键字
+      keywordsSearch(){
+        if (this.$route.query.thirdFlag == true) {
+          this.keyWord = this.$route.query.thirdKey;
+        }
+        if (this.$route.query.flag == true) {
+          this.keyWord = this.$route.query.msg;
+        }
       },
       //商品的展示
       exhibition(){
@@ -113,9 +118,12 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(res){
-          console.log(res.data.data);
-          self.recommendGoods = res.data.data;
-          console.log(self.recommendGoods);
+          console.log(res.data.data.length);
+          if(res.data.data.length<=0){
+            self.$router.push('/home/searchResult');
+          } else{
+            self.recommendGoods = res.data.data;
+          }
         })
       },
       //进入商品详情
@@ -313,14 +321,10 @@
             sortType: self.sort, //正序倒序
             keywords: self.keyWord, //关键字
             sortFieldType: self.order //字段排序
-          }
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function(response){
-          console.log(response);
-          if(response.data.data.length<=0){
-            self.$router.push('/home/searchResult');
-          } else{
-            successCallback&&successCallback(response.data.data);//成功回调
-          }
+          successCallback&&successCallback(response.data.data);//成功回调
         })
 
 //        .catch(function(error) {
