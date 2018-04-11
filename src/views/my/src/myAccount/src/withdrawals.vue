@@ -8,12 +8,12 @@
     .content
       .contentTop
         .haveWrapper(v-if="true", @click="$router.push('/my/chooseBankCard')")
-          .icon
+          img.icon(:src="bankInfo.bank_icon")
           .info
-            .name 中国工商银行
+            .name {{bankInfo.bank_name}}
             .dec
-              span 尾号2345
-              span 储蓄卡
+              span 尾号{{bankInfo.bank_card.slice(bankInfo.bank_card.length-5,bankInfo.bank_card.length-1)}}
+              span {{bankInfo.mbc_type}}
         .nothing(v-if="false")
           img.icon(src="../../../../../assets/img/add2@2x.png")
           .info 请添加银行卡
@@ -21,11 +21,11 @@
         .title 提现金额
         .inputWrapper
           label ￥
-          input(type="number", v-model="money")
+          input(type="number", v-model="form.money")
         .text
           .left(:class="{'active':textActive}") {{text}}
-          .right 全部提现
-      .bottomBtn(:style="{'background':btnBg}") 确认提现
+          .right(@click="all") 全部提现
+      .bottomBtn(:style="{'background':btnBg}", @click="confirm") 确认提现
 </template>
 
 <script>
@@ -33,15 +33,24 @@
       name: "withdrawals",
       data () {
         return {
-          balance: 5000.00,
-          money:'',
-          textActive: false
+          balance: 0,
+          textActive: false,
+          bankInfo:{},
+          form:{
+            money: '',
+            bankId:'',
+            desp:''
+          }
         }
+      },
+      created () {
+        this.getBankInfo();
+        this.getBalance();
       },
       computed: {
         btnBg () {
           let col = '';
-          if (parseFloat(this.money) > this.balance) {
+          if (parseFloat(this.form.money) > this.balance) {
             col = '#ff80ab';
           }else {
             col = '#f50057';
@@ -54,10 +63,47 @@
             text = '金额已超过可提现余额';
             this.textActive = true;
           }else {
-            text = `当前可提现余额￥${this.balance}`;
+            text = `当前可提现余额￥${Number(this.balance).toFixed(2)}`;
             this.textActive = false;
           }
           return text;
+        }
+      },
+      methods: {
+        getBankInfo() {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiMember + 'memberBank/memberbankcards',
+            params:{}
+          }).then(function (response) {
+            _this.bankInfo = response.data.data[0];
+            _this.form.bankId = _this.bankInfo.id
+          });
+        },
+        getBalance () {
+          this.balance = Number(this.$store.state.userData.cash_balance);
+        },
+        all () {
+          this.form.money = Number(this.balance).toFixed(2);
+        },
+        confirm () {
+          if (parseFloat(this.form.money) > this.balance) {
+            return;
+          }
+          let _this = this;
+          this.form.desp = '测试';
+          this.form.money = Number(this.form.money);
+          this.form.bankId = parseInt(this.form.bankId);
+          this.$ajax({
+            method: 'post',
+            url: this.$apiTransaction + 'withdraw',
+            params: this.form,
+          }).then(function (response) {
+            console.log(response.data.data)
+            _this.$message.success('提现成功')
+            _this.$router.go(-1)
+          })
         }
       }
     }
@@ -91,6 +137,10 @@
     height: 1rem;
     background: #65aadd;
     border-radius: 50%;
+  }
+  .haveWrapper .icon img {
+    width: 100%;
+    height: 100%;
   }
   .haveWrapper .info {
     margin-left: .26rem;

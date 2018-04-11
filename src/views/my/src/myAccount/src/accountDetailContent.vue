@@ -7,22 +7,22 @@
             .left {{item.trade_type | tradeType}}
             .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
           .block.center
-            .left(v-if="selected==1") {{item.no}}
-            .right(v-if="item.type") {{item.type}}
+            .left {{item.no}}
+            .right {{item.type}}
           .block.bottom
-            .left {{item.trade_in_out=='126'?'订单号：':'退货单号'}}{{item.order_id}}
+            .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
             .right {{item.creation_time}}
       ul.detailList(v-if="selected==1")
         li(v-for="item in cashDetail")
           .block.top
-            .left {{item.dec}}
-            .right {{item.price}}
+            .left {{item.trade_type | tradeType}}
+            .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
           .block.center
-            .left(v-if="selected==1") {{item.no}}
-            .right(v-if="item.type") {{item.type}}
+            .left 流水单号：{{item.trade_no}}
+            .right {{item.payment_channel}}
           .block.bottom
-            .left() {{item.orderNo}}
-            .right {{item.date}}
+            .left() {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
+            .right {{item.creation_time}}
     .nodata(v-if="!cashDetail") 暂无相关记录流水
 </template>
 
@@ -67,8 +67,8 @@
       methods: {
         getData (type) {
           let _this = this;
-          this.logs = null;
-          this.cashDetail = null;
+          this.logs = [];
+          this.cashDetail = [];
           if (type == 0) {
             this.$ajax({
               method: 'get',
@@ -76,7 +76,9 @@
               params:{}
             }).then(function (response) {
               _this.logs  = response.data.data;
-            })
+              // 过滤 1全部 2收入 3支出
+              _this.filterChange();
+            });
           }else {
             this.$ajax({
               method: 'get',
@@ -84,13 +86,13 @@
               params:{}
             }).then(function (response) {
               _this.logs = response.data.data;
-            })
+              // 过滤 1全部 2收入 3支出
+              _this.filterChange();
+            });
           }
-          // 过滤 1全部 2收入 3支出
-          this.filterChange();
         },
         filterChange () {
-          switch (parseInt(index)) {
+          switch (parseInt(this.type)) {
             case 1:
               this.cashDetail = this.logs;
               break;
@@ -109,6 +111,7 @@
               });
               break;
           }
+          console.log(this.logs)
         }
       }
     }

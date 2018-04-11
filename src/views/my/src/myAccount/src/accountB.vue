@@ -11,7 +11,7 @@
         .dec 账户余额
         .link(@click="$router.push({path:'/my/accountDetail/0'})") (点击查看明细)
       .right
-        .price ￥1000.00
+        .price ￥{{tempBalance | number}}
         .dec 预计收入
         .link(@click="$router.push({path:'/my/revenue'})") (点击查看明细)
       .line
@@ -27,7 +27,9 @@
       name: "account",
       data () {
         return {
-          balance: 0
+          balance: 0,
+          // 预计收入金额=冻结金额
+          tempBalance:0
         }
       },
       created () {
@@ -42,6 +44,7 @@
       methods: {
         getBalance () {
           this.balance = this.$store.state.userData.cash_balance;
+          this.tempBalance = this.$store.state.userData.temp_balance;
         }
       }
     }
