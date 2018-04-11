@@ -11,12 +11,12 @@
       p.center
           ul.headPic
             li(@click="routergoUser()")
-              img(:src="this.userHeadPortrait | img-filter")
+              img(:src="userData.mi_head_sculpture | img-filter")
           ul.userName
-            li {{userNiceName}}
-          ul.balance(v-if="isOrgUser")
+            li {{userData.mi_nickname}}
+          ul.balance(v-if="userData.member_type === '092'")
             li 余额:
-            li {{userAccountBalance}}
+            li {{accoutBalance}}
             li 元
     div.fav_att_foot
       ul.left
@@ -76,11 +76,8 @@
     data() {
       return{
         recommendGoods: [],
-        userNiceName:'1231312',
-        userHeadPortrait: '',
-        isOrgUser: false,
-        userAccountBalance: 0,
         footmarkNum: 0,
+        accoutBalance: 0,
         name:this.$route.query.routeParams,
         page: 1,
         // 切换动画hack
@@ -90,7 +87,7 @@
     computed: mapState(['userData']),
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
-      this.getUserInfo()
+      this.getUserData()
       this.getFootmarkNum()
       // 切换动画HACK
       this.animateHack()
@@ -106,23 +103,27 @@
         },500)
       },
       /* 获取用户信息 */
+      getUserData:function(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/api/currentMember',
+          params: {}
+        }).then(function (response) {
+          self.$store.commit('userDataChange',response.data.data)
+          if (response.data.data.member_type === '092') {
+            self.getUserInfo()
+          }
+        })
+      },
       getUserInfo:function(){
         let self = this
-        // 发送ajax请求校验手机号重复
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'member/info',
           params: {}
         }).then(function (response) {
-          // 提示用户信息
-          if (response.data.optSuc) {
-            self.userNiceName = response.data.data.mi_nickname
-            self.userHeadPortrait = response.data.data.mi_head_sculpture
-            self.isOrgUser = response.data.data.isOrg
-            if(response.data.data.isOrg){
-              self.userAccountBalance = response.data.data.accoutBalance
-            }
-          }
+          self.accoutBalance = response.data.data.accoutBalance
         })
       },
       getFootmarkNum:function(){
@@ -130,7 +131,7 @@
         // 发送ajax请求校验手机号重复
         self.$ajax({
           method: 'POST',
-          url: self.$apiClassify + 'logGoodsBrowse/count',
+          url: self.$apiGoods+ 'logGoodsBrowse/count',
           params: {}
         }).then(function (response) {
           if (response.data.optSuc) {

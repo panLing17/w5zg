@@ -85,7 +85,7 @@
     z-index: 100;
   }
   .content {
-    min-height: calc(100% - 1.3rem);
+    min-height: calc(100vh - 1.3rem);
     display: flex;
     flex-flow: column;
   }

@@ -343,7 +343,7 @@ const router = new Router ({
                   component:MyAccount.accountDetailContent
                 },
                 {
-                  path: '/my/accountDetailContent/:id',
+                  path: '/my/accountDetailContent/:id/:type',
                   name: '账户明细内容',
                   component:MyAccount.accountDetailContent
                 }
@@ -415,22 +415,22 @@ router.beforeEach ((to, from, next) => {
     vm.$store.dispatch('getDictionaries')
   }
   // 购物车及我的页面权限处理
-  // if (to.name === '我的' || to.name === '购物车') {
-  //   if (!localStorage.hasOwnProperty('token')) {
-  //     Message.warning('请先登录')
-  //     next({path:'/login'})
-  //   } else {
-  //     next()
-  //   }
-  // } else {
-  //   // 轮循解决字典异步问题(不满意)
-  //   let polling = setInterval(()=>{
-  //     if ($codeList !== '') {
-  //       clearInterval(polling)
-  //       next()
-  //     }
-  //   },10)
-  // }
+  if (to.name === '我的' || to.name === '购物车') {
+    if (!localStorage.hasOwnProperty('token')) {
+      Message.warning('请先登录')
+      next({path:'/login'})
+    } else {
+      next()
+    }
+  } else {
+    // 轮循解决字典异步问题(不满意)
+    let polling = setInterval(()=>{
+      if ($codeList !== '') {
+        clearInterval(polling)
+        next()
+      }
+    },10)
+  }
   next()
 })
 export default router

@@ -26,10 +26,11 @@ axios.interceptors.response.use(
     if (optSuc) {
       return response
     } else {
-      if (response.config.url.indexOf('member/login') === -1) {
-        Message.error(res.msg)
-      }
-      return response
+      Message.error(res.msg)
+      // if (response.config.url.indexOf('member/login') === -1) {
+      //   Message.error(res.msg)
+      // }
+      // return response
     }
   },
   /*

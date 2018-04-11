@@ -5,34 +5,41 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 昵称修改
     .enterCont
-      input(:type="type" :value="val")
-    .save(@click="router()") 保存
+      input(:type="type", v-model="val")
+    .save(@click="save") 保存
 </template>
 <script>
- 
+ import {mapState} from 'vuex'
   export default {
     name: 'nickname',
     data () {
       return {
         type:"text",
-        val:this.$route.query.routeParams
+        val: ''
       }
     },
+    computed:{
+      value(){
+        return this.val
+      },...mapState(['userData'])
+    },
     mounted () {
- 
+      this.val = this.userData.mi_nickname
     },
     methods: {
-      router:function(){
-        var val = document.getElementsByTagName("input")[0];
-        if (val.value.trim()!="") {
-          this.$router.push({
-            name:"我的用户资料",
-            query: {
-                routeParams: val.value
-             }
-          });
-        } 
-      } 
+      save () {
+        let self = this
+        self.$ajax({
+          method: 'patch',
+          url: self.$apiMember + 'member/memberProperty',
+          params: {
+            propertyName: 'nickname',
+            value: self.val
+          },
+        }).then(function (response) {
+          self.$router.push('/my')
+        })
+      }
     }
   }
 </script>
