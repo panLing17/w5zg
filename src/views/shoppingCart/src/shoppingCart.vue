@@ -74,7 +74,7 @@
       this.getGoodsNum()
       // loading加载
       let s = 500  // 基础秒数
-      let math = Math.random() * 2000 // 随机秒数
+      let math = Math.random() * 1000 // 随机秒数
       setTimeout(()=>{
         this.loading = false
       },s+math)

@@ -61,13 +61,20 @@
       },
       getBase () {
         let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'receivingAddress/address',
-          params: {},
-        }).then(function (response) {
+        this.form.addressId = this.$route.query.id
+        this.form.name = this.$store.state.transfer.ra_name
+        this.form.phone = this.$store.state.transfer.ra_phone
+        this.form.province = this.$store.state.transfer.ra_province
+        this.form.city = this.$store.state.transfer.ra_city
+        this.form.county = this.$store.state.transfer.ra_county
+        this.form.detailedAddr = this.$store.state.transfer.ra_detailed_addr
+        if (this.$store.state.transfer.ra_default) {
+          this.isdefault = true
+        } else {
+          this.isdefault = false
+        }
 
-        })
+        this.locationName = `${self.$store.state.transfer.province_name},${self.$store.state.transfer.city_name},${self.$store.state.transfer.county_name}`
       },
       // 选择城市结束
       cityChange (data) {
@@ -79,13 +86,14 @@
       },
       locationSave () {
         let self = this
+        let method = this.$route.query.id ? 'put' : 'post'
         if (this.isdefault) {
           this.form.isDefault = '0'
         } else {
           this.form.isDefault = '1'
         }
         self.$ajax({
-          method: 'post',
+          method:  method,
           url: self.$apiMember + 'receivingAddress/address',
           params: self.form,
         }).then(function (response) {
