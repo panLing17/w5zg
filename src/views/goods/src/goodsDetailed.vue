@@ -1,5 +1,5 @@
 <template lang="pug">
-  .goodsBox
+  .goodsBox.mescroll#goodsDetailMescroll
     .banner
       nav-bar(background="rgba(255,255,255,.7)", height="0", border-bottom="none")
         .topLeft(slot="left")
@@ -108,6 +108,11 @@
       this.getGoodsDetailed()
       this.getBanner()
       this.getSpec()
+      // mescroll初始化
+      this.$mescrollInt("goodsDetailMescroll",this.upCallback)
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
     },
     methods:{
       // 获取商品详情
@@ -395,6 +400,38 @@
       },
       onHandler(e) {
         e.preventDefault();
+      },
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if(page.num === 1) self.recommendGoods = []
+          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+//          	axios.get("xxxxxx", {
+//					params: {
+//						num: pageNum, //页码
+//						size: pageSize //每页长度
+//					}
+//				})
+//				.then(function(response)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
       }
     }
   }
@@ -593,5 +630,12 @@
     background: rgb(244,0,87);
     font-size: .4rem;
     color: white;
+  }
+  /* 下拉刷新，上拉加载 */
+  #goodsDetailMescroll {
+    top: 0;
+    bottom: 0;
+    height: auto;
+    position: fixed;
   }
 </style>

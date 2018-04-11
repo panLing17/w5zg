@@ -1,5 +1,5 @@
 <template lang="pug">
-  .shoppingCartBox#shoppingCartMescroll
+  .shoppingCartBox.mescroll#shoppingCartMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
         .sanjiao
@@ -306,5 +306,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  /* 上拉刷新下俩加载 */
+  #shoppingCartMescroll {
+    top: 0;
+    bottom: 0;
+    height: auto;
+    position: fixed;
   }
 </style>

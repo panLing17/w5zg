@@ -15,45 +15,45 @@
       ul.wrap(@click="routergo()")
         li.left 昵称
         li.right
-          span.name {{userData.mi_name}}
+          span.name {{userData.mi_nickname}}
           img(src="../../../assets/img/next@2x.png")
     .gender
-      ul.wrap(@click="select(3)")
+      ul.wrap(@click="show = true")
         li.left 性别
         li.right
-          span.sex {{userData.mi_sex}}
+          span.sex {{sex}}
           img(src="../../../assets/img/next@2x.png")
-    .birthDay
+    .birthDay(v-if="false")
       ul.wrap
         li.left 出生日期
         li.right
           span.day {{userData.mi_birthday}}
           img(src="../../../assets/img/next@2x.png")
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close")
+      .seleteBg(v-if="show", @click="show = false")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .select(v-show="shows")
-        ul
-          li.first(@click="type($event)")
-          li.second(@click="type($event)")
-          li.cancel(@click="type($event)") 取消
-    pdSelectBox
-    pdSelectItem
-    .oDiv(ref="refCon")
+      .seleteMain(v-if="show")
+        w-button(@click="selectSex('m')") 男
+        w-button(@click="selectSex('w')") 女
 </template>
 
 <script>
-  import pdSelectBox from './selectBox.vue'
-  import pdSelectItem from './selectitem.vue'
   import {mapState} from  'vuex'
   export default {
     name: "userinfo",
-    computed: mapState(['userData']),
-    components:{pdSelectBox,pdSelectItem},
+    computed: { sex () {
+        if (this.userData.mi_sex === 'm') {
+          return '男'
+        } else {
+          return '女'
+        }
+      },
+      // 使用对象展开运算符将此对象混入到外部对象中
+      ...mapState(['userData'])
+    },
     data(){
       return{
-        show:'',
-        shows:'',
+        show: false,
         name:this.$route.query.routeParams
       }
     },
@@ -63,44 +63,6 @@
       })
     },
     methods:{
-      select:function(num){
-        console.log(this.shows);
-        this.shows = true;
-        console.log(this.shows);
-        if (num == 1) {
-          var second = document.getElementsByClassName("second")[0];
-          document.getElementsByClassName("first")[0].innerHTML = "相机";
-          second.innerHTML = "选择相册";
-          var inputs = document.createElement("input");
-          inputs.setAttribute("type","file");
-          second.append(inputs);
-          second.style.position = "relative";
-
-          inputs.style.cssText += "width: 90%;position: absolute;top: 0;left: 0;right: 0;bottom: 0;margin: 0 auto;opacity: 0;"
-        }
-        if (num == 3) {
-          document.getElementsByClassName("first")[0].innerHTML = "男";
-          document.getElementsByClassName("second")[0].innerHTML = "女";
-        }
-      },
-
-      function (){
-        var second = document.getElementsByClassName("second")[0];
-        if (second.innerHTML == "选择相册") {
-          var inputs = document.createElement("input");
-          inputs.setAttribute("type","file");
-          second.append(inputs);
-        }
-      },
-
-
-      type:function(e){
-        if (e.target.innerHTML=="男"||e.target.innerHTML=="女") {
-          document.getElementsByClassName("sex")[0].innerHTML = e.target.innerHTML;
-        }
-          this.shows = false;
-      },
-
       routergo:function(){
         this.$router.push({
            name: '我的昵称',
@@ -109,7 +71,6 @@
            }
         });
       },
-
       routerback:function(){
         this.$router.push({
            name: '我的',
@@ -118,8 +79,34 @@
            }
         });
       },
-
-
+      // 选择性别
+      selectSex (s) {
+        // 关闭选择
+        this.show = false
+        // m为男，w为女
+        let self = this
+        self.$ajax({
+          method: 'patch',
+          url: self.$apiMember + 'member/memberProperty',
+          params: {
+            propertyName: 'sex',
+            value: s
+          },
+        }).then(function (response) {
+          self.getUserData()
+        })
+      },
+      /* 更新用户信息 */
+      getUserData () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/api/currentMember',
+          params: {}
+        }).then(function (response) {
+          self.$store.commit('userDataChange',response.data.data)
+        })
+      }
     }
   }
 </script>
@@ -270,4 +257,29 @@
     color: rgb(255,128,171);
   }
   /*下方出现的选择及蒙板--结束*/
+  /* ------------------------ 选择性别 ---------------------------- */
+  .seleteBg {
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 101;
+  }
+
+  .seleteMain {
+    background-color: white;
+    width: 100%;
+    height: 4rem;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 102;
+    padding: .5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
 </style>
