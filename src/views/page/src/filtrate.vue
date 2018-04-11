@@ -222,6 +222,7 @@
 /*重置,确认--开始*/
 .button{
   position: fixed;
+  bottom: 0;
   width: 70%;
   height: 1.35rem;
   border: 1px solid rgb(244,0,87);

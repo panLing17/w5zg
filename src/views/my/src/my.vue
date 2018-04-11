@@ -158,10 +158,10 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        let self = this
+        let self = this;
         self.$ajax({
           method: 'post',
-          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
           params: {
             page: pageNum,
             rows: pageSize

@@ -5,37 +5,77 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") {{titleName}}
     .form
-      w-input(v-model="form.mobile", label="新密码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required) 
-      w-input(label="确认新密码：", label-width="2.5rem", placeholder="", input-button=true, :error="message", required)
-      button.regButton(@click="$router.push('/my/accountSafety')") 提交                          
+      w-input(v-model="form.pwd", label="新密码：", label-width="2.5rem",placeholder="请输入密码", :type="passwordType", input-button=true, :error="passwordError", required,@blur="checkPwd")
+      w-input(v-model="qrPassword",label="确认新密码：", label-width="2.5rem", placeholder="请再次输入密码", :type="passwordType", input-button=true, :error="qrPasswordError", required)
+      button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 提交
 </template>
 <script>
- 
+
   export default {
-    name: 'updatePassword1',
+    name: 'updatePassword2',
     data () {
       return {
         form: {
-          mobile: '',
-          password: ''
+          pwd: ''
         },
-        title:this.$route.query.routeParams,
+        qrPassword: '',
+        passwordError: '',
+        qrPasswordError: '',
+        pwdStatus: true,
+        passwordType: 'password',
+        bizzType :this.$route.query.routeParams,
         titleName:''
       }
     },
     created (){
-      if (this.title == 1) {
+      if (this.bizzType == 1) {
         this.titleName = "修改登录密码"
       }
-      if (this.title == 2) {
+      if (this.bizzType == 2) {
         this.titleName = "修改支付密码"
       }
     },
     mounted () {
- 
+
     },
     methods: {
-      
+      checkPwd () {
+        this.pwdStatus = true
+        //校验规则 正则表达式  只允许输入 数字跟字母
+        var reg = /^[A-Za-z0-9]{6,20}$/;
+        if(!reg.test(this.form.pwd)){
+          this.passwordError = $code('268')
+          return
+        }
+        this.passwordError = ''
+        this.pwdStatus = false
+      },
+      sureBtn () {
+        let self = this
+        if (self.form.pwd == '') {
+          self.phoneError = ''
+          self.checkCodeError = ''
+          return
+        }
+
+        if(this.pwdStatus){
+          return
+        }
+
+        if(self.form.pwd != self.qrPassword){
+          self.qrPasswordError = $code('269')
+        }
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/resetPwdLoginIn',
+          params: self.form
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            // 成功跳转页面
+            self.$router.push({path: '/my/accountSafety'})
+          }
+        })
+      }
     }
   }
 </script>
@@ -85,6 +125,9 @@
     border: none;
     outline: none;
     border-radius: .5rem;
+  }
+  .regButtonGray {
+    background-color: rgb(192, 192, 192) !important;
   }
   .tips{
     font-size: .3rem;

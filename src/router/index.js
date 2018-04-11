@@ -193,6 +193,11 @@ const router = new Router ({
               component: My.updatePassword1
             },
             {
+              path: '/my/updatePassword2',
+              name: '修改登录登录密码与支付密码验证码验证',
+              component: My.updatePassword2
+            },
+            {
               path: '/my/changeMobile1',
               name: '更换手机号1',
               component: User.changeMobile1

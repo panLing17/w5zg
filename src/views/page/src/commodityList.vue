@@ -67,11 +67,11 @@
         minPrice: "", //开始价格区间
         maxPrice: "", //结束价格区间
         pickUps: "", //自提不自提
-        checkFlag:false, 
-        noKey:true,
-        order:"", //字段排序
-        keyWord:this.$route.query.msg, //关键字
-        sort:"", //正序倒序
+        checkFlag: false, 
+        noKey: true,
+        order: "", //字段排序
+        keyWord: this.$route.query.msg, //关键字
+        sort: "", //正序倒序
       }
     },
     mounted(){
@@ -227,7 +227,7 @@
         this.request();
       },
       exchange:function(){
-        this.flag = !this.flag;
+        this.flags = !this.flags;
         this.style = !this.style;
         var box = document.getElementById("box");
         var classVal = box.getAttribute('class');
