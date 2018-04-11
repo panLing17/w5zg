@@ -11,6 +11,7 @@
           span.pic
             img(:src="userData.mi_head_sculpture | img-filter")
           img(src="../../../assets/img/next@2x.png")
+      input(type="file", @change="uploadPhoto")
     .nickname
       ul.wrap(@click="routergo()")
         li.left 昵称
@@ -94,6 +95,22 @@
           },
         }).then(function (response) {
           self.getUserData()
+        })
+      },
+      /* 上传头像 */
+      uploadPhoto (e) {
+        // 请求
+        let self = this
+        let data = new FormData()
+        data.append('imagefile', e.target.files[0])
+        this.$ajax({
+          method: 'post',
+          url: self.$apiTransaction + 'goodsRejected/rejectedImage',
+          data: data,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+          processData: false,
+        }).then(function (response) {
+
         })
       },
       /* 更新用户信息 */
@@ -183,6 +200,17 @@
     vertical-align: baseline !important;
     margin-left: 0 !important;
     margin-top: 0 !important;
+  }
+  .avatar {
+    position: relative;
+  }
+  .avatar input{
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
   /*用户头像独立样式--结束*/
   /*昵称,性别,出生日期共同的样式--开始*/
