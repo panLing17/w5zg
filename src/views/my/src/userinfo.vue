@@ -110,7 +110,21 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
           processData: false,
         }).then(function (response) {
-
+          self.headPicChange(response.data.data)
+        })
+      },
+      /* 修改用户头像 */
+      headPicChange (url) {
+        let self = this
+        self.$ajax({
+          method: 'patch',
+          url: self.$apiMember + 'member/memberProperty',
+          params: {
+            propertyName: 'avatar',
+            value: url
+          },
+        }).then(function (response) {
+          self.getUserData()
         })
       },
       /* 更新用户信息 */
