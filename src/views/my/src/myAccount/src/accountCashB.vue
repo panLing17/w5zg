@@ -7,7 +7,7 @@
       .topRight(slot="right")
         p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="$router.push('/my/cashDetailB')") 明细
     .balanceBox
-      .balance 2000.00
+      .balance {{balance | number}}
       .balanceDec 余额
     .listBox
       .item(@click="$router.push('/my/grantCard')") 发放网金卡
@@ -17,18 +17,23 @@
 <script>
   export default {
     name: "accountCardB",
+    data () {
+      return {
+        balance:0
+      }
+    },
     created () {
       this.getBalance();
     },
+    filters: {
+      // 保留两位小数点
+      number (value) {
+        return Number(value).toFixed(2);
+      }
+    },
     methods: {
       getBalance () {
-        this.$ajax({
-          method: 'get',
-          url: this.$apiTransaction + 'netcard/netcard/totalBalance',
-          params: {}
-        }).then(function (response) {
-          console.log(response.data.data)
-        })
+        this.balance = Number(this.$store.state.userData.cash_balance);
       }
     }
   }

@@ -1,7 +1,18 @@
 <template lang="pug">
   .accountDetailContent
     .detailBox(v-if="cashDetail")
-      ul.detailList
+      ul.detailList(v-if="selected==0")
+        li(v-for="item in cashDetail")
+          .block.top
+            .left {{item.trade_type | tradeType}}
+            .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
+          .block.center
+            .left(v-if="selected==1") {{item.no}}
+            .right(v-if="item.type") {{item.type}}
+          .block.bottom
+            .left {{item.trade_in_out=='126'?'订单号：':'退货单号'}}{{item.order_id}}
+            .right {{item.creation_time}}
+      ul.detailList(v-if="selected==1")
         li(v-for="item in cashDetail")
           .block.top
             .left {{item.dec}}
@@ -21,87 +32,82 @@
       data () {
         return {
           selected: 0,
-          cashDetail: [
-            {
-              dec: '消费记录',
-              price: '-779.00',
-              orderNo: '订单号：25646856546545',
-              date: '2018-03-15 15:45'
-            },
-            {
-              dec: '消费退款',
-              price: '+169.00',
-              type: '余额',
-              orderNo: '订单号：25646856546545',
-              date: '2018-03-15 17:25'
-            },
-            {
-              dec: '余额入账',
-              price: '+2000.00',
-              type: '已结算',
-              orderNo: '订单号：25646856546545',
-              date: '2018-03-15 16:17'
-            },
-            {
-              dec: '余额提现',
-              price: '-10000.00',
-              orderNo: '订单号：25646856546545',
-              date: '2018-03-15 16:17'
-            }
-          ]
+          type: 1,
+          cashDetail: [],
+          logs:[]
+        }
+      },
+      filters: {
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
+        },
+        tradeType (value) {
+          let text = '';
+          switch(value) {
+            case '121': text = '消费记录'; break;
+            case '122': text = '余额提现'; break;
+            case '124': text = '消费退款'; break;
+            case '128': text = '余额入账（返点）'; break;
+            case '127': text = '余额入账（分成）'; break;
+          }
+          return text;
         }
       },
       watch: {
         '$route' (to, from) {
           this.selected = to.params.id;
-          if (this.selected == 0) {
-            this.cashDetail = [
-              {
-                dec: '消费记录',
-                price: '-779.00',
-                orderNo: '订单号：25646856546545',
-                date: '2018-03-15 15:45'
-              },
-              {
-                dec: '消费退款',
-                price: '+169.00',
-                type: '余额',
-                orderNo: '订单号：25646856546545',
-                date: '2018-03-15 17:25'
-              },
-              {
-                dec: '余额入账',
-                price: '+2000.00',
-                type: '已结算',
-                orderNo: '订单号：25646856546545',
-                date: '2018-03-15 16:17'
-              },
-              {
-                dec: '余额提现',
-                price: '-10000.00',
-                orderNo: '订单号：25646856546545',
-                date: '2018-03-15 16:17'
-              }
-            ]
+          this.type = to.params.type;
+          this.getData(this.selected);
+        }
+      },
+      created () {
+        this.getData(0);
+      },
+      methods: {
+        getData (type) {
+          let _this = this;
+          this.logs = null;
+          this.cashDetail = null;
+          if (type == 0) {
+            this.$ajax({
+              method: 'get',
+              url: this.$apiTransaction + 'logAccount/logs',
+              params:{}
+            }).then(function (response) {
+              _this.logs  = response.data.data;
+            })
           }else {
-            this.cashDetail = [
-              {
-                dec: '消费记录',
-                price: '-779.00',
-                type: '微信',
-                no:'流水单号：1545484784154151351',
-                orderNo: '订单号：25646856546545',
-                date: '2018-03-15 15:45'
-              },
-              {
-                dec: '消费退款',
-                price: '+169.00',
-                no:'流水单号：1545484784154151351',
-                type: '支付宝',
-                orderNo: '订单号：25646856546545',
-                date: '2018-03-15 17:25'
-              }
-            ]
+            this.$ajax({
+              method: 'get',
+              url: this.$apiTransaction + 'logThirdpay/logs',
+              params:{}
+            }).then(function (response) {
+              _this.logs = response.data.data;
+            })
+          }
+          // 过滤 1全部 2收入 3支出
+          this.filterChange();
+        },
+        filterChange () {
+          switch (parseInt(index)) {
+            case 1:
+              this.cashDetail = this.logs;
+              break;
+            case 2:
+              this.logs.forEach((item, i) => {
+                if (item.trade_in_out === '125') {
+                  this.cashDetail.push(item);
+                }
+              });
+              break;
+            case 3:
+              this.logs.forEach((item, i) => {
+                if (item.trade_in_out === '126') {
+                  this.cashDetail.push(item);
+                }
+              });
+              break;
           }
         }
       }
@@ -109,6 +115,9 @@
 </script>
 
 <style scoped>
+  .accountDetailContent {
+    margin-top: 1.3rem;
+  }
   .detailBox {
     background: #fff;
   }

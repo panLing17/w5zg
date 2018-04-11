@@ -35,6 +35,19 @@
       computed: {
 
       },
+      watch: {
+        filterActive () {
+          this.$router.replace({path:`/my/accountDetailContent/${this.itemActive}/${this.filterActive}`});
+        },
+        // 模态框出现禁止页面滑动
+        filterShow (cur, old) {
+          if (cur) {
+            document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+          }else {
+            document.getElementsByTagName('body')[0].style.overflow = 'auto';
+          }
+        }
+      },
       mounted () {
         this.itemInit(this.$route.params.id);
       },
@@ -45,7 +58,7 @@
         itemChange (index) {
           this.itemActive = index;
           this.drop = true;
-          this.$router.replace({path:`/my/accountDetailContent/${index}`});
+          this.$router.replace({path:`/my/accountDetailContent/${index}/1`});
         },
         dropChange () {
           this.drop = !this.drop;
@@ -80,7 +93,11 @@
     display: flex;
     height: 1.3rem;
     background: #fff;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 150;
   }
   .back {
     position: absolute;

@@ -7,13 +7,13 @@
       .topRight(slot="right")
     .headerBox
       .left
-        .price ￥2000.00
+        .price ￥{{balance | number}}
         .dec 账户余额
         .link(@click="$router.push({path:'/my/accountDetail/0'})") (点击查看明细)
       .right
         .price ￥1000.00
         .dec 预计收入
-        .link(@click="$router.push({path:'/my/accountDetail/1'})") (点击查看明细)
+        .link(@click="$router.push({path:'/my/revenue'})") (点击查看明细)
       .line
       .bottom 结算日期：2018-04-15
     .content
@@ -24,7 +24,26 @@
 
 <script>
     export default {
-        name: "account"
+      name: "account",
+      data () {
+        return {
+          balance: 0
+        }
+      },
+      created () {
+        this.getBalance();
+      },
+      filters: {
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
+        }
+      },
+      methods: {
+        getBalance () {
+          this.balance = this.$store.state.userData.cash_balance;
+        }
+      }
     }
 </script>
 

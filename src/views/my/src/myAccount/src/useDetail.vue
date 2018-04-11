@@ -3,7 +3,7 @@
     ul.contentList(v-if="data")
       li.item(v-for="(item,index) in data")
         p.info ID: {{item.tn_serial_number}}
-        p.info.last {{item.tn_start_time}}
+        p.info.last {{item.tn_create_time}}
         p.balance(:style="{'color':balanceColor}")
           span.left 余额
           span.right ￥{{item.tn_balance | number}}
@@ -72,6 +72,7 @@
         }
       },
       methods: {
+        // 1全部 0已使用 2已失效
         getData (status) {
           let _this = this;
           this.$ajax({
