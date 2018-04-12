@@ -10,9 +10,24 @@
         div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
           img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
     .goodsInfo
-      .goodsName  {{goodsData.gi_name}}
-      .price {{goodsData.counter_interval}} <span>专柜价</span>
-      .salePrice 零售价：{{goodsData.retail_interval}}
+      .goodsName <span class="tag">专柜提货</span><span class="tag">专柜比价</span><span class="tag">专柜体验</span> {{goodsData.gi_name}}
+      .stateChuiNiu
+        span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
+        img(src="../../../assets/img/pinkNext.png")
+      .price
+        span 专柜价
+        p {{goodsData.counter_interval | price-filter}}
+        .salePrice 统一零售价：{{goodsData.retail_interval}}
+      ul.saveMoney
+        li.red
+          .label 现金券
+          .text 省{{xian}}元
+        li.gray
+          .label 直接购买
+          .text 约省{{direct}}元
+        li.gray
+          .label 通用券
+          .text 约省{{tong}}元
     .numberBox
       ul.number
         li 邮费{{goodsData.goi_freight}}
@@ -20,11 +35,23 @@
         li 已售{{goodsData.gi_salenum}}
     ul.card
       li
-        .label <span class="wang">网金卡</span>
-        .text 222
+        .cartType
+          .my 我的
+          .name 现金券
+        .cartPrice
+          .price ￥2000
+          .name 余额
+        .leftRadio
+        .righttRadio
       li
-        .label <span class="tong">通用券</span>
-        .text 222222222222222222222222222
+        .cartType
+          .my 我的
+          .name 通用券
+        .cartPrice
+          .price ￥2000
+          .name 余额
+        .leftRadio
+        .righttRadio
     .size(@click="onlySelectSpecFun")
       .left 规格
       img(src="../../../assets/img/right.png").right
@@ -104,7 +131,21 @@
         ]
       }
     },
-    computed:mapState(['location']),
+    computed:{
+      // 现金券购买省钱价格
+      xian () {
+        return this.goodsData.counter_interval - this.goodsData.direct_supply_interval
+      },
+      // 直接购买购买省钱价格
+      direct () {
+        return this.goodsData.counter_interval - this.goodsData.direct_supply_interval
+      },
+      // 通用券购买省钱价格
+      tong () {
+        return parseInt(this.goodsData.counter_interval)
+      },
+      ...mapState(['location'])
+    },
     components: {selectSize,citySelect,disType,storeSelect},
     mounted () {
       this.getGoodsDetailed()
@@ -456,12 +497,13 @@
 <style scoped>
   .goodsBox {
     background: rgb(242,242,242);
+    padding-bottom: 1rem;
   }
   .banner{
     position: relative;
   }
   .goodsInfo{
-    height: 3rem;
+    height: 4rem;
     padding: .2rem;
     background: white;
     display: flex;
@@ -472,16 +514,85 @@
     line-height: .5rem;
     font-size: .35rem;
     font-weight: 600;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+  .stateChuiNiu {
+    color: rgb(255,128,171);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .stateChuiNiu img{
+    height: .4rem ;
+  }
+  .goodsName .tag{
+    margin-right: .1rem;
+    padding: 0 .1rem;
+    font-size: .3rem;
+    font-weight: 500;
+    color: white;
+    background: rgb(246,0,87);
   }
   .price {
-    font-size: .5rem;
+    display: flex;
+    align-items: baseline;
+    font-size: .6rem;
     color: rgb(245,0,87);
   }
   .price span{
     font-size: .3rem;
-    color: #aaaaaa;
+    font-weight: 600;
+    color: #000;
   }
+  .price .salePrice{
+    margin-left: .5rem;
+    font-weight: 500;
+    font-size: .3rem;
+    color: #999;
+  }
+  /* 省钱部分 */
+  .saveMoney {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .saveMoney li{
+    display: flex;
+  }
+  .saveMoney li .label{
+    width: 1.3rem;
+    text-align: center;
+  }
+  .saveMoney li .text{
+    width: 1.7rem;
+    text-align: center;
+  }
+  .red{
+    border: solid 1px  rgb(245,0,87);
+  }
+  .red .label{
+    color: rgb(245,0,87);
+  }
+  .red .text{
+    color: white;
+    background-color: rgb(245,0,87);
+  }
+  .gray{
+    border: solid 1px  #999;
+  }
+  .gray .label{
+    color: #999;
+  }
+  .gray .text{
+    color: white;
+    background-color: #999
+  }
+  /* 省钱部分end */
   .numberBox {
+    margin-top: 5px;
     padding: 0 .2rem;
     background: white;
   }
@@ -492,45 +603,72 @@
     color: #aaaaaa;
     background: white;
     height: 1rem;
-    border-top: 1px rgb(242,242,242) solid;
   }
+  /* 卡片部分 */
   .card{
     margin-top: .2rem;
-    background: white;
-  }
-  .card li {
-    min-height: .8rem;
-    max-width: 100%;
+    padding: 0 .5rem;
     display: flex;
-    align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
   }
-  .label {
-    width: 1.6rem;
-    height: 100%;
+  .card li{
+    position: relative;
+    height: 1.5rem;
+    width: 4.2rem;
+    background-color: white;
+    border: none;
+    border-radius: .1rem;
     display: flex;
+  }
+  .card li>.cartType {
+    background-color: rgb(244,0,87);
+    color: white;
+    width: 1.7rem;
+    border-bottom-left-radius: .1rem;
+    border-top-left-radius: .1rem;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-  .label span{
-    padding: 1px 5px;
-    border-radius: .5rem;
+  .card li:last-child>.cartType {
+    background-color: rgb(255,128,171);
   }
-  .wang{
-    background: rgb(255,128,171);
-    color: white;
+  .card li>.cartPrice {
+    color: #999;
+    width: 2.5rem;
+    border-bottom-left-radius: .1rem;
+    border-top-left-radius: .1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
-  .tong{
-    border: solid 1px rgb(255,128,171);
-    color: rgb(255,128,171);
+  .card li>.cartPrice .price{
+    font-size: .4rem;
+    font-weight: 600;
   }
-  .text{
-    color: rgb(247,0,88);
-    flex-grow: 1;
-    width: 0;
-    flex-basis: 0;
-    word-wrap: break-word;
+  .card li>.leftRadio{
+    position: absolute;
+    width: .5rem;
+    height: .5rem;
+    background-color: rgb(242,242,242);
+    top: 50%;
+    margin-top: -.25rem;
+    left: -.25rem;
+    border-radius: 1rem;
   }
+  .card li>.righttRadio{
+    position: absolute;
+    width: .5rem;
+    height: .5rem;
+    background-color: rgb(242,242,242);
+    top: 50%;
+    margin-top: -.25rem;
+    right: -.25rem;
+    border-radius: 1rem;
+  }
+  /* 卡片结束 */
   .size {
     margin-top: .2rem;
     height: 1.5rem;
