@@ -896,6 +896,12 @@
     font-size: .53rem;
     color: rgb(153,153,153);
   }
+  .pickerContent .item:first-child{
+    margin-top: .8rem;
+  }
+  .pickerContent .item:last-child {
+    margin-bottom: .8rem;
+  }
   .pickerContent .item.active {
     color: rgb(51,51,51);
     font-size: .66rem;

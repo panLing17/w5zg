@@ -108,12 +108,14 @@
         this.selected1 = index;
         this.selected2 = null;
         this.msg = item;
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true}});
       },
 
       change2: function(item,index){
         this.selected2 = index;
         this.selected1 = null;
         this.msg = item;
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true}});
       }
     }
   }

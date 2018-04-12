@@ -20,7 +20,7 @@
             .btn(:class="{'active':filterActive===5}", @click="filterChange(5)") 代购退款
             .btn(:class="{'active':filterActive===6}", @click="filterChange(6)") 返点退款
     .content
-      .detailBox(v-if="cashDetail")
+      .detailBox(v-if="!isEmpty")
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
@@ -30,7 +30,7 @@
               .left {{item.no}}
             .block.bottom
               .right {{item.date}}
-      .nodata(v-if="!cashDetail") 暂无相关记录流水
+      .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -54,6 +54,16 @@
           ],
           filterShow: false,
           filterActive: 1
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.cashDetail === null || this.cashDetail.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
         }
       },
       methods: {

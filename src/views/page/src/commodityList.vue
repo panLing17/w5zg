@@ -70,7 +70,7 @@
         checkFlag: false, 
         noKey: true,
         order: "", //字段排序
-        keyWord: this.$route.query.msg, //关键字
+        keyWord: "", //关键字
         sort: "", //正序倒序
       }
     },
@@ -78,12 +78,23 @@
       //window.onscroll = function() {};
       this.$mescrollInt("pageMescroll",this.upCallback);
       //商品展示
-      //this.exhibition();
+      this.exhibition();
+      //根据判断是哪个页面传过来的关键字
+      this.keywordsSearch();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods:{
+      //根据判断是哪个页面传过来的关键字
+      keywordsSearch(){
+        if (this.$route.query.thirdFlag == true) {
+          this.keyWord = this.$route.query.thirdKey;
+        }
+        if (this.$route.query.flag == true) {
+          this.keyWord = this.$route.query.msg;
+        }
+      },
       //商品的展示
       exhibition(){
         let self = this;
@@ -107,9 +118,12 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(res){
-          console.log(res.data.data);
-          self.recommendGoods = res.data.data;
-          console.log(self.recommendGoods);
+          console.log(res.data.data.length);
+          if(res.data.data.length<=0){
+            self.$router.push('/home/searchResult');
+          } else{
+            self.recommendGoods = res.data.data;
+          }
         })
       },
       //进入商品详情
@@ -158,6 +172,22 @@
             this.pickUps = 2;
           }
           this.brandId = data.brandId;
+          this.maxPrice = data.maxPrice;
+          this.minPrice = data.minPrice;
+          this.checkFlag = true;
+          console.log(this.pickUps);
+        }
+        if (data.flag1 == false) {
+          mask.style.left = "100%";
+          mask.style.opacity = 0;
+          mask.style.transition = "left .3s, opacity .3s";
+          commodityList.style.overflow = "scroll";
+          if (data.pickUps == "可自提") {
+            this.pickUps = 1;
+          }
+          if (data.pickUps == "不可自提") {
+            this.pickUps = 2;
+          }
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
@@ -291,14 +321,10 @@
             sortType: self.sort, //正序倒序
             keywords: self.keyWord, //关键字
             sortFieldType: self.order //字段排序
-          }
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function(response){
-          console.log(response);
-          if(response.data.data.length<=0){
-            self.$router.push('/home/searchResult');
-          } else{
-            successCallback&&successCallback(response.data.data);//成功回调
-          }
+          successCallback&&successCallback(response.data.data);//成功回调
         })
 
 //        .catch(function(error) {

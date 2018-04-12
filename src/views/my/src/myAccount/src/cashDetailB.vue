@@ -14,19 +14,19 @@
             .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 全部
             .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 收入
             .btn(:class="{'active':filterActive===3}", @click="filterChange(3)") 支出
-      .detailBox(v-if="cashDetail")
+      .detailBox(v-if="!isEmpty")
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
-              .left {{item.type===1 ? '现金券发放':'现金券收入'}}
-              .right {{item.type===1 ? '-'+item.price+'.00':'+'+item.price+'.00'}}
+              .left {{item.trade_in_out=='126' ? '现金券发放':'现金券收入'}}
+              .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
               .left(v-if="item.cardNo") 卡号: {{item.cardNo}}
               .right(v-if="item.expire") 到期日: {{item.expire}}
             .block.bottom
               .left(v-if="item.userId") 用户ID: {{item.userId}}
-              .right {{item.time}}
-      .nodata(v-if="!cashDetail") 暂无相关记录流水
+              .right {{item.creation_time}}
+      .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -46,6 +46,22 @@
             document.getElementsByTagName('body')[0].style.overflow = 'hidden';
           }else {
             document.getElementsByTagName('body')[0].style.overflow = 'auto';
+          }
+        }
+      },
+      filters: {
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.cashDetail === null || this.cashDetail.length === 0) {
+            return true;
+          }else {
+            return false;
           }
         }
       },

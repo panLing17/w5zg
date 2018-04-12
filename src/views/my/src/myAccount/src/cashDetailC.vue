@@ -14,19 +14,19 @@
             .btn(:class="{'active':filterActive===0}", @click="filterChange(0)") 全部
             .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 收入
             .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 支出
-      .detailBox(v-if="cashDetail")
+      .detailBox(v-if="!isEmpty")
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
-              .left {{item.type===1 ? '消费记录':'消费退款'}}
+              .left {{item.trade_type | tradeType}}
               .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
-              .left 流水单号: {{item.cardNo}}
-              .right {{item.trade_type | tradeType}}
+              .left 商户ID：{{item.source_id}}
+              .right 现金券ID:{{item.netcard_id}}
             .block.bottom
-              .left(v-if="item.userId") {{item.type===1 ? '订单号:':'退货单号:'}} {{item.userId}}
+              .left(v-if="item.order_id") 订单号：{{item.order_id}}
               .right {{item.creation_time}}
-      .nodata(v-if="!cashDetail") 暂无相关记录流水
+      .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -61,15 +61,23 @@
         tradeType (value) {
           let text = '';
           if (value === '121') {
-            text = '购物';
-          }else if (value === '122') {
-            text = '提现';
-          }else if(value === '123') {
-            text = '充值';
+            text = '现金券消费';
+          }else if(value === '1212') {
+            text = '商家发放';
           }else if (value === '124') {
-            text = '退款';
+            text = '现金券退款';
           }
           return text;
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.cashDetail === null || this.cashDetail.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
         }
       },
       methods: {

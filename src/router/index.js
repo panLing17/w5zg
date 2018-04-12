@@ -373,6 +373,11 @@ const router = new Router ({
               path: '/my/revenue',
               name: '预计收入明细',
               component:MyAccount.revenue
+            },
+            {
+              path: '/my/accountC',
+              name: '账户明细C',
+              component:MyAccount.accountC
             }
           ]
         }

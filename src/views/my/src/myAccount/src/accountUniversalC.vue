@@ -15,7 +15,7 @@
           li.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部
           li.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
           li.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
-    .detailBox(v-if="cashDetail")
+    .detailBox(v-if="!isEmpty")
       ul.detailList
         li(v-for="item in cashDetail")
           .block.top
@@ -26,7 +26,7 @@
           .block.bottom
             .left 余额: {{item.trade_balance_money | number}}
             .right {{item.creation_time}}
-    .nodata(v-if="!cashDetail") 暂无相关记录
+    .nodata(v-if="isEmpty") 暂无相关记录
 </template>
 
 <script>
@@ -48,6 +48,16 @@
         // 保留两位小数点
         number (value) {
           return Number(value).toFixed(2);
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.cashDetail === null || this.cashDetail.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
         }
       },
       methods: {
