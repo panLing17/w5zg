@@ -60,7 +60,7 @@ export default {
         // 编码逆解析
         geocoder.getAddress([data.position.lng,data.position.lat],function(status,result){
           if(status=='complete'){
-            alert(result.regeocode.addressComponent.adcode)
+            // alert(result.regeocode.addressComponent.adcode)
             _this.getLocationId(result.regeocode.addressComponent.adcode)
             let province = result.regeocode.addressComponent.province
             let city = result.regeocode.addressComponent.city
@@ -87,7 +87,7 @@ export default {
           adCode: adCode
         },
       }).then(function (response) {
-        alert(JSON.stringify(response.data.data))
+        // alert(JSON.stringify(response.data.data))
         let data = {
           province:{
             name: response.data.data.provinceName,
