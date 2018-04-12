@@ -3,12 +3,7 @@
     .headerBox
       img.back(src="../../../../../assets/img/back@2x.png", @click="$router.go(-1)")
     .navBox
-      .navItem(:class="{active:navActive===0}", @click="navChange(0)") 一类
-      .navItem(:class="{active:navActive===1}", @click="navChange(1)") 二类
-      .navItem(:class="{active:navActive===2}", @click="navChange(2)") 三类
-      .navItem(:class="{active:navActive===3}", @click="navChange(3)") 四类
-      .navItem(:class="{active:navActive===4}", @click="navChange(4)") 五类
-      .navItem(:class="{active:navActive===5}", @click="navChange(5)") 六类
+      .navItem(:class="{active:navActive===index}", @click="navChange(item.ic_id,index)", v-for="(item, index) in navList") {{item.ic_name}}
     transition(name="fade")
       router-view
 </template>
@@ -18,13 +13,27 @@
       name: "headlines",
       data () {
         return {
-          navActive: 0
+          navActive: 0,
+          navList: []
         }
       },
+      created () {
+        this.getNav();
+      },
       methods: {
-        navChange (index) {
+        getNav() {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiApp + 'index/acInformationCataList',
+            params:{}
+          }).then(function (response) {
+            _this.navList = response.data.data;
+          })
+        },
+        navChange (cataId, index) {
           this.navActive = index;
-          this.$router.replace(`/home/list/${index}`);
+          this.$router.replace(`/home/list/${cataId}/${index}`);
         }
       }
     }
@@ -62,9 +71,11 @@
     width: 100%;
     height: .93rem;
     display: flex;
+    overflow: auto;
   }
   .navItem {
     flex: 1;
+    /*width: 1.6rem;*/
     font-size: .4rem;
     color: rgb(51,51,51);
     text-align: center;

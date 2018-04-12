@@ -39,7 +39,8 @@
               money: Number(this.form.money)
             }
           }).then(function (response) {
-            console.log(response.data.data)
+            _this.$message.success('添加成功')
+            _this.$router.go(-1)
           })
         }
       }

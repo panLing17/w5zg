@@ -124,7 +124,7 @@ const router = new Router ({
                   component: Headlines.list
                 },
                 {
-                  path: '/home/list/:id',
+                  path: '/home/list/:cataId/:index',
                   name: '头条list',
                   component: Headlines.list
                 }
