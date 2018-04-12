@@ -1,6 +1,6 @@
 <template lang="pug">
   .useDetailBox
-    ul.contentList(v-if="data")
+    ul.contentList(v-if="!isEmpty")
       li.item(v-for="(item,index) in data")
         p.info ID: {{item.tn_serial_number}}
         p.info.last {{item.tn_create_time}}
@@ -12,7 +12,7 @@
         p.dec.last {{item.tn_end_time}} 前使用
         img.icon(:src="iconImg(index)")
         img.bg(:src="bgImg")
-    .nodata(v-if="!data") 暂无相关记录
+    .nodata(v-if="isEmpty") 暂无相关记录
 </template>
 
 <script>
@@ -42,10 +42,17 @@
           }else {
             this.getData(2);
           }
-
         }
       },
       computed : {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.data === null || this.data.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
+        },
         bgImg () {
           let img = '';
           switch (parseInt(this.selectType)) {
