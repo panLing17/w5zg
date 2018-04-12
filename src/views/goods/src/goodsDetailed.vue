@@ -10,7 +10,7 @@
         div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
           img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
     .goodsInfo
-      .goodsName <span class="tag">专柜提货</span><span class="tag">专柜比价</span><span class="tag">专柜体验</span> {{goodsData.gi_name}}
+      .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
       .stateChuiNiu
         span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
         img(src="../../../assets/img/pinkNext.png")
@@ -134,7 +134,7 @@
     computed:{
       // 现金券购买省钱价格
       xian () {
-        return this.goodsData.counter_interval - this.goodsData.direct_supply_interval
+        return this.goodsData.counter_interval - this.goodsData.cost_interval
       },
       // 直接购买购买省钱价格
       direct () {
@@ -489,6 +489,20 @@
         }).then(function (response) {
           successCallback&&successCallback(response.data.data);//成功回调
         })
+      },
+      tips (type) {
+        switch (type){
+          case 0:
+            this.$alert('专柜提货','去专柜提货,随去随拿')
+            break
+          case 1:
+            this.$alert('专柜比价','跟专柜比价格，不便宜你打我')
+            break
+          case 2:
+            this.$alert('专柜体验','去专柜体验，假不假试了就知道')
+            break
+        }
+
       }
     }
   }
