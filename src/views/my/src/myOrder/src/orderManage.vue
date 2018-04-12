@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
-        img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search
+        img(src="../../../../../assets/img/searchInput搜索图标@2x.png" v-show="false").search
         img(src="../../../../../assets/img/msg_0.png").msg
     .orderStatus
       ul.wrapStatus
@@ -170,10 +170,11 @@
             method: 'post',
             url:self.$apiTransaction + 'order/orderByStatus',
             params:{
-              status:this.state,
+              status: this.state,
               page: 1,
               rows: 10
-            }
+            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function(response){
             console.log(response.data.data);
             self.orderDetail = response.data.data;

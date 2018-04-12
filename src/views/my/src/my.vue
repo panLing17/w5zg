@@ -261,7 +261,7 @@
   }
   .head .center .balance{
     display: flex;
-    width: 4rem;
+    /*width: 4rem;*/
     height: .8rem;
     background-color: rgba(255,255,255,0.4);
     text-align: center;

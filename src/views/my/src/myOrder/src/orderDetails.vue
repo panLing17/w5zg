@@ -6,6 +6,7 @@
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png").msg
+    .topStatus {{countDowns}}    
     .goodsReceipt
       .consignee
         img(src="../../../../../assets/img/citySearch@2x.png")
@@ -15,23 +16,25 @@
           span.phone {{phone}} 
       .address
         span 收货地址:
-        strong 江苏省南京市玄武区 699-22 江苏软件园24栋
-    .content(v-for="(item,index) in orderDetail" @click="judgeSon()")
+        strong {{address}}
+    .content(v-for="(item,index) in orderDetails" @click="judgeSon()")
       .top
         .left
           span.orderNum 订单编号:
-          span.num {{item.orderNum}}  
-      .center
+          span.num {{item.order_no}}
+        .right
+          span.orderStatus {{item.orderInfo_status}}   
+      .center(v-for="items in item.orderDetail")
         .image
-          img(:src="item.imageSrc")
+          img(:src="items.logo | img-filter")
         .goodsDetails
-          .words 法国PELLIOT秋冬新品户外冲锋衣男
+          .words {{items.goods_name}}
           .property
-            span.color 黄色
+            span.color {{items.spec_json}}
             span.size L
           .amount x
-            span 1
-          .price ￥596.00
+            span {{items.goods_num}}
+          .price {{items.sale_price | price-filter}}
           .btn(v-if="showFlag" @click.stop="judgeBtn()") 物流信息
       .bottom(v-show="flag")
         span.shop 提货门店: 
@@ -46,17 +49,17 @@
           span 0.0
         li.aggregate
           span 订单合计
-          span ￥2000.00
+          span {{totalPrice | price-filter}}
         li.netGoldCard
           span 网金卡抵扣
-          span ￥500.00
+          span {{deductionCard | price-filter}}
         li.coupon
           span 通用券抵扣
-          span ￥500.00
+          span {{deductionTicket | price-filter}}
       .bottoms
         span.payment 实付金额
-        span.money ￥1000.00
-    .cashCoupon 返 ￥100.00 元现金券
+        span.money {{payPrice | price-filter}}
+    .cashCoupon 返 {{presentPrice | price-filter}} 元现金券
     .orderNumber
       ul
         li.code.selects
@@ -64,29 +67,21 @@
           span 2018022400001
         li.orderTime.selects
           span 下单时间:
-          span 2018-02-24
-          span 12:20:20
+          span {{createTime}}
         li.payTime.selects
           span 付款时间:
-          span 2018-03-18
-          span 12:20:20
+          span {{payTime}}
         li.sendTime.selects
           span 发货时间:
-          span -
+          span {{sendTime}}
         li.receiveTime.selects
           span 签收时间:
-          span -
+          span {{receiveTime}}
       .copy(@click="copyText()") 复制
-    .recommend
-      img(src="../../../../../assets/img/my_recommend@2x.png")
-    .bottomList
-        ul.goodsList#box
-          li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../../../assets/img/my_goods.png")
-            .wrapWords
-              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
-              .price ￥516.22
-              .bottom <span>江苏南京</span><span>2555人购买</span>
+    .title
+      .line
+      p 推荐
+    w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
     .fixedBtn
       .leftBtn {{leftBtn}}
@@ -100,6 +95,17 @@
       name: "orderDetails",
       data(){
         return{
+          receiveTime:"", //签收时间
+          sendTime:"", //发货时间
+          payTime:"", //付款时间
+          createTime:"", //下单时间
+          countDowns:"", //倒计时
+          address:"", //地址
+          payPrice:"", //实付金额
+          totalPrice:"", //总金额
+          deductionCard:"", //网金卡
+          presentPrice:"", //返现金
+          deductionTicket:"", //通用券
           recipients: "", //收件人
           phone: "", //收件人手机号
           orderId:this.$route.query.orderId,
@@ -108,7 +114,7 @@
           showFlag:false,
           flag:false,
           recommendGoods: [],
-          orderDetail:[
+          orderDetails:[
             {
               orderNum:"2018031401",
               imageSrc:myGoods,
@@ -129,17 +135,44 @@
         }
       },
       created(){
-
+        //this.countDown(86399);
       },
       mounted(){
         //this.$mescrollInt("orderMescroll",this.upCallback);
         this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示
+        this.countDown(86400);
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
       },
       methods:{
+        //倒计时
+        countDown(times){
+          let self = this;
+          var timer=null;
+          timer=setInterval(function(){
+            var day=0,
+              hour=0,
+              minute=0,
+              second=0;//时间默认值
+            if(times > 0){
+              //day = Math.floor(times / (60 * 60 * 24));
+              hour = Math.floor(times / (60 * 60)) - (day * 24);
+              minute = Math.floor(times / 60) - (day * 24 * 60) - (hour * 60);
+              second = Math.floor(times) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
+            }
+            //if (day <= 9) day = '0' + day;
+            if (hour <= 9) hour = '0' + hour;
+            if (minute <= 9) minute = '0' + minute;
+            if (second <= 9) second = '0' + second;
+            self.countDowns = "请在"+hour+"小时"+minute+"分钟"+second+"秒内付款";
+            times--;
+          },1000);
+          if(times<=0){
+            clearInterval(timer);
+          }
+        },
         //订单详情展示
         orderDetailShow(){
           console.log(this.$route.query.orderId);
@@ -152,8 +185,22 @@
             }
           }).then(function(res){
             console.log(res.data.data);
-            self.recipients = res.data.data[0].receiveName;
-            self.phone = res.data.data[0].receivePhone;
+            self.recipients = res.data.data[0].carry_person;
+            self.phone = res.data.data[0].carry_phone;
+            self.deductionCard = res.data.data[0].oi_deduction_card;
+            self.deductionTicket = res.data.data[0].oi_deduction_ticket;
+            var rel = 0; 
+            for (var i = 0; i < res.data.data[0].orderInfo.length; i++) {
+              rel += parseInt(res.data.data[0].orderInfo[i].oi_total);
+            }
+            self.totalPrice = rel;
+            self.payPrice = res.data.data[0].oi_pay_price;
+            self.presentPrice = res.data.data[0].oi_present_ticket;
+            self.address = res.data.data[0].address;
+            self.orderDetails = res.data.data[0].orderInfo;
+            self.createTime = res.data.data[0].create_time;
+            self.sendTime = res.data.data[0].send_time;
+            self.receiveTime = res.data.data[0].receive_time;
           })
         },
         //跳到子订单详情页
@@ -217,12 +264,18 @@
   //            size: pageSize //每页长度
   //          }
   //        })
-  //        .then(function(response) {
-            successCallback&&successCallback({});//成功回调
-            successCallback&&successCallback({});//成功回调
-            successCallback&&successCallback({});//成功回调
-            successCallback&&successCallback({});//成功回调
-  //        })
+          let self = this;
+          self.$ajax({
+            method: 'post',
+            url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+            params: {
+              page: pageNum,
+              rows: pageSize
+            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }).then(function (response) {
+            successCallback&&successCallback(response.data.data);//成功回调
+          })
   //        .catch(function(error) {
   //          errorCallback&&errorCallback()//失败回调
   //        });
@@ -233,6 +286,15 @@
 </script>
 
 <style scoped>
+  /*顶部倒计时付款--开始*/
+  .topStatus{
+    padding: .4rem .3rem;
+    background-color: #fff;
+    margin-bottom: .2rem;
+    font-size: .35rem;
+    color: rgb(244,0,87);
+  }
+  /*顶部倒计时付款--开始*/
   .orderDetails{
     background-color: rgb(242,242,242);
     width: 100%;
@@ -321,7 +383,7 @@
   .center{
     background-color: #fff;
     padding: .3rem .3rem .2rem;
-    border-bottom: 1px solid rgb(242,242,242);
+    /*border-bottom: 1px solid rgb(242,242,242);*/
     white-space:nowrap;
     overflow-x:auto;
     display: flex;
@@ -449,49 +511,28 @@
   }
   /*订单编号--结束*/
   /*我的推荐--开始*/
-  .recommend{
-    height: 1rem;
-    line-height: 1.2rem;
-    text-align: center;
+  .title{
+    height: .8rem;
+    width: 100%;
+    position: relative;
+    display: flex;
+    background: #f2f2f2;
+    justify-content: center;
+    align-items: center;
   }
-  .recommend img{
-    width: 5rem;
+  .line{
+    height: 1px;
+    width: 3rem;
+    background: #999;
+  }
+  .title p{
+    position: absolute;
+    background: #f2f2f2 ;
+    padding: 0 .2rem;
   }
   /*我的推荐--结束*/
   /*商品大图展示--开始*/
-  .goodsList {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: .2rem;
-    background: #fff;
-  }
-  .goodsList li{
-    border: solid 1px #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    width: 49%;
-    float: left;
-    margin-bottom: .2rem;
-  }
-  .goodsList li img {
-    width: 100%;
-  }
-  .text{
-    margin: .1rem;
-  }
-  .goodsList .price{
-    margin: .2rem .1rem;
-    color: rgb(246,0,87);
-    font-weight: 600;
-    font-size: .4rem;
-  }
-  .wrapWords .bottom{
-    margin: .1rem;
-    display: flex;
-    justify-content: space-between;
-    color: #aaaaaa;
-  }
+
   /*商品大图展示--结束*/
   .bottomPlaceholder {
     height: 1.5rem;

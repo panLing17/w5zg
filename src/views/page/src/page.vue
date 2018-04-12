@@ -12,17 +12,17 @@
     .content
       .left
         ul
-          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item,index,item.gc_id)") {{item.gc_name}}
+          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
       .right(:class="{styles:flag}")
         ul(v-for="(item,index) in productList").tabs
           li.tabsList
             .title
-              span.point
+              span.point(v-show="wordsShow")
               span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{thirdKey:items.gc_keywords,thirdFlag:true}})").wrapImg
-                img(:src="items.gc_url | img-filter")
-                .words {{items.gc_keywords}}
+              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{thirdKey:items.gc_url,thirdFlag:true}})").wrapImg
+                img(:src="items.gc_icon | img-filter")
+                .words(v-show="wordsShow") {{items.gc_keywords}}
 </template>
 
 <script>
@@ -96,13 +96,13 @@
       tab(item,index,id){
         console.log(item);
         console.log(id);
-        // if (item == "品牌") {
-        //   this.flag = true;
-        //   this.wordsShow = false;
-        // }else{
-        //   this.flag = false;
-        //   this.wordsShow = true;
-        // }
+        if (item == "品牌") {
+          this.flag = true;
+          this.wordsShow = false;
+        }else{
+          this.flag = false;
+          this.wordsShow = true;
+        }
         this.num = index;
 
         let self =this;
@@ -137,6 +137,7 @@
 </script>
 
 <style scoped>
+
   /*品牌名的页面--开始*/
   .styles .title{
     background-color: rgb(242,242,242);
@@ -153,9 +154,10 @@
     padding: .3rem .2rem !important;
   }
   .styles ul.tabs ul.listOfGoods li.wrapImg{
-    width: 32.9%;
+    width: 33%;
     background-color: #fff;
-    margin-left: 1px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     margin-bottom: 1px !important;
     text-align: center;
   }

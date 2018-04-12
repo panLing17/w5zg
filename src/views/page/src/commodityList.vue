@@ -119,11 +119,11 @@
           }
         }).then(function(res){
           console.log(res.data.data.length);
-          if(res.data.data.length<=0){
-            self.$router.push('/home/searchResult');
-          } else{
+          // if(res.data.data.length<=0){
+          //   self.$router.push('/home/searchResult');
+          // } else{
             self.recommendGoods = res.data.data;
-          }
+          // }
         })
       },
       //进入商品详情
