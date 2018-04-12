@@ -4,22 +4,22 @@
       li.listItem(v-for="(item, index) in list")
         .itemWrapper(v-if="sortType===0")
           .left(v-if="index%2===0")
-            img.img(:src="item.img")
+            img.img(:src="item.i_photo")
           .right.margin(v-if="index%2===0")
             p.title {{item.i_abstract}}
           .right(v-if="index%2===1")
             p.title {{item.i_abstract}}
           .left.margin(v-if="index%2===1")
-            img.img(:src="item.img")
+            img.img(:src="item.i_photo")
         .itemWrapper(v-if="sortType===1")
           .left(v-if="index%2===1")
-            img.img(:src="item.img")
+            img.img(:src="item.i_photo")
           .right.margin(v-if="index%2===1")
             p.title {{item.i_abstract}}
           .right(v-if="index%2===0")
             p.title {{item.i_abstract}}
           .left.margin(v-if="index%2===0")
-            img.img(:src="item.img")
+            img.img(:src="item.i_photo")
 </template>
 
 <script>
@@ -30,7 +30,6 @@
           list:[],
           sortType:0,
           cataId: -1
-
         }
       },
       created () {
@@ -42,12 +41,10 @@
       },
       watch: {
         '$route' (to, from) {
-          this.sortType = Number(to.params.id)%2;
+          this.sortType = Number(to.params.index)%2;
           this.list = null;
-          let _this = this;
-          setTimeout(() => {
-            _this.list = []
-          },10)
+          this.cataId = Number(to.params.cataId)
+          this.$mescrollInt("newsMescroll",this.upCallback);
         }
       },
       methods: {
@@ -95,9 +92,10 @@
 <style scoped>
   .listBox {
     margin-top: 2.23rem;
-    padding: 0 .2rem 3rem;
+    padding: 0 .2rem 1rem;
     background: #fff;
     position: fixed;
+    top: 0;
     bottom: 0;
     height: auto;
 
