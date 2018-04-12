@@ -5,19 +5,21 @@
         img(:src="item.gi_image_url | img-filter")
         .text {{item.goods_name}}
         .price {{item.price | price-filter}}
-        .bottom <span>{{item.city}}</span><span>{{item.gi_salenum}}人购买</span>
+          span(v-if="userData.member_type !== '092'") 可省100元
 </template>
 
 <script>
-    export default {
-        name: "bottom-list",
-        props: ['listData','background'],
-        methods:{
-          goGoods (id) {
-            this.$router.push({path:'/goodsDetailed',query:{id:id}})
-          }
-        }
+  import {mapState} from 'vuex'
+  export default {
+    name: "bottom-list",
+    props: ['listData', 'background'],
+    computed: mapState(['userData']),
+    methods: {
+      goGoods(id) {
+        this.$router.push({path: '/goodsDetailed', query: {id: id}})
+      }
     }
+  }
 </script>
 
 <style scoped>
@@ -26,9 +28,10 @@
     justify-content: space-between;
     flex-wrap: wrap;
     padding: .2rem;
-    background: rgb(242,242,242);
+    background: rgb(242, 242, 242);
   }
-  .goodsList li{
+
+  .goodsList li {
     border: solid 1px #ccc;
     border-radius: 5px;
     overflow: hidden;
@@ -39,10 +42,12 @@
     flex-direction: column;
     justify-content: space-between;
   }
+
   .goodsList li img {
     width: 100%;
   }
-  .text{
+
+  .text {
     margin: .1rem;
     height: .8rem;
     overflow: hidden;
@@ -51,13 +56,23 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-  .price{
+
+  .price {
     margin: .2rem .1rem;
-    color: rgb(246,0,87);
+    color: rgb(246, 0, 87);
     font-weight: 600;
     font-size: .4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  .bottom{
+
+  .price span {
+    font-weight: 500;
+    font-size: .3rem;
+  }
+
+  .bottom {
     margin: .1rem;
     display: flex;
     justify-content: space-between;

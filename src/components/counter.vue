@@ -19,6 +19,10 @@
           min:{
             type:Number
           },
+          max: {
+            type: Number,
+            default: 10000,
+          },
           change:{
             type:Function
           },
@@ -29,7 +33,7 @@
         },
         methods:{
           changeValue(){
-            if (this.msg > this.min ) {
+            if (this.msg > this.min && this.msg < this.max) {
               this.$emit('cMsg', this.msg)
               this.$emit('change')
             } else {
@@ -38,18 +42,20 @@
 
           },
           minus(){
-            if (this.msg > this.min ) {
+            if (this.msg > this.min && this.msg < this.max) {
               this.$emit('cMsg', this.msg-1)
               this.$emit('change')
             }
           },
           plus(){
-            this.$emit('cMsg', this.msg-0+1)
-            this.$emit('change')
+            if (this.msg > this.min && this.msg < this.max) {
+              this.$emit('cMsg', this.msg-0+1)
+              this.$emit('change')
+            }
           },
           handleFocus(event) {
             this.$emit('focus', event);
-            if (this.msg < this.min ) {
+            if (this.msg > this.min && this.msg < this.max) {
               this.$emit('cMsg', this.min)
             }
           }
