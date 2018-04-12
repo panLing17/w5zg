@@ -7,15 +7,16 @@
       .topRight(slot="right")
     .content
       .contentTop
-        .haveWrapper(v-if="true", @click="$router.push('/my/chooseBankCard')")
+        .haveWrapper(v-if="bankInfo", @click="$router.push('/my/chooseBankCard')")
           img.icon(:src="bankInfo.bank_icon")
           .info
             .name {{bankInfo.bank_name}}
             .dec
-              span 尾号{{bankInfo.bank_card.slice(bankInfo.bank_card.length-5,bankInfo.bank_card.length-1)}}
+              span 尾号{{bankInfo.bank_card | cardNo}}
               span {{bankInfo.mbc_type}}
-        .nothing(v-if="false")
-          img.icon(src="../../../../../assets/img/add2@2x.png")
+        .nothing(v-if="!bankInfo")
+          .icon
+            img(src="../../../../../assets/img/add2@2x.png")
           .info 请添加银行卡
       .contentCenter
         .title 提现金额
@@ -35,7 +36,7 @@
         return {
           balance: 0,
           textActive: false,
-          bankInfo:{},
+          bankInfo:null,
           form:{
             money: '',
             bankId:'',
@@ -67,6 +68,11 @@
             this.textActive = false;
           }
           return text;
+        }
+      },
+      filters: {
+        cardNo(value) {
+          return value && value.slice(value.length-5,value.length-1);
         }
       },
       methods: {

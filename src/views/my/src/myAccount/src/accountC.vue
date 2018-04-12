@@ -14,7 +14,7 @@
           .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 全部
           .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 收入
           .btn(:class="{'active':filterActive===3}", @click="filterChange(3)") 支出
-    .detailBox(v-if="cashDetail")
+    .detailBox(v-if="!isEmpty")
       ul.detailList
         li(v-for="item in cashDetail")
           .block.top
@@ -26,7 +26,7 @@
           .block.bottom
             .left() {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
             .right {{item.creation_time}}
-    .nodata(v-if="!cashDetail") 暂无相关记录流水
+    .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -52,6 +52,16 @@
           document.getElementsByTagName('body')[0].style.overflow = 'hidden';
         }else {
           document.getElementsByTagName('body')[0].style.overflow = 'auto';
+        }
+      }
+    },
+    computed: {
+      // 判断数据是否为空
+      isEmpty () {
+        if (this.cashDetail === null || this.cashDetail.length === 0) {
+          return true;
+        }else {
+          return false;
         }
       }
     },

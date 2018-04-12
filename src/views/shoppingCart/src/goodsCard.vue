@@ -32,10 +32,10 @@
                 w-counter(v-model="i.goods_num", :min="1", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
-            .left(@click="changeType(i)") <img src="../../../assets/img/switch@2x.png"/>门店自提
+            .left(@click="changeType(i,index)") <img src="../../../assets/img/switch@2x.png"/>门店自提
             .right
               span {{i.pro_Name}} {{i.city_name}}
-              img
+              img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id)")
 </template>
 
 <script>
@@ -55,10 +55,10 @@
       }
     },
     methods: {
-      changeType (data) {
+      changeType (data,index) {
         // 回调参数，执行删除动画效果
         let fun =()=> {
-          this.list.splice(0,1)
+          this.list.splice(index,1)
         }
         this.$emit('tab',data,fun)
       },
@@ -67,6 +67,18 @@
       },
       selectChange () {
         this.$emit('selectChange')
+      },
+      deleteGoods (id) {
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: id
+          },
+        }).then(function (response) {
+
+        })
       }
     }
   }
@@ -144,6 +156,7 @@
   /* */
   .info{
     flex-grow: 1;
+    width: 0;
     padding-left: .3rem;
     display: flex;
     flex-direction: column;
@@ -176,8 +189,15 @@
     border-top: solid 1px rgb(250,250,250);
   }
   .bottom .right{
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
     margin-left: .3rem;
     color: #aaaaaa;
+  }
+  .bottom .right img{
+    height: .4rem;
+    margin-right: .2rem;
   }
   .bottom .left {
     display: flex;

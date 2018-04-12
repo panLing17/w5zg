@@ -79,6 +79,9 @@
         this.loading = false
       },s+math)
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+    },
     methods: {
       upCallback: function(page) {
         let self = this;

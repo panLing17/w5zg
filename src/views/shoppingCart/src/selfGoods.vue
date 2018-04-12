@@ -32,7 +32,7 @@
             .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>快递配送
             .right
               span {{i.pro_Name}} {{i.city_name}}
-              img
+              img(src="../../../assets/img/delete@3x.png", @click="")
 </template>
 
 <script>
@@ -172,8 +172,15 @@
     border-top: solid 1px rgb(250,250,250);
   }
   .bottom .right{
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
     margin-left: .3rem;
     color: #aaaaaa;
+  }
+  .bottom .right img{
+    height: .4rem;
+    margin-right: .2rem;
   }
   .bottom .left {
     display: flex;

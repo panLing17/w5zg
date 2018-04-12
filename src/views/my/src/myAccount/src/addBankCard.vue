@@ -757,6 +757,7 @@
             url: self.$apiMember + 'memberBank/memberbankcard',
             params: self.form,
           }).then(function (response) {
+            console.log(response.data.optSuc)
             self.$message.success('添加成功')
             self.$router.go(-1)
           })

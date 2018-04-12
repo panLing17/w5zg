@@ -1,4 +1,4 @@
 module.exports = {
   NODE_ENV: '"production"' ,
-  API_ROOT: '"http://www.leshu.shop/api/"'
+  API_ROOT: '"http://192.168.1.190"'
 }

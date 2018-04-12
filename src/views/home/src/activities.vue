@@ -1,7 +1,7 @@
 <template lang="pug">
   .activities
     ul.goodsList
-      li(v-for="i in listData")
+      li(v-for="i in listData.slice(0,4)")
         img(:src="i.image | img-filter")
     .columLine
     .rowLine

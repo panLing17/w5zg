@@ -13,7 +13,7 @@
           .center
             .name {{item.bank_card_owner_name}}
             .type  {{item.mbc_type}}
-            .cardNo **** **** **** {{item.bank_card.slice(item.bank_card.length-5,item.bank_card.length-1)}}
+            .cardNo **** **** **** {{item.bank_card | cardNo}}
           img.checked(src="../../../../../assets/img/checked@2x.png", v-if="item.isChecked")
       .add
         img(src="../../../../../assets/img/newbankcard@2x.png", @click="$router.push('/my/addBankCard')")
@@ -24,30 +24,16 @@
       name: "chooseBankCard",
       data () {
         return {
-          bankData: [
-            {
-              bankName:'中国工商银行',
-              type: '储蓄卡',
-              cardNo:'2345',
-              isChecked: true
-            },
-            {
-              bankName:'中国农业银行',
-              type: '储蓄卡',
-              cardNo:'4189',
-              isChecked: false
-            },
-            {
-              bankName:'中国建设银行',
-              type: '储蓄卡',
-              cardNo:'1158',
-              isChecked: false
-            }
-          ]
+          bankData: []
         }
       },
       mounted () {
         this.getBankCartData()
+      },
+      filters: {
+        cardNo(value) {
+          return value && value.slice(value.length-5,value.length-1);
+        }
       },
       methods: {
         change (index) {
