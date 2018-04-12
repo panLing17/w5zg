@@ -10,7 +10,7 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
-      div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
+      div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
         img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
     hot-button(:list="hotButton")
     l-news.news(:newsData="news")
@@ -273,12 +273,7 @@
         this.$router.push('/search')
       },
       goActivity(link, type) {
-        var Case = parseInt(type)
-        if (Case === 1) {
-          this.$router.push({path: '/goods', query: {id: link}})
-        } else {
-          window.location = link
-        }
+          this.$router.push({path: '/goodsDetailed', query: {id: link}})
       }
     },
     components: {hotButton, lNews, wActivity}
@@ -331,7 +326,7 @@
     height: auto;
   }
   .positionFixed{
-    position: fixed;
+    position: fixed !important;
   }
   .homeBox {
     background: #f2f2f2;

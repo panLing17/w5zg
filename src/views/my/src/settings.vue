@@ -37,7 +37,8 @@
         li.left 关于我们
         li.right
           img(src="../../../assets/img/next@2x.png")
-    .logOut(@click="logout") 退出登录
+    .logOut
+      w-button(@click="logout") 退出登录
 </template>
 <script>
   import {mapState} from  'vuex'
@@ -201,15 +202,9 @@
   /*用户头像,账户安全下方的边框--结束*/
   /*退出登录--开始*/
   .logOut{
-    width: 6.5rem;
-    height: 1.2rem;
-    background-color: rgb(245,0,87);
-    border-radius: 1.2rem;
+    display: flex;
+    justify-content: center;
     margin: 1.6rem auto;
-    text-align: center;
-    line-height: 1.2rem;
-    color: #fff;
-    font-size: .4rem;
   }
   /*退出登录--结束*/
 </style>

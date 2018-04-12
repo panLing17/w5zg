@@ -47,7 +47,7 @@
           e.style.bottom='0';
           let fun=function () {
             e.style.bottom=parseFloat(e.style.bottom)+1.2+'rem'
-            if(parseFloat(e.style.bottom)>1.2*n/2){
+            if(parseFloat(e.style.bottom)>1.2*n-1){
               e.style.bottom='0';
             }
           };

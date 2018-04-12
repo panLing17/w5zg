@@ -4,7 +4,7 @@
       li(v-for="item in list.slice(0,4)")
         img(:src="item.tcTitlePicture | img-filter" , @click="goGoods('特价商品')")
     ul
-      li(v-for="item in list.slice(4,7)")
+      li(v-for="item in list.slice(4,8)")
         img(:src="item.tcTitlePicture | img-filter" )
 </template>
 
