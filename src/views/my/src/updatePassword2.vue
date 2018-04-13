@@ -42,7 +42,7 @@
       checkPwd () {
         this.pwdStatus = true
         //校验规则 正则表达式  只允许输入 数字跟字母
-        var reg = /^[A-Za-z0-9]{6,20}$/;
+        var reg = /^\S{6,20}$/;
         if(!reg.test(this.form.pwd)){
           this.passwordError = $code('268')
           return
@@ -54,7 +54,7 @@
         let self = this
         if (self.form.pwd == '') {
           self.phoneError = ''
-          self.checkCodeError = ''
+          self.qrPasswordError = ''
           return
         }
 
@@ -64,13 +64,16 @@
 
         if(self.form.pwd != self.qrPassword){
           self.qrPasswordError = $code('269')
+          return
         }
+
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/resetPwdLoginIn',
           params: self.form
         }).then(function (response) {
           if (response.data.optSuc) {
+            self.$message.success('修改成功')
             // 成功跳转页面
             self.$router.push({path: '/my/accountSafety'})
           }
