@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 直供头条
       .topRight(slot="right")
-    .content dkdkkdkdkdkdkddkkdkdkdkdkd
+    .content(v-html="$store.state.headlinesDetail")
 </template>
 
 <script>

@@ -1,25 +1,26 @@
 <template lang="pug">
-  .listBox.mescroll#newsMescroll(v-if="list")
-    ul.listWrapper
-      li.listItem(v-for="(item, index) in list")
-        .itemWrapper(v-if="sortType===0")
-          .left(v-if="index%2===0")
-            img.img(:src="item.i_photo")
-          .right.margin(v-if="index%2===0")
-            p.title {{item.i_abstract}}
-          .right(v-if="index%2===1")
-            p.title {{item.i_abstract}}
-          .left.margin(v-if="index%2===1")
-            img.img(:src="item.i_photo")
-        .itemWrapper(v-if="sortType===1")
-          .left(v-if="index%2===1")
-            img.img(:src="item.i_photo")
-          .right.margin(v-if="index%2===1")
-            p.title {{item.i_abstract}}
-          .right(v-if="index%2===0")
-            p.title {{item.i_abstract}}
-          .left.margin(v-if="index%2===0")
-            img.img(:src="item.i_photo")
+  .mescroll#newsMescroll
+    .listBox(v-if="list")
+      ul.listWrapper
+        li.listItem(v-for="(item, index) in list", @click="toDetail(item.i_content_app)")
+          .itemWrapper(v-if="sortType===0")
+            .left(v-if="index%2===0")
+              img.img(:src="item.i_photo")
+            .right.margin(v-if="index%2===0")
+              p.title {{item.i_abstract}}
+            .right(v-if="index%2===1")
+              p.title {{item.i_abstract}}
+            .left.margin(v-if="index%2===1")
+              img.img(:src="item.i_photo")
+          .itemWrapper(v-if="sortType===1")
+            .left(v-if="index%2===1")
+              img.img(:src="item.i_photo")
+            .right.margin(v-if="index%2===1")
+              p.title {{item.i_abstract}}
+            .right(v-if="index%2===0")
+              p.title {{item.i_abstract}}
+            .left.margin(v-if="index%2===0")
+              img.img(:src="item.i_photo")
 </template>
 
 <script>
@@ -41,6 +42,8 @@
       },
       watch: {
         '$route' (to, from) {
+          // 切换路由时必须先销毁，不然上拉加载和下拉刷新会持续增加
+          this.mescroll.destroy();
           this.sortType = Number(to.params.index)%2;
           this.list = null;
           this.cataId = Number(to.params.cataId)
@@ -85,12 +88,16 @@
             successCallback&&successCallback(response.data.data);//成功回调
           })
         },
+        toDetail (data) {
+          this.$store.commit('getHeadlinesDetail',data);
+          this.$router.push('/home/headlinesDetail');
+        }
       }
     }
 </script>
 
 <style scoped>
-  .listBox {
+  .mescroll {
     margin-top: 2.23rem;
     padding: 0 .2rem 1rem;
     background: #fff;
@@ -98,6 +105,9 @@
     top: 0;
     bottom: 0;
     height: auto;
+  }
+  .listBox {
+
 
   }
   .listWrapper {

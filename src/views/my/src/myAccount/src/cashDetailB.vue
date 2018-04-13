@@ -21,10 +21,10 @@
               .left {{item.trade_in_out=='126' ? '现金券发放':'现金券收入'}}
               .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
-              .left(v-if="item.cardNo") 卡号: {{item.cardNo}}
-              .right(v-if="item.expire") 到期日: {{item.expire}}
+              .left 卡号: {{item.serial_number}}
+              .right(v-if="item.end_time") 到期日: {{item.end_time}}
             .block.bottom
-              .left(v-if="item.userId") 用户ID: {{item.userId}}
+              .left 用户ID: {{item.source_id}}
               .right {{item.creation_time}}
       .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
@@ -58,7 +58,7 @@
       computed: {
         // 判断数据是否为空
         isEmpty () {
-          if (this.cashDetail === null || this.cashDetail.length === 0) {
+          if (this.cashDetail == null || this.cashDetail.length === 0) {
             return true;
           }else {
             return false;
@@ -66,22 +66,31 @@
         }
       },
       created () {
-        this.getCashDetail();
+        this.getCashDetail(1);
       },
       methods: {
-        getCashDetail () {
+        getCashDetail (type) {
+          this.cashDetail = [];
           let _this = this;
+          let form = { };
+          if (type === 2) {
+            form.type = '125';
+          }else if (type === 3) {
+            form.type = '126';
+          }
           this.$ajax({
             method: 'get',
             url: this.$apiTransaction + 'logNetcard/logs',
-            params:{}
+            params:form
           }).then(function (response) {
-            _this.logs = _this.cashDetail = response.data.data;
+            _this.cashDetail = response.data.data;
           })
         },
         filterChange (index) {
+
           this.filterActive = index;
           this.filterShow = false;
+          this.getCashDetail(index);
         },
         openFilter () {
           this.filterShow = true;

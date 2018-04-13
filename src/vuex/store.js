@@ -40,6 +40,9 @@ const state = {
   nowLocation: [116.397428, 39.90923],
   // 数据中转（修改数据、查看详情等。用来带数据）
   transfer:[],
+
+  // 头条详情内容
+  headlinesDetail: ""
 }
 const mutations = {
   transferGive (state, data) {
@@ -79,6 +82,9 @@ const mutations = {
   },
   userDataChange (state, data) {
     state.userData = data
+  },
+  getHeadlinesDetail (state, data) {
+    state.headlinesDetail = data
   }
 }
 const actions = {

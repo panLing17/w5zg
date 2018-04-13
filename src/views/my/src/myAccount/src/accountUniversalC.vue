@@ -20,7 +20,7 @@
         li(v-for="item in cashDetail")
           .block.top
             // 订单号
-            .left 订单号: {{item.order_id}}
+            .left 订单号: {{item.order_no}}
             // 交易金额 trade_in_out 126为支出 125为收入
             .right {{item.trade_in_out==='126'?'-':'+'}}{{item.tran_money | number}}
           .block.bottom
@@ -34,7 +34,6 @@
       name: "accountUniversalC",
       data () {
         return {
-          logs:[],
           cashDetail: null,
           itemActive: 0,
           balance: 0.00
@@ -42,7 +41,7 @@
       },
       created () {
         this.getBalance();
-        this.getLogs();
+        this.getLogs('');
       },
       filters: {
         // 保留两位小数点
@@ -53,7 +52,7 @@
       computed: {
         // 判断数据是否为空
         isEmpty () {
-          if (this.cashDetail === null || this.cashDetail.length === 0) {
+          if (this.cashDetail == null || this.cashDetail.length === 0) {
             return true;
           }else {
             return false;
@@ -65,37 +64,35 @@
           this.balance = this.$store.state.userData.cash_balance;
         },
         // 获取订单流水记录
-        getLogs () {
+        getLogs (type) {
+          this.cashDetail = [];
           let _this = this;
+          let form = {};
+          if (type.trim().length !== 0) {
+            form = {
+              type: type
+            }
+          }
           this.$ajax({
             method: 'get',
             url: this.$apiTransaction + 'logAccount/logs',
-            params: {}
+            params: form
           }).then(function (response) {
-            _this.logs = _this.cashDetail = response.data.data;
+            _this.cashDetail = response.data.data;
           })
         },
         // 过滤
         itemChange (index) {
           this.itemActive = index;
-          this.cashDetail = [];
           switch (parseInt(index)) {
             case 0:
-              this.cashDetail = this.logs;
+              this.getLogs ('');
               break;
             case 1:
-              this.logs.forEach((item, i) => {
-                if (item.trade_in_out === '125') {
-                  this.cashDetail.push(item);
-                }
-              });
+              this.getLogs ('125');
               break;
             case 2:
-              this.logs.forEach((item, i) => {
-                if (item.trade_in_out === '126') {
-                  this.cashDetail.push(item);
-                }
-              });
+              this.getLogs ('126');
               break;
           }
         }

@@ -131,7 +131,7 @@ const router = new Router ({
               ]
             },
             {
-              path: '/home/listDetail/:id',
+              path: '/home/headlinesDetail',
               name: '头条详情',
               component: Headlines.detail
             }

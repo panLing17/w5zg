@@ -47,7 +47,7 @@
       computed : {
         // 判断数据是否为空
         isEmpty () {
-          if (this.data === null || this.data.length === 0) {
+          if (this.data == null || this.data.length === 0) {
             return true;
           }else {
             return false;
@@ -81,6 +81,7 @@
       methods: {
         // 1全部 0已使用 2已失效
         getData (status) {
+          this.data = null;
           let _this = this;
           this.$ajax({
             method: 'get',

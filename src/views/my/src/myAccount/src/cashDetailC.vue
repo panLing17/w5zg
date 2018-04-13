@@ -24,7 +24,7 @@
               .left 商户ID：{{item.source_id}}
               .right 现金券ID:{{item.netcard_id}}
             .block.bottom
-              .left(v-if="item.order_id") 订单号：{{item.order_id}}
+              .left(v-if="item.orderNo") 订单号：{{item.orderNo}}
               .right {{item.creation_time}}
       .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
@@ -34,14 +34,13 @@
         name: "cashDetailB",
         data() {
           return {
-            logs:[],
             cashDetail: null,
             filterShow: false,
             filterActive: 0
           }
         },
       created () {
-         this.getCashDetail();
+         this.getCashDetail(0);
       },
       watch: {
         // 模态框出现禁止页面滑动
@@ -73,7 +72,7 @@
       computed: {
         // 判断数据是否为空
         isEmpty () {
-          if (this.cashDetail === null || this.cashDetail.length === 0) {
+          if (this.cashDetail == null || this.cashDetail.length === 0) {
             return true;
           }else {
             return false;
@@ -81,40 +80,27 @@
         }
       },
       methods: {
-        getCashDetail () {
+        getCashDetail (type) {
           let _this = this;
+          this.cashDetail = [];
+          let form = {};
+          if (type === 1) {
+            form.type = '125';
+          }else if (type === 2) {
+            form.type = '126';
+          }
           this.$ajax({
             method: 'get',
             url: this.$apiTransaction + 'logNetcard/logs',
-            params:{}
+            params:form
           }).then(function (response) {
-            _this.logs = _this.cashDetail = response.data.data;
+            _this.cashDetail = response.data.data;
           })
         },
         filterChange (index) {
           this.filterActive = index;
           this.filterShow = false;
-          this.cashDetail = [];
-          switch (parseInt(index)) {
-            case 0:
-              this.cashDetail = this.logs;
-              break;
-            case 1:
-              this.logs.forEach((item, i) => {
-                if (item.trade_in_out === '125') {
-                  this.cashDetail.push(item);
-
-                }
-              });
-              break;
-            case 2:
-              this.logs.forEach((item, i) => {
-                if (item.trade_in_out === '126') {
-                  this.cashDetail.push(item);
-                }
-              });
-              break;
-          }
+          this.getCashDetail(index);
         },
         openFilter () {
           this.filterShow = true;
