@@ -32,7 +32,6 @@
     },
     computed: mapState(['userData']),
     mounted () {
-
     },
     methods: {
       routergoUpdate1:function(){

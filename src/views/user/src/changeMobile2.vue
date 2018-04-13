@@ -104,6 +104,20 @@
           }
         })
       },
+      /* 获取用户信息 */
+      getUserData:function(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/api/currentMember',
+          params: {}
+        }).then(function (response) {
+          self.$store.commit('userDataChange',response.data.data)
+          if (response.data.data.member_type === '092') {
+            self.getUserInfo()
+          }
+        })
+      },
       nextStep() {
         let self = this
         if (self.form.mobile == '' || self.form.vcode == '' || self.nextStepStatus) {
@@ -118,6 +132,8 @@
           params: self.form
         }).then(function (response) {
           if (response.data.optSuc) {
+            self.$message.success('修改成功')
+            self.getUserData()
             // 成功跳转页面
             self.$router.push({path: '/my/accountSafety'})
           }
