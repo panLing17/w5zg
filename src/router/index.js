@@ -134,6 +134,16 @@ const router = new Router ({
               path: '/home/headlinesDetail',
               name: '头条详情',
               component: Headlines.detail
+            },
+            {
+              path: '/home/largeCollection',
+              name: '大牌云集',
+              component: Home.largeCollection
+            },
+            {
+              path: '/home/sports',
+              name: '运动',
+              component: Home.sports
             }
           ]
         }, {
@@ -401,6 +411,11 @@ const router = new Router ({
               path: '/my/accountC',
               name: '账户明细C',
               component:MyAccount.accountC
+            },
+            {
+              path: '/my/receiveTicket',
+              name: '领取现金券',
+              component: MyAccount.receiveTicket
             }
           ]
         }
