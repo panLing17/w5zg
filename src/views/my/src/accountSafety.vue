@@ -2,7 +2,7 @@
   .accountBind
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBackPage")
       .topCenter(slot="center") 账户安全
     .loginPassword
       ul.wrap(@click="routergoUpdate1()")
@@ -32,9 +32,13 @@
     },
     computed: mapState(['userData']),
     mounted () {
-
     },
     methods: {
+      goBackPage:function(){
+        this.$router.push({
+          name: '我的设置'
+        });
+      },
       routergoUpdate1:function(){
         this.$router.push({
            name: '修改登录密码与支付密码',

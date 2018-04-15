@@ -58,6 +58,7 @@
         itemChange (index) {
           this.itemActive = index;
           this.drop = true;
+          this.filterActive = 1;
           this.$router.replace({path:`/my/accountDetailContent/${index}/1`});
         },
         dropChange () {
