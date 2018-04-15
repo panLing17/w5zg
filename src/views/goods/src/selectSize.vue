@@ -7,7 +7,7 @@
         .photosBox(@touchstart="removeTouchDisable")
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
             li(v-for="item in list")
-              img(:src="item.image")
+              img(:src="item.gi_img_url | img-filter")
         .goodsData(:class="{smallGoodsData:smallPhotoFlag}")
           .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.counter_price | price-filter}}
           .price(v-else) {{0 | price-filter}}
@@ -23,9 +23,9 @@
           span 数量
           w-counter(v-model="content", :min="1")
     .buttons(v-if="show")
-      .left(@click="buy") 加入购物车
-      .right(@click="close", v-if="onlySelectSpec") 确认选择
-      .right(@click="buy", v-else) 立即购买
+      .left(@click="buy", v-if="false") 加入购物车
+      .right(@click="confirm", v-if="onlySelectSpec") 确认选择
+      .right(@click="buy", v-else) 确定
 </template>
 
 <script>
@@ -41,10 +41,7 @@
       }
     },
     props: {
-      photos: {
-        type: Array,
-        default:[]
-      },
+      photos: Array,
       spec: Array,
       onlySelectSpec: {
         type: Boolean,
@@ -69,6 +66,20 @@
     methods:{
       close () {
         this.$emit('close')
+      },
+      confirm () {
+        let data = {
+          price: this.realGoodsData.counter_price,
+          content: this.content,
+          spec: []
+        }
+        this.spec.forEach((now)=>{
+          data.spec.push({
+            gspec_name: now.specName,
+            gspec_value: now.specValue[now.valueIndex]
+          })
+        })
+        this.$emit('confirm', data)
       },
       removeTouchDisable () {
         this.$emit('buy')
@@ -103,8 +114,15 @@
         // 将数量与价格传过去
         let data = {
           price: this.realGoodsData.counter_price,
-          content: this.content
+          content: this.content,
+          spec: []
         }
+        this.spec.forEach((now)=>{
+          data.spec.push({
+            gspec_name: now.specName,
+            gspec_value: now.specValue[now.valueIndex]
+          })
+        })
         if (this.realGoodsData.storage_num>0) {
           // 此条为了恢复屏幕触摸事件
           this.$emit('buy', data)

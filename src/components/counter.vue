@@ -48,7 +48,7 @@
             }
           },
           plus(){
-            if (this.msg > this.min && this.msg < this.max) {
+            if (this.msg < this.max) {
               this.$emit('cMsg', this.msg-0+1)
               this.$emit('change')
             }

@@ -181,7 +181,11 @@
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
         console.log(this.$store.state.transfer)
-        this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+        if (this.$store.state.transfer.length>0) {
+          this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+        } else {
+          this.$message.error('请勾选商品')
+        }
       }
     }
   }

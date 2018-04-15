@@ -4,7 +4,7 @@
       .title
         <!---w-checkbox(v-model="isdefault")--->
         p {{storeName}}
-      transition-group(tag="div", name="leftOut")
+      transition-group(tag="div", :name="animate")
         .goodsBox(v-for="(i,index) in list", :key="index")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec")
@@ -27,35 +27,43 @@
               img(src="../../../../static/img/1.jpg")
               .specChange
                 .specData
-                  p 黑色,L
+                  p
+                    span(v-for="(item,specIndex) in i.specVOList") {{item.gspec_value}}{{specIndex < i.specVOList.length-1 ? ',' : ''}}
                   img(src="../../../assets/img/next@2x.png")
-                w-counter(v-model="i.goods_num", :min="1", width="4rem")
+                w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
             .left(@click="changeType(i,index)") <img src="../../../assets/img/switch@2x.png"/>门店自提
             .right
               span {{i.pro_Name}} {{i.city_name}}
-              img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id)")
+              img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")
 </template>
 
 <script>
   export default {
     name: "goods-card",
+    data () {
+      return {
+        animateName: 'leftOut',
+        isdefault: false,
+        content: 1,
+        flag: true
+      }
+    },
+    computed:{
+      animate () {
+        return this.animateName
+      }
+    },
     props:{
       list:{
         type: Array
       },
       storeName: String
     },
-    data () {
-      return {
-        isdefault: false,
-        content: 1,
-        flag: true
-      }
-    },
     methods: {
       changeType (data,index) {
+         this.animateName = 'leftOut'
         // 回调参数，执行删除动画效果
         let fun =()=> {
           this.list.splice(index,1)
@@ -68,13 +76,30 @@
       selectChange () {
         this.$emit('selectChange')
       },
-      deleteGoods (id) {
+      deleteGoods (id, index) {
+         this.animateName = 'fadeOut'
+        this.list.splice(index,1)
         let self = this
         self.$ajax({
           method: 'delete',
           url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
           params: {
             scIdArray: id
+          },
+        }).then(function (response) {
+
+        })
+      },
+      // 商品数量变化
+      countChange (cartId,skuId,num) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/shoppingCart',
+          params: {
+            scId: cartId,
+            gskuId: skuId,
+            num: num
           },
         }).then(function (response) {
 
@@ -153,7 +178,7 @@
     align-items: center;
     justify-content: center;
   }
-  /* */
+  /* 商品描述部分 */
   .info{
     flex-grow: 1;
     width: 0;
@@ -161,6 +186,17 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+  }
+  .info .text .name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .info .text .spec {
+    margin-top: .1rem;
+    color: #999;
   }
   .price{
     display: flex;
@@ -217,6 +253,16 @@
   .leftOut-enter, .leftOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
     transform: translate(-100%,-1000%) scale(.1,.1);
+    opacity: 0;
+  }
+  .fadeOut-enter-active {
+    transition: all .3s ease;
+  }
+  .fadeOut-leave-active {
+    transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .fadeOut-enter, .fadeOut-leave-to
+    /* .slide-fade-leave-active for below version 2.1.8 */ {
     opacity: 0;
   }
 </style>

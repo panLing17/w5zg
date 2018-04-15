@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 现金券明细
+      .topCenter(slot="center") 账户明细
       .topRight(slot="right")
         p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="openFilter") 筛选
     transition(name="fade")
@@ -22,9 +22,9 @@
             .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
           .block.center
             .left 流水单号：{{item.trade_no}}
-            .right {{item.payment_channel}}
+            .right {{item.payment_channel | paymentChannel}}
           .block.bottom
-            .left() {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
+            .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
             .right {{item.creation_time}}
     .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
@@ -43,6 +43,16 @@
       // 保留两位小数点
       number (value) {
         return Number(value).toFixed(2);
+      },
+      paymentChannel (value) {
+        let text = '';
+        switch(value) {
+          case '131': text = '支付宝'; break;
+          case '132': text = '微信'; break;
+          case '133': text = '银联'; break;
+          default: text = '其他';
+        }
+        return text;
       }
     },
     watch: {
@@ -58,7 +68,7 @@
     computed: {
       // 判断数据是否为空
       isEmpty () {
-        if (this.cashDetail === null || this.cashDetail.length === 0) {
+        if (this.cashDetail == null || this.cashDetail.length === 0) {
           return true;
         }else {
           return false;
@@ -66,42 +76,30 @@
       }
     },
     created () {
-      this.getCashDetail();
+      this.getCashDetail(1);
     },
     methods: {
-      getCashDetail () {
+      getCashDetail (type) {
         let _this = this;
+        this.cashDetail = [];
+        let form = { };
+        if (type === 2) {
+          form.type = '125';
+        }else if (type === 3) {
+          form.type = '126';
+        }
         this.$ajax({
           method: 'get',
           url: this.$apiTransaction + 'logThirdpay/logs',
-          params:{}
+          params:form
         }).then(function (response) {
-          _this.logs = _this.cashDetail =  response.data.data;
+          _this.cashDetail =  response.data.data;
         });
       },
       filterChange (index) {
         this.filterActive = index;
         this.filterShow = false;
-        this.cashDetail = [];
-        switch (parseInt(index)) {
-          case 1:
-            this.cashDetail = this.logs;
-            break;
-          case 2:
-            this.logs.forEach((item, i) => {
-              if (item.trade_in_out === '125') {
-                this.cashDetail.push(item);
-              }
-            });
-            break;
-          case 3:
-            this.logs.forEach((item, i) => {
-              if (item.trade_in_out === '126') {
-                this.cashDetail.push(item);
-              }
-            });
-            break;
-        }
+        this.getCashDetail(index);
       },
       openFilter () {
         this.filterShow = true;

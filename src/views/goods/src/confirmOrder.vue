@@ -6,7 +6,7 @@
       .topCenter(slot="center") 确认订单
       .topRight(slot="right")
     .title
-      .stud {{$route.query.since?'提货人':'联系人'}}
+      .stud 联系人
     .location(v-if="$route.query.since === 'true'")
       ul.locationInput
         li
@@ -95,6 +95,10 @@
       },
       /* 立即购买快递配送订单生成 */
       directDistribution () {
+        if (!this.giveGoodsAddress.id) {
+          this.$message.error('请选择收货地址')
+          return false
+        }
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
@@ -115,6 +119,10 @@
       },
       /* 立即购买自提订单生成 */
       directSince () {
+        if (!this.name || !this.phone) {
+          this.$message.error('请正确填写提货信息')
+          return false
+        }
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
@@ -137,6 +145,10 @@
       },
       /* 购物车自提订单生成 */
       shoppingCartSince () {
+        if (!this.name || !this.phone) {
+          this.$message.error('请正确填写提货信息')
+          return false
+        }
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
@@ -162,6 +174,10 @@
       },
       /* 购物车配送订单生成 */
       shoppingCartDistribution () {
+        if (!this.giveGoodsAddress.id) {
+          this.$message.error('请选择收货地址')
+          return false
+        }
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this

@@ -132,7 +132,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + 'member/api/currentMember',
+          url: self.$apiMember + 'member/currentMember',
           params: {}
         }).then(function (response) {
           self.$store.commit('userDataChange',response.data.data)

@@ -22,6 +22,8 @@ import AfterSale from '../views/my/src/afterSale/index.js'
 import Goods from '../views/goods/index.js'
 // 账户
 import MyAccount from '../views/my/src/myAccount/index.js'
+// 头条
+import Headlines from '../views/home/src/headlines/index'
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -111,6 +113,37 @@ const router = new Router ({
               path: '/home/classification',
               name: '首页分类',
               component: Home.classification
+            },
+            {
+              path: '/home/headlines',
+              name: '头条',
+              component: Headlines.headlines,
+              children:[
+                {
+                  path: '',
+                  component: Headlines.list
+                },
+                {
+                  path: '/home/list/:cataId/:index',
+                  name: '头条list',
+                  component: Headlines.list
+                }
+              ]
+            },
+            {
+              path: '/home/headlinesDetail',
+              name: '头条详情',
+              component: Headlines.detail
+            },
+            {
+              path: '/home/largeCollection',
+              name: '大牌云集',
+              component: Home.largeCollection
+            },
+            {
+              path: '/home/sports',
+              name: '运动',
+              component: Home.sports
             }
           ]
         }, {
@@ -378,6 +411,16 @@ const router = new Router ({
               path: '/my/accountC',
               name: '账户明细C',
               component:MyAccount.accountC
+            },
+            {
+              path: '/my/receiveTicket',
+              name: '领取现金券',
+              component: MyAccount.receiveTicket
+            },
+            {
+              path: '/my/footMark',
+              name: '足迹',
+              component:My.footMark
             }
           ]
         }

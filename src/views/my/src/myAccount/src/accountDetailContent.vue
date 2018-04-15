@@ -7,10 +7,9 @@
             .left {{item.trade_type | tradeType}}
             .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
           .block.center
-            .left {{item.no}}
-            .right {{item.type}}
+            .right {{item.status_name}}
           .block.bottom
-            .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
+            .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_no}}
             .right {{item.creation_time}}
       ul.detailList(v-if="selected==1")
         li(v-for="item in cashDetail")
@@ -21,7 +20,7 @@
             .left 流水单号：{{item.trade_no}}
             .right {{item.payment_channel}}
           .block.bottom
-            .left() {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
+            .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
             .right {{item.creation_time}}
     .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
@@ -33,14 +32,13 @@
         return {
           selected: 0,
           type: 1,
-          cashDetail: [],
-          logs:[]
+          cashDetail: []
         }
       },
       computed: {
         // 判断数据是否为空
         isEmpty () {
-          if (this.cashDetail === null || this.cashDetail.length === 0) {
+          if (this.cashDetail == null || this.cashDetail.length === 0) {
             return true;
           }else {
             return false;
@@ -68,58 +66,38 @@
         '$route' (to, from) {
           this.selected = to.params.id;
           this.type = to.params.type;
-          this.getData(this.selected);
+          this.getData();
         }
       },
       created () {
-        this.getData(0);
+        this.getData();
       },
       methods: {
-        getData (type) {
+        getData () {
           let _this = this;
-          this.logs = [];
           this.cashDetail = [];
-          if (type == 0) {
+          let form = {};
+          if (this.type == 2) {
+           form.type = '125'
+          }else if (this.type == 3) {
+            form.type = '126'
+          }
+          if (this.selected == 0) {
             this.$ajax({
               method: 'get',
               url: this.$apiTransaction + 'logAccount/logs',
-              params:{}
+              params:form
             }).then(function (response) {
-              _this.logs  = response.data.data;
-              // 过滤 1全部 2收入 3支出
-              _this.filterChange();
+              _this.cashDetail  = response.data.data;
             });
           }else {
             this.$ajax({
               method: 'get',
               url: this.$apiTransaction + 'logThirdpay/logs',
-              params:{}
+              params:form
             }).then(function (response) {
-              _this.logs = response.data.data;
-              // 过滤 1全部 2收入 3支出
-              _this.filterChange();
+              _this.cashDetail = response.data.data;
             });
-          }
-        },
-        filterChange () {
-          switch (parseInt(this.type)) {
-            case 1:
-              this.cashDetail = this.logs;
-              break;
-            case 2:
-              this.logs.forEach((item, i) => {
-                if (item.trade_in_out === '125') {
-                  this.cashDetail.push(item);
-                }
-              });
-              break;
-            case 3:
-              this.logs.forEach((item, i) => {
-                if (item.trade_in_out === '126') {
-                  this.cashDetail.push(item);
-                }
-              });
-              break;
           }
         }
       }

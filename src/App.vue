@@ -12,7 +12,9 @@ export default {
   mounted () {
     this.getDictionaries()
     this.getLocation()
-    this.getUserData()
+    if (localStorage.hasOwnProperty('token')) {
+      this.getUserData()
+    }
   },
   methods:{
     getDictionaries () {
@@ -107,7 +109,7 @@ export default {
       let self = this
       self.$ajax({
         method: 'get',
-        url: self.$apiMember + 'member/api/currentMember',
+        url: self.$apiMember + 'member/currentMember',
         params: {}
       }).then(function (response) {
         self.$store.commit('userDataChange' ,response.data.data)

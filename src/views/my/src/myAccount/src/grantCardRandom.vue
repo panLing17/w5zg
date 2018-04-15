@@ -16,6 +16,7 @@
           .itemRight
             img(src="../../../../../assets/img/wechat2@2x.png")
         .close(@click="shareShow=false") 取消
+    .content
 </template>
 
 <script>
@@ -107,5 +108,10 @@
     text-align: center;
     color: rgb(245,0,87);
     font-size: .4rem;
+  }
+  .content {
+    height: calc(100vh - 1.3rem);
+    background: url("../../../../../assets/img/bottom@2x.png") no-repeat top left;
+    background-size: 100% 100%;
   }
 </style>

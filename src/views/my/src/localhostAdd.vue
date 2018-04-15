@@ -11,12 +11,13 @@
       li
         label 联系电话 <input type="text" v-model="form.phone">
     ul.form.bottomForm
-      li
-        label(@click="show=!show") 地址&nbsp;&nbsp; <input type="text" v-model="locationName" placeholder='请选择' disabled="disabled">
+      li(@click="show = true")
+        label 地址&nbsp;&nbsp; <input type="text" v-model="locationName"  placeholder='请选择' disabled="disabled">
         img(src="" )
+        .clickHack
       li(style="height:2rem")
         label.detailed(style="height:2rem") 详细地址 <textarea v-model="form.detailedAddr"></textarea>
-      li
+      li(v-if="false")
         label 邮政编码 <input type="text" v-model="zipCode" placeholder='(选填)'>
       li.checkbox
         a(@click.stop="locationDefault(item.addressId , item.isdefault)")
@@ -53,6 +54,7 @@
     mounted(){
       if (this.$route.query.id) {
         this.getBase()
+        this.title = '修改收货地址'
       }
     },
     methods:{
@@ -97,7 +99,7 @@
           url: self.$apiMember + 'receivingAddress/address',
           params: self.form,
         }).then(function (response) {
-          self.$router.push('/my/localAdmin')
+          self.$router.go(-1)
         })
       }
     }
@@ -134,6 +136,15 @@
     line-height: 1.2rem;
     border-bottom: solid 1px #eee;
     width: 100%;
+  }
+  /* 选择地址点击事件hack */
+  .clickHack {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    opacity: 0;
   }
   /* 详细地址 */
   .detailed {

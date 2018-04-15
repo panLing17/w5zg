@@ -54,6 +54,7 @@
         .righttRadio
     .size(@click="onlySelectSpecFun")
       .left 规格
+        span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
       img(src="../../../assets/img/right.png").right
     .distribution(@click="distribution")
       .top
@@ -78,7 +79,7 @@
     .buttons
       .left(@click="shoppingCartAdd") 加入购物车
       .right(@click="buy") 立即购买
-    select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable")
+    select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec")
     dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
     store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
@@ -104,6 +105,8 @@
         banner: [],
         goodsData: {},
         spec: [],
+        // 已选规格
+        selectedSpec: [],
         // 详细描述（富文本）
         desc: '',
         // 购买商品数量
@@ -157,6 +160,14 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
+    },
+    watch: {
+      $route () {
+        this.getGoodsDetailed()
+        this.getGoodsDesc()
+        this.getBanner()
+        this.getSpec()
+      }
     },
     methods:{
       // 获取商品详情
@@ -380,10 +391,15 @@
         this.shoppingCartFlag = true
         // 并且，告诉组件，此操作有后续操作
         this.onlySelectSpec = false
-        this.selectFlag = true
-        this.onTouchMove(true)
-        document.body.style.overflow='hidden'
-        document.body.style.height="100vh"
+        // 如果存在规格，直接进行选择配送方式
+        if (this.selectedSpec.length>0) {
+          this.disTypeFlag = true
+        } else {
+          this.selectFlag = true
+          this.onTouchMove(true)
+          document.body.style.overflow='hidden'
+          document.body.style.height="100vh"
+        }
       },
       buy () {
         // 关闭购物车flag
@@ -392,12 +408,26 @@
         this.ofBuy = true
         // 并且，告诉组件，此操作有后续操作
         this.onlySelectSpec = false
-        this.selectFlag = true
-        this.onTouchMove(true)
-        document.body.style.overflow='hidden'
-        document.body.style.height="100vh"
+        // 如果存在规格，直接进行选择配送方式
+        if (this.selectedSpec.length>0) {
+          this.disTypeFlag = true
+        } else {
+          this.selectFlag = true
+          this.onTouchMove(true)
+          document.body.style.overflow='hidden'
+          document.body.style.height="100vh"
+        }
       },
       selectClose () {
+        this.selectFlag = false
+        this.onTouchMove(false)
+        document.body.style.overflow='auto'
+      },
+      confirmSpec (data) {
+        // 赋值信息
+        this.price = data.price
+        this.content = data.content
+        this.selectedSpec = data.spec
         this.selectFlag = false
         this.onTouchMove(false)
         document.body.style.overflow='auto'
@@ -414,10 +444,11 @@
         // 重置购物车flag
         this.shoppingCartFlag = false
       },
-      // 移除禁止触摸事件,并将购买商品数量与价格赋值
+      // 移除禁止触摸事件,并将购买商品数量与价格赋值(选择规格变化后)
       removeTouchDisable (data) {
         this.price = data.price
         this.content = data.content
+        this.selectedSpec = data.spec
         // 打开类型选择
         this.disTypeFlag = true
         // 关闭规格选择
@@ -646,7 +677,10 @@
     align-items: center;
   }
   .card li:last-child>.cartType {
-    background-color: rgb(255,128,171);
+    background-color: rgb(82,56,195);
+  }
+  .card li:last-child>.cartPrice .price {
+    color: rgb(82,56,195);
   }
   .card li>.cartPrice {
     color: #999;
@@ -695,6 +729,11 @@
   .size .left{
     font-size: .35rem;
     font-weight: 600;
+  }
+  .size .left span{
+    margin-left: .2rem;
+    font-weight: 500;
+    color: #aaaaaa;
   }
   .size .right{
     width: .6rem;
