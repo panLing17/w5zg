@@ -11,36 +11,31 @@
         .image
           img(src="../../../../../assets/img/my_goods.png")
         .goodsExplain
-          .words 已发货
-          .express 中通快递: 2467773999
-          .contactWay 官方联系: 95311
+          .words {{goodsStatus}}
+          .express {{CourierName}}: {{number}}
+          .contactWay 官方联系: {{phone}}
     .logisticsAddress
       img(src="../../../../../assets/img/citySearch@2x.png")
       .address 
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
-    .logisticsMsg(:class="fadeInUp")
+    .logisticsMsg
       ul
         li(v-for="(item,index) in states")
           .time
             span.wrap
               span {{item.time}}
           .messages 
-            span.state {{item.state}}
-            img(:src="item.imgSrc")
+            span.state {{item.status}}
+            img(src="../../../../../assets/img/now@2x.png" v-if="index==0")
+            img(src="../../../../../assets/img/past@2x.png" v-else="index==0")
     .packDrop(@click="packDrop()")
       span {{packDrops}}
       img(src="../../../../../assets/img/pack.png")
-    .recommend
-      img(src="../../../../../assets/img/my_recommend@2x.png")
-    .bottomList
-        ul.goodsList#box
-          li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../../../assets/img/my_goods.png")
-            .wrapWords
-              .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
-              .price ￥516.22
-              .bottom <span>江苏南京</span><span>2555人购买</span>
+    .title
+      .line
+      p 推荐
+    w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder                           
 </template>
 
@@ -51,35 +46,15 @@
       name: "checkLogistics",
       data(){
         return{
+          ordertype:"", //订单类型
+          sonOrder:1, //子订单id
+          goodsStatus:"", //货物的状态
+          phone:"", //官方联系电话
+          number:"", //快递的编号
+          CourierName:"", //快递名字
           packDrops:"点击收起详情",
           recommendGoods: [],
-          states:[
-            {
-              time:"03-19 13:25",
-              state:"运输中",
-              imgSrc:now
-            },
-            {
-              time:"03-18 13:25",
-              state:"中通快递揽件",
-              imgSrc:past
-            },
-            {
-              time:"03-17 13:25",
-              state:"卖家发货",
-              imgSrc:past
-            },
-            {
-              time:"03-17 10:25",
-              state:"仓库开始处理",
-              imgSrc:past
-            },
-            {
-              time:"03-17 06:25",
-              state:"已提交订单",
-              imgSrc:past
-            }
-          ]
+          states:[]
         }
       },
       created(){
@@ -87,19 +62,61 @@
       },
       mounted(){
         this.$mescrollInt("logisticsMescroll",this.upCallback);
+        //加载执行
+        this.execute();
+        //判断是商品订单还是退货订单
+        this.judgeOrderType();
       },
       methods:{
+        //判断是商品订单还是退货订单
+        judgeOrderType(){
+          if (true) {
+            this.ordertype = 321;
+          }else{
+            this.ordertype = 322;
+          }
+        },
+        //加载时执行
+        execute(){
+          let self = this;
+          self.$ajax({
+            method:"get",
+            url:self.$apiMember + "orderLogistics/api/info",
+            params:{orderId:self.sonOrder,orderType:self.ordertype}
+          }).then(function(res){
+            console.log(res.data.data);
+            self.CourierName = res.data.data.result.expName;
+            self.number = res.data.data.result.number;
+            self.phone = res.data.data.result.expPhone;
+            self.states = res.data.data.result.list;
+            if (res.data.data.result.deliverystatus == 3) {
+              self.goodsStatus = "已签收";
+            }
+            if (res.data.data.result.deliverystatus == 2) {
+              self.goodsStatus = "正在派件";
+            }
+            if (res.data.data.result.deliverystatus == 1) {
+              self.goodsStatus = "在途中";
+            }
+            if (res.data.data.result.deliverystatus == 4) {
+              self.goodsStatus = "派送失败";
+            }
+          })
+        },
+        //点击收起
         packDrop(){
           if (this.packDrops == "点击收起详情") {
+             var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
+             logisticsMsg.style.height = "1.5rem";
+             logisticsMsg.style.overflow = "hidden";
+             logisticsMsg.style.transition = "all 1s";
             this.packDrops = "点击查看更多详情";
-            var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
-            logisticsMsg.style.height = "1.5rem";
-            logisticsMsg.style.overflow = "hidden";
           }else{
-            this.packDrops = "点击收起详情";
             var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
-            logisticsMsg.style.height = null;
-            logisticsMsg.style.overflow = null;
+            logisticsMsg.style.height = "100%";
+            logisticsMsg.style.overflow = "auto";
+            logisticsMsg.style.transition = "all 1s";
+            this.packDrops = "点击收起详情";
           }
         },
 
@@ -115,23 +132,18 @@
           })
         },
         getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-          setTimeout(function () {
-  //            axios.get("xxxxxx", {
-  //          params: {
-  //            num: pageNum, //页码
-  //            size: pageSize //每页长度
-  //          }
-  //        })
-  //        .then(function(response) {
-            successCallback&&successCallback({});//成功回调
-            successCallback&&successCallback({});//成功回调
-            successCallback&&successCallback({});//成功回调
-            successCallback&&successCallback({});//成功回调
-  //        })
-  //        .catch(function(error) {
-  //          errorCallback&&errorCallback()//失败回调
-  //        });
-          },500)
+          let self = this;
+          self.$ajax({
+            method: 'post',
+            url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
+            params: {
+              page: pageNum,
+              rows: pageSize
+            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }).then(function (response) {
+            successCallback&&successCallback(response.data.data);//成功回调
+          })
         }
 
       }
@@ -223,6 +235,7 @@
   /*物流地址--结束*/
   /*物流信息--开始*/
   .logisticsMsg{
+    height: 100%;
     background-color: #fff;
     padding-top: .3rem; 
   }
@@ -238,18 +251,19 @@
   }
   .logisticsMsg li .time{
     margin-right: .4rem;
-    width: 18%;
+    width: 20%;
     position: relative;
+    font-size: .3rem;
   }
   .logisticsMsg li .time span.wrap{
     position: absolute;
     top: -.3rem;
   }
   .logisticsMsg li .messages{
-    width: 82%;
+    width: 80%;
     height: 1.5rem;
     border-left: 1px solid rgb(153,153,153);
-    text-indent: .4rem;
+    padding-left: .5rem;
     position: relative;
   }
   .logisticsMsg li:last-child .messages{
@@ -264,7 +278,8 @@
   }
   .logisticsMsg li .messages span.state{
     position: absolute;
-    top: -.15em;
+    top: -.5em;
+    font-size: .3rem;
   } 
   /*物流信息--结束*/
   /*点击收起下拉--开始*/
@@ -282,50 +297,27 @@
   }
   /*点击收起下拉--结束*/
   /*我的推荐--开始*/
-  .recommend{
-    height: 1rem;
-    line-height: 1.2rem;
-    text-align: center;
+  .title{
+    height: .8rem;
+    width: 100%;
+    position: relative;
+    display: flex;
+    background: #f2f2f2;
+    justify-content: center;
+    align-items: center;
   }
-  .recommend img{
-    width: 5rem;
+  .line{
+    height: 1px;
+    width: 3rem;
+    background: #999;
+  }
+  .title p{
+    position: absolute;
+    background: #f2f2f2 ;
+    padding: 0 .2rem;
   }
   /*我的推荐--结束*/
-  /*商品大图展示--开始*/
-  .goodsList {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: .2rem;
-    background: #fff;
-  }
-  .goodsList li{
-    border: solid 1px #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    width: 49%;
-    float: left;
-    margin-bottom: .2rem;
-  }
-  .goodsList li img {
-    width: 100%;
-  }
-  .text{
-    margin: .1rem;
-  }
-  .goodsList .price{
-    margin: .2rem .1rem;
-    color: rgb(246,0,87);
-    font-weight: 600;
-    font-size: .4rem;
-  }
-  .wrapWords .bottom{
-    margin: .1rem;
-    display: flex;
-    justify-content: space-between;
-    color: #aaaaaa;
-  }
-  /*商品大图展示--结束*/
+
   .bottomPlaceholder {
     height: 1.5rem;
   }

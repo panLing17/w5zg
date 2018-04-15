@@ -111,14 +111,16 @@
           },
           //点击确认提交
           hide(){
+            console.log(this.num1 == null);
             if (this.num1 == null) {
                 var data = {
                 flag1 : false,
+                brandId : null,
                 minPrice : this.minVal,
                 maxPrice : this.maxVal,
                 pickUps : this.pickUp
               };
-            } else{
+            } else if (this.num1 != null){
                 var data = {
                 flag1 : true,
                 brandId : this.brandNameId,

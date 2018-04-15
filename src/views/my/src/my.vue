@@ -70,7 +70,7 @@
 </template>
 
 <script>
-  import {mapState} from  'vuex'
+  import {mapState} from 'vuex'
   export default {
     name: "my",
     data() {
@@ -365,16 +365,6 @@
     font-size: .35rem;
   }
 	/*我的财富独有的样式--结束*/
-	/*我的推荐--开始*/
-	.recommend{
-		height: 1rem;
-		line-height: 1.2rem;
-		text-align: center;
-	}
-	.recommend img{
-		width: 5rem;
-	}
-	/*我的推荐--结束*/
 	/*商品大图展示--开始*/
   .goodsList{
     display: flex;

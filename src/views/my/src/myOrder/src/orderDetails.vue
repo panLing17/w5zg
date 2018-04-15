@@ -7,7 +7,7 @@
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png").msg
     .topStatus {{countDowns}}    
-    .goodsReceipt
+    .goodsReceipt(v-if="deliveryFlag")
       .consignee
         img(src="../../../../../assets/img/citySearch@2x.png")
         .addressee
@@ -17,7 +17,14 @@
       .address
         span 收货地址:
         strong {{address}}
-    .content(v-for="(item,index) in orderDetails" @click="judgeSon()")
+    .pickUpGoods(v-else="deliveryFlag")
+      .consignee
+        img(src="../../../../../assets/img/citySearch@2x.png")
+        .addressee
+          span.man 提货人:
+            strong {{recipients}}
+          span.phone {{phone}}     
+    .content(v-for="(item,index) in orderDetails")
       .top
         .left
           span.orderNum 订单编号:
@@ -29,22 +36,28 @@
           img(:src="items.logo | img-filter")
         .goodsDetails
           .words {{items.goods_name}}
-          .property
-            span.color {{items.spec_json}}
-            span.size L
-          .amount x
-            span {{items.goods_num}}
-          .price {{items.sale_price | price-filter}}
-          .btn(v-if="showFlag" @click.stop="judgeBtn()") 物流信息
+          .wrapAttr
+            .left
+              .property(v-for="skus in items.spec_json")
+                span.color {{skus.gspec_name}}
+                span.size {{skus.gspec_value}}
+              .amount x{{items.goods_num}}
+            .right  
+              .price {{items.sale_price | price-filter}}
+          .wrapBtn
+            .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
+              .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event)") {{moreBtnCont}}
+            .btnF.btn(v-show="btnFFlag" @click.stop="judgeBtnF($event)") {{btnF}}
+            .btnS.btn(v-show="btnSFlag" @click.stop="judgeBtnS($event)") {{btnS}}
       .bottom(v-show="flag")
         span.shop 提货门店: 
-        span 门店南京市 建邺区 新街口 中央广场    
+        span {{item.si_name}}    
     .total
       ul
         li.totalQuantity
           span 总数量
           span x3
-        li.freight
+        li.freight(v-show="freightFlag")
           span 运费
           span 0.0
         li.aggregate
@@ -77,14 +90,14 @@
         li.receiveTime.selects
           span 签收时间:
           span {{receiveTime}}
-      .copy(@click="copyText()") 复制
+      .copy(@click="copyText(2018022400001)") 复制
     .title
       .line
       p 推荐
     w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
     .fixedBtn
-      .leftBtn {{leftBtn}}
+      .leftBtn(v-show="leftBtnFlag") {{leftBtn}}
       .rightBtn {{rightBtn}}
 
 </template>
@@ -95,6 +108,17 @@
       name: "orderDetails",
       data(){
         return{
+          moreBtnFlag:"", //更多功能按钮的显隐
+          moreBtnCont:"申请退款", //更多功能按钮
+          freightFlag:"", //判断是否自提后是否显示运费
+          deliveryFlag:"", //判断是否自提
+          morethenFlag:true, //判断更多的显隐
+          btnSFlag:true, //判断第二个按钮的显隐
+          btnFFlag:true, //判断第一个按钮的显隐
+          btnS:"", //更多旁边第二个按钮
+          btnF:"", //更多旁边第一个按钮
+          color:"", //颜色或者容量
+          size:"", //大小或者体积
           receiveTime:"", //签收时间
           sendTime:"", //发货时间
           payTime:"", //付款时间
@@ -106,42 +130,26 @@
           deductionCard:"", //网金卡
           presentPrice:"", //返现金
           deductionTicket:"", //通用券
-          recipients: "", //收件人
+          recipients:"", //收件人
           phone: "", //收件人手机号
           orderId:this.$route.query.orderId,
-          leftBtn:"取消订单",
-          rightBtn:"支付",
-          showFlag:false,
-          flag:false,
+          leftBtn:"", //订单最下面的左边按钮
+          rightBtn:"", //订单最下面的右边按钮
+          leftBtnFlag:"", //判断订单最下面左边按钮的显隐
+          showFlag:true,
+          flag:"",
           recommendGoods: [],
-          orderDetails:[
-            {
-              orderNum:"2018031401",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031402",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031403",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031404",
-              imageSrc:myGoods,
-            }
-          ]
+          orderDetails:[]
         }
       },
       created(){
-        //this.countDown(86399);
+
       },
       mounted(){
-        //this.$mescrollInt("orderMescroll",this.upCallback);
+        this.$mescrollInt("orderMescroll",this.upCallback);
         this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示
-        this.countDown(86400);
+        this.countDown(1800);
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
@@ -158,19 +166,29 @@
               second=0;//时间默认值
             if(times > 0){
               //day = Math.floor(times / (60 * 60 * 24));
-              hour = Math.floor(times / (60 * 60)) - (day * 24);
+              //hour = Math.floor(times / (60 * 60)) - (day * 24);
               minute = Math.floor(times / 60) - (day * 24 * 60) - (hour * 60);
               second = Math.floor(times) - (day * 24 * 60 * 60) - (hour * 60 * 60) - (minute * 60);
             }
             //if (day <= 9) day = '0' + day;
-            if (hour <= 9) hour = '0' + hour;
+            //if (hour <= 9) hour = '0' + hour;
             if (minute <= 9) minute = '0' + minute;
             if (second <= 9) second = '0' + second;
-            self.countDowns = "请在"+hour+"小时"+minute+"分钟"+second+"秒内付款";
+            self.countDowns = "请在"+minute+"分钟"+second+"秒内付款";
             times--;
           },1000);
           if(times<=0){
             clearInterval(timer);
+          }
+        },
+        //更多展示功能按钮
+        moreShow(){
+          this.moreBtnFlag = !this.moreBtnFlag;
+        },
+        //点击更多后展示的按钮
+        judgeMoreBtn(e){
+          if (e.target.innerHTML == "申请退货") {
+
           }
         },
         //订单详情展示
@@ -181,7 +199,7 @@
             method:"post",
             url:self.$apiTransaction + "order/detail",
             params:{
-              orderTotalId:1
+              orderTotalId:218
             }
           }).then(function(res){
             console.log(res.data.data);
@@ -201,20 +219,126 @@
             self.createTime = res.data.data[0].create_time;
             self.sendTime = res.data.data[0].send_time;
             self.receiveTime = res.data.data[0].receive_time;
+            //判断是否自提
+            //自提
+            if (res.data.data[0].delivery_ways == "168") {
+              self.flag = true; //显示提货人
+              self.deliveryFlag = false;
+              self.freightFlag = false;
+            }
+            //配送
+            if (res.data.data[0].delivery_ways == "167") {
+              self.flag = false; //显示收货人
+              self.deliveryFlag = true;
+              self.freightFlag = true;
+            }
+            //判断货物状态来决定
+            if (res.data.data[0].orderInfo.orderInfo_status == "待付款") {
+              self.morethenFlag = false;
+              self.btnSFlag = false;
+              self.btnFFlag = false;
+              self.leftBtnFlag = true;
+              self.leftBtn = "取消订单";
+              self.rightBtn = "支付";
+            }
+            if (res.data.data[0].orderInfo.orderInfo_status == "待发货") {
+              self.morethenFlag = false;
+              self.btnSFlag = true;
+              self.btnFFlag = true;
+              self.btnF = "申请退货";
+              self.btnS = "提醒发货";
+              self.leftBtnFlag = true;
+              self.leftBtn = "批量退款";
+              self.rightBtn = "提醒发货";
+            }
+            if (res.data.data[0].orderInfo.orderInfo_status == "已发货") {
+              self.morethenFlag = false;
+              self.btnSFlag = true;
+              self.btnFFlag = true;
+              self.btnF = "申请退货";
+              self.btnS = "物流信息";
+              self.leftBtnFlag = true;
+              self.leftBtn = "批量退款";
+              self.rightBtn = "物流信息";
+            }
+            if (res.data.data[0].orderInfo.orderInfo_status == "备货中") {
+              self.morethenFlag = false;
+              self.btnSFlag = true;
+              self.btnFFlag = true;
+              self.btnF = "申请退货";
+              self.btnS = "提货码";
+              //提货码按钮的颜色
+              var btnS =document.getElementsByClassName("btnS")[0];
+              btnS.style.background = "rgb(244,0,87)";
+              btnS.style.color = "white";
+              btnS.style.borderColor = "rgb(244,0,87)";
+              self.leftBtnFlag = false;
+              self.rightBtn = "物流信息";
+              var rightBtn = document.getElementsByClassName("rightBtn")[0];
+              rightBtn.style.background = "white";
+              rightBtn.style.color = "rgb(244,0,87)";
+            }
+            if (res.data.data[0].orderInfo.orderInfo_status == "交易完成") {
+              self.morethenFlag = false;
+              self.btnSFlag = true;
+              self.btnFFlag = true;
+              self.btnF = "申请退货";
+              self.btnS = "再次购买";
+              self.leftBtnFlag = true;
+              self.leftBtn = "批量退款";
+              self.rightBtn = "再次购买";
+            }
+            if (res.data.data[0].orderInfo.orderInfo_status == "待提货") {
+              self.morethenFlag = false;
+              self.btnSFlag = true;
+              self.btnFFlag = true;
+              self.btnF = "申请退货";
+              self.btnS = "提货码";
+              //提货码按钮的颜色
+              var btnS =document.getElementsByClassName("btnS")[0];
+              btnS.style.background = "rgb(244,0,87)";
+              btnS.style.color = "white";
+              btnS.style.borderColor = "rgb(244,0,87)";
+              self.leftBtnFlag = true;
+              self.leftBtn = "批量退款";
+              self.rightBtn = "再次购买";
+              var rightBtn = document.getElementsByClassName("rightBtn")[0];
+              rightBtn.style.background = "white";
+              rightBtn.style.color = "rgb(244,0,87)";
+            }
           })
-        },
-        //跳到子订单详情页
-        judgeSon(){
-          this.$router.push('/my/orderDetailsSon');
-        },  
+        }, 
         //按照按钮上的文字跳转页面
-        judgeBtn(){
-          var btn = document.getElementsByClassName("btn")[0];
-          console.log(btn.innerHTML == "物流信息");
-          if (btn.innerHTML == "物流信息") {
+        judgeBtnF(e){
+          if (e.target.innerHTML == "再次购买") {
+
+          }
+          if (e.target.innerHTML == "物流信息") {
+
+          }
+          if (e.target.innerHTML == "申请退款") {
+
+          }
+          if (e.target.innerHTML == "申请退货") {
+
+          } 
+        },
+        judgeBtnS(e){
+          if (e.target.innerHTML == "物流信息") {
             this.$router.push('/my/checkLogistics');
           }
-          
+          if (e.target.innerHTML == "提醒发货") {
+
+          }
+          if (e.target.innerHTML == "提货码") {
+
+          }
+          if (e.target.innerHTML == "再次购买") {
+
+          }
+          if (e.target.innerHTML == "确认收货") {
+
+          }
         },
           
 
@@ -232,17 +356,15 @@
           }
         },
 
-        copyText() {
-          var li=document.getElementsByClassName("selects");
-          for(var i=0;i<li.length;i++){        
-            var span=li[i].getElementsByTagName("span");    
-            for(var j=0;j<span.length;j++){
-              span[j].select();        
-              document.execCommand("copy"); // 执行浏览器复制命令
-              alert("复制成功");    
-            }
-          }
-          
+        copyText (val) {
+          let oInput = document.createElement('input');
+          oInput.value = val;
+          document.body.appendChild(oInput);
+          oInput.select(); // 选择对象
+          document.execCommand("Copy"); // 执行浏览器复制命令
+          document.body.removeChild(oInput);
+          let alertDiv = document.createElement("div");
+          alertDiv.attr("alertDiv");
         },
 
         upCallback: function(page) {
@@ -257,17 +379,10 @@
           })
         },
         getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-          setTimeout(function () {
-  //            axios.get("xxxxxx", {
-  //          params: {
-  //            num: pageNum, //页码
-  //            size: pageSize //每页长度
-  //          }
-  //        })
           let self = this;
           self.$ajax({
             method: 'post',
-            url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+            url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
             params: {
               page: pageNum,
               rows: pageSize
@@ -276,16 +391,13 @@
           }).then(function (response) {
             successCallback&&successCallback(response.data.data);//成功回调
           })
-  //        .catch(function(error) {
-  //          errorCallback&&errorCallback()//失败回调
-  //        });
-          },500)
         }
       }
     }
 </script>
 
 <style scoped>
+
   /*顶部倒计时付款--开始*/
   .topStatus{
     padding: .4rem .3rem;
@@ -318,12 +430,14 @@
     margin-top: -.1rem;
   }
   /*收货人的信息--开始*/
-  .goodsReceipt{
+  .goodsReceipt,
+  .pickUpGoods{
     background-color: #fff;
     padding: .3rem;
     color: rgb(153,153,153);
   }
-  .goodsReceipt .consignee{
+  .goodsReceipt .consignee,
+  .pickUpGoods .consignee{
     display: flex;
   }
   .consignee img{
@@ -383,9 +497,7 @@
   .center{
     background-color: #fff;
     padding: .3rem .3rem .2rem;
-    /*border-bottom: 1px solid rgb(242,242,242);*/
-    white-space:nowrap;
-    overflow-x:auto;
+    border-bottom: 1px solid rgb(242,242,242);
     display: flex;
     position: relative;
   } 
@@ -398,6 +510,13 @@
   }
   .center .goodsDetails{
     margin-left: .3rem;
+  }
+  .center .goodsDetails .wrapAttr{
+    display: flex;
+    justify-content: space-between;
+  }
+  .center .goodsDetails .wrapAttr .left{
+    display: flex;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
@@ -412,27 +531,46 @@
   }
   .center .goodsDetails .amount{
     margin-top: .1rem;
+    margin-left: .5rem;
     font-size: .35rem;
     color: rgb(153,153,153);
   }
   .center .goodsDetails .price{
     margin-top: .25rem;
-    font-size: .45rem;
+    font-size: .35rem;
     color: rgb(244,0,87);
     margin-left: -.1rem;
   }
+  .center .goodsDetails .wrapBtn{
+    margin-top: .8rem;
+    display: flex;
+    justify-content: flex-end;
+  }
   .center .goodsDetails .btn{
-    width: 2rem;
-    height: .8rem;
+    width: 1.8rem;
+    height: .7rem;
     border-radius: .8rem;
     border: 1px solid rgb(153,153,153);
     text-align: center;
-    line-height: .8rem;
-    font-size: .4rem;
+    line-height: .7rem;
+    font-size: .35rem;
+    margin-left: .3rem;
+  }
+  .moreThen{
+    width: 1rem;
+    height: .7rem;
+    border-radius: .8rem;
+    text-align: center;
+    line-height: .7rem;
+    font-size: .35rem;
+    position: relative;
+  }
+  .moreThen .moreBtn{
     position: absolute;
-    top: 2rem;
-    right: .3rem;
-    z-index: 100;
+    left:-.7rem;
+    top:.65rem;
+    background-color: rgb(153,153,153);
+    color: #fff;
   }
   .bottom{
     height: .8rem;
@@ -531,9 +669,7 @@
     padding: 0 .2rem;
   }
   /*我的推荐--结束*/
-  /*商品大图展示--开始*/
 
-  /*商品大图展示--结束*/
   .bottomPlaceholder {
     height: 1.5rem;
   }

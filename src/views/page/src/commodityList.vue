@@ -188,6 +188,7 @@
           if (data.pickUps == "不可自提") {
             this.pickUps = 2;
           }
+          this.brandId = "",
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;

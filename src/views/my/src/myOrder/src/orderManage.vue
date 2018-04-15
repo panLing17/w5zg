@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
-        img(src="../../../../../assets/img/searchInput搜索图标@2x.png" v-show="false").search
+        img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search
         img(src="../../../../../assets/img/msg_0.png").msg
     .orderStatus
       ul.wrapStatus
@@ -16,11 +16,18 @@
           span.orderNum 订单编号:
           span.num {{item.total_order_no}}
         .right#state {{item.order_status}}  
-      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,id:index,orderId:item.total_order_id}})")
+      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,id:index,orderId:item.total_order_id}})" :class="{centerZ:item.logoList.length<=1}")
         .image
           img(:src="items | img-filter" v-for="items in item.logoList")
-        .goodsDetails
-          .words
+        .goodsDetails(v-show="item.logoList.length<=1")
+          .goodsExplain
+            span.words {{item.goodsName[0]}}
+          .cont
+            .property
+              span.color 
+              span.size
+            .quantity  
+              span.count x {{item.totalCount}} 
       .bottom
         .left(v-if="item.order_status === '待备货'")
           .goodsCode 提货码: {{item.goodsCode}}
@@ -48,8 +55,7 @@
           status:["全部","待付款","待发货","待收货","待评价"],
           orderDetail:[],
           buttonL:"",
-          buttonR:"",
-
+          buttonR:""
         }
       },
       created(){
@@ -284,8 +290,16 @@
     background-color: #fff;
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
-    white-space:nowrap;
+    white-space: nowrap;
     overflow-x:auto;
+    display: flex;
+  }
+  .centerZ{
+    background-color: #fff;
+    padding: .3rem .3rem .2rem;
+    border-bottom: 1px solid rgb(242,242,242);
+    white-space: normal !important;
+    display: flex;
   } 
   .center .image{
     
