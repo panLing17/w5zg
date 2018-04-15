@@ -25,7 +25,7 @@
       ul.center
         li 0
         li 关注店铺
-      ul.right
+      ul.right(@click="$router.push('/my/footMark')")
         li {{footmarkNum}}
         li 足迹
     div.myOrderForm
@@ -107,7 +107,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + 'member/api/currentMember',
+          url: self.$apiMember + 'member/currentMember',
           params: {}
         }).then(function (response) {
           self.$store.commit('userDataChange',response.data.data)

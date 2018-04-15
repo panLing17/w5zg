@@ -401,6 +401,11 @@ const router = new Router ({
               path: '/my/accountC',
               name: '账户明细C',
               component:MyAccount.accountC
+            },
+            {
+              path: '/my/footMark',
+              name: '足迹',
+              component:My.footMark
             }
           ]
         }

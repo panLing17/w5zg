@@ -11,8 +11,9 @@ import localAdmin from './src/localhostAdmin'
 import localAdd from './src/localhostAdd'
 import feedback from './src/feedback'
 import aboutUs from './src/aboutUs'
+import footMark from './src/footMark'
 
 
 export default {
-  index,my,settings,userinfo,nickname,accountBind,accountSafety,updatePassword1,updatePassword2,localAdmin,localAdd,feedback,aboutUs
+  index,my,settings,userinfo,nickname,accountBind,accountSafety,updatePassword1,updatePassword2,localAdmin,localAdd,feedback,aboutUs,footMark
 }

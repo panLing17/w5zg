@@ -1,7 +1,7 @@
 <template lang="pug">
   transition( leave-active-class="animated rotateOutUpRight")
     .goodsCardBox(v-if="goodsList.length>0")
-      transition-group(tag="div", name="leftOut")
+      transition-group(tag="div", :name="animate")
         .goodsBox(v-for="(i,index) in goodsList", :key="index")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec")
@@ -26,13 +26,13 @@
                 .specData
                   p 黑色,L
                   img(src="../../../assets/img/next@2x.png")
-                w-counter(v-model="i.goods_num", :min="1", width="4rem")
+                w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
             .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>快递配送
             .right
               span {{i.pro_Name}} {{i.city_name}}
-              img(src="../../../assets/img/delete@3x.png", @click="")
+              img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")
 </template>
 
 <script>
@@ -40,7 +40,10 @@
     name: "goods-card",
     data () {
       return {
-        watchFlag: true
+        animateName: 'leftOut',
+        watchFlag: true,
+        flag: true,
+        isdefault: false
       }
     },
     props: {
@@ -49,6 +52,9 @@
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
+      },
+      animate () {
+        return this.animateName
       }
     },
     watch: {
@@ -59,14 +65,9 @@
         this.computedPrice()
       }
     },
-    data () {
-      return {
-        flag: true,
-        isdefault: false
-      }
-    },
     methods: {
       changeType (index,data) {
+        this.animateName = 'leftOut'
         let fun = ()=>{
           this.goodsList.splice(index,1)
         }
@@ -98,6 +99,35 @@
         } else {
           // this.$store.commit('allCheckedChange', false)
         }
+      },
+      // 商品数量变化
+      countChange (cartId,skuId,num) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/shoppingCart',
+          params: {
+            scId: cartId,
+            gskuId: skuId,
+            num: num
+          },
+        }).then(function (response) {
+
+        })
+      },
+      deleteGoods (id, index) {
+        this.animateName = 'fadeOut'
+        this.list.splice(index,1)
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: id
+          },
+        }).then(function (response) {
+
+        })
       }
     }
   }
@@ -138,12 +168,24 @@
     height: 2rem;
     border-radius: .2rem;
   }
+  /*  */
   .info{
     flex-grow: 1;
     padding-left: .3rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+  }
+  .info .text .name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .info .text .spec {
+    margin-top: .1rem;
+    color: #999;
   }
   .price{
     display: flex;
@@ -236,6 +278,16 @@
   .leftOut-enter, .leftOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
     transform: translate(100%,-1000%) scale(.1,.1);
+    opacity: 0;
+  }
+  .fadeOut-enter-active {
+    transition: all .3s ease;
+  }
+  .fadeOut-leave-active {
+    transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .fadeOut-enter, .fadeOut-leave-to
+    /* .slide-fade-leave-active for below version 2.1.8 */ {
     opacity: 0;
   }
 </style>

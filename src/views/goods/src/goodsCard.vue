@@ -65,7 +65,13 @@
     flex-direction: column;
     justify-content: space-between;
   }
-
+  .info .text .name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
   .price {
     display: flex;
     justify-content: space-between;

@@ -10,7 +10,7 @@
         div.listTop
           p <span>收货人:{{item.ra_name}}</span> <span>联系方式:{{item.ra_phone}}</span>
           p {{item.province_name}} {{item.city_name}} {{item.county_name}} {{item.ra_detailed_addr}}
-          p 邮政编码：{{item.ra_province}}
+          p(v-if="false") 邮政编码：{{item.ra_province}}
         ul.listButton
           li.checkbox
             a(@click.stop="")

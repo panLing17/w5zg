@@ -62,10 +62,16 @@
         ]
       }
     },
+    watch: {
+      loadingFlag () {
+        if (this.loadingFlag === 4) {
+          this.animateHack()
+        }
+      }
+    },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
       // this.wxConfig()
-      this.animateHack()
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
         city.style.fontSize = .5 + "rem";
@@ -111,8 +117,9 @@
         let self = this
         this.$ajax({
           method: 'get',
-          url: self.$apiApp + 'index/acTitleCategoryList',
+          url: self.$apiApp + 'acActivity/acActivityList',
           params: {
+            type: '331'
           },
         }).then(function (response) {
           self.hotButton = response.data.data
@@ -140,8 +147,10 @@
         let self = this
         this.$ajax({
           method: 'get',
-          url: self.$apiApp + 'index/AcActivityList',
-          params: {},
+          url: self.$apiApp + 'acActivity/acActivityList',
+          params: {
+            type: '332'
+          },
         }).then(function (response) {
           self.activityGoods = response.data.data
           self.loadingFlag += 1
@@ -330,6 +339,7 @@
   }
   .homeBox {
     background: #f2f2f2;
+    padding-bottom: 1rem;
   }
   .news {
     margin-top: 6px;
