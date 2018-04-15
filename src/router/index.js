@@ -136,12 +136,12 @@ const router = new Router ({
               component: Headlines.detail
             },
             {
-              path: '/home/largeCollection',
+              path: '/home/largeCollection/:actId',
               name: '大牌云集',
               component: Home.largeCollection
             },
             {
-              path: '/home/sports',
+              path: '/home/sports/:keywords',
               name: '运动',
               component: Home.sports
             }

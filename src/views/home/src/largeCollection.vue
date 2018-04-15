@@ -7,9 +7,8 @@
       .topRight(slot="right")
     .content
       ul.list
-        li.item(v-for="item in bankList")
-          <!--img(:src="item.ac_phone_image | img-filter", style="width: 100%; height: 100%;")-->
-          img(:src="item", style="width: 100%; height: 100%;")
+        li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url)")
+          img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
 </template>
 
 <script>
@@ -17,42 +16,63 @@
       name: "largeCollection",
       data () {
         return {
-          bankList: [
-            'http://img0.imgtn.bdimg.com/it/u=2320394689,4099393023&fm=27&gp=0.jpg',
-            'http://img3.imgtn.bdimg.com/it/u=2182282912,3892064361&fm=27&gp=0.jpg',
-            'http://img2.imgtn.bdimg.com/it/u=3313231721,498415761&fm=27&gp=0.jpg'
-          ]
+          bankList: []
         }
+      },
+      created () {
+        this.getList();
       },
       mounted () {
         // this.$mescrollInt("largeMescroll",this.upCallback);
       },
       methods: {
-        upCallback: function(page) {
-          let self = this;
-          this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1) self.bankList = []
-            self.bankList = self.bankList.concat(curPageData)
-            self.mescroll.endSuccess(curPageData.length)
-          }, function() {
-            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-            self.mescroll.endErr();
+        getList () {
+          let _this = this;
+          this.$ajax({
+            url: this.$apiApp + 'acActivityContent/acActivityContentList',
+            methods: 'get',
+            params: {
+              actId: this.$route.params.actId
+            }
+          }).then((response) => {
+            this.bankList = response.data.data;
           })
         },
-        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
-            params: {
-              page: pageNum,
-              rows: pageSize
-            },
-            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-          }).then(function (response) {
-            successCallback&&successCallback(response.data.data);//成功回调
-          })
+        toNext (type, url) {
+          switch (type) {
+            // 跳外链
+            case '344': window.location.href = url; break;
+            // 跳3级页面
+            case '342': this.$router.push(`/home/sports/${url}`); break;
+            // 跳商品详情
+            case '343': this.$router.push({ path: '/goodsDetailed', query: { id: url }}); break;
+          }
         }
+        // upCallback: function(page) {
+        //   let self = this;
+        //   this.getListDataFromNet(page.num, page.size, function(curPageData) {
+        //     if(page.num === 1) self.bankList = []
+        //     self.bankList = self.bankList.concat(curPageData)
+        //     self.mescroll.endSuccess(curPageData.length)
+        //   }, function() {
+        //     //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+        //     self.mescroll.endErr();
+        //   })
+        // },
+        // getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        //   let self = this
+        //   self.$ajax({
+        //     method: 'post',
+        //     url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+        //     params: {
+        //       page: pageNum,
+        //       rows: pageSize
+        //     },
+        //     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        //   }).then(function (response) {
+        //     successCallback&&successCallback(response.data.data);//成功回调
+        //   })
+        // }
       }
     }
 </script>
