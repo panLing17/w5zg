@@ -19,8 +19,7 @@
       }
     },
     mounted: function () {
-      // this.jumpMyPage()
-      console.log($codeList)
+      this.jumpMyPage()
     },
     methods: {
       returnIndex () {
