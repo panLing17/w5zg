@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .content
       ul.list
-        li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url)")
+        li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id)")
           img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
 </template>
 
@@ -38,14 +38,14 @@
             this.bankList = response.data.data;
           })
         },
-        toNext (type, url) {
+        toNext (type, url, id, relateId) {
           switch (type) {
             // 跳外链
             case '344': window.location.href = url; break;
             // 跳3级页面 362代表从2级跳3级
-            case '342': this.$router.push(`/home/sports/362/${url}`); break;
+            case '342': this.$router.push(`/home/sports/362/${id}`); break;
             // 跳商品详情
-            case '343': this.$router.push({ path: '/goodsDetailed', query: { id: url }}); break;
+            case '343': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
           }
         }
         // upCallback: function(page) {

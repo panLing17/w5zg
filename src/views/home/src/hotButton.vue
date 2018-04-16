@@ -1,11 +1,11 @@
 <template lang="pug">
   div.box
     ul
-      li(v-for="item in list.slice(0,4)")
-        img(:src="item.tcTitlePicture | img-filter" , @click="toNext(1,index)")
+      li(v-for="(item, index) in list.slice(0,4)")
+        img(:src="item.image | img-filter" , @click="toNext(1,index)")
     ul
-      li(v-for="item in list.slice(4,8)", @click="toNext(2,index)")
-        img(:src="item.tcTitlePicture | img-filter" )
+      li(v-for="(item, index) in list.slice(4,8)", @click="toNext(2,index)")
+        img(:src="item.image | img-filter" )
 </template>
 
 <script>

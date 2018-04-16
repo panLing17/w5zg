@@ -29,7 +29,8 @@
         return {
           banner: [],
           recommendGoods: [],
-          keywords: null
+          parentId: null,
+          parentType: null
         }
       },
       filters: {
@@ -44,11 +45,16 @@
       created () {
         // 获取banner
         this.getBanner();
+        this.getParmas();
       },
       mounted () {
         this.$mescrollInt("sportsMescroll",this.upCallback);
       },
       methods: {
+        getParmas () {
+          this.parentId = this.$route.params.parentId;
+          this.parentType = this.$route.params.parentType;
+        },
         getBanner () {
           let self = this
           this.$ajax({
@@ -77,15 +83,16 @@
           let self = this
           self.$ajax({
             method: 'post',
-            url:self.$apiGoods +  'goodsSearch/spus',
+            url:self.$apiApp +  'acactivitydetail/spus',
             params: {
               page: pageNum,
               rows: pageSize,
-              keywords: this.keywords
+              parentId: this.parentId,
+              parentType: this.parentType
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            successCallback&&successCallback(response.data.data);//成功回调
+            successCallback&&successCallback(response.data.data.rows);//成功回调
           })
         }
       }
@@ -126,8 +133,12 @@
     border-radius: 5px;
     overflow: hidden;
     margin-bottom: .2rem;
+    position: relative;
   }
   .img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     max-height: 4rem;
   }
