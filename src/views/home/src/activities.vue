@@ -27,7 +27,7 @@
           // 跳3级页面 361代表从1级跳3级
           case '342': this.$router.push(`/home/sports/361/${this.listData[index].id}`); break;
           // 跳商品详情页 取relate_id
-          case '343': this.$router.push(`{ path: '/goodsDetailed', query: { id: ${this.listData[index].relate_id} }}`); break;
+          case '343': this.$router.push({ path: '/goodsDetailed', query: { id: this.listData[index].relate_id }}); break;
           // 跳2级页面
           case '341': this.$router.push(`/home/largeCollection/${this.listData[index].id}`); break;
         }
