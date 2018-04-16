@@ -91,6 +91,7 @@
         }).then(function (response) {
           if (response.data.optSuc) {
             self.nextStepStatus = false
+            self.$message.success($code('2612'))
             // 成功则开始读秒
             self.sendMsg = false
             let interval = window.setInterval(function () {

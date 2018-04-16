@@ -2,7 +2,7 @@
   .settings
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBackPage")
       .topCenter(slot="center") 设置
     .avatar
       ul.wrap(@click="routergoUser()")
@@ -54,6 +54,9 @@
 
     },
     methods: {
+      goBackPage:function(){
+        this.$router.push('/my')
+      },
       routergoUser:function(){
       	this.$router.push({
            name: '我的用户资料',
