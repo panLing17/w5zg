@@ -16,7 +16,7 @@
         img(src="../../../assets/img/pinkNext.png")
       .price
         span 专柜价
-        p {{goodsData.counter_interval | price-filter}}
+        p {{goodsData.counter_interval}}
         .salePrice 统一零售价：{{goodsData.retail_interval}}
       ul.saveMoney
         li.red
@@ -583,6 +583,7 @@
   }
   .price {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     font-size: .6rem;
     color: rgb(245,0,87);
@@ -592,8 +593,10 @@
     font-weight: 600;
     color: #000;
   }
+  .price p{
+    margin-right: .5rem;
+  }
   .price .salePrice{
-    margin-left: .5rem;
     font-weight: 500;
     font-size: .3rem;
     color: #999;

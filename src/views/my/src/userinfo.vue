@@ -102,10 +102,10 @@
         // 请求
         let self = this
         let data = new FormData()
-        data.append('imagefile', e.target.files[0])
+        data.append('imageFile', e.target.files[0])
         this.$ajax({
           method: 'post',
-          url: self.$apiTransaction + 'goodsRejected/rejectedImage',
+          url: self.$apiMember + 'member/uploadAvatar',
           data: data,
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
           processData: false,

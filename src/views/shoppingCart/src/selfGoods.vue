@@ -7,7 +7,7 @@
             .main(v-if="i.editClose", key="spec")
               .checkbox
                 w-checkbox(v-model="i.checked", @change="selectedChange")
-              img(src="../../../../static/img/1.jpg")
+              img(:src="i.logo | img-filter")
               .info
                 .text
                   .name {{i.gi_name}}

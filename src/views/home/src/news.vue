@@ -1,5 +1,5 @@
 <template lang="pug">
-    div.box( @click="$router.push('/news')")
+    div.box( @click="$router.push('/home/headlines')")
       img(src="../../../assets/img/HEADLINE@3x.png")
       div
         ul#newsList

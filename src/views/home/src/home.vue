@@ -5,8 +5,8 @@
         img(src="../../../assets/img/home定位按钮@2x.png")
         span.city {{cityName}}
       .topCenter(slot="center")
-        searchInput(placeholder="请输入商品名称" @focus="jump")
-        img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')")
+        searchInput(placeholder="请输入商品名称", @focus="jump")
+        img(src="../../../assets/img/home扫描@2x.png", @click="searchCode")
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
@@ -21,7 +21,7 @@
     .title
       .line
       p 推荐
-    w-recommend#dataId(:listData="recommendGoods")
+    w-recommend(:listData="recommendGoods")
     .bottomPlaceholder
 </template>
 <script>
@@ -34,7 +34,7 @@
       return {
         // 整页的固定定位，如果一直有的话会影响页面切换效果
         positionFixed: false,
-        mescroll: null,
+        // mescroll: null,
         loadingFlag: 0,
         date: 1,
         cityName:this.$route.query.routeParams,
@@ -71,7 +71,6 @@
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
-      // this.wxConfig()
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
         city.style.fontSize = .5 + "rem";
@@ -90,6 +89,8 @@
       this.getCtivity()
       // 获取分类
       this.getHotButton()
+      // 微信sdk
+      this.wxConfig()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -228,24 +229,21 @@
       wxConfig() {
         let _this = this
         _this.$ajax({
-          method: 'post',
-          url: 'pay/sao',
+          method: 'get',
+          url: _this.$apiTransaction + 'thirdPay/sao',
           params: {
             url: window.location.href
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          response.data.code = response.data.code.toString()
-          if (response.data.code === '100') {
-            wx.config({
-              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-              appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
-              timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
-              nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
-              signature: response.data.data.signature,// 必填，签名，见附录1
-              jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-            })
-          }
+          wx.config({
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
+            timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
+            nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
+            signature: response.data.data.signature,// 必填，签名，见附录1
+            jsApiList: ['scanQRCode'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+          })
         })
       },
       searchCode() {
@@ -327,19 +325,19 @@
     vertical-align: middle;
   }
   /*顶部搜索--结束*/
-
-
   #homeMescroll {
     top: 0;
     bottom: 0;
     height: auto;
+    position: fixed;
   }
   .positionFixed{
     position: fixed !important;
   }
   .homeBox {
     background: #f2f2f2;
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
+    min-height: 100vh;
   }
   .news {
     margin-top: 6px;
