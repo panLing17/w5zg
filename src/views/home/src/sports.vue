@@ -16,7 +16,7 @@
             .nameWrapper
               // carry_type 1可自提 2不可自提
               span.maybe(v-if="item.carry_type===1") 可自提
-              span.name {{item.gi_name}}}
+              span.name {{item.gi_name}}
             .price
               span.current ￥{{item.price | round}}
               span.save 可省XXX元
@@ -71,7 +71,9 @@
           let self = this;
           this.keywords = this.$route.params.keywords;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1) self.recommendGoods = []
+            if(page.num === 1){
+              self.recommendGoods = [];
+            }
             self.recommendGoods = self.recommendGoods.concat(curPageData)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
@@ -92,7 +94,11 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            successCallback&&successCallback(response.data.data.rows);//成功回调
+            if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
+              successCallback&&successCallback(response.data.data.rows);//成功回调
+            }else {
+              self.mescroll.endErr();
+            }
           })
         }
       }

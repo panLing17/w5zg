@@ -3,7 +3,7 @@
     ul.contentList(v-if="!isEmpty")
       li.item(v-for="(item,index) in data")
         p.info ID: {{item.tn_serial_number}}
-        p.info.last {{item.tn_create_time}}
+        p.info.last {{item.tn_created_time}}
         p.balance(:style="{'color':balanceColor}")
           span.left 余额
           span.right ￥{{item.tn_balance | number}}
