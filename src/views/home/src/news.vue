@@ -1,5 +1,5 @@
 <template lang="pug">
-    div.box( @click="$router.push('/news')")
+    div.box( @click="$router.push('/home/headlines')")
       img(src="../../../assets/img/HEADLINE@3x.png")
       div
         ul#newsList
@@ -8,33 +8,8 @@
 
 <script>
     export default {
-        name: "news",
-        props: ['newsData'],
-        data(){
-          return{
-            list:[
-              {
-                label:'新闻'
-              },{
-                label:'新闻'
-              },{
-                label:'新闻'
-              },
-              {
-                label:'新闻'
-              },
-              {
-                label:'新闻'
-              },
-              {
-                label:'新闻'
-              },
-              {
-                label:'新闻'
-              }
-            ]
-          }
-        },
+      name: "news",
+      props: ['newsData'],
       watch: {
         newsData: function () {
           this.animate()
@@ -46,18 +21,17 @@
           let e=document.getElementById('newsList');
           e.style.bottom='0';
           let fun=function () {
-            e.style.bottom=parseFloat(e.style.bottom)+1.2+'rem'
-            if(parseFloat(e.style.bottom)>1.2*n-1){
+            if(parseFloat(e.style.bottom)>=1.2*(n/2-1)){
               e.style.bottom='0';
+            }else {
+              e.style.bottom=parseFloat(e.style.bottom)+1.2+'rem'
             }
           };
-          setInterval(function(){
-            fun()
-          },4000)
+          setInterval(fun,4000)
         }
       },
       mounted(){
-        this.animate()
+        // this.animate()
       }
     }
 </script>

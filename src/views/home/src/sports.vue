@@ -18,7 +18,7 @@
               span.maybe(v-if="item.carry_type===1") 可自提
               span.name {{item.gi_name}}}
             .price
-              span.current ￥{{item.price}}
+              span.current ￥{{item.price | round}}
               span.save 可省XXX元
 </template>
 
@@ -30,6 +30,15 @@
           banner: [],
           recommendGoods: [],
           keywords: null
+        }
+      },
+      filters: {
+        round (value) {
+          if (value === "null") {
+            return value;
+          }else {
+            return Math.round(value);
+          }
         }
       },
       created () {
@@ -120,19 +129,41 @@
   }
   .img {
     width: 100%;
+    max-height: 4rem;
   }
   .nameWrapper {
     padding: 0 .1rem;
-    font-size: .4rem;
+    font-size: .26rem;
     line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     overflow: hidden;
-    text-overflow: ellipsis;
-    height: 1.2rem;
+    height: 1rem;
+    margin-top: 4.2rem;
   }
   .maybe {
-    padding: 0 .15rem;
+    padding: .1rem .2rem;
     background: rgb(245,0,87);
     color: #fff;
     border-radius: .4rem;
+    display: inline-block;
+    margin-right: .13rem;
+  }
+  .name {
+    color: rgb(51,51,51);
+  }
+  .price {
+    margin-top: .33rem;
+    padding:0 .1rem .26rem;
+    font-size: .29rem;
+    color: rgb(245,0,87);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .current {
+    font-weight: 400;
+    margin-right: .26rem;
   }
 </style>

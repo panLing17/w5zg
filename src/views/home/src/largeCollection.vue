@@ -42,8 +42,8 @@
           switch (type) {
             // 跳外链
             case '344': window.location.href = url; break;
-            // 跳3级页面
-            case '342': this.$router.push(`/home/sports/${url}`); break;
+            // 跳3级页面 362代表从2级跳3级
+            case '342': this.$router.push(`/home/sports/362/${url}`); break;
             // 跳商品详情
             case '343': this.$router.push({ path: '/goodsDetailed', query: { id: url }}); break;
           }
