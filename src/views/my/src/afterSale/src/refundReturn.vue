@@ -3,41 +3,36 @@
     nav-bar
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") {{title}}
+      .topCenter(slot="center") 申请退款
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content(v-for="(item,index) in goodsList")
+    .content
       .center
         .image
-          img(:src="item.imgSrc")
+          img(:src="goodsList.logo | img-filter")
         .goodsDetails
-          .words {{item.words}}
+          .words {{goodsList.goods_name}}
           .property
-            span.color {{item.color}}
-            span.size {{item.size}}
-          .amount x
-            span {{item.amount}}
-    .goodsStatus(@click="goodsTypes()" v-if="shows")
+            span.color {{goodsList.spec_json[0].gspec_value}}
+            span.size {{goodsList.spec_json[1].gspec_value}}
+          .count x
+            span {{goodsList.goods_num}}
+    .goodsStatus(@click="$refs.statusChoose.showPop()" )
       ul
         li 货物状态
         li
-          span 仅退款
+          span {{statusType===0?'仅退款':'退货退款'}}
           img(src="../../../../../assets/img/right.png")
-    .returnType(@click="returnTypes()" v-else="shows")
+    .returnType(@click="$refs.returnStyleChoose.showPop()" v-if="returnTypeShow")
       ul
         li 退货方式
         li
-          span 快递退货
+          span {{returnStyleType===0?'快递退货':'门店退货'}}
           img(src="../../../../../assets/img/right.png")
-    .refundReason(@click="reason1()" v-if="shows")
+    .refundReason(@click="$refs.reasonTypeChoose.showPop()")
       ul
-        li 退款原因
-        li
-          img(src="../../../../../assets/img/right.png")
-    .refundReason(@click="reason2()" v-else="shows")
-      ul
-        li 退货原因
-        li
+        li {{reasonTitle}}
+        li.special {{reasonText}}
           img(src="../../../../../assets/img/right.png")
     .amount
       .top
@@ -45,7 +40,7 @@
           li.num 数量
           li.addSub
             .sub(@click="sub()") -
-            .input 1
+            .input {{count}}
             .add(@click="add()") +
       .bottom
         ul
@@ -55,121 +50,172 @@
           li.max
             span 最多:
             span ￥200.00，
-            span 含运费
-            span ￥0.00
+            span 不含运费
     .refundExplain
       ul
         li 退款说明:
         li
-          input(placeholder="请输入···")
+          input(placeholder="请输入···", v-model="desc")
     .upload
       .up
         span 上传凭证
         span (最多可上传9张图片)
-      w-upload
-    .submit(@click="$router.push('/my')") 提交
-    goodsType(:show="statusFlag", @selectType="selectOne", @close="closeGoodsType()")
-    reason1(:show="reasonFlag1", @close="closeReason1()")
-    reason2(:show="reasonFlag2", @close="closeReason2()")
-    returnStyle(:show="typeFlag" @close="closeType()")
+      w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr")
+    .submit(@click="send") 提交
+    pop1(ref="statusChoose", :data="statusData", title="货物状态", @selected="statusTypeChange")
+    pop1(ref="returnStyleChoose", :data="returnStyleData", title="退货方式", @selected="returnStyleChange")
+    pop2(ref="reasonTypeChoose", :data="reasonData", :title="reasonTitle", @selected="reasonTypeChange")
 </template>
 <script>
-  import myGoods from '../../../../../assets/img/my_goods.png'
-  import goodsType from './selectGoodsStatus'
-  import reason1 from './returnReasonOnly'
-  import reason2 from './returnReason'
-  import returnStyle from './returnStyle'
+  import pop1 from './pop1'
+  import pop2 from './pop2'
   export default {
     name: 'refundReturn',
-    components:{goodsType,reason1,reason2,returnStyle},
+    components:{pop1,pop2},
     data () {
       return {
-        shows:true,
-        typeFlag:false,
-        reasonFlag1:false,
-        reasonFlag2:false,
-        statusFlag:false,
-        titleNum: this.$route.query.routeParams,
-        title:"",
-        goodsList:[
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黄色",
-            size:"L",
-            amount:1,
-            checked:false
-          }
-        ]
+        goodsList:{},
+        // 退货状态 0 仅退款 1 退货退款
+        statusType: 0,
+        // 退货方式选择 0 快递退货 1 门店退货
+        returnStyleType: 0,
+        // 退货方式选择框 仅退款时隐藏 退货退款时出现
+        returnTypeShow: false,
+        statusData:['仅退款','退货退款'],
+        returnStyleData:['快递退货','门店退货'],
+        reasonData:[],
+        reasonTitle:'退款原因',
+        reasonType:-1,
+        reasonText: '',
+        count: 1,
+        desc: '',
+        imageArr:[]
       }
     },
     mounted () {
-      this.titles();
+    },
+    created () {
+      // 获取退款原因列表
+      this.getReasonData()
+      // 获取退货商品信息
+      this.getReturnGoods()
     },
     methods: {
-      titles(){
-        if (this.titleNum == 1) {
-          this.title = "申请退款";
-          this.shows = true;
-        }
-        if (this.titleNum == 2) {
-          this.title = "申请退款退货";
-          this.shows = false;
+      //选择货物状态
+      statusTypeChange(num){
+        this.statusType = num;
+        this.reasonText = '';
+        if (num === 1) {
+          this.returnTypeShow = true;
+          this.reasonTitle = '退货原因';
+        }else {
+          this.returnTypeShow = false;
+          this.reasonTitle = '退款原因';
         }
       },
-      //选择货物状态
-      selectOne(num){
-        console.log(num);
-        if (num == 1) {
-          this.shows = false;
-          this.statusFlag = false;
-        }
+      // 选择退货方式
+      returnStyleChange (num) {
+        this.returnStyleType = num;
+      },
+      // 选择退款原因
+      reasonTypeChange (num) {
+        this.reasonType = this.reasonData[num].rgr_id;
+        this.reasonText = this.reasonData[num].rgr_reson;
       },
       //加减
       sub(){
-        var oInput = document.getElementsByClassName("input")[0];
-        console.log(parseInt(oInput.innerText));
-        var rel = parseInt(oInput.innerText);
-        rel--;
-        if (rel<=1) {
-          rel = 1;
+        if (this.count === 1) {
+          return;
+        }else {
+          this.count--;
         }
-        oInput.innerText = rel;
       },
       add(){
-        var oInput = document.getElementsByClassName("input")[0];
-        console.log(parseInt(oInput.innerText));
-        var rel = parseInt(oInput.innerText);
-        rel++;
-        if (rel>=10) {
-          rel = 10;
+        if (this.count === this.goodsList.goods_num) {
+          return;
+        }else {
+          this.count++;
         }
-        oInput.innerText = rel;
       },
+      getReasonData () {
+        let _this = this;
+        this.$ajax({
+          method: 'get',
+          url: this.$apiTransaction + 'rejectedReason/returnReason',
+          params:{}
+        }).then(function (response) {
+          _this.reasonData = response.data.data;
 
-      goodsTypes(){
-        this.statusFlag = true;
+        })
       },
-      closeGoodsType(){
-        this.statusFlag = false;
+      // 获取商品信息
+      getReturnGoods () {
+        this.goodsList = this.$store.state.returnGoods
+        this.count = this.goodsList.goods_num
       },
-      reason1(){
-        this.reasonFlag1 = true;
+      // 获取图片数组
+      getImageArr (arr) {
+        this.imageArr = []
+        this.imageArr = arr
       },
-      closeReason1(){
-        this.reasonFlag1 = false;
+    //  检查申请退款必填项数据
+      dataCheck (){
+        if (this.reasonType === -1) {
+          this.$message.error('请选择退货原因！')
+          return;
+        }
       },
-      reason2(){
-        this.reasonFlag2 = true;
+      // 申请退货/退款
+      send () {
+        this.dataCheck()
+        let _this = this;
+        let url = '';
+        if (this.statusType === 0) {
+          url = 'goodsRejected/rejectedOnly'
+        }else if (this.statusType === 1) {
+          url = 'goodsRejected/rejectedBoth'
+        }
+        let form = {
+          orderOrOrderDetailId:'',
+          count:this.count,
+          desp:[this.desc],
+          picUrl:this.imageArr,
+          reasonId:this.reasonType,
+          type:1
+        }
+        this.$ajax({
+          method: 'post',
+          url: this.$apiTransaction + url,
+          params:form
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            _this.updateInfo(response.data.data);
+          }else {
+            _this.$message.error(response.data.msg)
+          }
+
+        })
       },
-      closeReason2(){
-        this.reasonFlag2 = false;
-      },
-      returnTypes(){
-        this.typeFlag = true;
-      },
-      closeType(){
-        this.typeFlag = false;
+      // 更新退货申请信息
+      updateInfo (id) {
+        let _this = this
+        let form = {
+          id: id,
+          company_storeId:'',
+          type:this.returnStyleType===0?'2':'1'
+        }
+        this.$ajax({
+          method: 'post',
+          url: this.$apiTransaction + 'goodsRejected/updateRejected',
+          params:form
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            // 跳转到退货详情页
+            _this.$router.replace({path:'/my/returnDetails',query:{id:response.data.data}})
+          }else {
+            _this.$message.error(response.data.msg)
+          }
+        })
       }
     }
   }
@@ -209,23 +255,25 @@
   }
   .center .image img{
     width: 2.5rem;
+    height: 2.26rem;
     border-radius: .2rem;
   }
   .center .goodsDetails{
     margin-left: .3rem;
+    line-height: 1;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
   }
   .center .goodsDetails .property{
-    margin-top: .1rem;
+    margin-top: .33rem;
     font-size: .35rem;
     color: rgb(153,153,153);
   }
   .center .goodsDetails .property span.size{
     margin-left: .3rem;
   }
-  .center .goodsDetails .amount{
+  .center .goodsDetails .count{
     margin-top: 1rem;
     font-size: .35rem;
     color: rgb(153,153,153);
@@ -248,13 +296,14 @@
   .returnType ul{
     display: flex;
     justify-content: space-between;
+    height: 100%;
+    overflow: hidden;
   }
   .goodsStatus ul li img,
   .refundReason ul li img,
   .returnType ul li img{
     width: .6rem;
     vertical-align: middle;
-    margin-top: -.1rem;
   }
   /*货物状态--结束*/
   /*数量--开始*/
@@ -358,4 +407,21 @@
     font-size: .4rem;
   }
   /*提交--结束*/
+
+  .special {
+    position: relative;
+    padding-right: .6rem;
+    box-sizing: border-box;
+    width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: right;
+  }
+  .special img {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+  }
 </style>
