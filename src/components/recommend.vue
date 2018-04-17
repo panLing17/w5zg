@@ -4,8 +4,10 @@
       li(v-for="item in listData" , @click="goGoods(item.gspu_id)")
         img(:src="item.gi_image_url | img-filter")
         .text {{item.goods_name}}
-        .price {{item.price | price-filter}}
-          span(v-if="userData.member_type !== '092'") 可省100元
+        .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
+          span 可省100元
+        .price(v-else) {{item.price | price-filter}}
+          span 可省100元
 </template>
 
 <script>
