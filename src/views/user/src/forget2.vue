@@ -59,6 +59,7 @@
 
         if(self.form.pwd != self.qrPassword){
           self.qrPasswordError = $code('269')
+          return
         }
         self.$ajax({
           method: 'post',

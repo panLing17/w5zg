@@ -34,6 +34,7 @@
 
         if (!reg.test(self.form.mobile)) {
           self.mobileError = $code('261')
+          self.nextStepStatus = true
           return
         }
         self.nextStepStatus = false
@@ -43,7 +44,7 @@
         let self = this
 
         if(self.form.loginPwd == ''){
-          self.mobileError = $code('2611')
+          self.loginPwdError = $code('2611')
           return
         }else{
           self.mobileError = ''

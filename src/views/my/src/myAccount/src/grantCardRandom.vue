@@ -17,6 +17,7 @@
             img(src="../../../../../assets/img/wechat2@2x.png")
         .close(@click="shareShow=false") 取消
     .content
+      qrcode(value="img", :options="{ size: 200 }")
 </template>
 
 <script>
@@ -24,9 +25,25 @@
         name: "grantCardRandom",
         data () {
           return {
-            shareShow: false
+            shareShow: false,
+            img: null
           }
+        },
+      created() {
+          this.getQrcode();
+      },
+      methods: {
+        getQrcode() {
+          let _this = this;
+          this.$ajax({
+            method: 'post',
+            url: this.$apiMember + 'member/qrcode',
+            params:{}
+          }).then(function (response) {
+            _this.img = response.data.data;
+          })
         }
+      }
     }
 </script>
 
@@ -113,5 +130,12 @@
     height: calc(100vh - 1.3rem);
     background: url("../../../../../assets/img/bottom@2x.png") no-repeat top left;
     background-size: 100% 100%;
+    position: relative;
+  }
+  canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-40%);
   }
 </style>

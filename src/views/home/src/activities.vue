@@ -1,7 +1,7 @@
 <template lang="pug">
   .activities
     ul.goodsList
-      li(v-for="i in listData.slice(0,4)")
+      li(v-for="(i,index) in listData.slice(0,4)", @click="toNext(index)")
         img(:src="i.image | img-filter")
     .columLine
     .rowLine
@@ -18,6 +18,20 @@
     },
     mounted (){
 
+    },
+    methods: {
+      toNext (index) {
+        switch (this.listData[index].url_type) {
+          // 跳外链
+          case '344': window.location.href = this.listData[index].url; break;
+          // 跳3级页面 361代表从1级跳3级
+          case '342': this.$router.push(`/home/sports/361/${this.listData[index].id}`); break;
+          // 跳商品详情页 取relate_id
+          case '343': this.$router.push({ path: '/goodsDetailed', query: { id: this.listData[index].relate_id }}); break;
+          // 跳2级页面
+          case '341': this.$router.push(`/home/largeCollection/${this.listData[index].id}`); break;
+        }
+      }
     }
   }
 </script>

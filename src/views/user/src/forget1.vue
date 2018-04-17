@@ -15,7 +15,7 @@
 <script>
   export default {
     name: 'register',
-    data () {
+    data() {
       return {
         showPassword: false,
         passwordType: 'password',
@@ -35,7 +35,7 @@
         this.version += 1
         this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version
       },
-      checkPhone (){
+      checkPhone() {
         let self = this
         self.nextStepStatus = true
         let reg = /^1[0-9]{10}$/;
@@ -44,13 +44,25 @@
           return
         }
 
-        if(!reg.test(self.form.mobile)){
+        if (!reg.test(self.form.mobile)) {
           self.phoneError = $code('261')
           return
-        }else{
+        } else {
           self.phoneError = ''
-          self.nextStepStatus = false
         }
+
+        // 发送ajax请求校验手机号重复
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/mobile/isExistTrue',
+          params: self.form
+        }).then(function (response) {
+          // 提示用户信息
+          if (response.data.optSuc) {
+            self.nextStepStatus = false
+          }
+        })
+
       },
       nextStep() {
         let self = this
@@ -68,7 +80,7 @@
           if (response.data.optSuc) {
             // 成功跳转页面
             self.$router.push({path: '/forget2', query: {mobile: self.form.mobile}})
-          }else{
+          } else {
             self.getPicCode()
           }
         })
@@ -80,45 +92,51 @@
 <style scoped>
   .registerBox {
     min-height: 100vh;
-    background: rgb(242,242,242);
+    background: rgb(242, 242, 242);
   }
-  .form{
+
+  .form {
     margin-top: 1.3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
-  .inputButton{
+
+  .inputButton {
     width: 2rem;
     height: .9rem;
     border-radius: 1rem;
-    background: rgb(245,0,87);
+    background: rgb(245, 0, 87);
     color: white;
     display: flex;
     justify-content: center;
     align-items: center;
   }
+
   .regButton {
     margin-top: 1rem;
     width: 7rem;
     height: 1rem;
-    background-color: rgb(245,0,87);
+    background-color: rgb(245, 0, 87);
     color: white;
     font-size: .4rem;
     border: none;
     outline: none;
     border-radius: .5rem;
   }
+
   .regButtonGray {
     background-color: rgb(192, 192, 192) !important;
   }
-  .tips{
+
+  .tips {
     margin-top: .2rem;
     font-size: .3rem;
-    color: rgb(153,153,153);
+    color: rgb(153, 153, 153);
   }
-  .aplaceholder{
+
+  .aplaceholder {
     width: 2rem;
-    background-color: rgb(245,0,87);
+    background-color: rgb(245, 0, 87);
   }
 </style>
