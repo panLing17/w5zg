@@ -38,20 +38,7 @@
       name: "revenue",
       data () {
         return {
-          cashDetail: [
-            {
-              dec: '消费记录',
-              price: '-779.00',
-              no:'流水单号：1545484784154151351',
-              date: '2018-03-15 15:45'
-            },
-            {
-              dec: '消费退款',
-              price: '+169.00',
-              no:'流水单号：1545484784154151351',
-              date: '2018-03-15 17:25'
-            }
-          ],
+          cashDetail: [],
           filterShow: false,
           filterActive: 1
         }
@@ -66,7 +53,13 @@
           }
         }
       },
+      created () {
+        this.getData();
+      },
       methods: {
+        getData () {
+
+        },
         filterChange (index) {
           this.filterActive = index;
           this.filterShow = false;

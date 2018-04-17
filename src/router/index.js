@@ -141,7 +141,7 @@ const router = new Router ({
               component: Home.largeCollection
             },
             {
-              path: '/home/sports/:keywords',
+              path: '/home/sports/:parentType/:parentId',
               name: '运动',
               component: Home.sports
             }

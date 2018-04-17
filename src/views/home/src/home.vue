@@ -326,11 +326,11 @@
     vertical-align: middle;
   }
   /*顶部搜索--结束*/
+
   #homeMescroll {
     top: 0;
     bottom: 0;
     height: auto;
-    position: fixed;
   }
   .positionFixed{
     position: fixed !important;

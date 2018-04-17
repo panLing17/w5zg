@@ -81,7 +81,7 @@
         });
       },
 
-      check(a){
+      check(){
         let n = 0;
         this.goodsList.forEach((now)=>{
           console.log(now);

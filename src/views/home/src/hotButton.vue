@@ -1,10 +1,10 @@
 <template lang="pug">
   div.box
     ul
-      li(v-for="item in list.slice(0,4)")
-        img(:src="item.image | img-filter" , @click="goGoods('特价商品')")
+      li(v-for="(item, index) in list.slice(0,4)")
+        img(:src="item.image | img-filter" , @click="toNext(1,index)")
     ul
-      li(v-for="item in list.slice(4,8)")
+      li(v-for="(item, index) in list.slice(4,8)", @click="toNext(2,index)")
         img(:src="item.image | img-filter" )
 </template>
 
@@ -14,14 +14,26 @@
     props:{
       list: Array
     },
-    methods
-  :
-  {
-    goGoods(type)
-    {
-      this.$router.push({path: '/home/orderList', query: {name: type}})
+    methods: {
+      toNext (arrType,index) {
+        let data = {};
+        if (arrType === 2) {
+          data = this.list[4+index];
+        }else {
+          data = this.list[index];
+        }
+        switch (data.url_type) {
+          // 跳外链
+          case '344': window.location.href = data.url; break;
+          // 跳3级页面 361代表从1级跳3级
+          case '342': this.$router.push(`/home/sports/361/${data.id}`); break;
+          // 跳商品详情页 取relate_id
+          case '343': this.$router.push(`{ path: '/goodsDetailed', query: { id: ${data.relate_id} }}`); break;
+          // 跳2级页面
+          case '341': this.$router.push(`/home/largeCollection/${data.id}`); break;
+        }
+      }
     }
-  }
   }
 </script>
 

@@ -98,13 +98,6 @@
       //商品的展示
       exhibition(){
         let self = this;
-        console.log(self.pickUps);
-        console.log(self.minPrice);
-        console.log(self.maxPrice);
-        console.log(self.brandId);
-        console.log(self.keyWord);
-        console.log(self.sort);
-        console.log(self.order);
         self.$ajax({
           method:"post",
           url:this.$apiGoods + "goodsSearch/spus",
@@ -118,7 +111,6 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(res){
-          console.log(res.data.data.length);
           if(res.data.data.length<=0){
             self.$router.push('/home/searchResult');
           } else{
@@ -139,7 +131,6 @@
         var mask = document.getElementsByClassName("mask")[0];
         var lefter = document.getElementsByClassName("lefter")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        console.log(lefter);
         mask.style.opacity = 1;
         mask.style.left = 0;
         mask.style.transition = "left .5s";
@@ -156,10 +147,8 @@
       },
       //从筛选传值过来
       ievent(data){
-        console.log(data);
         var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        console.log(data.flag1);
         if (data.flag1 == true) {
           mask.style.left = "100%";
           mask.style.opacity = 0;
@@ -175,7 +164,6 @@
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
-          console.log(this.pickUps);
         }
         if (data.flag1 == false) {
           mask.style.left = "100%";
@@ -188,10 +176,10 @@
           if (data.pickUps == "不可自提") {
             this.pickUps = 2;
           }
+          this.brandId = "",
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
-          console.log(this.pickUps);
         }
         this.request();  
       },
@@ -200,7 +188,6 @@
       searchBrand(data){
         var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        console.log(data.flag2);
         if (data.flag2 == true) {
           mask.style.left = "100%";
           mask.style.opacity = 0;
@@ -214,7 +201,6 @@
       searchBrandHot(data){
         var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        console.log(data.flag2);
         if (data.flag2 == true) {
           mask.style.left = "100%";
           mask.style.opacity = 0;
@@ -225,7 +211,6 @@
         this.request();
       },
       showSon(data){
-        console.log(data.a);
         if (data.a == 1) {
           this.filtrateFlag = false;
           this.allBrandFlag = true;
@@ -301,13 +286,6 @@
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         let self = this;
-        console.log(self.$route.query.msg);
-        console.log(self.checkFlag);
-        
-        console.log(self.pickUps);
-        console.log(self.minPrice);
-        console.log(self.maxPrice);
-        console.log(self.brandId);
         self.$ajax({
           method:"post",
           url:self.$apiGoods + "goodsSearch/spus",
