@@ -1,34 +1,51 @@
 <template lang="pug">
   .selectGoodsStatus
     transition(name="fade")
-      .bg(v-if="show", @click="close")
+      .bg(v-if="show", @click="hide")
     transition(name="fold")
       .main(v-if="show")
-        .title  货物状态
+        .title  {{title}}
         ul
-          li(@click="selected(0)") 仅退款
-          li(@click="selected(1)") 退款退货
+          li(v-for="(item,index) in data", @click="selected(index)") {{item}}
 </template>
 
 <script>
   export default {
-    name: "selectGoodsStatus",
+    name: "pop1",
     data () {
       return {
+        show: false
       }
     },
     props: {
-      show: {
-        type: Boolean,
-        default: false
+      data: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      title:String
+    },
+    watch: {
+      // 模态框出现禁止页面滑动
+      show (cur, old) {
+        if (cur) {
+          document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+        }else {
+          document.getElementsByTagName('body')[0].style.overflow = 'auto';
+        }
       }
     },
     methods:{
-      close () {
-        this.$emit('close')
+      showPop () {
+        this.show = true
+      },
+      hide () {
+        this.show = false
       },
       selected (num) {
-        this.$emit('selectType',num)
+        this.$emit('selected',num)
+        this.show = false
       }
     }
   }

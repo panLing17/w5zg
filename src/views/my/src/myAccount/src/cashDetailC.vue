@@ -22,7 +22,7 @@
               .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
               .left 商户ID：{{item.source_id}}
-              .right 现金券ID:{{item.netcard_id}}
+              .right 现金券ID:{{item.serial_number}}
             .block.bottom
               .left(v-if="item.orderNo") 订单号：{{item.orderNo}}
               .right {{item.creation_time}}

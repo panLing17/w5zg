@@ -10,8 +10,8 @@
       .balance {{balance | number}}
       .balanceDec 余额
     .listBox
-      .item(@click="$router.push('/my/grantCard')") 发放网金卡
-      .item(@click="$router.push('/my/grantCardRandom')") 随机发放网金卡
+      .item(@click="$router.push('/my/grantCard')") 发放现金券
+      .item(@click="$router.push('/my/grantCardRandom')") 随机发放现金券
 </template>
 
 <script>
@@ -33,7 +33,7 @@
     },
     methods: {
       getBalance () {
-        this.balance = Number(this.$store.state.userData.cash_balance);
+        this.balance = Number(this.$store.state.userData.netcard_balance);
       }
     }
   }
