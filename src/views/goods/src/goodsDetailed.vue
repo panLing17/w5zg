@@ -18,7 +18,7 @@
       .price(v-if="userData.member_type === '092'")
         span 直供价
         p {{goodsData.direct_supply_interval}}
-        .salePrice 统一零售价：{{goodsData.retail_interval}}
+        .salePrice 统一零售价：{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}
       .price(v-else)
         span 专柜价
         p {{goodsData.counter_interval}}
@@ -38,13 +38,13 @@
         li 邮费{{goodsData.goi_freight}}
         li 库存{{goodsData.storage_num}}
         li 已售{{goodsData.gi_salenum}}
-    ul.card
+    ul.card(v-if="userData !== ''")
       li
         .cartType
           .my 我的
           .name 现金券
         .cartPrice
-          .price ￥2000
+          .price {{userData.netcard_balance | price-filter}}
           .name 余额
         .leftRadio
         .righttRadio
@@ -53,7 +53,7 @@
           .my 我的
           .name 通用券
         .cartPrice
-          .price ￥2000
+          .price {{userData.cash_balance | price-filter}}
           .name 余额
         .leftRadio
         .righttRadio
@@ -105,7 +105,7 @@
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
-        disTypeName: '快递配送',
+        disTypeName: '门店自提',
         selectCity: false,
         selectStoreFlag: false,
         shoppingCartFlag: false,
@@ -175,6 +175,7 @@
         this.getGoodsDesc()
         this.getBanner()
         this.getSpec()
+        this.mescroll.scrollTo( 0, 0 );
       }
     },
     methods:{

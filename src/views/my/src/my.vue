@@ -10,7 +10,7 @@
           img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
       p.center
           ul.headPic
-            li(@click="routergoUser()")
+            li(@click="$router.push('/my/settings')")
               img(:src="userData.mi_head_sculpture | img-filter")
           ul.userName
             li {{userData.mi_nickname}}

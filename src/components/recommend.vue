@@ -3,7 +3,7 @@
     ul.goodsList(:style="{background:background}")
       li(v-for="item in listData" , @click="goGoods(item.gspu_id)")
         img(:src="item.gi_image_url | img-filter")
-        .text {{item.goods_name}}
+        .text <span>可自提</span>{{item.goods_name}}
         .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
           span 可省100元
         .price(v-else) {{item.price | price-filter}}
@@ -58,7 +58,14 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-
+  .text span{
+    font-size: .3rem;
+    padding: 1px .2rem 0 .2rem;
+    background-color: rgb(246, 0, 87);
+    color: white;
+    border-radius: .2rem;
+    margin-right: .1rem;
+  }
   .price {
     margin: .2rem .1rem;
     color: rgb(246, 0, 87);

@@ -77,7 +77,7 @@
         this.$emit('selectChange')
       },
       deleteGoods (id, index) {
-         this.animateName = 'fadeOut'
+        this.animateName = 'fadeOut'
         this.list.splice(index,1)
         let self = this
         self.$ajax({
@@ -87,7 +87,9 @@
             scIdArray: id
           },
         }).then(function (response) {
-
+          let goodsNum = self.$store.state.shoppingCartGoodsNum
+          goodsNum.sendNum-=1
+          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
         })
       },
       // 商品数量变化
