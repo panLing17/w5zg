@@ -38,10 +38,10 @@
       li
         .left 网金卡
         .right
-          span 已抵扣100.00
-          toggle-button(v-model="netCardFlag", color="rgb(244,0,87)")
+          span 已抵扣{{netAndCommitCard.netCard}}
+          toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange")
       li
-        .left 通用卷 <span>您有通用卷500，可抵扣100</span>
+        .left 通用卷 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
         .right
           toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)")
     .submit
@@ -67,7 +67,12 @@
         phone: '',
         locationList:[
           {}
-        ]
+        ],
+        // 通用券与抵用金额
+        netAndCommitCard :{
+          commTicket: 0,
+          netCard: 0
+        }
       }
     },
     computed:mapState(['transfer','giveGoodsAddress']),
@@ -75,6 +80,8 @@
     mounted () {
       this.getLocation()
       this.computedPrice()
+      // 请求计算通用券与抵用金额
+      this.getVoucher()
     },
     methods:{
       submit () {
@@ -200,6 +207,10 @@
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
+      // 网金卡变化
+      netCardChange () {
+        this.getVoucher()
+      },
       getLocation () {
         let self = this
         this.$ajax({
@@ -220,6 +231,40 @@
           this.price += now.price*now.number
           this.content += now.number-0
         })
+      },
+      // 请求可抵用金额与通用券
+      getVoucher () {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let self = this
+        if (this.$route.query.type === 'shoppingCart') {
+          let cartId = []
+          this.$store.state.transfer.forEach((now)=>{
+            cartId.push(now.cartId)
+          })
+          cartId = cartId.join(',')
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'order/submitOrderCard',
+            params: {
+              gcIdArray: cartId,
+              netCardFlag: netCardFlag
+            }
+          }).then(function (response) {
+            self.netAndCommitCard = response.data.data
+          })
+        } else {
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'order/nowSubmitOrderCard',
+            params: {
+              gskuId: self.$store.state.skuId,
+              netCardFlag: netCardFlag,
+              num: self.content
+            }
+          }).then(function (response) {
+            self.netAndCommitCard = response.data.data
+          })
+        }
       },
       locationSelectClose () {
         this.flag = false
