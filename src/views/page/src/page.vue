@@ -79,23 +79,18 @@
 
       //第一个二级分类
       one(id){
-        console.log(id);
         let self =this;
         self.$ajax({
           method:"post",
           url:this.$apiGoods + "goodsClass/class/firstId",
           params:{firstId:id}
         }).then(function(res){
-          console.log(res.data.data);
           self.productList = res.data.data;
-          console.log(self.productList);
         })
       },
 
 
       tab(item,index,id){
-        console.log(item);
-        console.log(id);
         if (item == "品牌") {
           this.flag = true;
           this.wordsShow = false;
@@ -111,22 +106,18 @@
           url:this.$apiGoods + "goodsClass/class/firstId",
           params:{firstId:id}
         }).then(function(res){
-          console.log(res.data.data);
           self.productList = res.data.data;
-          console.log(self.productList);
         })
       },
 
       //展示左侧商品导航
       request(){
         let self = this;
-        console.log(self);
         self.$ajax({
           method:"post",
           url:this.$apiGoods + "goodsClass/class/hierarchy",
           params:{hierarchy:1}
         }).then(function(res){
-          console.log(res.data.data);
           self.pageName = res.data.data;
           self.goodsName = res.data.data[0].gc_id;
           self.one(res.data.data[0].gc_id);

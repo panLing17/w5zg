@@ -63,22 +63,18 @@
               url:self.$apiGoods + "goods/recommendBrand",
               params:{}
             }).then(function(res){
-              console.log(res.data.data);
               self.brandList = res.data.data;
             })
           },
           //点击品牌名
           check(index,e){
-            console.log(e.target.children[0].innerText);
             this.num1 = index;
             this.brandNameId = e.target.children[0].innerText;
           },
           //点击价格区间
           checks(index,e){
             this.num2 = index;
-            console.log(e.target.innerText);
             var rel = e.target.innerText.split("~");
-            console.log(parseInt(rel[1]));
             var min = document.getElementsByClassName("min")[0];
             var max = document.getElementsByClassName("max")[0];
             min.value = parseInt(rel[0]);
@@ -111,7 +107,6 @@
           },
           //点击确认提交
           hide(){
-            console.log(this.num1 == null);
             if (this.num1 == null) {
                 var data = {
                 flag1 : false,

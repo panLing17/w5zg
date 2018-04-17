@@ -30,7 +30,7 @@
           span.orderNum 订单编号:
           span.num {{item.order_no}}
         .right
-          span.orderStatus {{item.orderInfo_status}}   
+          span.orderStatus {{orderInfoStatus}}   
       .center(v-for="items in item.orderDetail")
         .image
           img(:src="items.logo | img-filter")
@@ -39,8 +39,8 @@
           .wrapAttr
             .left
               .property(v-for="skus in items.spec_json")
-                span.color {{skus.gspec_name}}
-                span.size {{skus.gspec_value}}
+                span.color {{skus.gspec_value}}
+                span.size(v-if="false") {{skus.gspec_value}}
               .amount x{{items.goods_num}}
             .right  
               .price {{items.sale_price | price-filter}}
@@ -56,7 +56,7 @@
       ul
         li.totalQuantity
           span 总数量
-          span x3
+          span x {{totalNumber}}
         li.freight(v-show="freightFlag")
           span 运费
           span 0.0
@@ -77,7 +77,7 @@
       ul
         li.code.selects
           span 订单号:
-          span 2018022400001
+          span {{totalOrderNum}}
         li.orderTime.selects
           span 下单时间:
           span {{createTime}}
@@ -97,8 +97,8 @@
     w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
     .fixedBtn
-      .leftBtn(v-show="leftBtnFlag") {{leftBtn}}
-      .rightBtn {{rightBtn}}
+      .leftBtn(v-show="leftBtnFlag" @click="jumpToLeft($event)") {{leftBtn}}
+      .rightBtn(@click="jumpToRight($event)") {{rightBtn}}
 
 </template>
 
@@ -108,6 +108,9 @@
       name: "orderDetails",
       data(){
         return{
+          orderInfoStatus:"", //订单状态
+          totalOrderNum:this.$route.query.orderNo, //总订单编号
+          totalNumber:this.$route.query.totalNum, //从上个页面传来的商品总量
           moreBtnFlag:"", //更多功能按钮的显隐
           moreBtnCont:"申请退款", //更多功能按钮
           freightFlag:"", //判断是否自提后是否显示运费
@@ -132,14 +135,16 @@
           deductionTicket:"", //通用券
           recipients:"", //收件人
           phone: "", //收件人手机号
-          orderId:this.$route.query.orderId,
+          orderId:this.$route.query.orderId, //从订单管理传来的商品id
           leftBtn:"", //订单最下面的左边按钮
           rightBtn:"", //订单最下面的右边按钮
           leftBtnFlag:"", //判断订单最下面左边按钮的显隐
           showFlag:true,
           flag:"",
           recommendGoods: [],
-          orderDetails:[]
+          orderDetails:[],
+          TotalOrderId:"", //总的订单id
+
         }
       },
       created(){
@@ -181,6 +186,41 @@
             clearInterval(timer);
           }
         },
+        //订单最下面的左边按钮
+        jumpToLeft(e){
+          if (e.target.innerHTML == "删除订单") {
+            alert("你被耍了！");
+          }
+          if (e.target.innerHTML == "取消订单") {
+            let self = this;
+            self.$ajax({
+              method:"patch",
+              url:self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
+              params:{}
+            }).then(function(res){
+              console.log(res);
+              self.$router.go(-1);
+            })
+          }
+          if (e.target.innerHTML == "批量退款") {
+
+          }
+        },
+        //订单最下面的右边按钮
+        jumpToRight(e){
+          if (e.target.innerHTML == "支付") {
+            this.$router.push({
+              path:'/payment',
+              query:{
+                id:this.TotalOrderId,
+                price:this.totalPrice
+              }
+            })
+          }
+          if (e.target.innerHTML == "申请退款") {
+
+          }
+        },
         //更多展示功能按钮
         moreShow(){
           this.moreBtnFlag = !this.moreBtnFlag;
@@ -199,10 +239,10 @@
             method:"post",
             url:self.$apiTransaction + "order/detail",
             params:{
-              orderTotalId:218
+              orderTotalId:self.orderId
             }
           }).then(function(res){
-            console.log(res.data.data);
+            self.totalOrderNum = res.data.data[0].total_order_no;
             self.recipients = res.data.data[0].carry_person;
             self.phone = res.data.data[0].carry_phone;
             self.deductionCard = res.data.data[0].oi_deduction_card;
@@ -219,123 +259,179 @@
             self.createTime = res.data.data[0].create_time;
             self.sendTime = res.data.data[0].send_time;
             self.receiveTime = res.data.data[0].receive_time;
+            //总订单的id
+            self.TotalOrderId = res.data.data[0].total_order_id;
             //判断是否自提
             //自提
-            if (res.data.data[0].delivery_ways == "168") {
+            if (res.data.data[0].delivery_ways == "自提") {
               self.flag = true; //显示提货人
               self.deliveryFlag = false;
               self.freightFlag = false;
             }
             //配送
-            if (res.data.data[0].delivery_ways == "167") {
+            if (res.data.data[0].delivery_ways == "快递配送") {
               self.flag = false; //显示收货人
               self.deliveryFlag = true;
               self.freightFlag = true;
             }
             //判断货物状态来决定
-            if (res.data.data[0].orderInfo.orderInfo_status == "待付款") {
-              self.morethenFlag = false;
-              self.btnSFlag = false;
-              self.btnFFlag = false;
-              self.leftBtnFlag = true;
-              self.leftBtn = "取消订单";
-              self.rightBtn = "支付";
+
+            for (var i = 0; i < res.data.data[0].orderInfo.length; i++) {
+              console.log(res.data.data[0].orderInfo[i].orderInfo_status);
+              if(res.data.data[0].orderInfo[i].orderInfo_status == "待付款"){
+                self.morethenFlag = false;
+                self.btnSFlag = false;
+                self.btnFFlag = false;
+                self.leftBtnFlag = true;
+                self.leftBtn = "取消订单";
+                self.rightBtn = "支付";
+                self.orderInfoStatus = "待付款";
+              }
+              if (res.data.data[0].orderInfo[i].orderInfo_status == "待发货/待备货") {
+                if (res.data.data[0].delivery_ways == "快递配送"){
+                  self.morethenFlag = false;
+                  self.btnSFlag = true;
+                  self.btnFFlag = true;
+                  self.btnF = "申请退货";
+                  self.btnS = "提醒发货";
+                  self.leftBtnFlag = true;
+                  self.leftBtn = "批量退款";
+                  self.rightBtn = "提醒发货";
+                  self.orderInfoStatus = "待发货";
+                }
+                if (res.data.data[0].delivery_ways == "自提"){
+                  self.morethenFlag = false;
+                  self.btnSFlag = true;
+                  self.btnFFlag = true;
+                  self.btnF = "申请退货";
+                  self.btnS = "提货码";
+                  //提货码按钮的颜色
+                  var btnSDiv =document.getElementsByClassName("btnS")[0];
+                  btnSDiv.style.background = "rgb(244,0,87)";
+                  btnSDiv.style.color = "white";
+                  btnSDiv.style.borderColor = "rgb(244,0,87)";
+                  self.leftBtnFlag = false;
+                  self.rightBtn = "申请退款";
+                  self.orderInfoStatus = "待备货";
+                }
+              }
+
+              if (res.data.data[0].orderInfo[i].orderInfo_status == "待收货/待提货") {
+                if (res.data.data[0].delivery_ways == "快递配送") {
+                  self.morethenFlag = true;
+                  self.btnSFlag = true;
+                  self.btnFFlag = true;
+                  self.btnF = "物流信息";
+                  self.btnS = "确认收货";
+                  self.leftBtnFlag = true;
+                  self.leftBtn = "批量退款";
+                  self.rightBtn = "确认收货";
+                  var rightBtn = document.getElementsByClassName("rightBtn")[0];
+                  rightBtn.style.background = "white";
+                  rightBtn.style.color = "rgb(244,0,87)";
+                  self.orderInfoStatus = "待收货";
+                }
+                if (res.data.data[0].delivery_ways == "自提") {
+                  self.morethenFlag = false;
+                  self.btnSFlag = true;
+                  self.btnFFlag = true;
+                  self.btnF = "申请退货";
+                  self.btnS = "提货码";
+                  //提货码按钮的颜色
+                  var btnSDiv =document.getElementsByClassName("btnS")[0];
+                  btnSDiv.style.background = "rgb(244,0,87)";
+                  btnSDiv.style.color = "white";
+                  btnSDiv.style.borderColor = "rgb(244,0,87)";
+                  self.leftBtnFlag = true;
+                  self.leftBtn = "批量退款";
+                  self.rightBtn = "再次购买";
+                  var rightBtn = document.getElementsByClassName("rightBtn")[0];
+                  rightBtn.style.background = "white";
+                  rightBtn.style.color = "rgb(244,0,87)";
+                  self.orderInfoStatus = "待提货";
+                }
+              }
+              if (res.data.data[0].orderInfo[i].orderInfo_status == "已完成") {
+                self.morethenFlag = false;
+                self.btnSFlag = true;
+                self.btnFFlag = true;
+                self.btnF = "申请退货";
+                self.btnS = "再次购买";
+                self.leftBtnFlag = true;
+                self.leftBtn = "批量退款";
+                self.rightBtn = "再次购买";
+                self.orderInfoStatus = "已完成";
+              }
+
+              if (res.data.data[0].orderInfo[i].orderInfo_status == "已取消") {
+                self.morethenFlag = false;
+                self.btnSFlag = true;
+                self.btnFFlag = true;
+                self.btnF = "删除订单";
+                self.btnS = "再次购买";
+                self.leftBtnFlag = true;
+                self.leftBtn = "删除订单";
+                self.rightBtn = "再次购买";
+                self.orderInfoStatus = "已取消";
+              }
             }
-            if (res.data.data[0].orderInfo.orderInfo_status == "待发货") {
-              self.morethenFlag = false;
-              self.btnSFlag = true;
-              self.btnFFlag = true;
-              self.btnF = "申请退货";
-              self.btnS = "提醒发货";
-              self.leftBtnFlag = true;
-              self.leftBtn = "批量退款";
-              self.rightBtn = "提醒发货";
-            }
-            if (res.data.data[0].orderInfo.orderInfo_status == "已发货") {
-              self.morethenFlag = false;
-              self.btnSFlag = true;
-              self.btnFFlag = true;
-              self.btnF = "申请退货";
-              self.btnS = "物流信息";
-              self.leftBtnFlag = true;
-              self.leftBtn = "批量退款";
-              self.rightBtn = "物流信息";
-            }
-            if (res.data.data[0].orderInfo.orderInfo_status == "备货中") {
-              self.morethenFlag = false;
-              self.btnSFlag = true;
-              self.btnFFlag = true;
-              self.btnF = "申请退货";
-              self.btnS = "提货码";
-              //提货码按钮的颜色
-              var btnS =document.getElementsByClassName("btnS")[0];
-              btnS.style.background = "rgb(244,0,87)";
-              btnS.style.color = "white";
-              btnS.style.borderColor = "rgb(244,0,87)";
-              self.leftBtnFlag = false;
-              self.rightBtn = "物流信息";
-              var rightBtn = document.getElementsByClassName("rightBtn")[0];
-              rightBtn.style.background = "white";
-              rightBtn.style.color = "rgb(244,0,87)";
-            }
-            if (res.data.data[0].orderInfo.orderInfo_status == "交易完成") {
-              self.morethenFlag = false;
-              self.btnSFlag = true;
-              self.btnFFlag = true;
-              self.btnF = "申请退货";
-              self.btnS = "再次购买";
-              self.leftBtnFlag = true;
-              self.leftBtn = "批量退款";
-              self.rightBtn = "再次购买";
-            }
-            if (res.data.data[0].orderInfo.orderInfo_status == "待提货") {
-              self.morethenFlag = false;
-              self.btnSFlag = true;
-              self.btnFFlag = true;
-              self.btnF = "申请退货";
-              self.btnS = "提货码";
-              //提货码按钮的颜色
-              var btnS =document.getElementsByClassName("btnS")[0];
-              btnS.style.background = "rgb(244,0,87)";
-              btnS.style.color = "white";
-              btnS.style.borderColor = "rgb(244,0,87)";
-              self.leftBtnFlag = true;
-              self.leftBtn = "批量退款";
-              self.rightBtn = "再次购买";
-              var rightBtn = document.getElementsByClassName("rightBtn")[0];
-              rightBtn.style.background = "white";
-              rightBtn.style.color = "rgb(244,0,87)";
-            }
+            
+            
+            
+            
+            console.log(res.data.data[0].orderInfo.orderInfo_status);
+            
           })
         }, 
         //按照按钮上的文字跳转页面
         judgeBtnF(e){
+          //此功能还没有
           if (e.target.innerHTML == "再次购买") {
-
+            alert("逗你玩！");
           }
+          //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
 
           }
+          //进入到申请退货页面
           if (e.target.innerHTML == "申请退款") {
 
           }
+          //进入到申请退货页面
           if (e.target.innerHTML == "申请退货") {
 
           } 
+          if (e.target.innerHTML == "取消订单"){
+            let self = this;
+            self.$ajax({
+              method:"patch",
+              url:self.$apiTransaction + "order/cancel"+"/+"+id,
+              params:{}
+            }).then(function(res){
+              console.log(res);
+              console.log(self.state);
+              self.orderDetailShow();
+            })
+          }
         },
         judgeBtnS(e){
+          //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
             this.$router.push('/my/checkLogistics');
           }
+          //没有
           if (e.target.innerHTML == "提醒发货") {
-
+            alert("逗你玩！")
           }
+          //点击弹出一个框显示提货码
           if (e.target.innerHTML == "提货码") {
 
           }
+          //此功能未开放
           if (e.target.innerHTML == "再次购买") {
-
+            alert("逗你玩！");
           }
+          //点击完了
           if (e.target.innerHTML == "确认收货") {
 
           }
@@ -343,8 +439,6 @@
           
 
         judgeState(){
-          console.log(this.$route.query.state);
-          console.log(this.$route.query.id);
           var states = this.$route.query.state;
           if (states == "待发货/待备货") {
             this.leftBtn = "批量退款";
@@ -363,8 +457,31 @@
           oInput.select(); // 选择对象
           document.execCommand("Copy"); // 执行浏览器复制命令
           document.body.removeChild(oInput);
-          let alertDiv = document.createElement("div");
-          alertDiv.attr("alertDiv");
+          var orderNumbers = document.getElementsByClassName("orderNumber")[0];
+          var alertDiv = document.createElement("div");
+          alertDiv.id="layers";
+          alertDiv.innerHTML="复制成功";
+            var style={
+                width: "2rem",
+                height: ".8rem",
+                backgroundColor: "rgba(0,0,0,0.2)",
+                color: "#fff",
+                position: "absolute",
+                left: "4rem",
+                bottom: ".2rem",
+                textAlign: "center",
+                lineHeight: ".8rem",
+                borderRadius: ".8rem",
+            }
+            for(var i in style)
+                alertDiv.style[i]=style[i];
+            if(document.getElementById("layers")==null){
+                orderNumbers.appendChild(alertDiv);
+                //setTimeout("orderNumbers.removeChild(alertDiv)",1000);
+                setTimeout(function(){
+                  orderNumbers.removeChild(alertDiv);
+                },1500);
+            }
         },
 
         upCallback: function(page) {
@@ -397,7 +514,6 @@
 </script>
 
 <style scoped>
-
   /*顶部倒计时付款--开始*/
   .topStatus{
     padding: .4rem .3rem;
@@ -509,9 +625,11 @@
     border-radius: .2rem;
   }
   .center .goodsDetails{
+    width: 100%;
     margin-left: .3rem;
   }
   .center .goodsDetails .wrapAttr{
+    width: 100%;
     display: flex;
     justify-content: space-between;
   }
@@ -526,20 +644,19 @@
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span.color{
+    margin-right: .3rem;
   }
   .center .goodsDetails .amount{
-    margin-top: .1rem;
+    margin-top: .15rem;
     margin-left: .5rem;
     font-size: .35rem;
     color: rgb(153,153,153);
   }
   .center .goodsDetails .price{
-    margin-top: .25rem;
+    margin-top: .05rem;
     font-size: .35rem;
     color: rgb(244,0,87);
-    margin-left: -.1rem;
   }
   .center .goodsDetails .wrapBtn{
     margin-top: .8rem;
@@ -643,7 +760,7 @@
     background-color: rgb(204,204,204);
     color: #fff;
     text-align: center;
-    line-height: .7rem;
+    line-height: .75rem;
     font-size: .35rem;
     border-radius: .5rem;
   }

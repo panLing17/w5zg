@@ -78,7 +78,6 @@
           //选择热门品牌
           check(index,e){
             this.num1 = index;
-            console.log(e.target.children[0].innerText);
             this.brandNameId = e.target.children[0].innerText;
             let data = {
               flag2:true,
@@ -94,16 +93,10 @@
           },
           goAnchorz:function(selector) {
             var anchor = this.$el.querySelector(selector);
-            console.log(anchor);
             var heightTop = document.documentElement.scrollTop || document.body.scrollTop;
-            console.log(heightTop);
             heightTop = anchor.offsetTop - 60;
-            console.log(heightTop); 
           },
-          viewMore:function(key,e,oIndex){
-            console.log(key);
-            console.log(oIndex);
-            console.log(e.target.innerText);  
+          viewMore:function(key,e,oIndex){  
             if(e.target.innerText == "收起更多"){
               this.num = 9;
               key.words = "查看更多";
@@ -120,7 +113,6 @@
               url:this.$apiGoods + "goods/brand/all",
               params:{},
             }).then(function(res){
-              console.log(res.data.data);
               self.letterBrandList.A.list = res.data.data.a;
               self.letterBrandList.B.list = res.data.data.b;
               self.letterBrandList.C.list = res.data.data.c;
@@ -157,14 +149,12 @@
               url:this.$apiGoods + "goods/recommendBrand",
               params:{},
             }).then(function(res){
-              console.log(res.data.data);
               self.brandList = res.data.data;
             });  
           },
 
           //选择字母列表品牌名
           selects(e){
-            console.log(e.target.children[0].innerText);
             this.brandNameId = e.target.children[0].innerText;
             let data = {
               flag2:true,

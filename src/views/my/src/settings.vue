@@ -65,7 +65,7 @@
       notOpen:function(){
         var layer=document.createElement("div");
         layer.id="layer";
-        layer.innerHTML="此功能未开放"
+        layer.innerHTML="此功能未开放";
             var style={
                 background:"rgba(0,0,0,0.2)",
                 position:"fixed",
