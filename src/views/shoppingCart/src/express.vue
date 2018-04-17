@@ -141,7 +141,7 @@
         let self = this
         let list = []
         this.disableGoods.forEach((now)=>{
-          list.push(now.id)
+          list.push(now.si_id)
         })
         list = list.join(',')
         self.$ajax({
@@ -151,9 +151,8 @@
             scIdArray: list
           },
         }).then(function (response) {
-          let goodsNum = self.$store.state.shoppingCartGoodsNum
-          goodsNum.sendNum-=1
-          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          self.disableGoods = []
+          self.$message.success('清除成功')
         })
       }
     }
