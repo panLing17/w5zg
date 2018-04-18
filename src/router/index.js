@@ -271,14 +271,14 @@ const router = new Router ({
               component: MyOrder.orderDetails
             },
             {
-              path: '/my/orderDetailsSon',
-              name: '子订单详情',
-              component: MyOrder.orderDetailsSon
-            },
-            {
               path: '/my/checkLogistics',
               name: '查看物流',
               component: MyOrder.checkLogistics
+            },
+            {
+              path: '/my/searchOrder',
+              name: '查看物流',
+              component: MyOrder.searchOrder
             },
             {
               path: '/my/applyAfterSale',

@@ -9,15 +9,15 @@
           img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
           img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
       p.center
-          ul.headPic
-            li(@click="routergoUser()")
-              img(:src="userData.mi_head_sculpture | img-filter")
-          ul.userName
-            li {{userData.mi_nickname}}
-          ul.balance(v-if="userData.member_type === '092'")
-            li 余额:
-            li {{accoutBalance}}
-            li 元
+        ul.headPic
+          li(@click="routergoUser()")
+            img(:src="userData.mi_head_sculpture | img-filter")
+        ul.userName
+          li {{userData.mi_nickname}}
+        ul.balance(v-if="userData.member_type === '092'")
+          li 余额:
+          li {{accoutBalance}}
+          li 元
     div.fav_att_foot
       ul.left
         li 0
@@ -248,6 +248,8 @@
   }
   .head .center .headPic img{
     width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
   }
   .head .center .userName{
     display: flex;

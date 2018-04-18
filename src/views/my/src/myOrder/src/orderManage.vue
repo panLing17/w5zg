@@ -5,8 +5,8 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
-        img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search
-        img(src="../../../../../assets/img/msg_0.png").msg
+        img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()").search
+        img(src="../../../../../assets/img/msg_0.png" v-show="false").msg
     .orderStatus
       ul.wrapStatus
         li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num}").status {{item}}
@@ -38,8 +38,8 @@
               span.price 合计 :
                 strong.priceNum {{item.oi_pay_price | price-filter}}
       .button
-        .cancel(@click="buttonLeft($event,item.total_order_id)") {{item.buttonL}}
-        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}") {{item.buttonR}}       
+        .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货'") {{item.buttonL}}
+        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货'") {{item.buttonR}}       
 </template>
 
 <script>
@@ -48,12 +48,14 @@
       name: "orderManage",
       data(){
         return{
+          btnLeftFlag:"", //左边按钮显隐
+          btnRightFlag:"", //右边按钮显隐
           orderStatus:"", //订单的状态
           state:"",
           num:0,
           statusFlag1:false,
           statusFlag2:true,
-          status:["全部","待付款","待发货","待收货","待评价"],
+          status:["全部","待付款","待发货","待收货","已完成"],
           orderDetail:[],
           buttonL:"",
           buttonR:""
@@ -68,6 +70,9 @@
         //this.request();  
       },
       methods:{
+        jumpToSearch(){
+          this.$router.push('/my/searchOrder');
+        },
         //判断上一页点击的索引值
         jump(){
           if (this.$route.query.id == 1) {
@@ -104,7 +109,7 @@
           if (item == "待收货") {
             this.state = 4;
           }
-          if (item == "待评价") {
+          if (item == "已完成") {
             this.state = 3;
           }
           this.request();
@@ -121,8 +126,6 @@
               url:self.$apiTransaction + "order/cancel"+"/+"+id,
               params:{}
             }).then(function(res){
-              console.log(res);
-              console.log(self.state);
               self.request();
             })
           }
@@ -136,7 +139,6 @@
             this.$router.push('/my/checkLogistics');
           }
           if (e.target.innerText == "支付") {
-            alert(id,price);
             this.$router.push({
               path:'/payment',
               query:{
@@ -156,6 +158,7 @@
               params:{}
             }).then(function(res){
               console.log(res);
+              self.request();
             })
           }
         },
@@ -177,7 +180,7 @@
             method: 'post',
             url:self.$apiTransaction + 'order/orderByStatus',
             params: {
-              status: this.state,
+              status: self.state,
               page: pageNum,
               rows: pageSize
             },
@@ -459,12 +462,12 @@
     justify-content: flex-end;
   }
   .button div{
-    width: 2.5rem;
-    height: 1rem;
-    border-radius: 1rem;
+    width: 2rem;
+    height: .8rem;
+    border-radius: .8rem;
     text-align: center;
-    line-height: .95rem;
-    font-size: .4rem;
+    line-height: .8rem;
+    font-size: .35rem;
     margin-right: .3rem;
   }
   .button .cancel{

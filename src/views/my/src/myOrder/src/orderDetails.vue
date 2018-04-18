@@ -5,8 +5,8 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
-        img(src="../../../../../assets/img/msg_0.png").msg
-    .topStatus {{countDowns}}    
+        img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
+    .topStatus(v-if="false") {{countDowns}}    
     .goodsReceipt(v-if="deliveryFlag")
       .consignee
         img(src="../../../../../assets/img/citySearch@2x.png")
@@ -47,8 +47,8 @@
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
               .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event)") {{moreBtnCont}}
-            .btnF.btn(v-show="btnFFlag" @click.stop="judgeBtnF($event)") {{btnF}}
-            .btnS.btn(v-show="btnSFlag" @click.stop="judgeBtnS($event)") {{btnS}}
+            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event)") {{btnF}}
+            .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付'" @click.stop="judgeBtnS($event,item.order_id)") {{btnS}}
       .bottom(v-show="flag")
         span.shop 提货门店: 
         span {{item.si_name}}    
@@ -97,8 +97,8 @@
     w-recommend#dataId(:listData="recommendGoods")
     .bottomPlaceholder
     .fixedBtn
-      .leftBtn(v-show="leftBtnFlag" @click="jumpToLeft($event)") {{leftBtn}}
-      .rightBtn(@click="jumpToRight($event)") {{rightBtn}}
+      .leftBtn(v-show="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款'" @click="jumpToLeft($event)") {{leftBtn}}
+      .rightBtn(@click="jumpToRight($event)" v-show="rightBtn !== '再次购买' && rightBtn !== '确认收货'") {{rightBtn}}
 
 </template>
 
@@ -154,7 +154,7 @@
         this.$mescrollInt("orderMescroll",this.upCallback);
         this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示
-        this.countDown(1800);
+        //this.countDown(1800);
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
@@ -213,7 +213,7 @@
               path:'/payment',
               query:{
                 id:this.TotalOrderId,
-                price:this.totalPrice
+                price:this.payPrice
               }
             })
           }
@@ -221,6 +221,7 @@
 
           }
         },
+
         //更多展示功能按钮
         moreShow(){
           this.moreBtnFlag = !this.moreBtnFlag;
@@ -242,16 +243,17 @@
               orderTotalId:self.orderId
             }
           }).then(function(res){
+            console.log(res.data.data);
             self.totalOrderNum = res.data.data[0].total_order_no;
             self.recipients = res.data.data[0].carry_person;
             self.phone = res.data.data[0].carry_phone;
             self.deductionCard = res.data.data[0].oi_deduction_card;
             self.deductionTicket = res.data.data[0].oi_deduction_ticket;
-            var rel = 0; 
-            for (var i = 0; i < res.data.data[0].orderInfo.length; i++) {
-              rel += parseInt(res.data.data[0].orderInfo[i].oi_total);
-            }
-            self.totalPrice = rel;
+            // var rel = 0; 
+            // for (var i = 0; i < res.data.data[0].orderInfo.length; i++) {
+            //   rel += parseInt(res.data.data[0].orderInfo[i].oi_total);
+            // }
+            self.totalPrice = res.data.data[0].oi_total_price;
             self.payPrice = res.data.data[0].oi_pay_price;
             self.presentPrice = res.data.data[0].oi_present_ticket;
             self.address = res.data.data[0].address;
@@ -282,6 +284,8 @@
                 self.morethenFlag = false;
                 self.btnSFlag = false;
                 self.btnFFlag = false;
+                self.btnF = "取消订单";
+                self.btnS = "支付";
                 self.leftBtnFlag = true;
                 self.leftBtn = "取消订单";
                 self.rightBtn = "支付";
@@ -402,19 +406,14 @@
 
           } 
           if (e.target.innerHTML == "取消订单"){
-            let self = this;
-            self.$ajax({
-              method:"patch",
-              url:self.$apiTransaction + "order/cancel"+"/+"+id,
-              params:{}
-            }).then(function(res){
-              console.log(res);
-              console.log(self.state);
-              self.orderDetailShow();
-            })
+            
           }
         },
-        judgeBtnS(e){
+        judgeBtnS(e,sonId){
+          //支付
+          if (e.target.innerHTML == "支付") {
+
+          }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
             this.$router.push('/my/checkLogistics');
@@ -431,9 +430,17 @@
           if (e.target.innerHTML == "再次购买") {
             alert("逗你玩！");
           }
-          //点击完了
+          //点击完了跳到订单列表
           if (e.target.innerHTML == "确认收货") {
-
+            let self = this;
+            self.$ajax({
+              method:"patch",
+              url:self.$apiTransaction + "order/confirmTakeGood/"+sonId,
+              params:{}
+            }).then(function(res){
+              console.log(res);
+              self.$router.push('/my/orderManage');
+            })
           }
         },
           

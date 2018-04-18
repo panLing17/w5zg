@@ -81,7 +81,7 @@
         let self = this;
         self.$ajax({
           method:"post",
-          url:this.$apiGoods + "goodsSearch/searchDiscovery",
+          url:self.$apiGoods + "goodsSearch/searchDiscovery",
           params:{}
         }).then(function(res){
           console.log(res.data.data);
