@@ -46,6 +46,11 @@
     padding: 0 .2rem;
     box-sizing: border-box;
     background: #fff;
+    position: fixed;
+    top: 1.3rem;
+    left: 0;
+    width: 100%;
+    z-index: 150;
   }
   .tabList {
     display: flex;

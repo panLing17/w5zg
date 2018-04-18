@@ -17,7 +17,7 @@
           li.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
     .detailBox(v-if="!isEmpty")
       ul.detailList
-        li(v-for="item in cashDetail")
+        li(v-for="item in cashDetail", v-if="item.tran_money!=0")
           .block.top
             // 订单号
             .left 订单号: {{item.order_no}}

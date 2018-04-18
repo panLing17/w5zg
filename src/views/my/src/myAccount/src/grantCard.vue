@@ -9,7 +9,7 @@
       .item
         .itemDec 手机号：
         .itemContent
-          input(placeholder="请输入领卡手机号", type="number", v-model="form.mobile")
+          input(placeholder="请输入领券手机号", type="number", v-model="form.mobile")
       .item
         .itemDec 金额：
         .itemContent
@@ -41,7 +41,7 @@
           }).then(function (response) {
             if (response.data.code === '081') {
               _this.$message.success(response.data.msg)
-              _this.$router.go(-1)
+              _this.$router.push('/my')
             }else {
               _this.$message.error(response.data.msg);
             }
