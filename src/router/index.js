@@ -136,13 +136,13 @@ const router = new Router ({
               component: Headlines.detail
             },
             {
-              path: '/home/largeCollection/:actId',
-              name: '大牌云集',
+              path: '/home/largeCollection',
+              name: '二级活动',
               component: Home.largeCollection
             },
             {
-              path: '/home/sports/:parentType/:parentId',
-              name: '运动',
+              path: '/home/sports',
+              name: '三级活动',
               component: Home.sports
             }
           ]

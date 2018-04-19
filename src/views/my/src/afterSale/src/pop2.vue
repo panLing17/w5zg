@@ -6,7 +6,7 @@
       .main(v-if="show")
         .title  {{title}}
         ul
-          li(v-for="(item,index) in data", @click="selected(index)") {{item.rgr_reson}}
+          li(v-for="(item,index) in data", @click="selected(index)") {{item[itemKey]}}
 </template>
 
 <script>
@@ -34,7 +34,8 @@
           return []
         }
       },
-      title: String
+      title: String,
+      itemKey: String
     },
     methods:{
       showPop () {

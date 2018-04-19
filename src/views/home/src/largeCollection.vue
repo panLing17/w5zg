@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center", style="color: rgb(245,0,87);") 大牌云集
+      .topCenter(slot="center", style="color: rgb(245,0,87);")
       .topRight(slot="right")
     .content(v-if="!isEmpty")
       ul.list
@@ -43,7 +43,8 @@
             url: this.$apiApp + 'acActivityContent/acActivityContentList',
             methods: 'get',
             params: {
-              actId: this.$route.params.actId
+              actId: this.$route.query.actId,
+              parentType: this.$route.query.parentType
             }
           }).then((response) => {
             this.bankList = response.data.data;
@@ -52,11 +53,11 @@
         toNext (type, url, id, relateId) {
           switch (type) {
             // 跳外链
-            case '344': window.location.href = url; break;
+            case '143': window.location.href = url; break;
             // 跳3级页面 362代表从2级跳3级
-            case '342': this.$router.push(`/home/sports/362/${id}`); break;
+            case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id}}); break;
             // 跳商品详情
-            case '343': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
+            case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
           }
         }
         // upCallback: function(page) {

@@ -9,13 +9,20 @@
       .decWrapper
         .title 万物商城
         .dec 800大品牌  线上下单 | 专柜提货
-        img.bg(src="../../../../../assets/img/coupon2@2x.png")
+      .imagesWrapper
+        img.z3(src="../../../../../assets/img/three@2x.png")
+        img.z1(src="../../../../../assets/img/one@2x.png")
+        transition(name="fold")
+          .price(v-if="showSuccess")
+            span.wrapper
+              sup ￥
+              strong 188
       .formWrapper
         .text(v-if="showSuccess")
           p 恭喜您
           p 获得 “万物商城” 现金券188元
         .form
-          input(placeholder="请输入手机号领取", v-model="phone", type="number", v-show="isLoginFlag")
+          input(placeholder="请输入手机号领取", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
 
 </template>
@@ -35,14 +42,15 @@
     },
     methods: {
       receive () {
-        if (this.isLoginFlag) {
-          let reg = /^1[0-9]{10}$/;
-          if (!reg.test(this.phone)) {
-            this.$message.error('手机号码格式不正确！');
-            return;
-          }
-        }
-        this.getTicket();
+        // if (this.isLoginFlag) {
+        //   let reg = /^1[0-9]{10}$/;
+        //   if (!reg.test(this.phone)) {
+        //     this.$message.error('手机号码格式不正确！');
+        //     return;
+        //   }
+        // }
+        // this.getTicket();
+        this.showSuccess = true;
       },
       isLogin () {
         this.phone = this.$store.state.userData.mi_phone;
@@ -52,7 +60,6 @@
       },
       getTicket () {
         let _this = this;
-        console.log(this.phone)
         this.$ajax({
           method: 'get',
           url: this.$apiTransaction + 'netcard/qrcodeByB/64ffb3347276e90e5e2428bbdc2f5c31',
@@ -111,14 +118,14 @@
     z-index: 150;
   }
   .formWrapper {
-    margin-top: -1.1rem;
-    background: rgb(231,55,62);
+    background:rgb(231,55,62);
     flex: 1;
     position: relative;
+    z-index: 200;
   }
   .text {
     position: absolute;
-    top: 1.5rem;
+    top: 0;
     left: 0;
     color: #fff;
     font-size: .43rem;
@@ -127,7 +134,7 @@
     text-align: center;
   }
   .form {
-    margin-top: 3.12rem;
+    margin-top: 2rem;
   }
   .form input, .form .btn {
     width: 7.45rem;
@@ -150,5 +157,62 @@
     color: #fff;
     font-size: .43rem;
     line-height: 1rem;
+  }
+  .z1, .z3 {
+    width: 100%;
+  }
+  .z3 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 200;
+  }
+  .z1 {
+    position: absolute;
+    left: 0;
+    bottom: -1rem;
+    z-index: 100
+  }
+  .price {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 150;
+    width: 100%;
+    height: 100%;
+    background: url("../../../../../assets/img/two@2x.png") no-repeat top left;
+    background-size: 100%;
+    transform: translate3d(0,0,0);
+  }
+  .price.fold-enter-active, .price.fold-leave-active {
+    transition: all 0.5s;
+  }
+  .price.fold-enter, .price.fold-leave-to {
+    transform: translate3d(0,100%,0);
+  }
+  .price .wrapper {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    bottom: .5rem;
+    left: 0;
+    font-size: 1rem;
+    color: rgb(231,55,62);
+    font-weight: 900;
+  }
+  .wrapper strong {
+    font-size: 1.78rem;
+  }
+  .wrapper sup {
+    position: absolute;
+    left: 28%;
+    top: .2rem;
+  }
+  .imagesWrapper {
+    flex: none;
+    height: 5.5rem;
+    position: relative;
+    overflow: hidden;
   }
 </style>

@@ -10,7 +10,7 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
-      div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
+      div(v-for="(tag, index) in banner", style="width:100%" , @click="goActivity(index)")
         img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
     hot-button(:list="hotButton")
     l-news.news(:newsData="news")
@@ -135,8 +135,7 @@
           url: self.$apiApp + 'index/acInformationByCataId',
           params: {
             page: 1,
-            rows: 10,
-            cataId: 1
+            rows: 20
           },
         }).then(function (response) {
           self.news = response.data.data
@@ -280,8 +279,19 @@
       goSearch() {
         this.$router.push('/search')
       },
-      goActivity(link, type) {
-          this.$router.push({path: '/goodsDetailed', query: {id: link}})
+      goActivity(index) {
+        switch (this.banner[index].ac_inlink_type) {
+          // 跳三级
+          case '145': this.$router.push({path: '/home/sports', query: {parentType: '363', actId: this.banner[index].ac_id}}); break;
+          // 跳二级
+          case '144': this.$router.push({path: '/home/largeCollection', query: {parentType: '363', actId: this.banner[index].ac_id}}); break;
+          // 外部
+          case '143': window.location.href = this.banner[index].ac_outlink; break;
+          // 店铺
+          case '142': this.$router.push({ path: '/goodsDetailed', query: { id: this.banner[index].ac_inlink}}); break;
+          // 商品
+          case '141': this.$router.push({ path: '/goodsDetailed', query: { id: this.banner[index].ac_inlink}}); break;
+        }
       }
     },
     components: {hotButton, lNews, wActivity}
