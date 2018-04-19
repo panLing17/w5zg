@@ -141,7 +141,10 @@
         let self = this
         let list = []
         this.disableGoods.forEach((now)=>{
-          list.push(now.si_id)
+          now.shoppingCartVOList.forEach((sunNow)=>{
+            list.push(sunNow.sc_id)
+          })
+
         })
         list = list.join(',')
         self.$ajax({

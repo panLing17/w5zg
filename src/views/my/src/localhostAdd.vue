@@ -90,9 +90,9 @@
         let self = this
         let method = this.$route.query.id ? 'put' : 'post'
         if (this.isdefault) {
-          this.form.isDefault = '0'
-        } else {
           this.form.isDefault = '1'
+        } else {
+          this.form.isDefault = '0'
         }
         self.$ajax({
           method:  method,

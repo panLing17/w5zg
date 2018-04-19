@@ -17,8 +17,6 @@
           li(v-for="item in provinceList", @click="getCity(item.pro_no,item.pro_name)") {{item.pro_name}}
         ul.list
           li(v-for="item in cityList", @click="getStore(item.city_no,item.city_name)") {{item.city_name}}
-        ul.list
-          li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_name}}
 </template>
 
 <script>
@@ -105,20 +103,18 @@
         this.cityNumber = number
         // 当前选项卡名称改变
         this.cityName = cityName
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/store',
-          params: {
-            gskuId: self.$store.state.skuId,
-            gspuId: self.$route.query.id,
-            provinceNo: self.proNumber ,
-            cityNo: number
+        let data = {
+          province: {
+            id: this.proNumber,
+            name: this.provinceName
           },
-        }).then(function (response) {
-          self.storeList = response.data.data.storeList
-          self.selectType = 2
-        })
+          city: {
+            id: this.cityNumber,
+            name: this.cityName
+          }
+        }
+        this.$store.commit('transferGive',data)
+        this.$emit('change', data)
       },
       selectOver (number, storeName) {
         // 记录选中的区的编码

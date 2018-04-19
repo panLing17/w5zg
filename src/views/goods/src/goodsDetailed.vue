@@ -89,6 +89,8 @@
     store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
     share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
+    onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
+    <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
 
 <script>
@@ -97,6 +99,8 @@
   import citySelect from './citySelect'
   import storeSelect from './storeSelect'
   import shareSelect from './shareSelect'
+  import onlyStoreSelect from './onlyStoreSelect'
+  // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
   export default {
     name: "goods-detailed",
@@ -105,11 +109,15 @@
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
-        disTypeName: '门店自提',
+        disTypeName: '专柜自提',
         selectCity: false,
         selectStoreFlag: false,
         shoppingCartFlag: false,
         selectShare: false,
+        // 仅选择门店开关
+        onlyStoreSelect: false,
+        // 仅选择城市开关
+        onlyCitySelect: true,
         banner: [],
         goodsData: {},
         spec: [],
@@ -157,7 +165,7 @@
       },
       ...mapState(['location', 'userData'])
     },
-    components: {selectSize,citySelect,disType,storeSelect,shareSelect},
+    components: {selectSize,citySelect,disType,storeSelect,shareSelect,onlyStoreSelect},
     mounted () {
       this.getGoodsDetailed()
       this.getGoodsDesc()
@@ -238,22 +246,7 @@
       },
       // 门店选择变化后
       storeChange (data) {
-        let locationData = {
-          province:{
-            name: data.pro.name,
-            id: data.pro.number
-          },
-          city:{
-            name: data.city.name,
-            id: data.city.number
-          },
-          store:{
-            name: data.store.name,
-            id: data.store.id
-          }
-        }
-        this.storeId = data.store.id
-        this.$store.commit('getLocation',locationData)
+        this.$store.commit('getLocation',data)
         this.selectStoreFlag = false
         // 如果操作来自购买按钮
         if (this.ofBuy) {
@@ -310,27 +303,119 @@
       },
       // 选择城市变化后
       cityChange (data) {
-        let locationData = {
-          province:{
-            name: data.pro.name,
-            id: data.pro.number
-          },
-          city:{
-            name: data.city.name,
-            id: data.city.number
-          },
-          area:{
-            name: data.area.name,
-            id:  data.area.number
-          }
-        }
-        this.$store.commit('getLocation',locationData)
+        this.$store.commit('getLocation',data)
         this.selectCity = false
         // 重新渲染选择规格组件，触发库存等数据的请求
         this.selectSizeShow = false
         setTimeout(()=>{
           this.selectSizeShow = true
         },50)
+      },
+      shoppingCartAdd () {
+        this.ofBuy = false
+        this.shoppingCartFlag = true
+        // 并且，告诉组件，此操作有后续操作
+        this.onlySelectSpec = false
+        // 如果存在规格，直接进行选择配送方式
+        if (this.selectedSpec.length>0) {
+          // 根据配送类型进行操作
+          if (this.disTypeName==='专柜自提') {
+            this.onlyStoreSelect = true
+          } else {
+            // 为配送订单直接进入下一步
+            this.expressNext()
+          }
+        } else {
+          this.selectFlag = true
+          this.onTouchMove(true)
+          document.body.style.overflow='hidden'
+          document.body.style.height="100vh"
+        }
+      },
+      buy () {
+        // 关闭购物车flag
+        this.shoppingCartFlag = false
+        // 此生明，这次选择地址等一系列操作来自购买按钮
+        this.ofBuy = true
+        // 并且，告诉组件，此操作有后续操作
+        this.onlySelectSpec = false
+        // 如果存在规格，直接进行选择配送方式
+        if (this.selectedSpec.length>0) {
+          // 根据配送类型进行操作
+          if (this.disTypeName==='专柜自提') {
+            this.onlyStoreSelect = true
+          } else {
+            // 为配送订单直接进入下一步
+            this.expressNext()
+          }
+        } else {
+          this.selectFlag = true
+          this.onTouchMove(true)
+          document.body.style.overflow='hidden'
+          document.body.style.height="100vh"
+        }
+      },
+      // 单独选择门店后
+      onlyStoreChange (data) {
+        // 如果操作来自购买按钮
+        if (this.ofBuy) {
+          /* let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiTransaction + 'order/submitNowCarryOrder',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (response) {
+            response.data.data.forEach((now,index)=>{
+              now.valueIndex = 0
+            })
+            self.spec = response.data.data
+          }) */
+          // 规格
+          let spec = []
+          this.spec.forEach((now)=>{
+            spec.push(now.specValue[now.valueIndex])
+          })
+          console.log(this.$store.state.location)
+          // 订单页需要展示及用到的数据
+          let orderData = [{
+            storeName: this.$store.state.location.store.name,
+            storeLocation: this.$store.state.location,
+            photo: this.banner[0].gi_img_url,
+            spec: spec,
+            number: this.content,
+            goodsName: this.goodsData.gi_name,
+            price: this.price
+          }]
+          console.log(orderData)
+          // 传入中转
+          this.$store.commit('transferGive', orderData)
+          this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
+        }
+        if (this.shoppingCartFlag) {
+          // 如果操作来自添加购物车按钮
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods+ 'goods/shoppingCart/add',
+            params: {
+              gskuId: self.$store.state.skuId,
+              deliveryWays: 168,
+              province: self.$store.state.location.province.id,
+              city: self.$store.state.location.city.id,
+              storeId: self.$store.state.location.store.id,
+              goodsNum: self.content
+            }
+          }).then(function (response) {
+            // 关闭选择
+            self.onlyStoreSelect = false
+            self.$message.success('添加购物车成功')
+          })
+        }
+      },
+      // 配送订单进入下一步
+      expressNext () {
         // 如果操作来自购买按钮
         if (this.ofBuy) {
           // 规格
@@ -341,7 +426,7 @@
           // 订单页需要展示及用到的数据
           let orderData = [{
             storeName: 'xx旗舰店',
-            storeLocation: data,
+            storeLocation: this.$store.state.location,
             photo: this.banner[0].gi_img_url,
             spec: spec,
             number: this.content,
@@ -395,38 +480,6 @@
           })
         }
       },
-      shoppingCartAdd () {
-        this.ofBuy = false
-        this.shoppingCartFlag = true
-        // 并且，告诉组件，此操作有后续操作
-        this.onlySelectSpec = false
-        // 如果存在规格，直接进行选择配送方式
-        if (this.selectedSpec.length>0) {
-          this.disTypeFlag = true
-        } else {
-          this.selectFlag = true
-          this.onTouchMove(true)
-          document.body.style.overflow='hidden'
-          document.body.style.height="100vh"
-        }
-      },
-      buy () {
-        // 关闭购物车flag
-        this.shoppingCartFlag = false
-        // 此生明，这次选择地址等一系列操作来自购买按钮
-        this.ofBuy = true
-        // 并且，告诉组件，此操作有后续操作
-        this.onlySelectSpec = false
-        // 如果存在规格，直接进行选择配送方式
-        if (this.selectedSpec.length>0) {
-          this.disTypeFlag = true
-        } else {
-          this.selectFlag = true
-          this.onTouchMove(true)
-          document.body.style.overflow='hidden'
-          document.body.style.height="100vh"
-        }
-      },
       selectClose () {
         this.selectFlag = false
         this.onTouchMove(false)
@@ -459,9 +512,14 @@
         this.content = data.content
         this.selectedSpec = data.spec
         // 打开类型选择
-        this.disTypeFlag = true
+        // this.disTypeFlag = true
         // 关闭规格选择
         this.selectFlag = false
+        if (this.disTypeName==='专柜自提') {
+          this.onlyStoreSelect = true
+        } else {
+          this.expressNext()
+        }
         this.onTouchMove(false)
         document.body.style.overflow='auto'
       },
@@ -485,7 +543,7 @@
           this.disTypeName = '快递配送'
         } else {
           this.selectStoreFlag = true
-          this.disTypeName = '门店自提'
+          this.disTypeName = '专柜自提'
         }
       },
       onTouchMove(inFlag) {

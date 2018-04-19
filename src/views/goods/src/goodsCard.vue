@@ -14,7 +14,7 @@
     .bottom(v-if="since === 'true'")
       .left 门店自提
       .right
-        span {{data.storeLocation.pro.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
+        span {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
         img(src="../../../assets/img/next@2x.png")
     .bottom(v-else)
       .left 运费
@@ -30,6 +30,9 @@
       data: Object,
       // 根据此判断是否是自提订单
       since: String
+    },
+    mounted () {
+      console.log(this.data)
     }
   }
 </script>

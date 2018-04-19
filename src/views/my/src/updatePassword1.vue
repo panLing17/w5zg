@@ -12,7 +12,7 @@
         .inputButton(slot="button", @click="getPhoneCode", v-show="sendMsg" ,:class="{inputButtonGray:sendMsgStatus}") 获取验证码
         .inputButton(slot="button", v-show="!sendMsg",style="background-color:gray") {{countDown}}
       p.tips 系统将向您的手机号发送短信验证码
-      button.regButton(@click="nextStep",:class="{regButtonGray:nextStepStatus}") 下一步
+      button.regButton(@click="nextStep", :class="{regButtonGray:nextStepStatus}") 下一步
 </template>
 <script>
   import {mapState} from 'vuex'
@@ -24,7 +24,8 @@
         form: {
           gCode: '',
           vcode: '',
-          type: '3'
+          type: '3',
+          W5MALLTOKEN: ''
         },
         version: 1,
         url: this.$apiMember + 'member/picCode/150/75/60',
@@ -50,11 +51,23 @@
       }
     },
     mounted() {
+      this.getToken()
     },
     methods: {
+      getToken () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/getSessionId',
+          params: {}
+        }).then(function (response) {
+          self.form.W5MALLTOKEN = response.data.data
+          self.getPicCode()
+        })
+      },
       getPicCode() {
         this.version += 1
-        this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version
+        this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version + '&W5MALLTOKEN=' +  this.form.W5MALLTOKEN
       },
       getPhoneCode() {
         // 发送验证码
@@ -95,7 +108,6 @@
           self.checkCodeError = ''
           return
         }
-
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/validationLoginIn',
