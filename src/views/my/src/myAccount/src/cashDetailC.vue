@@ -65,6 +65,8 @@
             text = '商家发放';
           }else if (value === '124') {
             text = '现金券退款';
+          }else if (value === '1211') {
+            text = '取消订单'
           }
           return text;
         }

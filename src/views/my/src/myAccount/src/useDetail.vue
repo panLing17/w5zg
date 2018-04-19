@@ -114,6 +114,7 @@
   .useDetailBox {
     padding: 0 .2rem;
     box-sizing: border-box;
+    margin-top: 1.13rem;
   }
   .item {
     background: #fff;

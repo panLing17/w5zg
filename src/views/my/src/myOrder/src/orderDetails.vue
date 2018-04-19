@@ -47,7 +47,7 @@
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
               .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event)") {{moreBtnCont}}
-            .btnF.btn(v-show="btnFFlag" @click.stop="judgeBtnF($event, items, item)") {{btnF}}
+            .btnF.btn(v-show="btnFFlag" @click.stop="judgeBtnF($event, items, item.delivery_id)") {{btnF}}
             .btnS.btn(v-show="btnSFlag" @click.stop="judgeBtnS($event)") {{btnS}}
       .bottom(v-show="flag")
         span.shop 提货门店:
@@ -384,7 +384,7 @@
           })
         },
         //按照按钮上的文字跳转页面
-        judgeBtnF(e, goods, father){
+        judgeBtnF(e, goods, deliveryId){
           //此功能还没有
           if (e.target.innerHTML == "再次购买") {
             alert("逗你玩！");
@@ -395,6 +395,7 @@
           }
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退款" || e.target.innerHTML == "申请退货") {
+            goods.delivery_id = deliveryId
             this.$store.commit('getReturnGoods',goods)
             this.$router.push('/my/refundReturn')
           }
