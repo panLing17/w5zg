@@ -22,14 +22,13 @@
           p 手机号：{{giveGoodsAddress.ra_phone}}
         .giveGoodsLocation
           .label 收货地址
-          .info {{giveGoodsAddress.ra_detailed_addr}}
+          .info {{giveGoodsAddress.province_name}} {{giveGoodsAddress.city_name}} {{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
       .icon
         img(src="../../../assets/img/next@2x.png")
     .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) === '{}'")
       .addLocation
         p(@click="$router.push('/my/localAdd')") 添加收货地址
     goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
-    p {{transfer.length}}
     .allPrice
       .goodsNum 共计{{content}}件商品
       .price
@@ -42,7 +41,7 @@
           span 已抵扣{{netAndCommitCard.netCard}}
           toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
       li
-        .left 通用卷 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
+        .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
         .right
           toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
@@ -123,6 +122,7 @@
             buyNum: self.content
           }
         }).then(function (response) {
+          console.log(response.data.data)
           self.$message.success('成功生成订单')
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
@@ -149,8 +149,10 @@
             bsId: self.$store.state.location.store.id
           }
         }).then(function (response) {
-          self.$message.success('成功生成订单')
-          self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
+          if (response.data.optSuc) {
+            self.$message.success('成功生成订单')
+            self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
+          }
         })
       },
       /* 购物车自提订单生成 */

@@ -162,7 +162,7 @@
             photo: now.logo,
             cartId: now.sc_id,
             storeLocation: {
-              pro: {
+              province: {
                 name: now.pro_Name,
                 id: now.province
               },
