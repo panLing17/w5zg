@@ -7,22 +7,13 @@
         .title
           span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
-        .tabBox
-          transition-group(enter-active-class="animated bounceInLeft", leave-active-class="animated fadeOut").tab
-            li(v-if="selectType > 0 || selectType === 0 ", :class="{selected:selectType === 0}", key="0", @click="tab(0)") {{provinceName}}
-            li(v-if="selectType > 1 || selectType === 1 ", :class="{selected:selectType === 1}", key="1", @click="tab(1)") {{cityName}}
-            li(v-if="selectType > 2 || selectType === 2 ", :class="{selected:selectType === 2}", key="2", @click="tab(2)") {{areaName}}
-          .slider(:style="{marginLeft:3 * selectType + 'rem'}")
         ul.list
-          li(v-for="item in provinceList", @click="getCity(item.pro_no,item.pro_name)") {{item.pro_name}}
-        ul.list
-          li(v-for="item in cityList", @click="selectOver(item.city_no,item.city_name)") {{item.city_name}}
-
+          li(v-for="item in areaList", @click="selectOver(item.district_no,item.district_name)") {{item.district_name}}
 </template>
 
 <script>
   export default {
-    name: "city-select",
+    name: "store-select",
     data () {
       return {
         // 当前选择的类型，0为选择省，1为市，2为区
@@ -47,8 +38,15 @@
         default: false
       }
     },
+    watch: {
+      show () {
+        if (this.show) {
+          this.areaList = []
+          this.getArea()
+        }
+      }
+    },
     mounted () {
-      this.getProvince()
     },
     methods:{
       close () {
@@ -68,70 +66,28 @@
             this.areaList = []
         }
       },
-      getProvince () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'index/allProvince',
-          params: {
-          },
-        }).then(function (response) {
-          self.provinceList = response.data.data
-        })
-      },
-      getCity (number,proName) {
-        // 记录选中的省的编码
-        this.proNumber = number
-        // 清空市与区数据
-        this.cityList = []
-        this.areaList = []
-        // 当前选项卡名称改变
-        this.provinceName = proName
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'index/cityProvince',
-          params: {
-            pro_no: number
-          },
-        }).then(function (response) {
-          self.cityList = response.data.data
-          self.selectType = 1
-        })
-      },
-      getArea (number, cityName) {
-        // 记录选中的市的编码
-        this.cityNumber = number
-        // 当前选项卡名称改变
-        this.cityName = cityName
+      getArea () {
         let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiApp + 'index/districtCity',
           params: {
-            cityNo: number
+            cityNo: self.$store.state.location.city.id
           },
         }).then(function (response) {
           self.areaList = response.data.data
           self.selectType = 2
         })
       },
-      selectOver (number, cityName) {
-        // 记录选中的市的编码
-        this.cityNumber = number
-        // 当前选项卡名称改变
-        this.cityName = cityName
+      selectOver (number, storeName) {
         // 事件派发，将省市区名字以及编号返回
         let data = {
-          province:{
-            id: this.proNumber,
-            name: this.provinceName
-          },
-          city:{
-            id: this.cityNumber,
-            name: this.cityName
-          }
+          id: number,
+          name: storeName
         }
+        let l = this.$store.state.location
+        l.store = data
+        this.$store.commit('transferGive',l)
         this.$emit('change', data)
       }
     }
@@ -156,7 +112,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 70%;
+    height: 30%;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -195,9 +151,12 @@
     line-height: .8rem;
     text-align: center;
     float: left;
-    width: 3rem;
-    height: 10rem;
+    width: 10rem;
+    height: 4rem;
     overflow-y: auto;
+  }
+  .list li{
+    border-top: solid 1px #eee;
   }
   .slider {
     height: 1px;

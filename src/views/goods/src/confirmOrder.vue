@@ -29,6 +29,7 @@
       .addLocation
         p(@click="$router.push('/my/localAdd')") 添加收货地址
     goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
+    p {{transfer.length}}
     .allPrice
       .goodsNum 共计{{content}}件商品
       .price
@@ -39,11 +40,11 @@
         .left 网金卡
         .right
           span 已抵扣{{netAndCommitCard.netCard}}
-          toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange")
+          toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
       li
         .left 通用卷 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
         .right
-          toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)")
+          toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
       .left 实付：{{price | price-filter}}
       .right(@click="submit") 提交订单
@@ -54,6 +55,7 @@
   import goodsCard from './goodsCard'
   import locationSelect from './locationSelect'
   import {mapState} from 'vuex'
+
   export default {
     name: 'confirm-order',
     data () {
@@ -72,7 +74,9 @@
         netAndCommitCard :{
           commTicket: 0,
           netCard: 0
-        }
+        },
+        // 是否禁用switch
+        switchFlag: false
       }
     },
     computed:mapState(['transfer','giveGoodsAddress']),

@@ -10,9 +10,9 @@
             .brandNameId(v-show="false") {{item.bi_id}}
       .price 价格区间
       .priceContent
-        input(type="text" placeholder="最小金额" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
+        input(type="text" placeholder="最小金额" v-model="minVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
         span ~
-        input(type="text" placeholder="最大金额" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").max
+        input(type="text" placeholder="最大金额" v-model="maxVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").max
         ul
           li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index,$event)").sections {{item}}
       .support 支持自提

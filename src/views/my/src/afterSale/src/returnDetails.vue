@@ -71,6 +71,7 @@
 <script>
   import now from '../../../../../assets/img/now@2x.png'
   import past from '../../../../../assets/img/past@2x.png'
+
   export default {
     name: 'returnDetails',
     data () {

@@ -11,6 +11,7 @@
 <script>
   import selfGoods from './selfGoods'
   import disableGoods from './disableGoods'
+
   export default {
     name: 'give-self',
     data () {
@@ -86,7 +87,7 @@
         let self = this
         let list = []
         this.disableGoodsList.forEach((now)=>{
-          list.push(now.si_id)
+          list.push(now.sc_id)
         })
         list = list.join(',')
         self.$ajax({
