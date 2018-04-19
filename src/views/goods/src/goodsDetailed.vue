@@ -6,6 +6,7 @@
           img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
         .topCenter(slot="center") 商品
         .topRight(slot="right")
+          img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
       carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
         div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
           img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
@@ -14,9 +15,13 @@
       .stateChuiNiu
         span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
         img(src="../../../assets/img/pinkNext.png")
-      .price
+      .price(v-if="userData.member_type === '092'")
+        span 直供价
+        p {{goodsData.direct_supply_interval}}
+        .salePrice 统一零售价：{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}
+      .price(v-else)
         span 专柜价
-        p {{goodsData.counter_interval | price-filter}}
+        p {{goodsData.counter_interval}}
         .salePrice 统一零售价：{{goodsData.retail_interval}}
       ul.saveMoney
         li.red
@@ -33,13 +38,13 @@
         li 邮费{{goodsData.goi_freight}}
         li 库存{{goodsData.storage_num}}
         li 已售{{goodsData.gi_salenum}}
-    ul.card
+    ul.card(v-if="userData !== ''")
       li
         .cartType
           .my 我的
           .name 现金券
         .cartPrice
-          .price ￥2000
+          .price {{userData.netcard_balance | price-filter}}
           .name 余额
         .leftRadio
         .righttRadio
@@ -48,7 +53,7 @@
           .my 我的
           .name 通用券
         .cartPrice
-          .price ￥2000
+          .price {{userData.cash_balance | price-filter}}
           .name 余额
         .leftRadio
         .righttRadio
@@ -83,6 +88,7 @@
     dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
     store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
+    share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
 </template>
 
 <script>
@@ -90,6 +96,7 @@
   import disType from './disType'
   import citySelect from './citySelect'
   import storeSelect from './storeSelect'
+  import shareSelect from './shareSelect'
   import {mapState} from 'vuex'
   export default {
     name: "goods-detailed",
@@ -98,10 +105,11 @@
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
-        disTypeName: '快递配送',
+        disTypeName: '门店自提',
         selectCity: false,
         selectStoreFlag: false,
         shoppingCartFlag: false,
+        selectShare: false,
         banner: [],
         goodsData: {},
         spec: [],
@@ -147,9 +155,9 @@
       tong () {
         return parseInt(this.goodsData.counter_interval)
       },
-      ...mapState(['location'])
+      ...mapState(['location', 'userData'])
     },
-    components: {selectSize,citySelect,disType,storeSelect},
+    components: {selectSize,citySelect,disType,storeSelect,shareSelect},
     mounted () {
       this.getGoodsDetailed()
       this.getGoodsDesc()
@@ -167,6 +175,7 @@
         this.getGoodsDesc()
         this.getBanner()
         this.getSpec()
+        this.mescroll.scrollTo( 0, 0 );
       }
     },
     methods:{
@@ -583,6 +592,7 @@
   }
   .price {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     font-size: .6rem;
     color: rgb(245,0,87);
@@ -592,8 +602,10 @@
     font-weight: 600;
     color: #000;
   }
+  .price p{
+    margin-right: .5rem;
+  }
   .price .salePrice{
-    margin-left: .5rem;
     font-weight: 500;
     font-size: .3rem;
     color: #999;

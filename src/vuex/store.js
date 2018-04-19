@@ -42,7 +42,9 @@ const state = {
   transfer:[],
 
   // 头条详情内容
-  headlinesDetail: ""
+  headlinesDetail: "",
+  // 退货商品信息
+  returnGoods:{}
 }
 const mutations = {
   transferGive (state, data) {
@@ -85,6 +87,9 @@ const mutations = {
   },
   getHeadlinesDetail (state, data) {
     state.headlinesDetail = data
+  },
+  getReturnGoods (state, data) {
+    state.returnGoods = data
   }
 }
 const actions = {

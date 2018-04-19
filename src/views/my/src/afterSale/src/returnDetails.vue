@@ -32,10 +32,10 @@
         .fatDiv
           img(:src="item.imgSrc")
           .progress {{item.progressC}}
-          .time {{item.time}}   
+          .time {{item.time}}
     .refundInfor
       .top 退款信息
-      .content(v-for="(item,index) in goodsList") 
+      .content(v-for="(item,index) in goodsList")
         .center
           .image
             img(:src="item.imgSrc")
@@ -102,14 +102,33 @@
             progressC:"退款完成",
             time:"2018-03-20 13:20:20"
           }
-        ]  
+        ]
       }
+    },
+    created () {
+      this.getData()
     },
     mounted () {
 
     },
     methods: {
-
+      getData () {
+        let _this = this
+        let form = {
+          id: this.$route.query.id
+        }
+        this.$ajax({
+          method: 'post',
+          url: this.$apiTransaction + 'goodsRejected/rejectedOrderInfo',
+          params:form
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            this.goodsList = response.data.data
+          }else {
+            _this.$message.error(response.data.msg)
+          }
+        })
+      }
     }
   }
 </script>
@@ -167,7 +186,7 @@
     border-top: .5px solid rgb(242,242,242);
   }
   .returnTotalMoney ul li,
-  .coupon ul li{  
+  .coupon ul li{
     font-size: .4rem;
   }
   /*退款总金额和网金卡--结束*/
@@ -254,7 +273,7 @@
     position: absolute;
     top: 44%;
     left: .3rem;
-  } 
+  }
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;

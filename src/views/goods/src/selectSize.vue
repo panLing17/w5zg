@@ -8,8 +8,13 @@
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
             li(v-for="item in list")
               img(:src="item.gi_img_url | img-filter")
-        .goodsData(:class="{smallGoodsData:smallPhotoFlag}")
+        .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
           .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.counter_price | price-filter}}
+          .price(v-else) {{0 | price-filter}}
+          .store 库存{{realGoodsData.storage_num}}
+          .size 选择 颜色 尺寸
+        .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-else)
+          .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.direct_supply_price | price-filter}}
           .price(v-else) {{0 | price-filter}}
           .store 库存{{realGoodsData.storage_num}}
           .size 选择 颜色 尺寸
@@ -29,6 +34,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
     name: "city-select",
     data () {
@@ -58,7 +64,8 @@
         let obj={};
         obj=JSON.parse(JSON.stringify(this.photos))
         return obj
-      }
+      },
+      ...mapState(['userData'])
     },
     mounted () {
       this.getStoreNum()

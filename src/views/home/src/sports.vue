@@ -9,7 +9,7 @@
       carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
         div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
           img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
-      .recommendWrapper
+      .recommendWrapper(v-if="!isEmpty")
         ul.list
           li.item(v-for="item in recommendGoods")
             img.img(:src="item.gi_image_url | img-filter")
@@ -20,6 +20,7 @@
             .price
               span.current ￥{{item.price | round}}
               span.save 可省XXX元
+      .noData(v-if="isEmpty") 暂无推荐商品
 </template>
 
 <script>
@@ -39,6 +40,16 @@
             return value;
           }else {
             return Math.round(value);
+          }
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.recommendGoods == null || this.recommendGoods.length === 0) {
+            return true;
+          }else {
+            return false;
           }
         }
       },
@@ -182,5 +193,15 @@
   .current {
     font-weight: 400;
     margin-right: .26rem;
+  }
+  .noData {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    color: rgb(153,153,153);
+    font-size: .4rem;
   }
 </style>

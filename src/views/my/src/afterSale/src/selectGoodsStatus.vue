@@ -1,12 +1,12 @@
 <template lang="pug">
   .selectGoodsStatus
-    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
+    transition(name="fade")
       .bg(v-if="show", @click="close")
-    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
+    transition(name="fold")
       .main(v-if="show")
         .title  货物状态
         ul
-          li(@click="selected(0)") 仅退货
+          li(@click="selected(0)") 仅退款
           li(@click="selected(1)") 退款退货
 </template>
 
@@ -43,6 +43,13 @@
     top: 0;
     left: 0;
     z-index: 101;
+    opacity: 1;
+  }
+  .bg.fade-enter-active, .bg.fade-leave-active {
+    transition: all 0.5s;
+  }
+  .bg.fade-enter, .bg.fade-leave-to {
+    opacity: 0;
   }
   .main {
     background-color: white;
@@ -53,6 +60,13 @@
     left: 0;
     z-index: 102;
     font-size: .4rem;
+    transform: translate3d(0,0,0);
+  }
+  .main.fold-enter-active, .main.fold-leave-active {
+    transition: all 0.5s;
+  }
+  .main.fold-enter, .main.fold-leave-to {
+    transform: translate3d(0,100%,0);
   }
   .title {
     height: 1rem;

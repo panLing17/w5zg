@@ -7,7 +7,7 @@
             .main(v-if="i.editClose", key="spec")
               .checkbox
                 w-checkbox(v-model="i.checked", @change="selectedChange")
-              img(src="../../../../static/img/1.jpg")
+              img(:src="i.logo | img-filter")
               .info
                 .text
                   .name {{i.gi_name}}
@@ -24,7 +24,8 @@
               img(src="../../../../static/img/1.jpg")
               .specChange
                 .specData
-                  p 黑色,L
+                  p
+                    span(v-for="(item,specIndex) in i.specVOList") {{item.gspec_value}}{{specIndex < i.specVOList.length-1 ? ',' : ''}}
                   img(src="../../../assets/img/next@2x.png")
                 w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", width="4rem")
               .specOk(@click="edit(true,index)") 完成
@@ -117,7 +118,7 @@
       },
       deleteGoods (id, index) {
         this.animateName = 'fadeOut'
-        this.list.splice(index,1)
+        this.goodsList.splice(index,1)
         let self = this
         self.$ajax({
           method: 'delete',
@@ -126,7 +127,9 @@
             scIdArray: id
           },
         }).then(function (response) {
-
+          let goodsNum = self.$store.state.shoppingCartGoodsNum
+          goodsNum.carryNum-=1
+          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
         })
       }
     }

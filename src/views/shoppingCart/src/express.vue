@@ -4,7 +4,7 @@
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
         span 失效商品
-        .delete 清空失效商品
+        .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
     city-select(:show='selectFlag', :goodsList="nowGoodsDataList", @close="selectClose", @submit="submit")
 </template>
@@ -135,6 +135,25 @@
             self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
           })
         }
+      },
+      // 清空失效商品
+      clearAllDisableGoods () {
+        let self = this
+        let list = []
+        this.disableGoods.forEach((now)=>{
+          list.push(now.si_id)
+        })
+        list = list.join(',')
+        self.$ajax({
+          method: 'delete',
+          url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: list
+          },
+        }).then(function (response) {
+          self.disableGoods = []
+          self.$message.success('清除成功')
+        })
       }
     }
   }

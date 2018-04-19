@@ -5,10 +5,11 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center", style="color: rgb(245,0,87);") 大牌云集
       .topRight(slot="right")
-    .content
+    .content(v-if="!isEmpty")
       ul.list
         li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id)")
           img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
+    .noData(v-if="isEmpty") 暂无更多活动
 </template>
 
 <script>
@@ -21,6 +22,16 @@
       },
       created () {
         this.getList();
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.bankList == null || this.bankList.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
+        }
       },
       mounted () {
         // this.$mescrollInt("largeMescroll",this.upCallback);
@@ -89,5 +100,15 @@
     margin-top: .26rem;
     width: 100%;
     height: 3.33rem;
+  }
+  .noData {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    color: rgb(153,153,153);
+    font-size: .4rem;
   }
 </style>

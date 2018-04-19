@@ -15,7 +15,7 @@
                 p 手机号：{{item.ra_phone}}
               .giveGoodsLocation
                 .label 收货地址
-                .info {{item.ra_detailed_addr}}
+                .info {{item.province_name}} {{item.city_name}} {{item.county_name}} {{item.ra_detailed_addr}}
           .button
             w-button(@click="$router.push('/my/localAdd')") 新增收货地址
 </template>

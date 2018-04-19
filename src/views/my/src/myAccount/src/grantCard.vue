@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 发放网金卡
+      .topCenter(slot="center") 发放现金券
       .topRight(slot="right")
     .formBox
       .item
@@ -39,8 +39,13 @@
               money: Number(this.form.money)
             }
           }).then(function (response) {
-            _this.$message.success('添加成功')
-            _this.$router.go(-1)
+            if (response.data.code === '081') {
+              _this.$message.success(response.data.msg)
+              _this.$router.go(-1)
+            }else {
+              _this.$message.error(response.data.msg);
+            }
+
           })
         }
       }

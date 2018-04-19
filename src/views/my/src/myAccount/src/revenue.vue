@@ -12,24 +12,24 @@
       transition(name="fold")
         .filterBox(v-show="filterShow")
           .btnWrapper
-            .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 全部
-            .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 代购分成
-            .btn(:class="{'active':filterActive===3}", @click="filterChange(3)") 现金券返点
+            .btn(:class="{'active':filterActive===1}", @click="filterChange(1,0)") 全部
+            .btn(:class="{'active':filterActive===2}", @click="filterChange(2,127)") 消费提成
+            .btn(:class="{'active':filterActive===3}", @click="filterChange(3,122)") 提现金额
           .btnWrapper
-            .btn(:class="{'active':filterActive===4}", @click="filterChange(4)") 余额入账
-            .btn(:class="{'active':filterActive===5}", @click="filterChange(5)") 代购退款
-            .btn(:class="{'active':filterActive===6}", @click="filterChange(6)") 返点退款
+            .btn(:class="{'active':filterActive===4}", @click="filterChange(4,128)") 消费返点
+            .btn(:class="{'active':filterActive===5}", @click="filterChange(5,123)") 充值提成
+            .btn(:class="{'active':filterActive===6}", @click="filterChange(6,124)") 返点退款
     .content
       .detailBox(v-if="!isEmpty")
         ul.detailList
           li(v-for="item in cashDetail")
             .block.top
-              .left {{item.dec}}
-              .right {{item.price}}
+              .left {{item.trade_type | tradeType}}
+              .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
             .block.center
-              .left {{item.no}}
+              .left 流水单号: {{item.serial_number}}
             .block.bottom
-              .right {{item.date}}
+              .right {{item.creation_time}}
       .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
@@ -43,6 +43,23 @@
           filterActive: 1
         }
       },
+      filters: {
+        tradeType (value) {
+          let text = '';
+          switch(value) {
+            case '121': text = '消费记录'; break;
+            case '122': text = '余额提现'; break;
+            case '124': text = '消费退款'; break;
+            case '128': text = '余额入账（返点）'; break;
+            case '127': text = '余额入账（分成）'; break;
+          }
+          return text;
+        },
+        // 保留两位小数点
+        number (value) {
+          return Number(value).toFixed(2);
+        }
+      },
       computed: {
         // 判断数据是否为空
         isEmpty () {
@@ -54,15 +71,27 @@
         }
       },
       created () {
-        this.getData();
+        this.getData(0);
       },
       methods: {
-        getData () {
-
+        getData (type) {
+          let _this = this;
+          let form = {};
+          if (type != 0) {
+            form.type = type+'';
+          }
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'logAccount/logs/unsettle',
+            params:form
+          }).then(function (response) {
+            _this.cashDetail = response.data.data;
+          })
         },
-        filterChange (index) {
+        filterChange (index,type) {
           this.filterActive = index;
           this.filterShow = false;
+          this.getData(type);
         }
       }
     }

@@ -6,14 +6,14 @@
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
-    .topStatus(v-if="false") {{countDowns}}    
+    .topStatus(v-if="false") {{countDowns}}
     .goodsReceipt(v-if="deliveryFlag")
       .consignee
         img(src="../../../../../assets/img/citySearch@2x.png")
         .addressee
           span.man 收件人:
             strong {{recipients}}
-          span.phone {{phone}} 
+          span.phone {{phone}}
       .address
         span 收货地址:
         strong {{address}}
@@ -23,14 +23,14 @@
         .addressee
           span.man 提货人:
             strong {{recipients}}
-          span.phone {{phone}}     
+          span.phone {{phone}}
     .content(v-for="(item,index) in orderDetails")
       .top
         .left
           span.orderNum 订单编号:
           span.num {{item.order_no}}
         .right
-          span.orderStatus {{orderInfoStatus}}   
+          span.orderStatus {{orderInfoStatus}}
       .center(v-for="items in item.orderDetail")
         .image
           img(:src="items.logo | img-filter")
@@ -42,7 +42,7 @@
                 span.color {{skus.gspec_value}}
                 span.size(v-if="false") {{skus.gspec_value}}
               .amount x{{items.goods_num}}
-            .right  
+            .right
               .price {{items.sale_price | price-filter}}
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
@@ -50,8 +50,8 @@
             .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event)") {{btnF}}
             .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付'" @click.stop="judgeBtnS($event,item.order_id)") {{btnS}}
       .bottom(v-show="flag")
-        span.shop 提货门店: 
-        span {{item.si_name}}    
+        span.shop 提货门店:
+        span {{item.si_name}}
     .total
       ul
         li.totalQuantity
@@ -249,7 +249,7 @@
             self.phone = res.data.data[0].carry_phone;
             self.deductionCard = res.data.data[0].oi_deduction_card;
             self.deductionTicket = res.data.data[0].oi_deduction_ticket;
-            // var rel = 0; 
+            // var rel = 0;
             // for (var i = 0; i < res.data.data[0].orderInfo.length; i++) {
             //   rel += parseInt(res.data.data[0].orderInfo[i].oi_total);
             // }
@@ -379,14 +379,14 @@
                 self.orderInfoStatus = "已取消";
               }
             }
-            
-            
-            
-            
+
+
+
+
             console.log(res.data.data[0].orderInfo.orderInfo_status);
-            
+
           })
-        }, 
+        },
         //按照按钮上的文字跳转页面
         judgeBtnF(e){
           //此功能还没有
@@ -404,9 +404,9 @@
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货") {
 
-          } 
+          }
           if (e.target.innerHTML == "取消订单"){
-            
+
           }
         },
         judgeBtnS(e,sonId){
@@ -443,7 +443,7 @@
             })
           }
         },
-          
+
 
         judgeState(){
           var states = this.$route.query.state;
@@ -623,9 +623,9 @@
     border-bottom: 1px solid rgb(242,242,242);
     display: flex;
     position: relative;
-  } 
+  }
   .center .image{
-    
+
   }
   .center .image img{
     width: 2.5rem;

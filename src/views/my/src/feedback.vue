@@ -32,7 +32,7 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiApp + 'feedback',
+          url: self.$apiApp + 'feedback/',
           params: self.form
         }).then(function (response) {
           self.$message.success(response.data.msg)

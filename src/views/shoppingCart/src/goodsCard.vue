@@ -10,7 +10,7 @@
             .main(v-if="i.editClose", key="spec")
               .checkbox
                 w-checkbox(v-model="i.checked", @change="selectChange")
-              img(src="../../../../static/img/1.jpg")
+              img(:src="i.logo | img-filter")
               .info
                 .text
                   .name {{i.gi_name}}
@@ -77,7 +77,7 @@
         this.$emit('selectChange')
       },
       deleteGoods (id, index) {
-         this.animateName = 'fadeOut'
+        this.animateName = 'fadeOut'
         this.list.splice(index,1)
         let self = this
         self.$ajax({
@@ -87,7 +87,9 @@
             scIdArray: id
           },
         }).then(function (response) {
-
+          let goodsNum = self.$store.state.shoppingCartGoodsNum
+          goodsNum.sendNum-=1
+          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
         })
       },
       // 商品数量变化
