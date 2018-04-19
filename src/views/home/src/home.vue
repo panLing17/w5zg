@@ -10,7 +10,7 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
-      div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
+      div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag,tag.linkType)")
         img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
     hot-button(:list="hotButton")
     l-news.news(:newsData="news")
@@ -282,7 +282,10 @@
         this.$router.push('/search')
       },
       goActivity(link, type) {
-          this.$router.push({path: '/goodsDetailed', query: {id: link}})
+        if (type === '') {
+          this.$router.push({path: '/goodsDetailed', query: {id: link.ac_id}})
+        }
+
       }
     },
     components: {hotButton, lNews, wActivity}

@@ -7,22 +7,22 @@
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
     .stateDiv
-      .goodsState 退货中
-      .payTime 买家暂时未收到货,请耐心等待
+      .goodsState {{goodsList.gr_status}}
+      .payTime
     .returnTotalMoney
       ul.total
         li 退款总金额
-        li ￥200.00
+        li ￥{{priceInfo.price+priceInfo.cardPrice+priceInfo.ticketPrice | price}}
       ul.reality
         li 实退金额
-        li ￥200.00
+        li ￥{{priceInfo.price | price}}
     .coupon
       ul.netGoldCard
-        li 网金卡
-        li ￥20.00
+        li 现金券
+        li ￥{{priceInfo.cardPrice | price}}
       ul.generalCard
         li 通用券
-        li ￥20.00
+        li ￥{{priceInfo.ticketPrice | price}}
     .refundWay
       ul
         li 退款路径
@@ -35,37 +35,37 @@
           .time {{item.time}}
     .refundInfor
       .top 退款信息
-      .content(v-for="(item,index) in goodsList")
+      .content(v-for="item in goodsList.rejectedDetail")
         .center
           .image
-            img(:src="item.imgSrc")
+            img(:src="item.logo | img-filter")
           .goodsDetails
-            .words {{item.words}}
+            .words {{item.goods_name}}
             .property
-              span.color {{item.color}}
-              span.size {{item.size}}
-            .amount x
-              span {{item.amount}}
-      .refundCont
-        ul
-          li
-            span 退款原因:
-            span 多拍 /拍错 /不想要
-          li
-            span 退款说明:
-            span -
-          li
-            span 申请数量:
-            span 1
-          li
-            span 申请时间:
-            span 2018-03-20
-          li
-            span 退款编号:
-            span 03202100010001
-          li
-            span 退款凭证:
-            img(src="../../../../../assets/img/my_goods.png")
+              span.color {{item.spec_json[0].gspec_value}}
+              span.size(v-if="item.spec_json[1]") {{item.spec_json[1].gspec_value}}
+              span.count x {{item.gr_num}}
+        .refundCont
+          ul
+            li
+              span.left 退款原因:
+              span.right 多拍 /拍错 /不想要
+            li
+              span.left 退款说明:
+              span.right {{item.desp_custom}}
+            li
+              span.left 申请数量:
+              span.right {{item.gr_num}}
+            li
+              span.left 申请时间:
+              span.right {{goodsList.apply_time}}
+            li
+              span.left 退款编号:
+              span.right {{goodsList.reject_num}}
+            li
+              span.left 退款凭证:
+              .wrapper.right
+                img(:src="img | img-filter", v-for="img in item.desp_pic")
 
 </template>
 <script>
@@ -77,16 +77,8 @@
     name: 'returnDetails',
     data () {
       return {
-        goodsList:[
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黄色",
-            size:"L",
-            amount:1,
-            checked:false
-          }
-        ],
+        goodsList:{},
+        priceInfo:{},
         progress:[
           {
             imgSrc:now,
@@ -107,10 +99,18 @@
       }
     },
     created () {
+      // 获取商品相关信息
       this.getData()
+      // 获取金额相关信息
+      this.getPrice()
     },
     mounted () {
 
+    },
+    filters: {
+      price (value) {
+        return value.toFixed(2)
+      }
     },
     methods: {
       getData () {
@@ -121,13 +121,26 @@
         this.$ajax({
           method: 'post',
           url: this.$apiTransaction + 'goodsRejected/rejectedOrderInfo',
+          // url: "http://192.168.1.171:8061/goodsRejected/rejectedOrderInfo",
           params:form
         }).then(function (response) {
           if (response.data.code === '081') {
-            this.goodsList = response.data.data
+            _this.goodsList = response.data.data[0]
           }else {
             _this.$message.error(response.data.msg)
           }
+        })
+      },
+      getPrice () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: this.$apiTransaction + 'order/order/detail/usedNetCardAndCommonTicket',
+          params:{
+            orderDetailId:this.$route.query.detailId
+          }
+        }).then(function (response) {
+          _this.priceInfo = response.data.data;
         })
       }
     }
@@ -264,9 +277,12 @@
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
     white-space:nowrap;
-    overflow-x:auto;
     display: flex;
     position: relative;
+    overflow: hidden;
+  }
+  .center .image {
+    flex: none;
   }
   .center .check{
     line-height: 2.4rem;
@@ -277,13 +293,20 @@
   }
   .center .image img{
     width: 2.5rem;
+    height: 2.26rem;
     border-radius: .2rem;
   }
   .center .goodsDetails{
     margin-left: .3rem;
+    flex: 1;
+    overflow: hidden;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .center .goodsDetails .property{
     margin-top: .1rem;
@@ -307,11 +330,18 @@
     margin-top: .1rem;
     color: rgb(153,153,153);
   }
+  .refundCont ul li .left {
+    flex: none;
+  }
+  .refundCont ul li .right {
+    flex: 1;
+  }
   .refundCont ul li span:nth-child(2){
     margin-left: .2rem;
   }
   .refundCont ul li:last-child{
     display: flex;
+    flex-wrap: wrap;
   }
   .refundCont ul li:last-child img{
     width: 2rem;
@@ -320,4 +350,7 @@
     margin-left: .2rem;
   }
   /*退款内容原因--结束*/
+  .count {
+    margin-left: 1rem;
+  }
 </style>

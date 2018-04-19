@@ -119,9 +119,16 @@
         })
       },
       buy () {
+        // 判断用户类型，小B显示直供价，小C显示专柜价
+        let price = 0
+        if (this.userData.member_type !== '092') {
+          price = this.realGoodsData.counter_price
+        } else {
+          price = this.realGoodsData.direct_supply_price
+        }
         // 将数量与价格传过去
         let data = {
-          price: this.realGoodsData.counter_price,
+          price: price,
           content: this.content,
           spec: []
         }

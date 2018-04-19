@@ -46,10 +46,10 @@
         ul
           li.money
             span 退款金额:
-            strong ￥200.00
+            strong ￥{{price}}
           li.max
             span 最多:
-            span ￥200.00，
+            span ￥{{price}}，
             span 不含运费
     .refundExplain
       ul
@@ -90,7 +90,8 @@
         reasonText: '',
         count: 1,
         desc: '',
-        imageArr:[]
+        imageArr:[],
+        price: 0
       }
     },
     mounted () {
@@ -100,6 +101,8 @@
       this.getReasonData()
       // 获取退货商品信息
       this.getReturnGoods()
+      // 获取退款金额
+      this.getPrice()
     },
     methods: {
       //选择货物状态
@@ -149,6 +152,19 @@
 
         })
       },
+      getPrice() {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: this.$apiTransaction + 'order/order/detail/usedNetCardAndCommonTicket',
+          params:{
+            orderDetailId:this.goodsList.order_detail_id
+          }
+        }).then(function (response) {
+          _this.price = response.data.data.price;
+          console.log(_this.price)
+        })
+      },
       // 获取商品信息
       getReturnGoods () {
         this.goodsList = this.$store.state.returnGoods
@@ -156,8 +172,10 @@
       },
       // 获取图片数组
       getImageArr (arr) {
-        this.imageArr = []
-        this.imageArr = arr
+        this.imageArr = ''
+        this.imageArr = arr.join('&')
+        // this.imageArr = this.imageArr.substring(0,this.imageArr.length-1)
+        console.log(typeof  this.imageArr)
       },
     //  检查申请退款必填项数据
       dataCheck (){
@@ -176,21 +194,33 @@
         }else if (this.statusType === 1) {
           url = 'goodsRejected/rejectedBoth'
         }
+
         let form = {
-          orderOrOrderDetailId:'',
-          count:this.count,
-          desp:[this.desc],
-          picUrl:this.imageArr,
+          orderOrOrderDetailId:this.goodsList.order_detail_id,
+          count:parseInt(this.count),
+          desp:[this.desc].toString(),
+          picUrl:[this.imageArr].toString(),
           reasonId:this.reasonType,
-          type:1
+          type:'1'
         }
+        console.log(form.picUrl)
+        // form = JSON.stringify(form)
+        console.log(form)
         this.$ajax({
           method: 'post',
           url: this.$apiTransaction + url,
-          params:form
+          // url: "http://192.168.1.171:8061/"+url,
+          params: form,
+          // traditional: true
         }).then(function (response) {
           if (response.data.code === '081') {
-            _this.updateInfo(response.data.data);
+            // 如果是退货退款需再调用更新退货退款信息
+            if (_this.statusType === 1){
+              _this.updateInfo(response.data.data);
+            }else if (_this.statusType === 0) {
+              // 跳转到退货详情页
+              _this.$router.replace({path:'/my/returnDetails',query:{id:response.data.data, detailId:_this.goodsList.order_detail_id}})
+            }
           }else {
             _this.$message.error(response.data.msg)
           }
@@ -202,7 +232,7 @@
         let _this = this
         let form = {
           id: id,
-          company_storeId:'',
+          company_storeId:this.goodsList.delivery_id,
           type:this.returnStyleType===0?'2':'1'
         }
         this.$ajax({
@@ -212,7 +242,7 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             // 跳转到退货详情页
-            _this.$router.replace({path:'/my/returnDetails',query:{id:response.data.data}})
+            _this.$router.replace({path:'/my/returnDetails',query:{id:response.data.data, detailId:_this.goodsList.order_detail_id}})
           }else {
             _this.$message.error(response.data.msg)
           }

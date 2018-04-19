@@ -5,7 +5,8 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 直供头条
       .topRight(slot="right")
-    .content(v-html="$store.state.headlinesDetail")
+    .content
+      img.img(:src="$route.query.url | img-filter")
 </template>
 
 <script>
@@ -21,5 +22,8 @@
     height: 100vh;
     position: absolute;
     z-index: 100;
+  }
+  .img {
+    width: 100%;
   }
 </style>

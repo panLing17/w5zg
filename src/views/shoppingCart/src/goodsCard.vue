@@ -7,8 +7,8 @@
       transition-group(tag="div", :name="animate")
         .goodsBox(v-for="(i,index) in list", :key="index")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
-            .main(v-if="i.editClose", key="spec")
-              .checkbox
+            .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
+              .checkbox(@click.stop="")
                 w-checkbox(v-model="i.checked", @change="selectChange")
               img(:src="i.logo | img-filter")
               .info
@@ -19,12 +19,12 @@
                 .price
                   span {{i.now_price | price-filter}}
               .mainRight
-                img(src="../../../assets/img/edit@3x.png", @click="edit(false,index)")
+                img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
                 p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
                 w-checkbox(v-model="i.checked", @change="selectChange")
-              img(src="../../../../static/img/1.jpg")
+              img(:src="i.logo | img-filter")
               .specChange
                 .specData
                   p
@@ -62,6 +62,15 @@
       storeName: String
     },
     methods: {
+      // 前往商品详情
+      goGoodsDetail (id) {
+        this.$router.push({
+          path: '/goodsDetailed',
+          query: {
+            id: id
+          }
+        })
+      },
       changeType (data,index) {
          this.animateName = 'leftOut'
         // 回调参数，执行删除动画效果

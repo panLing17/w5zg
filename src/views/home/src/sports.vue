@@ -72,7 +72,8 @@
             method: 'get',
             url: this.$apiApp + 'index/advertiseContentList',
             params: {
-              acCataType: 111
+              acCataType: 115,
+              acCataTypeId: 14
             },
           }).then(function (response) {
             self.banner = response.data.data

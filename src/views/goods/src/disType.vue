@@ -6,7 +6,7 @@
       .main(v-if="show")
         .title  配送方式
         ul
-          li(@click="selected(0)") 门店自提
+          li(@click="selected(0)") 专柜自提
           li(@click="selected(1)") 快递配送
 </template>
 

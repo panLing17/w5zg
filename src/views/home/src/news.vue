@@ -1,9 +1,9 @@
 <template lang="pug">
-    div.box( @click="$router.push('/home/headlines')")
+    div.box
       img(src="../../../assets/img/HEADLINE@3x.png")
       div
         ul#newsList
-          li(v-for="(item,index) in newsData ") {{item.i_title}}
+          li(v-for="(item,index) in newsData ", @click="$router.push({path: '/home/headlinesDetail',query:{url: item.i_photo}})") {{item.i_title}}
 </template>
 
 <script>

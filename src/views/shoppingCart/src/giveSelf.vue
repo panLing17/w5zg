@@ -87,7 +87,7 @@
         let self = this
         let list = []
         this.disableGoodsList.forEach((now)=>{
-          list.push(now.si_id)
+          list.push(now.sc_id)
         })
         list = list.join(',')
         self.$ajax({
