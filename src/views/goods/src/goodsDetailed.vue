@@ -102,6 +102,7 @@
   import onlyStoreSelect from './onlyStoreSelect'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
+
   export default {
     name: "goods-detailed",
     data () {

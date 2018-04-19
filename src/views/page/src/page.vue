@@ -20,20 +20,12 @@
               span.point(v-show="wordsShow")
               span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{thirdKey:items.gc_url,thirdFlag:true}})").wrapImg
+              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
                 img(:src="items.gc_icon | img-filter")
                 .words(v-show="wordsShow") {{items.gc_keywords}}
 </template>
 
 <script>
-  import jacket from '../../../assets/img/page_jacket.png'
-  import downCoat from '../../../assets/img/page_downCoat.png'
-  import coat from '../../../assets/img/page_coat.png'
-  import logo1 from '../../../assets/img/logo1.png'
-  import logo2 from '../../../assets/img/logo2.png'
-  import logo3 from '../../../assets/img/logo3.png'
-  import logo4 from '../../../assets/img/logo4.png'
-  import logo5 from '../../../assets/img/logo5.png'
 
   export default {
     name: "page",
@@ -50,7 +42,6 @@
       }
     },
     mounted(){
-
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
         city.style.fontSize = .5 + "rem";
@@ -76,7 +67,6 @@
            }
         });
       },
-
       //第一个二级分类
       one(id){
         let self =this;
@@ -91,13 +81,13 @@
 
 
       tab(item,index,id){
-        if (item == "品牌") {
-          this.flag = true;
-          this.wordsShow = false;
-        }else{
+        // if (item == "品牌") {
+        //   this.flag = true;
+        //   this.wordsShow = false;
+        // }else{
           this.flag = false;
           this.wordsShow = true;
-        }
+        // }
         this.num = index;
 
         let self =this;
@@ -216,6 +206,9 @@
     /*background-color: rgb(242,242,242);*/
     /*overflow-y: scroll;*/
   }
+  .content .left ul{
+    overflow-y: scroll;
+  }
   .content .left ul li{
     background-color: rgb(242,242,242);
     width: 100%;
@@ -226,7 +219,6 @@
     font-size: .4rem;
     font-weight: 600;
     border-bottom: 1px solid #fff;
-    overflow-y: scroll;
   }
   /*中间内容左边--结束*/
   /*中间内容右边--开始*/
@@ -243,7 +235,6 @@
   }
   .right ul.tabs{
     padding-top: .45rem;
-    padding-bottom: 2rem;
   }
   .right ul.tabs .title{
     font-size: .4rem;

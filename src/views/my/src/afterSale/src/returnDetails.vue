@@ -23,16 +23,16 @@
       ul.generalCard
         li 通用券
         li ￥{{priceInfo.ticketPrice | price}}
-    .refundWay
-      ul
-        li 退款路径
-        li 银行卡
-    .refundProgress
-      .wrap(v-for="item in progress")
-        .fatDiv
-          img(:src="item.imgSrc")
-          .progress {{item.progressC}}
-          .time {{item.time}}
+    <!--.refundWay-->
+      <!--ul-->
+        <!--li 退款路径-->
+        <!--li 银行卡-->
+    <!--.refundProgress-->
+      <!--.wrap(v-for="item in progress")-->
+        <!--.fatDiv-->
+          <!--img(:src="item.imgSrc")-->
+          <!--.progress {{item.progressC}}-->
+          <!--.time {{item.time}}-->
     .refundInfor
       .top 退款信息
       .content(v-for="item in goodsList.rejectedDetail")
@@ -49,8 +49,8 @@
           ul
             li
               span.left 退款原因:
-              span.right 多拍 /拍错 /不想要
-            li
+              span.right {{goodsList.rejected_reason}}
+            li(v-if="item.desp_custom")
               span.left 退款说明:
               span.right {{item.desp_custom}}
             li
@@ -62,16 +62,16 @@
             li
               span.left 退款编号:
               span.right {{goodsList.reject_num}}
-            li
+            li(v-if="item.desp_pic")
               span.left 退款凭证:
               .wrapper.right
                 img(:src="img | img-filter", v-for="img in item.desp_pic")
 
 </template>
 <script>
-  import myGoods from '../../../../../assets/img/my_goods.png'
   import now from '../../../../../assets/img/now@2x.png'
   import past from '../../../../../assets/img/past@2x.png'
+
   export default {
     name: 'returnDetails',
     data () {
@@ -108,7 +108,12 @@
     },
     filters: {
       price (value) {
-        return value.toFixed(2)
+        if (value || value == 0) {
+          return value.toFixed(2)
+        }else {
+          return
+        }
+
       }
     },
     methods: {

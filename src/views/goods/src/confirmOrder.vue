@@ -54,6 +54,7 @@
   import goodsCard from './goodsCard'
   import locationSelect from './locationSelect'
   import {mapState} from 'vuex'
+
   export default {
     name: 'confirm-order',
     data () {

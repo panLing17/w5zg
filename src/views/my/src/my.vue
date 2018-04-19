@@ -71,6 +71,7 @@
 
 <script>
   import {mapState} from 'vuex'
+
   export default {
     name: "my",
     data() {
@@ -104,7 +105,7 @@
       },
       /* 获取用户信息 */
       getUserData:function(){
-        let self = this
+        let self = this;
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'member/currentMember',
@@ -117,7 +118,7 @@
         })
       },
       getUserInfo:function(){
-        let self = this
+        let self = this;
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'member/info',
@@ -127,7 +128,7 @@
         })
       },
       getFootmarkNum:function(){
-        let self = this
+        let self = this;
         // 发送ajax请求校验手机号重复
         self.$ajax({
           method: 'POST',
@@ -248,6 +249,8 @@
   }
   .head .center .headPic img{
     width: 1.6rem;
+    height: 1.6rem;
+    border-radius: 50%;
   }
   .head .center .userName{
     display: flex;

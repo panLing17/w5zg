@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Loading from './loading.vue'
+
 function onTouchMove(inFlag) {
   if (inFlag) {
     document.addEventListener('touchmove', onHandler, false);

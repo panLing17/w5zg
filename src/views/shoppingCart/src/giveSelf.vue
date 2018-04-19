@@ -11,6 +11,7 @@
 <script>
   import selfGoods from './selfGoods'
   import disableGoods from './disableGoods'
+
   export default {
     name: 'give-self',
     data () {

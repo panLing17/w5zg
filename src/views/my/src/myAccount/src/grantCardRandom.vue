@@ -17,7 +17,7 @@
             img(src="../../../../../assets/img/wechat2@2x.png")
         .close(@click="shareShow=false") 取消
     .content
-      qrcode(value="img", :options="{ size: 200 }")
+      qrcode(:value="img", :options="{ size: 200 }")
 </template>
 
 <script>
@@ -40,7 +40,11 @@
             url: this.$apiMember + 'member/qrcode',
             params:{}
           }).then(function (response) {
-            _this.img = response.data.data;
+            if (response.data.code === '081') {
+              _this.img = response.data.data
+            }else {
+              _this.$message.error(response.msg)
+            }
           })
         }
       }

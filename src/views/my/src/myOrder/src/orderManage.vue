@@ -5,18 +5,18 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
-        img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search
-        img(src="../../../../../assets/img/msg_0.png").msg
+        img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()").search
+        img(src="../../../../../assets/img/msg_0.png" v-show="false").msg
     .orderStatus
       ul.wrapStatus
-        li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num}").status {{item}}
+        li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
     .content(v-for="(item,index) in orderDetail")
       .top
         .left
           span.orderNum 订单编号:
           span.num {{item.total_order_no}}
-        .right#state {{item.orderStatus}}  
-      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,id:index,orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
+        .right#state {{item.orderStatus}}
+      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
         .image
           img(:src="items | img-filter" v-for="items in item.logoList")
         .goodsDetails(v-show="item.logoList.length<=1")
@@ -25,9 +25,9 @@
           .cont
             .property
               span.color(v-for="items in item.spec_json") {{items.gspec_value}}
-              span.size 
-            .quantity  
-              span.count x {{item.totalCount}} 
+              span.size
+            .quantity
+              span.count x {{item.totalCount}}
       .bottom
         .left(v-if="false")
           .goodsCode 提货码: {{item.goodsCode}}
@@ -38,22 +38,23 @@
               span.price 合计 :
                 strong.priceNum {{item.oi_pay_price | price-filter}}
       .button
-        .cancel(@click="buttonLeft($event,item.total_order_id)") {{item.buttonL}}
-        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}") {{item.buttonR}}       
+        .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货'") {{item.buttonL}}
+        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货'") {{item.buttonR}}
 </template>
 
 <script>
-    import myGoods from '../../../../../assets/img/my_goods.png'
-    export default {
+  export default {
       name: "orderManage",
       data(){
         return{
+          btnLeftFlag:"", //左边按钮显隐
+          btnRightFlag:"", //右边按钮显隐
           orderStatus:"", //订单的状态
           state:"",
           num:0,
           statusFlag1:false,
           statusFlag2:true,
-          status:["全部","待付款","待发货","待收货","待评价"],
+          status:["全部","待付款","待发货","待收货","已完成"],
           orderDetail:[],
           buttonL:"",
           buttonR:""
@@ -65,9 +66,12 @@
       mounted(){
         this.jump();
         this.$mescrollInt("orderManageMescroll",this.upCallback);
-        //this.request();  
+        //this.request();
       },
       methods:{
+        jumpToSearch(){
+          this.$router.push('/my/searchOrder');
+        },
         //判断上一页点击的索引值
         jump(){
           if (this.$route.query.id == 1) {
@@ -104,7 +108,7 @@
           if (item == "待收货") {
             this.state = 4;
           }
-          if (item == "待评价") {
+          if (item == "已完成") {
             this.state = 3;
           }
           this.request();
@@ -121,8 +125,6 @@
               url:self.$apiTransaction + "order/cancel"+"/+"+id,
               params:{}
             }).then(function(res){
-              console.log(res);
-              console.log(self.state);
               self.request();
             })
           }
@@ -136,7 +138,6 @@
             this.$router.push('/my/checkLogistics');
           }
           if (e.target.innerText == "支付") {
-            alert(id,price);
             this.$router.push({
               path:'/payment',
               query:{
@@ -156,6 +157,7 @@
               params:{}
             }).then(function(res){
               console.log(res);
+              self.request();
             })
           }
         },
@@ -177,7 +179,7 @@
             method: 'post',
             url:self.$apiTransaction + 'order/orderByStatus',
             params: {
-              status: this.state,
+              status: self.state,
               page: pageNum,
               rows: pageSize
             },
@@ -203,7 +205,7 @@
                   arr[i].buttonR = "确认收货";
                   arr[i].orderStatus = "待收货";
                 }
-                
+
               }
               if (arr[i].order_status == "待发货/待备货") {
                 if (arr[i].delivery_ways == "自提") {
@@ -262,7 +264,7 @@
                   self.orderDetail[i].buttonR = "确认收货";
                   self.orderDetail[i].orderStatus = "待收货";
                 }
-                
+
               }
               if (self.orderDetail[i].order_status == "待发货/待备货") {
                 if (self.orderDetail[i].delivery_ways == "自提") {
@@ -299,6 +301,9 @@
     bottom: 0;
     height: auto;
     position: fixed;
+  }
+  .underLine{
+    border-bottom:
   }
   .active{
     color: rgb(244,0,87) !important;
@@ -388,9 +393,9 @@
     border-bottom: 1px solid rgb(242,242,242);
     white-space: normal !important;
     display: flex;
-  } 
+  }
   .center .image{
-    
+
   }
   .center .image img{
     width: 2.5rem;
@@ -399,9 +404,9 @@
   }
   .center .goodsDetails{
     width: 100%;
+    padding-left: .2rem;
   }
   .center .goodsExplain{
-    padding-left: .1rem;
     width: 100%;
   }
   .center .goodsExplain .words{
@@ -459,12 +464,12 @@
     justify-content: flex-end;
   }
   .button div{
-    width: 2.5rem;
-    height: 1rem;
-    border-radius: 1rem;
+    width: 2rem;
+    height: .8rem;
+    border-radius: .8rem;
     text-align: center;
-    line-height: .95rem;
-    font-size: .4rem;
+    line-height: .8rem;
+    font-size: .35rem;
     margin-right: .3rem;
   }
   .button .cancel{

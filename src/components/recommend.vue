@@ -12,6 +12,7 @@
 
 <script>
   import {mapState} from 'vuex'
+
   export default {
     name: "bottom-list",
     props: ['listData', 'background'],

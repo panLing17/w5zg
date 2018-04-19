@@ -12,9 +12,9 @@
           span 025-23562356
         .address
           span 地址
-          strong 江苏省南京市玄武区 699-22 江苏软件园 24栋
+          strong 江苏省南京市玄武区 699-22 江苏软件园
       .righter
-        img(src="../../../../../assets/img/right.png") 
+        img(src="../../../../../assets/img/right.png")
     .logistics
       ul.company(@click="checkCom()")
         li 物流公司
@@ -25,31 +25,35 @@
     .upload
       .up
         span 上传凭证
-      w-upload        
+      w-upload
     .submit(@click="$router.push('/my/selectService')") 提交
-    logCompany(:show="companyFlag", @selectType="", @close="closeCheckCom()")              
+    <!--logCompany(:show="companyFlag", @selectType="", @close="closeCheckCom()")-->
+    pop2(ref="logistics", :data="reasonData", title="物流公司", @selected="logisticsChange")
 </template>
 <script>
   import myGoods from '../../../../../assets/img/my_goods.png'
   import logCompany from './logisticsCompany'
+  import pop2 from './pop2'
   export default {
     name: 'express',
-    components:{logCompany},
+    components:{logCompany, pop2},
     data () {
       return {
         companyFlag: false,
-        msg: false
+        msg: false,
+        logisticsData:[]
       }
     },
     mounted () {
 
     },
+    created () {
+    //  获取物流公司列表
+      this.getLogisticsData()
+    },
     methods: {
-      checkCom(){
-        this.companyFlag = true;
-      },
-      closeCheckCom(){
-        this.companyFlag = false;
+      getLogisticsData () {
+
       }
     }
   }
@@ -76,6 +80,12 @@
     display: flex;
     justify-content: space-between;
     padding: .3rem;
+  }
+  .addressee .lefter {
+    flex: 1;
+  }
+  .addressee .righter {
+    flex: none;
   }
   .addressee .lefter span{
     margin-right: .2rem;
