@@ -16,7 +16,7 @@
           .contactWay 官方联系: {{phone}}
     .logisticsAddress
       img(src="../../../../../assets/img/citySearch@2x.png")
-      .address 
+      .address
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
     .logisticsMsg
@@ -25,7 +25,7 @@
           .time
             span.wrap
               span {{item.time}}
-          .messages 
+          .messages
             span.state {{item.status}}
             img(src="../../../../../assets/img/now@2x.png" v-if="index==0")
             img(src="../../../../../assets/img/past@2x.png" v-else="index==0")
@@ -36,13 +36,11 @@
       .line
       p 推荐
     w-recommend#dataId(:listData="recommendGoods")
-    .bottomPlaceholder                           
+    .bottomPlaceholder
 </template>
 
 <script>
-    import now from '../../../../../assets/img/now@2x.png'
-    import past from '../../../../../assets/img/past@2x.png'
-    export default {
+  export default {
       name: "checkLogistics",
       data(){
         return{
@@ -81,7 +79,7 @@
           let self = this;
           self.$ajax({
             method:"get",
-            url:self.$apiMember + "orderLogistics/api/info",
+            url:self.$apiMember + "orderLogistics/info",
             params:{orderId:self.sonOrder,orderType:self.ordertype}
           }).then(function(res){
             console.log(res.data.data);
@@ -106,10 +104,10 @@
         //点击收起
         packDrop(){
           if (this.packDrops == "点击收起详情") {
-             var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
-             logisticsMsg.style.height = "1.5rem";
-             logisticsMsg.style.overflow = "hidden";
-             logisticsMsg.style.transition = "all 1s";
+            var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
+            logisticsMsg.style.height = "1.5rem";
+            logisticsMsg.style.overflow = "hidden";
+            logisticsMsg.style.transition = "all 1s";
             this.packDrops = "点击查看更多详情";
           }else{
             var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
@@ -188,7 +186,7 @@
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
     display: flex;
-  } 
+  }
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
@@ -237,7 +235,7 @@
   .logisticsMsg{
     height: 100%;
     background-color: #fff;
-    padding-top: .3rem; 
+    padding-top: .3rem;
   }
   .logisticsMsg li{
     width: 100%;
@@ -280,7 +278,7 @@
     position: absolute;
     top: -.5em;
     font-size: .3rem;
-  } 
+  }
   /*物流信息--结束*/
   /*点击收起下拉--开始*/
   .packDrop{

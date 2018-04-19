@@ -28,6 +28,7 @@
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
+
   export default {
     name: 'home',
     data() {

@@ -13,6 +13,7 @@
   import goodsCard from './goodsCard'
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
+
   export default {
     name: 'express',
     data () {

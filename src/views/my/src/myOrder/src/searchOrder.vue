@@ -26,7 +26,7 @@
             span.orderNum 订单编号:
             span.num {{item.total_order_no}}
           .right#states {{item.orderStatus}}  
-        .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,id:index,orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
+        .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'搜索订单',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
           .image
             img(:src="items | img-filter" v-for="items in item.logoList")
           .goodsDetails(v-show="item.logoList.length<=1")
@@ -95,8 +95,17 @@
         this.$mescrollInt("searchOrderMescroll",this.upCallback);
         //加载搜索到的订单列表
         //this.request();
+        //从详情返回时的执行
+        this.judgeUrl();
       },
       methods:{
+        //判断此时的url
+        judgeUrl(){
+          if (this.$route.query.name) {
+            this.msg = this.$route.query.name;
+            this.searchGoodsName();
+          }
+        },
         //历史搜索
         searchHistory(){
           let self = this;
@@ -112,14 +121,13 @@
             }
             var removeElement = function(arr, elm) {
               for(var i=0; i< arr.length; i++) {
-                  if(arr[i].gsr_keywords==elm) {
-                      arr.splice(i,1);
-                      i--;
-                  }
+                if(arr[i].gsr_keywords==elm) {
+                    arr.splice(i,1);
+                    i--;
+                }
               }
               return arr
             };
-
             var arr = self.record1;
             console.log(removeElement(arr,"")); // [2, 3, 7, 9]
             console.log(self.record1);
@@ -131,6 +139,8 @@
           //this.showOrder = true; 
           //让历史搜索记录隐藏
           //this.showHistory = false;
+          //给url上拼一个搜索结果
+          this.$router.push({path:'/my/searchOrder',query:{name:this.msg}});
           //加载订单列表
           this.request();
         },
@@ -139,6 +149,8 @@
           this.selected1 = index;
           //让输入框中显示用户选择的文字
           this.msg = e.target.innerHTML;
+          //给url上拼一个搜索结果
+          this.$router.push({path:'/my/searchOrder',query:{name:this.msg}});
           //点击选择的历史搜索记录后直接进行搜索
           this.request();
           //点击搜索后让历史搜索隐藏

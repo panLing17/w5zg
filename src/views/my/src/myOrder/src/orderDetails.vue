@@ -103,8 +103,7 @@
 </template>
 
 <script>
-    import myGoods from '../../../../../assets/img/my_goods.png'
-    export default {
+  export default {
       name: "orderDetails",
       data(){
         return{
@@ -144,7 +143,6 @@
           recommendGoods: [],
           orderDetails:[],
           TotalOrderId:"", //总的订单id
-
         }
       },
       created(){

@@ -98,6 +98,7 @@
   import storeSelect from './storeSelect'
   import shareSelect from './shareSelect'
   import {mapState} from 'vuex'
+
   export default {
     name: "goods-detailed",
     data () {

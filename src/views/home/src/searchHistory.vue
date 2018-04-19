@@ -1,5 +1,5 @@
 <template lang="pug">
-  .searchHistory
+  .searchHistory.mescroll#historyMescroll
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
@@ -8,23 +8,31 @@
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
           input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()")
       .topRight(slot="right" @click="$router.go(-1)") 取消
-    .history
+    .history(v-show="searchFlag")
       ul.top
         li.left 历史搜索
-        li.right(@click="clear")
+        li.right(@click="clearHistory()")
           img(src="../../../assets/img/searchHistory_clear.png") 
       ul.cont(v-if="flag")
         li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}
       .empty(v-else="flag") 暂无搜索历史          
-    .discover
+    .discover(v-show="searchFlag")
       ul.top
         li.left 搜索发现
         li.right(@click="toggle")
-          img(src="../../../assets/img/searchHistory显示图层.png" v-show="show")
-          img(src="../../../assets/img/searchHistory隐藏图层.png" v-show="hide") 
-      ul.cont(v-show="show")
+          img(src="../../../assets/img/searchHistory显示图层.png" v-if="showDiscover")
+          img(src="../../../assets/img/searchHistory隐藏图层.png" v-else="showDiscover") 
+      ul.cont(v-show="showDiscover")
         li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
-        
+    .result(v-show="resultFlag")
+      .words 没有搜索到
+        span.strong 此类
+        span 商品，及相关商品    
+    .title
+      .line
+      p 推荐
+    w-recommend#dataId(:listData="recommendGoods")
+    .bottomPlaceholder    
           
 </template>
 <script>
@@ -33,11 +41,15 @@
     name: 'searchHistory',
     data () {
       return {
+        searchFlag:true, //历史搜索,搜索发现显隐
+        resultFlag:false, //搜索结果的显隐
+        recommendGoods:[], //推荐的数组
         selected1:null,
         selected2:null,
         flag:true,
         show:true,
         hide:false,
+        showDiscover:"", //搜索发现的显隐
         record1:[],
         record2:[],
         msg:""
@@ -54,17 +66,33 @@
       }
     },
     mounted(){
+      //商品推荐
+      this.$mescrollInt("historyMescroll",this.upCallback);
       //历史搜索
       this.historys();
       //搜索发现
       this.searchDiscover();
+      //显示搜索结果
+      this.resultShow();
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
     },
     methods: {
+      //显示搜索结果
+      resultShow(){
+        if (this.$route.query.relNum == 1) {
+          this.searchFlag = false;
+          this.resultFlag = true;
+        }
+      },
+      //搜索商品去商品展示页
       searchGoods(){
         console.log(this.msg);
         let self = this;
         self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true}});
       },
+      //历史搜索
       historys(){
         let self =this;
         self.$ajax({
@@ -77,6 +105,7 @@
           console.log(self.record1);
         })
       },
+      //搜索发现
       searchDiscover(){
         let self = this;
         self.$ajax({
@@ -90,18 +119,35 @@
         })
       },
 
-
       handFocus () {
-        this.$emit('focus', this.msg)
+        this.$emit('focus', this.msg);
       },
 
-      clear:function(){
-        this.flag = false;
+      //清除历史搜索记录
+      clearHistory(){
+        //this.flag = false;
+        // let self = this;
+        // self.$ajax({
+        //   method:""
+        // })
+        if (this.flag != false) {
+          this.$confirm({
+            title: '确认',
+            message: '真的要这样做吗',
+            confirm: () => {
+              //alert('确定')
+              this.flag = false;
+            },
+            noConfirm: () => {
+              alert('取消')
+            }
+          })
+        }
+        
       },
 
       toggle:function(){
-         this.show = !this.show;
-         this.hide = !this.hide; 
+        this.showDiscover = !this.showDiscover;
       },
 
       change1: function(item,index){
@@ -116,7 +162,42 @@
         this.selected1 = null;
         this.msg = item;
         this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true}});
+      },
+
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if(page.num === 1) self.recommendGoods = []
+          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+//            axios.get("xxxxxx", {
+//          params: {
+//            num: pageNum, //页码
+//            size: pageSize //每页长度
+//          }
+//        })
+//        .then(function(response)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          console.log(response.data.data);
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
       }
+
     }
   }
 </script>
@@ -204,4 +285,40 @@
 }
 /*历史搜索--结束*/
 
+/*搜索结果显示--开始*/
+.result{
+  padding: .7rem .6rem 1.2rem;
+  background-color: #fff;
+}
+.result .words{
+  font-size: .4rem;
+}
+.result .words span.strong{
+  color: rgb(244,0,87);
+  margin: 0 .2rem;
+}
+/*搜索结果显示--结束*/
+.title{
+  margin-top: .5rem;
+  height: .8rem;
+  width: 100%;
+  position: relative;
+  display: flex;
+  background: #f2f2f2;
+  justify-content: center;
+  align-items: center;
+}
+.line{
+  height: 1px;
+  width: 3rem;
+  background: #999;
+}
+.title p{
+  position: absolute;
+  background: #f2f2f2 ;
+  padding: 0 .2rem;
+}
+.bottomPlaceholder {
+  height: 1.5rem;
+}
 </style>
