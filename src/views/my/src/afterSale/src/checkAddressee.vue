@@ -7,16 +7,16 @@
     .wrap
       ul
         li.name
-          span 收件人
-          input(placeholder="请输入收件人姓名")
+          span.left 收件人
+          input.right(placeholder="请输入收件人姓名")
         li.phone
-          span 联系方式
-          input(placeholder="请输入固定电话或手机")
+          span.left 联系方式
+          input.right(placeholder="请输入固定电话或手机")
         li.address
-          span 地址
-          input(placeholder="请输入收件人地址")  
+          span.left 地址
+          textarea.right(placeholder="请输入收件人地址")
     .makeSure(@click="$router.push('/my/express')") 确认
-             
+
 </template>
 <script>
 
@@ -24,7 +24,11 @@
     name: 'checkAddressee',
     data () {
       return {
-
+        expressInfo: {
+          name: '',
+          phone: '',
+          detailedAddr: ''
+        }
       }
     },
     mounted () {
@@ -57,29 +61,36 @@
     padding: 0 .3rem;
   }
   .wrap li{
-    height: 1.5rem;
+    min-height: 1.5rem;
     line-height: 1.5rem;
+    border-bottom: 1px solid rgb(242,242,242);
+    display: flex;
   }
-  .wrap li.name{
-    border-bottom: .5px solid rgb(242,242,242);
+  .wrap li:last-child {
+    border: none;
   }
-  .wrap li.phone{
-    border-top: .5px solid rgb(242,242,242);
-    border-bottom: .5px solid rgb(242,242,242);
-  }
-   .wrap li.address{
-    border-top: .5px solid rgb(242,242,242);
-  }
-  .wrap li span{
+
+  .wrap li .left{
     font-size: .4rem;
     display: inline-block;
     width: 2rem;
+    flex: none;
   }
-  .wrap li input{
+  .wrap li .right{
+    display: inline-block;
+    vertical-align: top;
+    font-size: .29rem;
     border: 0;
     outline: none;
+    flex: 1;
   }
-  .wrap li input::placeholder{
+  textarea.right {
+    padding-top: .5rem;
+  }
+  textarea::placeholder{
+    color: rgb(153,153,153);
+  }
+  input::placeholder{
     color: rgb(153,153,153);
   }
   /*收件人信息--结束*/

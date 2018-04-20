@@ -47,7 +47,7 @@
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
               .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event)") {{moreBtnCont}}
-            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event,item.order_id)") {{btnF}}
+            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event,item.delivery_id, items)") {{btnF}}
             .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付' && btnS !== '提醒发货'" @click.stop="judgeBtnS($event,item.order_id)") {{btnS}}
       .bottom(v-show="flag")
         span.shop 提货门店:
@@ -384,18 +384,21 @@
           })
         },
         //按照按钮上的文字跳转页面
-        judgeBtnF(e,sonId){
+        judgeBtnF(e,deliveryId,goods){
           //此功能还没有
           if (e.target.innerHTML == "再次购买") {
             alert("逗你玩！");
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
+
             this.$router.push({path:'/my/checkLogistics',query:{orderId:sonId,address:this.address}});
           }
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货") {
-            this.$router.push({path:'/my/applyAfterSale',query:{orderId:sonId}});
+            goods.delivery_id = deliveryId
+            this.$store.commit('getReturnGoods', goods)
+            this.$router.push({path:'/my/refundReturn'});
           }
           if (e.target.innerHTML == "取消订单"){
 

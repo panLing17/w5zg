@@ -42,9 +42,9 @@
           .goodsDetails
             .words {{item.goods_name}}
             .property
-              span.color {{item.spec_json[0].gspec_value}}
-              span.size(v-if="item.spec_json[1]") {{item.spec_json[1].gspec_value}}
+              span(v-for="i in item.spec_json") {{i.gspec_value}}
               span.count x {{item.gr_num}}
+        .btn(v-if="goodsList.gr_status==='待发货'", @click="$router.push({path: '/my/express', query:{id:$route.query.id}})") 发货
         .refundCont
           ul
             li
@@ -317,8 +317,8 @@
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span{
+    margin-right: .3rem;
   }
   .center .goodsDetails .amount{
     margin-top: 1rem;

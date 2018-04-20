@@ -25,17 +25,16 @@
               .goodsDetails
                   .words {{info.goods_name}}
                   .property
-                    span.color {{info.spec_json[0].gspec_value}}
-                    span.size {{info.spec_json[1].gspec_value}}
+                    span(v-for="i in info.spec_json") {{i.gspec_value}}
                   .amount x
                     span {{info.gr_num}}
             .bottom
               .left
-                .returnState {{item.gr_status}}
+                .returnState {{item.gr_status | decFilter(item.reject_way)}}
               .right
                 .button
-                  .cancel(@click="$router.push('/my/express')", v-if="item.gr_status==='待发货'") 发货
-                  .pay( @click="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
+                  .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货'&&item.reject_way!=='门店退货'") 发货
+                  .pay( @click.stop="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
     .noData(v-if="isEmpty") 暂无更多记录
 </template>
 
@@ -70,6 +69,18 @@
             text = '已完成'
           }
           return text
+        },
+        decFilter (value,way) {
+          if (value === '待发货') {
+            if (way!='门店退货') {
+              return value
+            }else {
+              return '买家请退货至门店'
+            }
+          }else {
+            return value
+          }
+
         }
       },
       created(){
@@ -110,6 +121,7 @@
             if (response.data.code === '081') {
               successCallback&&successCallback(response.data.data);//成功回调
             }else {
+              self.mescroll.hideTopBtn();
               self.mescroll.endErr();
             }
           })
@@ -206,7 +218,7 @@
     display: flex;
   }
   .center .image{
-
+    flex: none;
   }
   .center .image img{
     width: 2.32rem;
@@ -216,6 +228,7 @@
   }
   .center .goodsDetails{
     margin-left: .3rem;
+    flex: 1;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
@@ -225,8 +238,8 @@
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span{
+    margin-right: .3rem;
   }
   .center .goodsDetails .amount{
     margin-top: 1rem;

@@ -13,8 +13,7 @@
         .goodsDetails
           .words {{goodsList.goods_name}}
           .property
-            span.color {{goodsList.spec_json[0].gspec_value}}
-            span.size {{goodsList.spec_json[1].gspec_value}}
+            span(v-for="item in goodsList.spec_json") {{item.gspec_value}}
           .count x
             span {{goodsList.goods_num}}
     .goodsStatus(@click="$refs.statusChoose.showPop()" )
@@ -61,7 +60,7 @@
         span 上传凭证
         span (最多可上传9张图片)
       w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr")
-    .submit(@click="send") 提交
+    .submit(@click="dataCheck") 提交
     pop1(ref="statusChoose", :data="statusData", title="货物状态", @selected="statusTypeChange")
     pop1(ref="returnStyleChoose", :data="returnStyleData", title="退货方式", @selected="returnStyleChange")
     pop2(ref="reasonTypeChoose", :data="reasonData", :title="reasonTitle", item-key="rgr_reson", @selected="reasonTypeChange")
@@ -172,10 +171,10 @@
       },
       // 获取图片数组
       getImageArr (arr) {
+        console.log(arr)
         this.imageArr = ''
         this.imageArr = arr.join('&')
         // this.imageArr = this.imageArr.substring(0,this.imageArr.length-1)
-        console.log(typeof  this.imageArr)
       },
     //  检查申请退款必填项数据
       dataCheck (){
@@ -183,10 +182,10 @@
           this.$message.error('请选择退货原因！')
           return;
         }
+        this.send()
       },
       // 申请退货/退款
       send () {
-        this.dataCheck()
         let _this = this;
         let url = '';
         if (this.statusType === 0) {
@@ -238,7 +237,7 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             // 跳转到退货详情页
-            _this.$router.replace({path:'/my/returnDetails',query:{id:response.data.data, detailId:_this.goodsList.order_detail_id}})
+            _this.$router.replace({path:'/my/returnDetails',query:{id:id, detailId:_this.goodsList.order_detail_id}})
           }else {
             _this.$message.error(response.data.msg)
           }
@@ -268,10 +267,16 @@
     background-color: #fff;
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
-    white-space:nowrap;
-    overflow-x:auto;
+    flex-wrap: nowrap;
     display: flex;
     position: relative;
+  }
+  .center .image {
+    flex: none;
+  }
+  .center .goodsDetails {
+    flex: 1;
+    overflow: hidden;
   }
   .center .check{
     line-height: 2.4rem;
@@ -287,7 +292,7 @@
   }
   .center .goodsDetails{
     margin-left: .3rem;
-    line-height: 1;
+    /*line-height: 1;*/
   }
   .center .goodsDetails .words{
     font-size: .35rem;
@@ -297,8 +302,8 @@
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span{
+    margin-right: .3rem;
   }
   .center .goodsDetails .count{
     margin-top: 1rem;

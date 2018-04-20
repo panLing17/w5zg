@@ -8,7 +8,7 @@
     .mescroll#sportsMescroll
       .content
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
-          div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
+          div(v-for="tag in banner", style="width:100%" )
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
         .recommendWrapper(v-if="!isEmpty")
           ul.list
@@ -120,9 +120,12 @@
 
 <style scoped>
   .mescroll {
-    top: 0;
+    position: fixed;
+    top: 1.3rem;
     bottom: 0;
     height: auto;
+    width: 100%;
+
   }
   .sports {
     background: rgb(242,242,242);
