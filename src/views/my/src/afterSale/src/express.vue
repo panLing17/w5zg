@@ -123,7 +123,7 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             // 跳转到退货列表
-            _this.$router.replace({path:'/my/refundAfterSale'})
+            _this.$router.go(-1)
           }else {
             _this.$message.error(response.data.msg)
           }

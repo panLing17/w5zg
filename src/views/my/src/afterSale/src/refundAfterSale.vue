@@ -61,11 +61,11 @@
       filters: {
         statusFilter (value) {
           let text = ''
-          if (value==='审核拒绝' || value === '审核中') {
+          if (value === '审核中') {
             text = '申请中'
           }else if(value === '待发货' || value === '卖家待收货') {
             text = '退款中'
-          } else if(value === '已完成') {
+          } else if(value === '已完成' || value==='审核拒绝') {
             text = '已完成'
           }
           return text
