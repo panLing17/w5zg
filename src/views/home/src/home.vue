@@ -70,7 +70,6 @@
       }
     },
     mounted() {
-      alert(this.$apiMember)
       this.$mescrollInt("homeMescroll",this.upCallback);
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
