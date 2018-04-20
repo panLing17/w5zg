@@ -7,7 +7,9 @@
             .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
               .checkbox(@click.stop="")
                 w-checkbox(v-model="i.checked", @change="selectedChange")
-              img(:src="i.logo | img-filter")
+              .img
+                img(:src="i.logo | img-filter")
+                p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
               .info
                 .text
                   .name {{i.gi_name}}
@@ -21,13 +23,14 @@
             .main(v-else, key="change")
               .checkbox
                 w-checkbox(v-model="i.checked", @change="selectedChange")
-              img(:src="i.logo | img-filter")
+              .img
+                img(:src="i.logo | img-filter")
               .specChange
                 .specData
                   p
                     span(v-for="(item,specIndex) in i.specVOList") {{item.gspec_value}}{{specIndex < i.specVOList.length-1 ? ',' : ''}}
                   img(src="../../../assets/img/next@2x.png")
-                w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", width="4rem")
+                w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
             .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>快递配送
@@ -175,14 +178,32 @@
     display: flex;
     align-items: center;
   }
-  .main>img{
+  .main>.img{
     width: 2rem;
     height: 2rem;
     border-radius: .2rem;
+    position: relative;
+  }
+  .img img{
+    width: 100%;
+    height: 100%;
+  }
+  .img p{
+    padding-left: 2px;
+    font-size: .2rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: .5rem;
+    line-height: .5rem;
+    width: 100%;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
   }
   /*  */
   .info{
     flex-grow: 1;
+    width: 0;
     padding-left: .3rem;
     display: flex;
     flex-direction: column;

@@ -26,13 +26,13 @@
       ul.saveMoney
         li.red
           .label 现金券
-          .text 省{{xian}}元
+          .text 省{{makeMoney.useCardEconomyPrice}}元
         li.gray
           .label 直接购买
-          .text 约省{{direct}}元
+          .text 约省{{makeMoney.directEconomyPrice}}元
         li.gray
           .label 通用券
-          .text 约省{{tong}}元
+          .text 约省{{makeMoney.useTicketEconomyPricce}}元
     .numberBox
       ul.number
         li 邮费{{goodsData.goi_freight}}
@@ -107,6 +107,8 @@
     name: "goods-detailed",
     data () {
       return {
+        // 能省多少钱
+        makeMoney: {},
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
@@ -153,7 +155,7 @@
     },
     computed:{
       // 现金券购买省钱价格
-      xian () {
+      /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
       },
       // 直接购买购买省钱价格
@@ -163,8 +165,8 @@
       // 通用券购买省钱价格
       tong () {
         return parseInt(this.goodsData.counter_interval)
-      },
-      ...mapState(['location', 'userData'])
+      },*/
+      ...mapState(['location', 'userData','skuId'])
     },
     components: {selectSize,citySelect,disType,storeSelect,shareSelect,onlyStoreSelect},
     mounted () {
@@ -172,13 +174,19 @@
       this.getGoodsDesc()
       this.getBanner()
       this.getSpec()
+      // 防止从订单页回退，skuid并没变化导致的可省金额不变化的问题
+      let sku = this.skuId === '' ? 0 : this.skuId
+      this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback)
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn();
+      this.mescroll.hideTopBtn()
     },
     watch: {
+      skuId (val) {
+        this.getMakeMoney (val)
+      },
       $route () {
         this.getGoodsDetailed()
         this.getGoodsDesc()
@@ -188,6 +196,17 @@
       }
     },
     methods:{
+      // 获取能省多少钱
+      getMakeMoney (id) {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goods/sku/'+ id +'/economyPrice',
+          params: {}
+        }).then(function (response) {
+          self.makeMoney = response.data.data
+        })
+      },
       // 获取商品详情
       getGoodsDetailed () {
         let self = this
@@ -279,6 +298,8 @@
           this.onTouchMove(true)
           document.body.style.overflow='hidden'
           document.body.style.height="100vh"
+          // 返回顶部
+          this.mescroll.hideTopBtn()
         }
       },
       buy () {
@@ -302,6 +323,8 @@
           this.onTouchMove(true)
           document.body.style.overflow='hidden'
           document.body.style.height="100vh"
+          // 隐藏返回顶部
+          this.mescroll.hideTopBtn()
         }
       },
       // 单独选择门店后
@@ -450,6 +473,8 @@
         // 并且，告诉组件，此操作仅仅为了选择规格
         this.onlySelectSpec = true
         this.selectFlag = true
+        // 返回顶部
+        this.mescroll.hideTopBtn()
         // 重置购物车flag
         this.shoppingCartFlag = false
       },

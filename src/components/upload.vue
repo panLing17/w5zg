@@ -75,7 +75,9 @@
           self.urlList.forEach((now,index)=>{
             array.push(now.url)
           })
-          array.splice(array.length-1,1)
+          if (array[array.length-1].url === '') {
+            array.splice(array.length-1,1)
+          }
           self.$emit('success',array)
         })
       },

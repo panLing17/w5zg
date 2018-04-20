@@ -1,10 +1,10 @@
 <template lang="pug">
   .selectSizeBox
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close")
+      .bg(v-if="show", @click="close", @touchmove="notScroll")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show", @touchstart="touchStart", @touchmove="touchMove")
-        .photosBox(@touchstart="removeTouchDisable")
+        .photosBox(@touchstart="removeTouchDisable",  @touchmove="disableDefaultMove")
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
             li(v-for="item in list")
               img(:src="item.gi_img_url | img-filter")
@@ -72,6 +72,9 @@
       this.getStoreNum()
     },
     methods:{
+      notScroll (e) {
+        e.preventDefault()
+      },
       close () {
         this.$emit('close')
       },
@@ -91,7 +94,7 @@
           // 此条为了恢复屏幕触摸事件
           this.$emit('confirm', data)
         } else {
-          this.$message.error('商品没有库存了')
+          this.$message.error('商品库存不足')
         }
       },
       removeTouchDisable () {
@@ -147,7 +150,7 @@
           // 此条为了恢复屏幕触摸事件
           this.$emit('buy', data)
         } else {
-          this.$message.error('商品没有库存了')
+          this.$message.error('商品库存不足')
         }
 
       },
@@ -155,8 +158,13 @@
       touchStart (e) {
         this.startY = e.targetTouches[0].clientY
       },
+      // 阻止默认滑动
+      disableDefaultMove (e) {
+        e.preventDefault()
+      },
       // 滑动中
       touchMove (e) {
+        e.preventDefault()
         this.moveY = e.targetTouches[0].clientY
         // 滑动距离超过100 执行样式变换
         if( this.startY -this.moveY > 100) {
