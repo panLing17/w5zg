@@ -9,7 +9,7 @@
           .main
             .checkbox
               img(src="../../../assets/img/Invalid@3x.png")
-            img(src="../../../../static/img/1.jpg")
+            img(:src="i.logo | img-filter")
             .info
               .text
                 .name {{i.gi_name}}

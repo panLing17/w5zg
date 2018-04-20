@@ -9,109 +9,127 @@
         img(src="../../../../../assets/img/msg_0.png").msg
     .orderStatus
       ul.wrapStatus
-        li(v-for="(item,index) in status" @click="check(index)" :class="{active:index == num}").status {{item}}
-    .content(v-for="(item,index) in orderDetail")
-      .top
-        .left
-          span.orderNum 订单编号:
-          span.num {{item.orderNum}}
-        .right#state {{item.status}}  
-      .center(@click="$router.push('/my/returnDetails')")
-        .image
-          img(:src="item.imageSrc")
-        .goodsDetails
-            .words {{item.words}}
-            .property
-              span.color {{item.color}}
-              span.size {{item.size}}
-            .amount x
-              span {{item.amount}}   
-      .bottom
-        .left
-          .returnState {{item.returnState}}
-        .right
-          .button
-            .cancel(@click="$router.push('/my/express')" v-show="item.status === '退款中'") {{item.buttonL}}
-            .pay(:class="{a:item.status === '待发货'}" @click="$router.push('/my/returnDetails')") {{item.buttonR}}       
+        li.status(v-for="(item,index) in status" @click="statusChange(index)" :class="{active:index===statusActive}") {{item}}
+    .mescroll#saleMescroll
+      .contentWrapper
+        .content(v-for="(item,index) in orderDetail", v-if="!isEmpty")
+          .top
+            .left
+              span.orderNum 订单号:
+              span.num {{item.reject_num}}
+            .right#state {{item.gr_status | statusFilter}}
+          div(v-for="(info, index) in item.rejectedDetail")
+            .center
+              .image
+                img(:src="info.logo | img-filter")
+              .goodsDetails
+                  .words {{info.goods_name}}
+                  .property
+                    span.color {{info.spec_json[0].gspec_value}}
+                    span.size {{info.spec_json[1].gspec_value}}
+                  .amount x
+                    span {{info.gr_num}}
+            .bottom
+              .left
+                .returnState {{item.gr_status}}
+              .right
+                .button
+                  .cancel(@click="$router.push('/my/express')", v-if="item.gr_status==='待发货'") 发货
+                  .pay( @click="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
+    .noData(v-if="isEmpty") 暂无更多记录
 </template>
 
 <script>
-    import myGoods from '../../../../../assets/img/my_goods.png'
     export default {
       name: "refundAfterSale",
       data(){
         return{
-          num:0,
-          statusFlag1:false,
-          statusFlag2:true,
-          status:["全部","申请中","退款中","已退款","已完成"],
-          orderDetail:[
-            {
-              orderNum:"2018031401",
-              status:"申请中",
-              imageSrc:myGoods,
-              returnState:"等待确认",
-              words:"法国PELLIOT秋冬新品户外冲锋衣男",
-              color:"黄色",
-              size:"L",
-              amount:1,
-              buttonL:"发货",
-              buttonR:"查看详情"
-            },
-            {
-              orderNum:"2018031402",
-              status:"退款中",
-              imageSrc:myGoods,
-              returnState:"等待买家发货",
-              words:"法国PELLIOT秋冬新品户外冲锋衣男",
-              color:"黄色",
-              size:"L",
-              amount:1,
-              buttonL:"发货",
-              buttonR:"查看详情"
-            },
-            {
-              orderNum:"2018031403",
-              status:"已完成",
-              imageSrc:myGoods,
-              returnState:"退货退款完成",
-              words:"法国PELLIOT秋冬新品户外冲锋衣男",
-              color:"黄色",
-              size:"L",
-              amount:1,
-              buttonL:"发货",
-              buttonR:"查看详情"
-            },
-            {
-              orderNum:"2018031404",
-              status:"已完成",
-              imageSrc:myGoods,
-              returnState:"退货退款完成",
-              words:"法国PELLIOT秋冬新品户外冲锋衣男",
-              color:"黄色",
-              size:"L",
-              amount:1,
-              buttonL:"发货",
-              buttonR:"查看详情"
-            }
-          ]
+          statusActive: 0,
+          status:["全部","申请中","退款中","已完成"],
+          orderDetail:[]
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.orderDetail == null || this.orderDetail.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
+        }
+      },
+      filters: {
+        statusFilter (value) {
+          let text = ''
+          if (value==='审核拒绝' || value === '审核中') {
+            text = '申请中'
+          }else if(value === '待发货' || value === '卖家待收货') {
+            text = '退款中'
+          } else if(value === '已完成') {
+            text = '已完成'
+          }
+          return text
         }
       },
       created(){
 
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+      },
       mounted(){
-        
+        // 获取数据
+        this.$mescrollInt("saleMescroll",this.upCallback);
       },
       methods:{
-        check(index){
-          this.num = index;
+        upCallback: function(page) {
+          let self = this;
+          this.getListDataFromNet(page.num, page.size, function(curPageData) {
+            if(page.num === 1) self.orderDetail = []
+            self.orderDetail = self.orderDetail.concat(curPageData)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function() {
+            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr();
+          })
+        },
+        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+          let self = this;
+          let form = {
+            page: pageNum,
+            rows: pageSize,
+            status: this.statusActive+''
+          }
+          self.$ajax({
+            method: 'post',
+            url:this.$apiTransaction + 'goodsRejected/rejectedList',
+            params: form,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }).then(function (response) {
+            if (response.data.code === '081') {
+              successCallback&&successCallback(response.data.data);//成功回调
+            }else {
+              self.mescroll.endErr();
+            }
+          })
+        },
+        statusChange (index) {
+          this.statusActive = index
+          this.mescroll.destroy();
+          this.$mescrollInt("saleMescroll",this.upCallback);
         }
       }
     }
 </script>
 
 <style scoped>
+  .mescroll {
+    position: fixed;
+    top: 2.3rem;
+    bottom: 0;
+    height: auto;
+  }
   .active{
     color: rgb(244,0,87) !important;
   }
@@ -186,12 +204,13 @@
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
     display: flex;
-  } 
+  }
   .center .image{
-    
+
   }
   .center .image img{
-    width: 2.5rem;
+    width: 2.32rem;
+    height: 2.32rem;
     border-radius: .2rem;
     margin-right: .3rem;
   }
@@ -270,4 +289,14 @@
     margin-left: .3rem;
   }
   /*订单内容--结束*/
+  .noData {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    color: rgb(153,153,153);
+    font-size: .4rem;
+  }
 </style>

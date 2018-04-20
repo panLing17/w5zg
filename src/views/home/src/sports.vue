@@ -1,26 +1,27 @@
 <template lang="pug">
-  .sports.mescroll#sportsMescroll
+  .sports
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 运动
+      .topCenter(slot="center")
       .topRight(slot="right")
-    .content
-      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
-        div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
-          img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
-      .recommendWrapper(v-if="!isEmpty")
-        ul.list
-          li.item(v-for="item in recommendGoods")
-            img.img(:src="item.gi_image_url | img-filter")
-            .nameWrapper
-              // carry_type 1可自提 2不可自提
-              span.maybe(v-if="item.carry_type===1") 可自提
-              span.name {{item.gi_name}}
-            .price
-              span.current ￥{{item.price | round}}
-              span.save 可省XXX元
-      .noData(v-if="isEmpty") 暂无推荐商品
+    .mescroll#sportsMescroll
+      .content
+        carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
+          div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.ac_id,tag.linkType)")
+            img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
+        .recommendWrapper(v-if="!isEmpty")
+          ul.list
+            li.item(v-for="item in recommendGoods", @click="$router.push({path: '/goodsDetailed',query: {id: item.gspu_id}})")
+              img.img(:src="item.gi_image_url | img-filter")
+              .nameWrapper
+                // carry_type 1可自提 2不可自提
+                span.maybe(v-if="item.carry_type===1") 可自提
+                span.name {{item.gi_name}}
+              .price
+                span.current ￥{{item.price | round}}
+                span.save 可省XXX元
+        .noData(v-if="isEmpty") 暂无推荐商品
 </template>
 
 <script>
@@ -63,8 +64,8 @@
       },
       methods: {
         getParmas () {
-          this.parentId = this.$route.params.parentId;
-          this.parentType = this.$route.params.parentType;
+          this.parentId = this.$route.query.actId;
+          this.parentType = this.$route.query.parentType;
         },
         getBanner () {
           let self = this
@@ -73,7 +74,7 @@
             url: this.$apiApp + 'index/advertiseContentList',
             params: {
               acCataType: 115,
-              acCataTypeId: 14
+              acCataTypeId: this.$route.query.actId
             },
           }).then(function (response) {
             self.banner = response.data.data
@@ -129,7 +130,6 @@
     height: 100vh;
     position: absolute;
     z-index: 100;
-    padding-top: .26rem;
   }
   .recommendWrapper {
     margin-top: .26rem;

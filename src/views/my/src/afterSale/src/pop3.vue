@@ -1,34 +1,52 @@
 <template lang="pug">
-  .selectGoodsStatus
+  .returnReason
     transition(name="fade")
-      .bg(v-if="show", @click="close")
+      .bg(v-if="show", @click="hide")
     transition(name="fold")
       .main(v-if="show")
-        .title  货物状态
+        .title  {{title}}
         ul
-          li(@click="selected(0)") 仅退款
-          li(@click="selected(1)") 退款退货
+          li(v-for="(item,index) in data", @click="selected(index)") {{item[itemKey]}}
 </template>
 
 <script>
   export default {
-    name: "selectGoodsStatus",
+    name: "pop3",
     data () {
       return {
+        show: false
+      }
+    },
+    watch: {
+      // 模态框出现禁止页面滑动
+      show (cur, old) {
+        if (cur) {
+          document.getElementsByTagName('body')[0].style.overflow = 'hidden';
+        }else {
+          document.getElementsByTagName('body')[0].style.overflow = 'auto';
+        }
       }
     },
     props: {
-      show: {
-        type: Boolean,
-        default: false
-      }
+      data: {
+        type: Array,
+        default () {
+          return []
+        }
+      },
+      title: String,
+      itemKey: String
     },
     methods:{
-      close () {
-        this.$emit('close')
+      showPop () {
+        this.show = true
+      },
+      hide () {
+        this.show = false
       },
       selected (num) {
-        this.$emit('selectType',num)
+        this.$emit('selected',num)
+        this.hide();
       }
     }
   }
@@ -54,11 +72,11 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 3.7rem;
+    /*height: 3.7rem;*/
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 102;
+    z-index: 101;
     font-size: .4rem;
     transform: translate3d(0,0,0);
   }
@@ -83,8 +101,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .main ul li:first-child{
-    border-bottom: solid 1px #ddd ;
   }
 </style>

@@ -64,7 +64,7 @@
     .submit(@click="send") 提交
     pop1(ref="statusChoose", :data="statusData", title="货物状态", @selected="statusTypeChange")
     pop1(ref="returnStyleChoose", :data="returnStyleData", title="退货方式", @selected="returnStyleChange")
-    pop2(ref="reasonTypeChoose", :data="reasonData", :title="reasonTitle", @selected="reasonTypeChange")
+    pop2(ref="reasonTypeChoose", :data="reasonData", :title="reasonTitle", item-key="rgr_reson", @selected="reasonTypeChange")
 </template>
 <script>
   import pop1 from './pop1'
@@ -203,13 +203,9 @@
           reasonId:this.reasonType,
           type:'1'
         }
-        console.log(form.picUrl)
-        // form = JSON.stringify(form)
-        console.log(form)
         this.$ajax({
           method: 'post',
           url: this.$apiTransaction + url,
-          // url: "http://192.168.1.171:8061/"+url,
           params: form,
           // traditional: true
         }).then(function (response) {

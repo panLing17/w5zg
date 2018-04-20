@@ -249,58 +249,6 @@
       storeChange (data) {
         this.$store.commit('getLocation',data)
         this.selectStoreFlag = false
-        // 如果操作来自购买按钮
-        if (this.ofBuy) {
-          /* let self = this
-          this.$ajax({
-            method: 'post',
-            url: self.$apiTransaction + 'order/submitNowCarryOrder',
-            params: {
-              gspuId: self.$route.query.id
-            }
-          }).then(function (response) {
-            response.data.data.forEach((now,index)=>{
-              now.valueIndex = 0
-            })
-            self.spec = response.data.data
-          }) */
-          // 规格
-          let spec = []
-          this.spec.forEach((now)=>{
-            spec.push(now.specValue[now.valueIndex])
-          })
-          // 订单页需要展示及用到的数据
-          let orderData = [{
-            storeName: data.store.name,
-            storeLocation: data,
-            photo: this.banner[0].gi_img_url,
-            spec: spec,
-            number: this.content,
-            goodsName: this.goodsData.gi_name,
-            price: this.price
-          }]
-          // 传入中转
-          this.$store.commit('transferGive', orderData)
-          this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
-        }
-        if (this.shoppingCartFlag) {
-          // 如果操作来自添加购物车按钮
-          let self = this
-          this.$ajax({
-            method: 'post',
-            url: self.$apiGoods+ 'goods/shoppingCart/add',
-            params: {
-              gskuId: self.$store.state.skuId,
-              deliveryWays: 168,
-              province: self.$store.state.location.province.id,
-              city: self.$store.state.location.city.id,
-              storeId: self.storeId,
-              goodsNum: self.content
-            }
-          }).then(function (response) {
-            self.$message.success('添加购物车成功')
-          })
-        }
       },
       // 选择城市变化后
       cityChange (data) {
@@ -378,7 +326,6 @@
           this.spec.forEach((now)=>{
             spec.push(now.specValue[now.valueIndex])
           })
-          console.log(this.$store.state.location)
           // 订单页需要展示及用到的数据
           let orderData = [{
             storeName: this.$store.state.location.store.name,
@@ -389,7 +336,6 @@
             goodsName: this.goodsData.gi_name,
             price: this.price
           }]
-          console.log(orderData)
           // 传入中转
           this.$store.commit('transferGive', orderData)
           this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
@@ -883,6 +829,7 @@
   }
   .buttons {
     position: fixed;
+    z-index: 1;
     bottom: 0;
     left: 0;
     width: 100%;
