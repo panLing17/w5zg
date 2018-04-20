@@ -18,7 +18,7 @@
       img(src="../../../../../assets/img/citySearch@2x.png")
       .address
         span 收货地址:
-        strong 江苏省南京市玄武区 699-22 江苏软件园24栋
+        strong {{address}}
     .logisticsMsg
       ul
         li(v-for="(item,index) in states")
@@ -44,6 +44,7 @@
       name: "checkLogistics",
       data(){
         return{
+          address:this.$route.query.address, //接收订单详情页面的地址
           ordertype:"", //订单类型
           sonOrder:1, //子订单id
           goodsStatus:"", //货物的状态
@@ -212,7 +213,7 @@
     background-color: #fff;
     margin-top: .2rem;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     text-align: center;
     padding: .4rem .3rem;
   }
