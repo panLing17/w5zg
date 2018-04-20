@@ -49,7 +49,7 @@
                   strong.priceNum {{item.oi_pay_price | price-filter}}
         .button
           .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货'") {{item.buttonL}}
-          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货'") {{item.buttonR}}
+          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息'") {{item.buttonR}}
     .title(v-show="recommendFlag")
       .line
       p 推荐
@@ -97,6 +97,8 @@
         //this.request();
         //从详情返回时的执行
         this.judgeUrl();
+        //加载推荐商品
+        this.getListDataFromNets();
       },
       methods:{
         //判断此时的url
@@ -299,7 +301,9 @@
               self.showOrder = false;
               self.showHistory = false;
               self.showRel = true;
+              self.recommendFlag = true;
             } else{
+              self.recommendFlag = false;
               self.showOrder = true;
               self.showHistory = false;
               for (var i=0; i<self.orderDetail.length; i++) {
@@ -350,29 +354,30 @@
         },
 
         //推荐商品的请求
-        upCallback: function(page) {
-          let self = this;
-          this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1) self.recommendGoods = []
-            self.recommendGoods = self.recommendGoods.concat(curPageData)
-            self.mescroll.endSuccess(curPageData.length)
-          }, function() {
-            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-            self.mescroll.endErr();
-          })
-        },
-        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        // upCallback: function(page) {
+        //   let self = this;
+        //   this.getListDataFromNet(page.num, page.size, function(curPageData) {
+        //     if(page.num === 1) self.recommendGoods = []
+        //     self.recommendGoods = self.recommendGoods.concat(curPageData)
+        //     self.mescroll.endSuccess(curPageData.length)
+        //   }, function() {
+        //     //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+        //     self.mescroll.endErr();
+        //   })
+        // },
+        getListDataFromNets(pageNum,pageSize,successCallback,errorCallback) {
           let self = this;
           self.$ajax({
             method: 'post',
             url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
             params: {
-              page: pageNum,
-              rows: pageSize
+              page: 1,
+              rows: 5
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            successCallback&&successCallback(response.data.data);//成功回调
+            //successCallback&&successCallback(response.data.data);//成功回调
+            self.recommendGoods = response.data.data;
           })
         },
 

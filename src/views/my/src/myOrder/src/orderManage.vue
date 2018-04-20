@@ -39,7 +39,7 @@
                 strong.priceNum {{item.oi_pay_price | price-filter}}
       .button
         .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货'") {{item.buttonL}}
-        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货'") {{item.buttonR}}
+        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息'") {{item.buttonR}}
 </template>
 
 <script>

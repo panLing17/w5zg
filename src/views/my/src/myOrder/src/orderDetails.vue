@@ -47,8 +47,8 @@
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
               .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event)") {{moreBtnCont}}
-            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event)") {{btnF}}
-            .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付'" @click.stop="judgeBtnS($event,item.order_id)") {{btnS}}
+            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event,item.order_id)") {{btnF}}
+            .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付' && btnS !== '提醒发货'" @click.stop="judgeBtnS($event,item.order_id)") {{btnS}}
       .bottom(v-show="flag")
         span.shop 提货门店:
         span {{item.si_name}}
@@ -98,7 +98,7 @@
     .bottomPlaceholder
     .fixedBtn
       .leftBtn(v-show="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款'" @click="jumpToLeft($event)") {{leftBtn}}
-      .rightBtn(@click="jumpToRight($event)" v-show="rightBtn !== '再次购买' && rightBtn !== '确认收货'") {{rightBtn}}
+      .rightBtn(@click="jumpToRight($event)" v-show="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货'") {{rightBtn}}
 
 </template>
 
@@ -158,6 +158,7 @@
         this.mescroll.hideTopBtn();
       },
       methods:{
+        //
         //倒计时
         countDown(times){
           let self = this;
@@ -227,7 +228,7 @@
         //点击更多后展示的按钮
         judgeMoreBtn(e){
           if (e.target.innerHTML == "申请退货") {
-
+            this.$router.push({path:'/my/applyAfterSale',query:{orderId:sonId}});
           }
         },
         //订单详情展示
@@ -295,7 +296,7 @@
                   self.btnSFlag = true;
                   self.btnFFlag = true;
                   self.btnF = "申请退货";
-                  self.btnS = "提醒发货";
+                  self.btnS = "物流信息";
                   self.leftBtnFlag = true;
                   self.leftBtn = "批量退款";
                   self.rightBtn = "提醒发货";
@@ -378,30 +379,23 @@
               }
             }
 
-
-
-
             console.log(res.data.data[0].orderInfo.orderInfo_status);
 
           })
         },
         //按照按钮上的文字跳转页面
-        judgeBtnF(e){
+        judgeBtnF(e,sonId){
           //此功能还没有
           if (e.target.innerHTML == "再次购买") {
             alert("逗你玩！");
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-
-          }
-          //进入到申请退货页面
-          if (e.target.innerHTML == "申请退款") {
-
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:sonId,address:this.address}});
           }
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货") {
-
+            this.$router.push({path:'/my/applyAfterSale',query:{orderId:sonId}});
           }
           if (e.target.innerHTML == "取消订单"){
 
@@ -414,7 +408,7 @@
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-            this.$router.push('/my/checkLogistics');
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:sonId,address:this.address}});
           }
           //没有
           if (e.target.innerHTML == "提醒发货") {
