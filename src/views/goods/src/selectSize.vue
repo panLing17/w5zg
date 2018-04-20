@@ -87,7 +87,12 @@
             gspec_value: now.specValue[now.valueIndex]
           })
         })
-        this.$emit('confirm', data)
+        if (this.realGoodsData.storage_num>0 && this.realGoodsData.storage_num >= this.content) {
+          // 此条为了恢复屏幕触摸事件
+          this.$emit('confirm', data)
+        } else {
+          this.$message.error('商品没有库存了')
+        }
       },
       removeTouchDisable () {
         this.$emit('buy')
@@ -138,7 +143,7 @@
             gspec_value: now.specValue[now.valueIndex]
           })
         })
-        if (this.realGoodsData.storage_num>0) {
+        if (this.realGoodsData.storage_num>0 && this.realGoodsData.storage_num >= this.content) {
           // 此条为了恢复屏幕触摸事件
           this.$emit('buy', data)
         } else {
