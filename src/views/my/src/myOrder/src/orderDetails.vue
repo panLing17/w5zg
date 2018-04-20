@@ -46,7 +46,7 @@
               .price {{items.sale_price | price-filter}}
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
-              .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event)") {{moreBtnCont}}
+              .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event,item.delivery_id, items)") {{moreBtnCont}}
             .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event,item.delivery_id, items)") {{btnF}}
             .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付' && btnS !== '提醒发货'" @click.stop="judgeBtnS($event,item.order_id)") {{btnS}}
       .bottom(v-show="flag")
@@ -226,9 +226,11 @@
           this.moreBtnFlag = !this.moreBtnFlag;
         },
         //点击更多后展示的按钮
-        judgeMoreBtn(e){
-          if (e.target.innerHTML == "申请退货") {
-            this.$router.push({path:'/my/applyAfterSale',query:{orderId:sonId}});
+        judgeMoreBtn(e,deliveryId,goods){
+          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款") {
+            goods.delivery_id = deliveryId
+            this.$store.commit('getReturnGoods', goods)
+            this.$router.push({path:'/my/refundReturn'});
           }
         },
         //订单详情展示

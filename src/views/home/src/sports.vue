@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center")
+      .topCenter(slot="center") {{$route.query.title}}
       .topRight(slot="right")
     .mescroll#sportsMescroll
       .content
@@ -171,7 +171,7 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    height: 1rem;
+    height: 1.2rem;
     margin-top: 4.2rem;
   }
   .maybe {
