@@ -25,11 +25,11 @@
           // 跳外链
           case '143': window.location.href = this.listData[index].url; break;
           // 跳3级页面 361代表从1级跳3级
-          case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: this.listData[index].id}}); break;
+          case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: this.listData[index].id, title: this.listData[index].title}}); break;
           // 跳商品详情页 取relate_id
           case '141': this.$router.push({ path: '/goodsDetailed', query: { id: this.listData[index].relate_id }}); break;
           // 跳2级页面
-          case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: this.listData[index].id}}); break;
+          case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: this.listData[index].id, title: this.listData[index].title}}); break;
         }
       }
     }

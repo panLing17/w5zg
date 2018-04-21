@@ -1,13 +1,13 @@
 <template lang="pug">
-  .largeConllection.mescroll#largeMescroll
+  .largeConllection
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center", style="color: rgb(245,0,87);")
+      .topCenter(slot="center", style="color: rgb(245,0,87);") {{$route.query.title}}
       .topRight(slot="right")
     .content(v-if="!isEmpty")
       ul.list
-        li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id)")
+        li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id, item.title)")
           img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
     .noData(v-if="isEmpty") 暂无更多活动
 </template>
@@ -50,12 +50,12 @@
             this.bankList = response.data.data;
           })
         },
-        toNext (type, url, id, relateId) {
+        toNext (type, url, id, relateId, title) {
           switch (type) {
             // 跳外链
             case '143': window.location.href = url; break;
             // 跳3级页面 362代表从2级跳3级
-            case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id}}); break;
+            case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id,title: title}}); break;
             // 跳商品详情
             case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
           }

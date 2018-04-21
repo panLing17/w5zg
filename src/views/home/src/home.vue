@@ -70,7 +70,6 @@
       }
     },
     mounted() {
-      alert(this.$apiMember)
       this.$mescrollInt("homeMescroll",this.upCallback);
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
@@ -134,10 +133,7 @@
         this.$ajax({
           method: 'get',
           url: self.$apiApp + 'index/acInformationByCataId',
-          params: {
-            page: 1,
-            rows: 20
-          },
+          params: {},
         }).then(function (response) {
           self.news = response.data.data
           self.loadingFlag += 1
@@ -283,9 +279,9 @@
       goActivity(index) {
         switch (this.banner[index].ac_inlink_type) {
           // 跳三级
-          case '145': this.$router.push({path: '/home/sports', query: {parentType: '363', actId: this.banner[index].ac_id}}); break;
+          case '145': this.$router.push({path: '/home/sports', query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}}); break;
           // 跳二级
-          case '144': this.$router.push({path: '/home/largeCollection', query: {parentType: '363', actId: this.banner[index].ac_id}}); break;
+          case '144': this.$router.push({path: '/home/largeCollection', query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}}); break;
           // 外部
           case '143': window.location.href = this.banner[index].ac_outlink; break;
           // 店铺

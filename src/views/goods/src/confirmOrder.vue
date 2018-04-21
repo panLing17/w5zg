@@ -38,14 +38,14 @@
       li
         .left 网金卡
         .right
-          span 已抵扣{{netAndCommitCard.netCard}}
+          span 可抵扣{{netAndCommitCard.netCard}}
           toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
       li
         .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
         .right
           toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
-      .left 实付：{{price | price-filter}}
+      .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
     location-select(:show="flag", :location="locationList", @close="locationSelectClose")
 </template>
@@ -78,7 +78,24 @@
         switchFlag: false
       }
     },
-    computed:mapState(['transfer','giveGoodsAddress']),
+    computed:{
+      computedPriceText () {
+        if (this.netCardFlag && this.commonTicketFlag) {
+          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard)
+        } else if (this.commonTicketFlag) {
+          return this.price - this.netAndCommitCard.commTicket
+        }
+        else if (this.netCardFlag) {
+          return this.price - this.netAndCommitCard.netCard
+        }
+        else if (this.commonTicketFlag) {
+          return this.price - this.netAndCommitCard.commTicket
+        } else {
+          return this.price
+        }
+      },
+      ...mapState(['transfer','giveGoodsAddress'])
+    },
     components:{goodsCard,locationSelect},
     mounted () {
       this.getLocation()

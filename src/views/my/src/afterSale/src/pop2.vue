@@ -72,7 +72,6 @@
   .main {
     background-color: white;
     width: 100%;
-    /*height: 3.7rem;*/
     position: fixed;
     bottom: 0;
     left: 0;
@@ -88,18 +87,24 @@
   }
   .title {
     height: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    line-height: 1rem;
+    text-align: center;
+    width: 100%;
     font-weight: 600;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
   }
   .main ul{
     padding: 0 .2rem;
+    margin-top: 1rem;
+    max-height: 10rem;
+    overflow: auto;
   }
   .main ul li{
     height: 1.35rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    line-height: 1.35rem;
+    text-align: center;
   }
 </style>

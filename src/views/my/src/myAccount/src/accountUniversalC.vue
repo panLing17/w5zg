@@ -30,6 +30,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
     export default {
       name: "accountUniversalC",
       data () {
@@ -57,6 +58,14 @@
           }else {
             return false;
           }
+        },
+        ...mapState([
+          "userData"
+          ])
+      },
+      watch: {
+        userData (value) {
+          this.balance = value.cash_balance
         }
       },
       methods: {

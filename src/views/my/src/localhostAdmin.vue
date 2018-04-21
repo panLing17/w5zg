@@ -95,7 +95,7 @@
             })
           },
           noConfirm: () => {
-            alert(id)
+
           }
         })
       },

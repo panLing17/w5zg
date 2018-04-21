@@ -25,17 +25,17 @@
               .goodsDetails
                   .words {{info.goods_name}}
                   .property
-                    span.color {{info.spec_json[0].gspec_value}}
-                    span.size {{info.spec_json[1].gspec_value}}
+                    span(v-for="i in info.spec_json") {{i.gspec_value}}
                   .amount x
                     span {{info.gr_num}}
             .bottom
               .left
-                .returnState {{item.gr_status}}
+                .returnState {{item.gr_status | decFilter(item.reject_way)}}
               .right
                 .button
-                  .cancel(@click="$router.push('/my/express')", v-if="item.gr_status==='待发货'") 发货
-                  .pay( @click="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
+                  .cancel(v-if="item.gr_status ==='审核中' || item.gr_status === '待发货'", @click.stop="cancel(item.id)") 取消退货
+                  .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货'&&item.reject_way!=='门店退货'") 发货
+                  .pay( @click.stop="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
     .noData(v-if="isEmpty") 暂无更多记录
 </template>
 
@@ -62,14 +62,26 @@
       filters: {
         statusFilter (value) {
           let text = ''
-          if (value==='审核拒绝' || value === '审核中') {
+          if (value === '审核中') {
             text = '申请中'
           }else if(value === '待发货' || value === '卖家待收货') {
             text = '退款中'
-          } else if(value === '已完成') {
+          } else if(value === '已完成' || value==='审核拒绝') {
             text = '已完成'
           }
           return text
+        },
+        decFilter (value,way) {
+          if (value === '待发货') {
+            if (way!='门店退货') {
+              return value
+            }else {
+              return '买家请退货至门店'
+            }
+          }else {
+            return value
+          }
+
         }
       },
       created(){
@@ -110,6 +122,7 @@
             if (response.data.code === '081') {
               successCallback&&successCallback(response.data.data);//成功回调
             }else {
+              self.mescroll.hideTopBtn();
               self.mescroll.endErr();
             }
           })
@@ -118,6 +131,24 @@
           this.statusActive = index
           this.mescroll.destroy();
           this.$mescrollInt("saleMescroll",this.upCallback);
+        },
+        // 取消退货
+        cancel (id) {
+          let _this = this
+          this.$ajax({
+            method: 'post',
+            url:this.$apiTransaction + 'goodsRejected/cancelRejectedOrder',
+            params: {
+              rejectedTotalId: id
+            },
+            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }).then(function (response) {
+            if (response.data.code === '081') {
+              _this.$message.success('取消成功！')
+            }else {
+              _this.$message.error(response.data.msg)
+            }
+          })
         }
       }
     }
@@ -206,7 +237,7 @@
     display: flex;
   }
   .center .image{
-
+    flex: none;
   }
   .center .image img{
     width: 2.32rem;
@@ -216,6 +247,7 @@
   }
   .center .goodsDetails{
     margin-left: .3rem;
+    flex: 1;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
@@ -225,8 +257,8 @@
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span{
+    margin-right: .3rem;
   }
   .center .goodsDetails .amount{
     margin-top: 1rem;
@@ -281,12 +313,13 @@
   .bottom .right .button .cancel{
     color: rgb(161,161,161);
     border: 1px solid rgb(161,161,161);
+    margin-right: .3rem;
   }
   .bottom .right .button .pay{
     color: rgb(244,0,87);
     border: 1px solid rgb(244,0,87);
     background-color: #fff;
-    margin-left: .3rem;
+
   }
   /*订单内容--结束*/
   .noData {

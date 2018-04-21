@@ -89,7 +89,7 @@
     text-align: center;
     height: 20px;
     line-height: 20px;
-    background: deepskyblue;
+    background: rgb(245,0,87);
     color: white;
   }
   .no {

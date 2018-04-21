@@ -42,9 +42,9 @@
           .goodsDetails
             .words {{item.goods_name}}
             .property
-              span.color {{item.spec_json[0].gspec_value}}
-              span.size(v-if="item.spec_json[1]") {{item.spec_json[1].gspec_value}}
+              span(v-for="i in item.spec_json") {{i.gspec_value}}
               span.count x {{item.gr_num}}
+          .btn(v-if="goodsList.gr_status==='待发货'&&goodsList.reject_way!=='门店退货'", @click="$router.push({path: '/my/express', query:{id:$route.query.id}})") 发货
         .refundCont
           ul
             li
@@ -317,8 +317,8 @@
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span{
+    margin-right: .3rem;
   }
   .center .goodsDetails .amount{
     margin-top: 1rem;
@@ -356,5 +356,18 @@
   /*退款内容原因--结束*/
   .count {
     margin-left: 1rem;
+  }
+  .btn {
+    width: 2.2rem;
+    height: 1rem;
+    border-radius: 1rem;
+    text-align: center;
+    line-height: 1rem;
+    font-size: .4rem;
+    color: rgb(244,0,87);
+    border: 1px solid rgb(244,0,87);
+    position: absolute;
+    bottom: 0.2rem;
+    right: .5rem;
   }
 </style>

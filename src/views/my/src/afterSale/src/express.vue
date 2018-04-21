@@ -4,44 +4,47 @@
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 填写快递
-    .addressee(@click="$router.push('/my/checkAddressee')")
-      .lefter
-        .name
-          span 收件人
-          span 张三三
-          span 025-23562356
-        .address
-          span 地址
-          strong 江苏省南京市玄武区 699-22 江苏软件园
-      .righter
-        img(src="../../../../../assets/img/right.png")
+    <!--.addressee(@click="$router.push('/my/checkAddressee')")-->
+      <!--.lefter-->
+        <!--.name-->
+          <!--span 收件人-->
+          <!--span 张三三-->
+          <!--span 025-23562356-->
+        <!--.address-->
+          <!--span 地址-->
+          <!--strong 江苏省南京市玄武区 699-22 江苏软件园-->
+      <!--.righter-->
+        <!--img(src="../../../../../assets/img/right.png")-->
     .logistics
-      ul.company(@click="checkCom()")
-        li 物流公司
-        li
-          img(src="../../../../../assets/img/right.png")
+      ul.company(@click="$refs.logistics.showPop()")
+        li.left 物流公司
+        li.change
+          input(type="text", placeholder="请选择", disabled="disabled", v-model="logistics.ultd_name")
       ul.number
-        li 物流单号
+        li.left 物流单号
+        li.right
+          input(type="text", placeholder="请输入物流单号", v-model="numbers")
     .upload
       .up
         span 上传凭证
-      w-upload
-    .submit(@click="$router.push('/my/selectService')") 提交
+      w-upload(url="goodsRejected/rejectedImage", :max="1", @success="getImageArr")
+    .submit(@click="check") 提交
     <!--logCompany(:show="companyFlag", @selectType="", @close="closeCheckCom()")-->
-    pop2(ref="logistics", :data="reasonData", title="物流公司", @selected="logisticsChange")
+    pop3(ref="logistics", :data="logisticsData", title="物流公司", item-key="ultd_name", @selected="logisticsChange")
 </template>
 <script>
   import myGoods from '../../../../../assets/img/my_goods.png'
-  import logCompany from './logisticsCompany'
   import pop2 from './pop2'
+  import pop3 from './pop3'
   export default {
     name: 'express',
-    components:{logCompany, pop2},
+    components:{ pop2, pop3},
     data () {
       return {
-        companyFlag: false,
-        msg: false,
-        logisticsData:[]
+        logisticsData:[],
+        logistics: {},
+        imageUrl: '',
+        numbers: ''
       }
     },
     mounted () {
@@ -53,7 +56,78 @@
     },
     methods: {
       getLogisticsData () {
-
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: this.$apiMember + 'logisticsThird/api/logistics',
+          params:{
+            page: 1,
+            rows: 500
+          }
+        }).then(function (response) {
+          if (response.data.code === '081') {
+              _this.logisticsData = response.data.data
+          }else {
+            _this.$message.error(response.data.msg);
+          }
+        })
+      },
+      logisticsChange (logistics) {
+        this.logistics = logistics
+      },
+      getImageArr (arr) {
+        this.imageUrl = arr[0]
+      },
+      submitInfo () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: this.$apiMember + 'orderLogistics/logistics',
+          params:{
+            companyId : this.logistics.ultd_id,
+            orderOrRejectedId: this.$route.query.id,
+            number: this.numbers,
+            type: '322',
+            ulImage: this.imageUrl
+          }
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            _this.updateStatus()
+          }else {
+            _this.$message.error(response.data.msg);
+          }
+        })
+      },
+      check () {
+        if (!this.logistics.ultd_id) {
+          this.$message.error('请选择物流公司！')
+          return
+        }
+        if (this.numbers.trim().length<=0) {
+          this.$message.error('请输入物流单号！')
+          return
+        }
+       this.submitInfo()
+      },
+      updateStatus () {
+        let _this = this
+        let form = {
+          id: this.$route.query.id,
+          company_storeId:this.logistics.ultd_id,
+          type:'2'
+        }
+        this.$ajax({
+          method: 'post',
+          url: this.$apiTransaction + 'goodsRejected/updateRejected',
+          params:form
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            // 跳转到退货列表
+            _this.$router.go(-1)
+          }else {
+            _this.$message.error(response.data.msg)
+          }
+        })
       }
     }
   }
@@ -125,13 +199,9 @@
     line-height: 1.5rem;
   }
   .logistics ul.company{
-    border-bottom: .5px solid rgb(242,242,242);
+    border-bottom: 1px solid rgb(242,242,242);
     display: flex;
     justify-content: space-between;
-  }
-  .logistics ul.company img{
-    width: .6rem;
-    vertical-align: middle;
   }
   .logistics ul.number{
     border-top: .5px solid rgb(242,242,242);
@@ -167,4 +237,49 @@
     font-size: .4rem;
   }
   /*下一步--结束*/
+  .logisticsText {
+    display: inline-block;
+    width: 5rem;
+    height: 100%;
+  }
+  li.left
+  {
+    flex: none;
+  }
+  li.right {
+    flex: 1;
+  }
+  .company li.change{
+    flex: 1;
+    background: url("../../../../../assets/img/right.png") no-repeat center right;
+    background-size: .6rem auto;
+
+    padding-right: .8rem
+  }
+  .number {
+    display: flex;
+  }
+  .right input {
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    font-size: .29rem;
+    border: none;
+    outline: none;
+    padding-right: .8rem;
+    color: rgb(51,51,51);
+  }
+  li.change input {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    border: none;
+    outline: none;
+    text-align: right;
+    color: rgb(51,51,51);
+    font-size: .29rem;
+  }
+  input::placeholder{
+    color: rgb(153,153,153);
+  }
 </style>
