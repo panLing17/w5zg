@@ -33,7 +33,7 @@
                 .returnState {{item.gr_status | decFilter(item.reject_way)}}
               .right
                 .button
-                  .cancel(v-if="item.gr_status ==='审核中' || item.gr_status === '待发货'", @click.stop="cancel(item.id)") 取消退货
+                  .cancel(v-if="item.gr_status ==='审核中' || item.gr_status === '待发货'", @click.stop="confirm(item.id)") 取消退款
                   .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货'&&item.reject_way!=='门店退货'") 发货
                   .pay( @click.stop="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
     .noData(v-if="isEmpty") 暂无更多记录
@@ -46,7 +46,8 @@
         return{
           statusActive: 0,
           status:["全部","申请中","退款中","已完成"],
-          orderDetail:[]
+          orderDetail:[],
+          cancelId:''
         }
       },
       computed: {
@@ -132,19 +133,29 @@
           this.mescroll.destroy();
           this.$mescrollInt("saleMescroll",this.upCallback);
         },
+        confirm (id) {
+          this.cancelId = id
+          this.$confirm({
+            title: '取消退款',
+            message: '确定取消退款申请吗？',
+            confirm:this.cancel,
+            noConfirm: function () {}
+          })
+        },
         // 取消退货
-        cancel (id) {
+        cancel () {
           let _this = this
           this.$ajax({
             method: 'post',
             url:this.$apiTransaction + 'goodsRejected/cancelRejectedOrder',
             params: {
-              rejectedTotalId: id
+              rejectedTotalId: this.cancelId
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
             if (response.data.code === '081') {
               _this.$message.success('取消成功！')
+              _this.mescroll.resetUpScroll( true )
             }else {
               _this.$message.error(response.data.msg)
             }
