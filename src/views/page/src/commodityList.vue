@@ -8,7 +8,8 @@
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')" v-model="message")
       .topRight(slot="right")
-        img(src="../../../assets/img/msg_0.png")
+        img(src="../../../assets/img/msg_0.png" v-show="false")
+        .searchbtn(@click="searchGoods()") 搜索
     .content
       ul.wrap
         li.left
@@ -104,11 +105,22 @@
       this.mescroll.hideTopBtn();
     },
     methods:{
+      //滑动限制
+      stop(){
+        var mo = function(e){e.preventDefault();};
+        document.body.style.overflow = 'hidden';
+        document.addEventListener("touchmove",mo,false);//禁止页面滑动
+      },
+      //取消滑动限制
+      move(){
+        var mo = function(e){e.preventDefault();};
+        document.body.style.overflow = '';//出现滚动条
+        document.removeEventListener("touchmove",mo,false);
+      },
       //让页面加载时将搜索的文字拼到url上
       onload(){
         this.$router.push({path:'/page/commodityList',query:{name:this.message}});
       },
-
       //根据判断是哪个页面传过来的关键字
       keywordsSearch(){
         //从分类首页的三级传来
@@ -139,10 +151,13 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(res){
-          if(res.data.data.length<=0){
+          self.recommendGoods = res.data.data;
+
+          console.log(self.recommendGoods);
+
+          if(self.recommendGoods.length<=0){
             self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
-          } else{
-            self.recommendGoods = res.data.data;
+          }else{
             for (var i = 0; i < self.recommendGoods.length; i++) {
               if(self.recommendGoods[i].carry_type == 1){
                 self.recommendGoods[i].carryFlag = true;
@@ -164,7 +179,7 @@
           }
         })
       },
-      // 筛选左滑
+      //筛选左滑
       leftScroll(){
         var _this = this;
         //this.$mescrollInt("",this.upCallback);
@@ -177,6 +192,8 @@
         mask.style.left = 0;
         mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
+        //this.stop();
+        //this.$mescrollInt("pageMescroll",this.upCallback) = null;
       },
       lefterBack(){
         //_this.$mescrollInt("pageMescroll",this.upCallback);
@@ -186,6 +203,8 @@
         mask.style.opacity = 0;
         mask.style.transition = "left .3s, opacity .3s";
         commodityList.style.overflow = "scroll";
+        //this.move();
+        this.$mescrollInt("pageMescroll",this.upCallback);
       },
       //从筛选传值过来
       ievent(data){
@@ -436,6 +455,11 @@
   .topRight img{
     width: .7rem;
     vertical-align: middle;
+  }
+  .topRight .searchbtn{
+    font-size: .4rem;
+    font-weight: 400;
+    color: rgb(244,0,87);
   }
   /*顶部搜索--结束*/
   /*搜索框样式--开始*/

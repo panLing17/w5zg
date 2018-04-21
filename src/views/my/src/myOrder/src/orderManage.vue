@@ -10,36 +10,39 @@
     .orderStatus
       ul.wrapStatus
         li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
-    .content(v-for="(item,index) in orderDetail")
-      .top
-        .left
-          span.orderNum 订单编号:
-          span.num {{item.total_order_no}}
-        .right#state {{item.orderStatus}}
-      .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
-        .image
-          img(:src="items | img-filter" v-for="items in item.logoList")
-        .goodsDetails(v-show="item.logoList.length<=1")
-          .goodsExplain
-            span.words {{item.goodsName[0]}}
-          .cont
-            .property
-              span.color(v-for="items in item.spec_json") {{items.gspec_value}}
-              span.size
-            .quantity
-              span.count x {{item.totalCount}}
-      .bottom
-        .left(v-if="false")
-          .goodsCode 提货码: {{item.goodsCode}}
-        .right
-          .total
-            .totalNumber
-              span.amount 共计 {{item.totalCount}} 件商品
-              span.price 合计 :
-                strong.priceNum {{item.oi_pay_price | price-filter}}
-      .button
-        .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货'") {{item.buttonL}}
-        .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息'") {{item.buttonR}}
+        .lineDiv
+    .wrapContent    
+      .content(v-for="(item,index) in orderDetail")
+        .top
+          .left
+            span.orderNum 订单编号:
+            span.num {{item.total_order_no}}
+          .right#state {{item.orderStatus}}
+        .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
+          .image
+            img(:src="items | img-filter" v-for="items in item.logoList")
+          .goodsDetails(v-show="item.logoList.length<=1")
+            .goodsExplain
+              span.words {{item.goodsName[0]}}
+            .cont
+              .property
+                span.color(v-for="items in item.spec_json") {{items.gspec_value}}
+                span.size
+              .quantity
+                span.count x {{item.totalCount}}
+        .bottom
+          .left(v-if="false")
+            .goodsCode 提货码: {{item.goodsCode}}
+          .right
+            .total
+              .totalNumber
+                span.amount 共计 {{item.totalCount}} 件商品
+                span.price 合计 :
+                  strong.priceNum {{item.oi_pay_price | price-filter}}
+        .button
+          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息'") {{item.buttonL}}
+          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息'") {{item.buttonR}}
+    .noData(v-if="isEmpty") 暂无更多记录    
 </template>
 
 <script>
@@ -58,6 +61,16 @@
           orderDetail:[],
           buttonL:"",
           buttonR:""
+        }
+      },
+      computed: {
+        // 判断数据是否为空
+        isEmpty () {
+          if (this.orderDetail == null || this.orderDetail.length === 0) {
+            return true;
+          }else {
+            return false;
+          }
         }
       },
       created(){
@@ -96,20 +109,27 @@
         //点击tab切换
         check(item,index){
           this.num = index;
+          var lineDiv = document.getElementsByClassName("lineDiv")[0];
+          lineDiv.style.transition = "all .5s";
           if (item == "全部") {
             this.state = "";
+            lineDiv.style.left = 0;
           }
           if (item == "待付款") {
             this.state = 1;
+            lineDiv.style.left = "19%";
           }
           if (item == "待发货") {
             this.state = 2;
+            lineDiv.style.left = "40.5%";
           }
           if (item == "待收货") {
             this.state = 4;
+            lineDiv.style.left = "62%";
           }
           if (item == "已完成") {
             this.state = 3;
+            lineDiv.style.left = "83.5%";
           }
           this.request();
         },
@@ -122,7 +142,7 @@
             let self = this;
             self.$ajax({
               method:"patch",
-              url:self.$apiTransaction + "order/cancel"+"/+"+id,
+              url:self.$apiTransaction + "order/cancel/"+id,
               params:{}
             }).then(function(res){
               self.request();
@@ -153,7 +173,7 @@
             let self = this;
             self.$ajax({
               method:"patch",
-              url:self.$apiTransaction + "order/confirmTakeGood"+"/+"+id,
+              url:self.$apiTransaction + "order/confirmTakeGood/"+id,
               params:{}
             }).then(function(res){
               console.log(res);
@@ -211,7 +231,7 @@
                 if (arr[i].delivery_ways == "自提") {
                   arr[i].buttonL = "申请退款";
                   arr[i].buttonR = "提货码";
-                  arr[i].orderStatus = "待备提";
+                  arr[i].orderStatus = "待备货";
                 }
                 if (arr[i].delivery_ways == "快递配送") {
                   arr[i].buttonL = "提醒发货";
@@ -270,7 +290,7 @@
                 if (self.orderDetail[i].delivery_ways == "自提") {
                   self.orderDetail[i].buttonL = "申请退款";
                   self.orderDetail[i].buttonR = "提货码";
-                  self.orderDetail[i].orderStatus = "待备提";
+                  self.orderDetail[i].orderStatus = "待备货";
                 }
                 if (self.orderDetail[i].delivery_ways == "快递配送") {
                   self.orderDetail[i].buttonL = "提醒发货";
@@ -353,8 +373,19 @@
     font-size: .4rem;
     color: rgb(153,153,153);
   }
+  .lineDiv{
+    width: 15%;
+    height: .1rem;
+    background-color: rgb(244,0,87);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
   /*订单的状态--结束*/
   /*订单内容--开始*/
+  .wrapContent{
+    margin-top: 1.2rem;
+  }
   .content{
     margin-bottom: .3rem;
   }
@@ -482,4 +513,15 @@
     background-color: rgb(244,0,87);
   }
   /*订单内容--结束*/
+  .noData {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    text-align: center;
+    color: rgb(153,153,153);
+    font-size: .4rem;
+    z-index: 202;
+  }
 </style>
