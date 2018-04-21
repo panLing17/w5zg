@@ -139,14 +139,25 @@
             this.$router.push('/my/checkLogistics');
           }
           if (e.target.innerText == "取消订单") {
-            let self = this;
-            self.$ajax({
-              method:"patch",
-              url:self.$apiTransaction + "order/cancel/"+id,
-              params:{}
-            }).then(function(res){
-              self.request();
+            this.$confirm({
+              title: '确认',
+              message: '真的要这样做吗',
+              confirm: () => {
+                //alert('确定')
+                let self = this;
+                self.$ajax({
+                  method:"patch",
+                  url:self.$apiTransaction + "order/cancel/"+id,
+                  params:{}
+                }).then(function(res){
+                  self.request();
+                })
+              },
+              noConfirm: () => {
+                //alert('取消')
+              }
             })
+            
           }
           if (e.target.innerText == "删除订单") {
             alert("没有！");
