@@ -63,22 +63,27 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
           processData: false,
         }).then(function (response) {
-          self.urlList[index].url = response.data.data
-          if (self.urlList.length < self.max) {
-            self.urlList.push({
-              url: '',
-              edit: false
+          if (response.data.code === '081') {
+            self.urlList[index].url = response.data.data
+            if (self.urlList.length < self.max) {
+              self.urlList.push({
+                url: '',
+                edit: false
+              })
+            }
+            // 请求成功后回调
+            let array = []
+            self.urlList.forEach((now,index)=>{
+              array.push(now.url)
             })
+            if (array[array.length-1].url === '') {
+              array.splice(array.length-1,1)
+            }
+            self.$emit('success',array)
+          }else {
+            self.$message.error('上传图片只支持jpg、png、jpeg格式！')
           }
-          // 请求成功后回调
-          let array = []
-          self.urlList.forEach((now,index)=>{
-            array.push(now.url)
-          })
-          if (array[array.length-1].url === '') {
-            array.splice(array.length-1,1)
-          }
-          self.$emit('success',array)
+
         })
       },
       remove (index) {

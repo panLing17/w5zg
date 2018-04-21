@@ -133,10 +133,7 @@
         this.$ajax({
           method: 'get',
           url: self.$apiApp + 'index/acInformationByCataId',
-          params: {
-            page: 1,
-            rows: 20
-          },
+          params: {},
         }).then(function (response) {
           self.news = response.data.data
           self.loadingFlag += 1

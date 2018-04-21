@@ -1,5 +1,5 @@
 <template lang="pug">
-  .largeConllection.mescroll#largeMescroll
+  .largeConllection
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")

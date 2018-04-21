@@ -59,7 +59,7 @@
       .up
         span 上传凭证
         span (最多可上传9张图片)
-      w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr")
+      w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr", :type="uploadType")
     .submit(@click="dataCheck") 提交
     pop1(ref="statusChoose", :data="statusData", title="货物状态", @selected="statusTypeChange")
     pop1(ref="returnStyleChoose", :data="returnStyleData", title="退货方式", @selected="returnStyleChange")
@@ -90,7 +90,8 @@
         count: 1,
         desc: '',
         imageArr:[],
-        price: 0
+        price: 0,
+        uploadType: ['jpg','png','jpeg']
       }
     },
     mounted () {
