@@ -47,8 +47,8 @@
           .wrapBtn
             .moreThen(v-show="morethenFlag" @click="moreShow()") 更多
               .moreBtn.btn(v-show="moreBtnFlag" @click.stop="judgeMoreBtn($event,item, items)") {{moreBtnCont}}
-            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单'" @click.stop="judgeBtnF($event,item, items)") {{btnF}}
-            .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付' && btnS !== '提醒发货'" @click.stop="judgeBtnS($event,item, items)") {{btnS}}
+            .btnF.btn(v-show="btnF !== '删除订单' && btnF !== '提醒发货' && btnF !== '取消订单' && btnF !== '取消申请'" @click.stop="judgeBtnF($event,item, items)") {{btnF}}
+            .btnS.btn(v-show="btnS !== '再次购买' && btnS !== '支付' && btnS !== '提醒发货' && btnS !== '取消申请'" @click.stop="judgeBtnS($event,item, items)") {{btnS}}
       .pickUpNum(v-show="pickUpNoFlag")
         .alertFrame
           .topDiv 提货码
@@ -161,7 +161,7 @@
         this.orderDetailShow();//订单详情展示
         //this.countDown(1800);
         //判断最下方的两个按钮都隐藏时下方的白条消失
-        this.judgeWhiteBar();
+        //this.judgeWhiteBar();
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
@@ -362,7 +362,7 @@
 
               if (res.data.data[0].orderInfo[i].orderInfo_status == "待收货/待提货") {
                 if (res.data.data[0].delivery_ways == "快递配送") {
-                  self.morethenFlag = false;
+                  self.morethenFlag = true;
                   self.btnSFlag = true;
                   self.btnFFlag = true;
                   self.btnF = "物流信息";
@@ -859,11 +859,9 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: 1.4rem;
     display: flex;
     justify-content: flex-end;
     background-color: #fff;
-    padding: .2rem .3rem;
   }
   .fixedBtn div{
     width: 2.3rem;
@@ -872,6 +870,7 @@
     text-align: center;
     line-height: 1rem;
     font-size: .4rem;
+    margin: .2rem .3rem .2rem 0;
   }
   .fixedBtn .leftBtn{
     color: rgb(161,161,161);
@@ -881,7 +880,6 @@
     color: #fff;
     border: 1px solid rgb(244,0,87);
     background-color: rgb(244,0,87);
-    margin-left: .3rem;
   }
   /*底部的两个按钮--结束*/
   /*提货码弹出框--开始*/
