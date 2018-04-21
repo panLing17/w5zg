@@ -59,7 +59,7 @@
       .up
         span 上传凭证
         span (最多可上传9张图片)
-      w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr", :type="uploadType")
+      w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr")
     .submit(@click="dataCheck") 提交
     pop1(ref="statusChoose", :data="statusData", title="货物状态", @selected="statusTypeChange")
     pop1(ref="returnStyleChoose", :data="returnStyleData", title="退货方式", @selected="returnStyleChange")
@@ -90,8 +90,7 @@
         count: 1,
         desc: '',
         imageArr:[],
-        price: 0,
-        uploadType: ['jpg','png','jpeg']
+        price: 0
       }
     },
     mounted () {
@@ -207,16 +206,10 @@
           method: 'post',
           url: this.$apiTransaction + url,
           params: form,
-          // traditional: true
         }).then(function (response) {
           if (response.data.code === '081') {
-            // 如果是退货退款需再调用更新退货退款信息
-            if (_this.statusType === 1){
-              _this.updateInfo(response.data.data);
-            }else if (_this.statusType === 0) {
               // 跳转到退货详情页
               _this.$router.replace({path:'/my/returnDetails',query:{id:response.data.data, detailId:_this.goodsList.order_detail_id}})
-            }
           }else {
             _this.$message.error(response.data.msg)
           }
@@ -224,26 +217,26 @@
         })
       },
       // 更新退货申请信息
-      updateInfo (id) {
-        let _this = this
-        let form = {
-          id: id,
-          company_storeId:this.goodsList.delivery_id,
-          type:this.returnStyleType===0?'2':'1'
-        }
-        this.$ajax({
-          method: 'post',
-          url: this.$apiTransaction + 'goodsRejected/updateRejected',
-          params:form
-        }).then(function (response) {
-          if (response.data.code === '081') {
-            // 跳转到退货详情页
-            _this.$router.replace({path:'/my/returnDetails',query:{id:id, detailId:_this.goodsList.order_detail_id}})
-          }else {
-            _this.$message.error(response.data.msg)
-          }
-        })
-      }
+      // updateInfo (id) {
+      //   let _this = this
+      //   let form = {
+      //     id: id,
+      //     company_storeId:this.goodsList.delivery_id,
+      //     type:this.returnStyleType===0?'2':'1'
+      //   }
+      //   this.$ajax({
+      //     method: 'post',
+      //     url: this.$apiTransaction + 'goodsRejected/updateRejected',
+      //     params:form
+      //   }).then(function (response) {
+      //     if (response.data.code === '081') {
+      //       // 跳转到退货详情页
+      //       _this.$router.replace({path:'/my/returnDetails',query:{id:id, detailId:_this.goodsList.order_detail_id}})
+      //     }else {
+      //       _this.$message.error(response.data.msg)
+      //     }
+      //   })
+      // }
     }
   }
 </script>

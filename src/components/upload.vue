@@ -50,6 +50,7 @@
         // 校验格式，格式不对直接跳出
         let type = e.target.files[0].name.split('.')[1]
         if (this.type.indexOf(type) === -1) {
+          this.$message.error('上传图片格式不支持！')
           return false
         }
         // 请求
@@ -81,7 +82,7 @@
             }
             self.$emit('success',array)
           }else {
-            self.$message.error('上传图片只支持jpg、png、jpeg格式！')
+            self.$message.error(response.data.msg)
           }
 
         })
