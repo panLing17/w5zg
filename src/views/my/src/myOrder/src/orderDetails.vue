@@ -305,7 +305,6 @@
               console.log(res.data.data[0].orderInfo[i].orderInfo_status);
               var arrays = res.data.data[0].orderInfo[i].orderDetail;
               if (res.data.data[0].orderInfo[i].orderInfo_status == "（退货）售后") {
-                for (var j = 0; j < arrays.length; j++) {
                   //arrays[j].refund_status
                   self.morethenFlag = false;
                   self.btnSFlag = false;
@@ -315,9 +314,6 @@
                   self.leftBtn = "取消申请";
                   self.rightBtn = "取消申请";
                   self.orderInfoStatus = res.data.data[0].orderInfo[i].orderInfo_status;
-                }
-              } else {
-
               }
               if(res.data.data[0].orderInfo[i].orderInfo_status == "待付款"){
                 self.morethenFlag = false;
