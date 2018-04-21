@@ -6,7 +6,7 @@
           img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
         .topCenter(slot="center") 商品
         .topRight(slot="right")
-          img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
+          // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
       carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
         div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
           img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")

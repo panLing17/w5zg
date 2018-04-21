@@ -33,7 +33,7 @@ Vue.directive('loading', function (el, binding) {
     setTimeout(function () {
       el.removeChild($vm.$el)
       onTouchMove(false)
-      // document.body.style.overflow='auto'
+      document.body.style.overflow='auto'
       // el.style.position = oldPosition
     }, 800)
   }
