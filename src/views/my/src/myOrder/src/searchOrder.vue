@@ -48,8 +48,8 @@
                 span.price 合计 :
                   strong.priceNum {{item.oi_pay_price | price-filter}}
         .button
-          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货'") {{item.buttonL}}
-          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息'") {{item.buttonR}}
+          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款'") {{item.buttonL}}
+          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码'") {{item.buttonR}}
     .title(v-show="recommendFlag")
       .line
       p 推荐
@@ -247,7 +247,7 @@
                 if (arr[i].delivery_ways == "自提") {
                   arr[i].buttonL = "申请退款";
                   arr[i].buttonR = "提货码";
-                  arr[i].orderStatus = "待自提";
+                  arr[i].orderStatus = "待提货";
                 }
                 if (arr[i].delivery_ways == "快递配送") {
                   arr[i].buttonL = "物流信息";
@@ -260,7 +260,7 @@
                 if (arr[i].delivery_ways == "自提") {
                   arr[i].buttonL = "申请退款";
                   arr[i].buttonR = "提货码";
-                  arr[i].orderStatus = "待备提";
+                  arr[i].orderStatus = "待备货";
                 }
                 if (arr[i].delivery_ways == "快递配送") {
                   arr[i].buttonL = "提醒发货";
@@ -316,7 +316,7 @@
                   if (self.orderDetail[i].delivery_ways == "自提") {
                     self.orderDetail[i].buttonL = "申请退款";
                     self.orderDetail[i].buttonR = "提货码";
-                    self.orderDetail[i].orderStatus = "待自提";
+                    self.orderDetail[i].orderStatus = "待提货";
                   }
                   if (self.orderDetail[i].delivery_ways == "快递配送") {
                     self.orderDetail[i].buttonL = "物流信息";
@@ -329,7 +329,7 @@
                   if (self.orderDetail[i].delivery_ways == "自提") {
                     self.orderDetail[i].buttonL = "申请退款";
                     self.orderDetail[i].buttonR = "提货码";
-                    self.orderDetail[i].orderStatus = "待备提";
+                    self.orderDetail[i].orderStatus = "待备货";
                   }
                   if (self.orderDetail[i].delivery_ways == "快递配送") {
                     self.orderDetail[i].buttonL = "提醒发货";
