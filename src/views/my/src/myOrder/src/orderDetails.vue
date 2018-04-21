@@ -314,7 +314,7 @@
                   self.btnF = "取消申请";
                   self.leftBtn = "取消申请";
                   self.rightBtn = "取消申请";
-                  self.orderInfoStatus = arrays[j].refund_status;
+                  self.orderInfoStatus = res.data.data[0].orderInfo[i].orderInfo_status;
                 }
               } else {
 
