@@ -25,7 +25,7 @@
     },
     methods: {
       notScroll (e) {
-        e.preventDefault()
+        e.preventDefault();
       }
     }
   }

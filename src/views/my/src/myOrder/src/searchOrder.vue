@@ -2,14 +2,14 @@
   .searchOrder.mescroll#searchOrderMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="backTo()")
       .topCenter(slot="center")
         .searchInput
           img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoodsName()")
           input(:type="type", placeholder="请输入商品名称" v-model="msg" @keyup.enter="searchGoodsName()")
           .clear(@click="clearName()") x
       .topRight(slot="right")
-        .topRight(slot="right" @click="$router.go(-1)") 取消
+        .topRight(slot="right" @click="backTo()") 取消
     .history(v-show="showHistory")
       ul.top
         li.left 历史搜索
@@ -48,8 +48,8 @@
                 span.price 合计 :
                   strong.priceNum {{item.oi_pay_price | price-filter}}
         .button
-          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款'") {{item.buttonL}}
-          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码'") {{item.buttonR}}
+          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款' && item.buttonL !== '取消申请'") {{item.buttonL}}
+          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '取消申请'") {{item.buttonR}}
     .title(v-show="recommendFlag")
       .line
       p 推荐
@@ -101,6 +101,14 @@
         this.getListDataFromNets();
       },
       methods:{
+        //判断页面回退
+        backTo(){
+          if (this.$route.query.name) {
+            this.$router.push('/my/orderManage');
+          } else {
+            this.$router.go(-1);
+          }
+        },  
         //判断此时的url
         judgeUrl(){
           if (this.$route.query.name) {
@@ -307,6 +315,11 @@
               self.showOrder = true;
               self.showHistory = false;
               for (var i=0; i<self.orderDetail.length; i++) {
+                if (self.orderDetail[i].order_status == "（退货）售后") {
+                  self.orderDetail[i].buttonL = "取消申请";
+                  self.orderDetail[i].buttonR = "取消申请";
+                  self.orderDetail[i].orderStatus = "（退货）售后";
+                }
                 if (self.orderDetail[i].order_status == "待付款") {
                   self.orderDetail[i].buttonL = "取消订单";
                   self.orderDetail[i].buttonR = "支付";

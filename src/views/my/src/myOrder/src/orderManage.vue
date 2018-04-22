@@ -2,7 +2,7 @@
   .orderManage.mescroll#orderManageMescroll
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="backJump()")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
         img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()").search
@@ -40,8 +40,8 @@
                 span.price 合计 :
                   strong.priceNum {{item.oi_pay_price | price-filter}}
         .button
-          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息'") {{item.buttonL}}
-          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息'") {{item.buttonR}}
+          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
+          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
     .noData(v-if="isEmpty") 暂无更多记录    
 </template>
 
@@ -53,7 +53,7 @@
           btnLeftFlag:"", //左边按钮显隐
           btnRightFlag:"", //右边按钮显隐
           orderStatus:"", //订单的状态
-          state:"",
+          state:1,
           num:0,
           statusFlag1:false,
           statusFlag2:true,
@@ -78,10 +78,21 @@
       },
       mounted(){
         this.jump();
+        this.keepStatus();
         this.$mescrollInt("orderManageMescroll",this.upCallback);
         //this.request();
+        
       },
       methods:{
+        //回退判断
+        backJump(){
+          if (this.$route.query.nums != 0 || this.$route.query.states != "" || this.$route.query.lefts != 0 ) {
+            this.$router.push('/my');
+          } else {
+            this.$router.go(-1);
+          }
+        },
+        //跳到搜索订单页面
         jumpToSearch(){
           this.$router.push('/my/searchOrder');
         },
@@ -114,24 +125,44 @@
           if (item == "全部") {
             this.state = "";
             lineDiv.style.left = 0;
+            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待付款") {
             this.state = 1;
             lineDiv.style.left = "19%";
+            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待发货") {
             this.state = 2;
             lineDiv.style.left = "40.5%";
+            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待收货") {
             this.state = 4;
             lineDiv.style.left = "62%";
+            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "已完成") {
             this.state = 3;
             lineDiv.style.left = "83.5%";
+            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
+          
           this.request();
+        },
+        keepStatus(){
+          console.log(this.$route.query.nums);
+          if (this.$route.query.nums == undefined) {
+            this.num = 0;
+          } else{
+            this.num = this.$route.query.nums;
+          }
+          
+          this.state = this.$route.query.states;
+          var lineDiv = document.getElementsByClassName("lineDiv")[0];
+          lineDiv.style.left = this.$route.query.lefts;
+          console.log(this.state);
+          this.request(); 
         },
         //判断两个按钮上的文字
         buttonLeft(e,id){
@@ -219,7 +250,11 @@
             console.log(response.data.data);
             var arr = response.data.data;
             for (var i=0; i<arr.length; i++) {
-
+              if (arr[i].order_status == "（退货）售后") {
+                arr[i].buttonL = "取消申请";
+                arr[i].buttonR = "取消申请";
+                arr[i].orderStatus = "（退货）售后";
+              }
               if (arr[i].order_status == "待付款") {
                 arr[i].buttonL = "取消订单";
                 arr[i].buttonR = "支付";
@@ -261,7 +296,7 @@
                 arr[i].orderStatus = "已完成";
               }
             }
-            successCallback&&successCallback(response.data.data);//成功回调
+            successCallback&&successCallback(arr);//成功回调
           })
         },
 
@@ -271,7 +306,7 @@
             method: 'post',
             url:self.$apiTransaction + 'order/orderByStatus',
             params:{
-              status: this.state,
+              status: self.state,
               page: 1,
               rows: 10
             },
@@ -279,6 +314,11 @@
           }).then(function(response){
             self.orderDetail = response.data.data;
             for (var i=0; i<self.orderDetail.length; i++) {
+              if (self.orderDetail[i].order_status == "（退货）售后") {
+                self.orderDetail[i].buttonL = "取消申请";
+                self.orderDetail[i].buttonR = "取消申请";
+                self.orderDetail[i].orderStatus = "（退货）售后";
+              }
               if (self.orderDetail[i].order_status == "待付款") {
                 self.orderDetail[i].buttonL = "取消订单";
                 self.orderDetail[i].buttonR = "支付";

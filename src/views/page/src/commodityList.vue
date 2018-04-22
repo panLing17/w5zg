@@ -1,15 +1,15 @@
 <template lang="pug">
-  .commodityList.mescroll#pageMescroll
+  .commodityList.mescroll#pageMescroll(@touchmove="notScroll($event)")
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png")
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')" v-model="message")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
-        .searchbtn(@click="searchGoods()") 搜索
+        .searchbtn(@click="searchGoods()" v-show="false") 搜索
     .content
       ul.wrap
         li.left
@@ -105,6 +105,15 @@
       this.mescroll.hideTopBtn();
     },
     methods:{
+      //遮罩层出现后不让页面滑动
+      notScroll (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      },
+      //搜索商品
+      searchGoods(){
+        this.exhibition();
+      },
       //滑动限制
       stop(){
         var mo = function(e){e.preventDefault();};
