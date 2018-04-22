@@ -2,7 +2,7 @@
   .commodityList.mescroll#pageMescroll(@touchmove="notScroll($event)")
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
       .topCenter(slot="center")
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png")
@@ -42,23 +42,20 @@
     .mask
       .lefter(@click="lefterBack()")
       .righter
-        filtrate(@ievent="ievent" v-show="filtrateFlag" @showSon="showSon")
-        allBrand(v-show="allBrandFlag" @searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
+        filtrate(@ievent="ievent" v-show="filtrateFlag")
     .bottomPlaceholder
 </template>
 
 <script>
   import filtrate from './filtrate.vue'
-  import allBrand from './allBrand.vue'
 
   export default {
     name: "commodityList",
-    components: {filtrate,allBrand},
+    components: {filtrate},
     data(){
       return {
         message:this.$route.query.msg, //在输入框搜索的内容
         filtrateFlag: true,
-        allBrandFlag: false,
         mescroll: null,
         flags: false,
         check: true,
@@ -231,6 +228,7 @@
             this.pickUps = 2;
           }
           this.brandId = data.brandId;
+          this.message = data.brandName;
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
@@ -251,41 +249,10 @@
           this.minPrice = data.minPrice;
           this.checkFlag = true;
         }
+        console.log(this.brandId);
         this.request();  
       },
 
-      //从字母列表传来的值
-      searchBrand(data){
-        var mask = document.getElementsByClassName("mask")[0];
-        var commodityList = document.getElementsByClassName("commodityList")[0];
-        if (data.flag2 == true) {
-          mask.style.left = "100%";
-          mask.style.opacity = 0;
-          mask.style.transition = "left .3s, opacity .3s";
-          commodityList.style.overflow = "scroll";
-          this.brandId = data.brandId2;
-        }
-        this.request();  
-      },
-      //热门品牌
-      searchBrandHot(data){
-        var mask = document.getElementsByClassName("mask")[0];
-        var commodityList = document.getElementsByClassName("commodityList")[0];
-        if (data.flag2 == true) {
-          mask.style.left = "100%";
-          mask.style.opacity = 0;
-          mask.style.transition = "left .3s, opacity .3s";
-          commodityList.style.overflow = "scroll";
-          this.brandId = data.brandId2;
-        }
-        this.request();
-      },
-      showSon(data){
-        if (data.a == 1) {
-          this.filtrateFlag = false;
-          this.allBrandFlag = true;
-        }
-      },
       //综合排序
       changes1:function(){
         this.change1 = !this.change1;

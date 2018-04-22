@@ -53,7 +53,7 @@
           btnLeftFlag:"", //左边按钮显隐
           btnRightFlag:"", //右边按钮显隐
           orderStatus:"", //订单的状态
-          state:1,
+          state:this.$route.query.states,
           num:0,
           statusFlag1:false,
           statusFlag2:true,

@@ -1,13 +1,14 @@
 <template lang="pug">
-  .filtrate 
+  .filtrate
     .wrap(v-show="downList")
-      .brand(@click="down()") 
+      .brand(@click="down()")
         span 品牌
         img(src="../../../assets/img/right.png")
       .brandList
-        ul
-          li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event)") {{item.bi_name}}
-            .brandNameId(v-show="false") {{item.bi_id}}
+        ul(v-if="showBrand")
+          li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event,item.bi_id)") {{item.bi_name}}
+        ul(v-else="showBrand")
+          li.onlyBrand(:class="{active:true}" @click="onlyBrandCheck()") {{onlyBrandName}}
       .price 价格区间
       .priceContent
         input(type="text" placeholder="最小金额" v-model="minVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
@@ -17,15 +18,20 @@
           li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index,$event)").sections {{item}}
       .support 支持自提
         ul
-          li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}  
+          li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}
     .button(v-show="downList")
       .reset(@click="reset()") 重置
-      .affirm(@click="hide()") 确认             
+      .affirm(@click="hide()") 确认
+    .wrapAllBrand
+      allBrand(v-show="allBrandFlag" @searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
 </template>
 
 <script>
-    export default {
+  import allBrand from './allBrand.vue'
+
+  export default {
         name: "filtrate",
+        components: {allBrand},
         props: {
           show: {
             type: Boolean,
@@ -34,6 +40,9 @@
         },
         data(){
           return{
+            showBrand:true, //判断是显示一个还是多个品牌名
+            onlyBrandName:"", //只显示一个品牌名
+            allBrandFlag:false,
             brandNameId:"",
             minVal:"",
             maxVal:"",
@@ -66,10 +75,17 @@
               self.brandList = res.data.data;
             })
           },
+          //当只显示一个品牌名时
+          onlyBrandCheck(){
+            this.showBrand = true;
+            this.num1 = null;
+          },
           //点击品牌名
-          check(index,e){
+          check(index,e,id){
             this.num1 = index;
-            this.brandNameId = e.target.children[0].innerText;
+            this.brandNameId = id;
+            this.showBrand = false;
+            this.onlyBrandName = e.target.innerText;
           },
           //点击价格区间
           checks(index,e){
@@ -103,7 +119,7 @@
             this.minVal = min.value;
             this.maxVal = max.value;
             this.pickUp = "";
-            this.brandNameId = ""; 
+            this.brandNameId = "";
           },
           //点击确认提交
           hide(){
@@ -121,18 +137,41 @@
                 brandId : this.brandNameId,
                 minPrice : this.minVal,
                 maxPrice : this.maxVal,
-                pickUps : this.pickUp
+                pickUps : this.pickUp,
+                brandName: this.onlyBrandName
               };
             }
+            console.log(this.brandNameId);
             this.$emit('ievent',data);
           },
           down(){
-            let data = {
-              a : 1
-            };    
-            this.$emit("showSon",data);
+            this.allBrandFlag = true;
+            this.downList = false;
           },
-          
+
+          //从字母列表传来的值
+          searchBrand(data){
+            if (data.flag2 == true) {
+              this.allBrandFlag = false;
+              this.downList = true;
+              this.brandNameId = data.brandId2;
+              this.onlyBrandName = data.brandName2;
+              this.showBrand = false;
+              this.num1 = !null;
+            }
+          },
+          //热门品牌
+          searchBrandHot(data){
+            if (data.flag2 == true) {
+              this.allBrandFlag = false;
+              this.downList = true;
+              this.brandNameId = data.brandId2;
+              this.onlyBrandName = data.brandName2;
+              this.showBrand = false;
+              this.num1 = !null;
+            }
+          },
+
         }
     }
 </script>
@@ -159,7 +198,7 @@
   justify-content: space-between;
   font-size: .4rem;
 }
-.brand img{ 
+.brand img{
   width: .5rem;
   height: .5rem;
   vertical-align: middle;

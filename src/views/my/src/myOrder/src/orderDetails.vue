@@ -52,7 +52,7 @@
       .pickUpNum(v-show="pickUpNoFlag")
         .alertFrame
           .topDiv 提货码
-          .contDiv {{item.pick_up_no}} XANCDERFKL
+          .contDiv {{item.pick_up_no}}
           .bottomDiv(@click="pickUpNoFinish()") 完成
       .bottom(v-show="flag")
         span.shop 提货门店:
@@ -400,10 +400,10 @@
                   arrays[i].btnF = "申请退款";
                   arrays[i].btnS = "提货码";
                   //提货码按钮的颜色
-                  var btnSDiv =document.getElementsByClassName("btnS")[0];
-                  btnSDiv.style.background = "rgb(244,0,87)";
-                  btnSDiv.style.color = "white";
-                  btnSDiv.style.borderColor = "rgb(244,0,87)";
+                  // var btnSDiv =document.getElementsByClassName("btnS")[0];
+                  // btnSDiv.style.background = "rgb(244,0,87)";
+                  // btnSDiv.style.color = "white";
+                  // btnSDiv.style.borderColor = "rgb(244,0,87)";
                   self.leftBtnFlag = true;
                   self.leftBtn = "批量退款";
                   self.rightBtn = "再次购买";

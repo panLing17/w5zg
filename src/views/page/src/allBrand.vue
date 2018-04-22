@@ -5,13 +5,11 @@
     p.hot 热门
     .brandList
       ul
-        li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event)") {{item.bi_name}}
-          .hot(v-show="false") {{item.bi_id}}
+        li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event,item.bi_id)") {{item.bi_name}}
     .allBrandList
       ul(v-for="(key,value,oIndex) in letterBrandList")
         li.letters(:id="'anchorz-'+oIndex") {{value}}
-        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event)") {{item.bi_name}}
-          .conceal(v-show="false") {{item.bi_id}}
+        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event,item.bi_id)") {{item.bi_name}}
         li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
     ul.letter
       li #
@@ -76,12 +74,13 @@
         },
         methods:{
           //选择热门品牌
-          check(index,e){
+          check(index,e,id){
             this.num1 = index;
-            this.brandNameId = e.target.children[0].innerText;
+            this.brandNameId = id;
             let data = {
               flag2:true,
-              brandId2:this.brandNameId
+              brandId2:id,
+              brandName2:e.target.innerText
             }
             this.$emit('searchBrandHot',data);
           },
@@ -154,11 +153,13 @@
           },
 
           //选择字母列表品牌名
-          selects(e){
-            this.brandNameId = e.target.children[0].innerText;
+          selects(e,id){
+            console.log(id);
+            this.brandNameId = id;
             let data = {
               flag2:true,
-              brandId2:this.brandNameId
+              brandId2:id,
+              brandName2:e.target.innerText
             }
             this.$emit('searchBrand',data);
           }
