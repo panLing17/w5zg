@@ -91,6 +91,8 @@
       this.getHotButton()
       // 微信sdk
       this.wxConfig()
+      // 动画hack
+      this.animateHack()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
