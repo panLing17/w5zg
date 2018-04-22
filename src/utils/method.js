@@ -9,6 +9,6 @@ function transformDate(date) {
 }
 // 拼接图片前缀
 function imgUrlFilter(data) {
-  return '' + data
+  return 'http://w5zg-mall-test.oss-cn-hangzhou.aliyuncs.com/' + data
 }
 export default {transformDate, imgUrlFilter}

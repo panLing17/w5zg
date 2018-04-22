@@ -2,7 +2,7 @@
   .paymentBox
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-2)")
       .topCenter(slot="center") 确认支付
       .topRight(slot="right")
     .price
@@ -65,6 +65,14 @@
           }
           this.type[n] = true
         },
+        isWeiXin() {
+          let ua = window.navigator.userAgent.toLowerCase()
+          if (ua.match(/MicroMessenger/i) === 'micromessenger') {
+            return true
+          } else {
+            return false
+          }
+        },
         payment () {
           let type = ''
           for (let i in this.type) {
@@ -74,7 +82,12 @@
           }
           let url = ''
           if (type === 'wePay') {
-            url = 'thirdPay/wechat/payOrder'
+            if (this.isWeiXin()) {
+              url = 'thirdPay/wechat/payOrder'
+            } else {
+              url = 'thirdPay/wechat/h5/pushOrder'
+            }
+
           }
           if (type === 'aliPay') {
             url = 'thirdPay/alipay/payOrder'

@@ -3,7 +3,7 @@
     .goodsCardBox
       .title
         p {{list.si_name}}
-        img(src="../../../assets/img/searchHistory_clear.png")
+        // img(src="../../../assets/img/searchHistory_clear.png")
       transition-group(tag="div", name="leftOut")
         .goodsBox(v-for="(i,index) in list.shoppingCartVOList", :key="index")
           .main

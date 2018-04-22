@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Loading from './loading.vue'
 
-function onTouchMove(inFlag) {
+/*function onTouchMove(inFlag) {
   if (inFlag) {
     document.addEventListener('touchmove', onHandler, false);
   } else {
@@ -10,7 +10,7 @@ function onTouchMove(inFlag) {
 }
 function onHandler(e) {
   e.preventDefault();
-}
+}*/
 let $vm
 const $view = Vue.extend(Loading)
 $vm = new $view()
@@ -24,15 +24,15 @@ Vue.directive('loading', function (el, binding) {
   $vm.show = binding.value
   if (binding.value) {
     el.appendChild($vm.$el)
-    onTouchMove(true)
-    document.body.style.overflow='hidden'
-    document.body.style.height="100vh"
+    // onTouchMove(true)
+    // document.body.style.overflow='hidden'
+    // document.body.style.height="100vh"
     // 防止父节点固定定位导致被遮罩处可拖动
     // el.style.position = 'relative'
   } else {
     setTimeout(function () {
       el.removeChild($vm.$el)
-      onTouchMove(false)
+      // onTouchMove(false)
       // document.body.style.overflow='auto'
       // el.style.position = oldPosition
     }, 800)
