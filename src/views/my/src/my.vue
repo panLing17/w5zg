@@ -43,8 +43,8 @@
           img(src="../../../assets/img/my_waitforreceiving2@2x.png")
           .character 待收货
         li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
-          img(src="../../../assets/img/my_remaintobeevaluated2@2x.png")
-          .character 待评价
+          img(src="../../../assets/img/my_completed.png")
+          .character 已完成
         li(@click="$router.push('/my/refundAfterSale')")
           img(src="../../../assets/img/my_aftersale2@2x.png")
           .character 退货/售后
@@ -337,6 +337,12 @@
   .myOrderForm ul.bottom li:nth-child(3),
   .myOrderForm ul.bottom li:nth-child(4){
     margin-left: .7rem;
+  }
+  .myOrderForm ul.bottom li:nth-child(3) img{
+    width: .75rem;
+  }
+  .myOrderForm ul.bottom li:nth-child(4) img{
+    width: .65rem;
   }
   .myOrderForm ul.bottom li:nth-child(5){
     margin-left: .3rem;

@@ -2,7 +2,7 @@
   .searchHistory.mescroll#historyMescroll
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
@@ -79,6 +79,14 @@
       this.mescroll.hideTopBtn();
     },
     methods: {
+      //判断回退事件
+      backRouter(){
+        if (this.$route.query.relNum == 1) {
+          this.$router.push('/page/commodityList');
+        } else{
+          this.$router.go(-1);
+        }
+      },  
       //显示搜索结果
       resultShow(){
         if (this.$route.query.relNum == 1) {
@@ -139,7 +147,7 @@
               this.flag = false;
             },
             noConfirm: () => {
-              alert('取消')
+              //alert('取消')
             }
           })
         }

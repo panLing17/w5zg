@@ -23,6 +23,7 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
     export default {
       name: "account",
       data () {
@@ -30,6 +31,17 @@
           balance: 0,
           // 预计收入金额=冻结金额
           tempBalance:0
+        }
+      },
+      computed: {
+        ...mapState([
+          "userData"
+        ])
+      },
+      watch: {
+        userData (value) {
+          this.balance = value.cash_balance;
+          this.tempBalance = value.temp_balance;
         }
       },
       created () {

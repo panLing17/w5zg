@@ -22,7 +22,7 @@
             ul.listOfGoods
               li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
                 img(:src="items.gc_icon | img-filter")
-                .words(v-show="wordsShow") {{items.gc_keywords}}
+                .words(v-show="wordsShow") {{items.gc_name}}
 </template>
 
 <script>

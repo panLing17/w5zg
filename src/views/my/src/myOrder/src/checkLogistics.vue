@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 查看物流
       .topRight(slot="right")
-        img(src="../../../../../assets/img/msg_0.png").msg
+        img(src="../../../../../assets/img/msg_0.png" v-show="false").msg
     .content
       .center
         .image
@@ -29,7 +29,7 @@
             span.state {{item.status}}
             img(src="../../../../../assets/img/now@2x.png" v-if="index==0")
             img(src="../../../../../assets/img/past@2x.png" v-else="index==0")
-    .packDrop(@click="packDrop()")
+    .packDrop(@click="packDrop()" v-show="false")
       span {{packDrops}}
       img(src="../../../../../assets/img/pack.png")
     .title
@@ -45,8 +45,8 @@
       data(){
         return{
           address:this.$route.query.address, //接收订单详情页面的地址
-          ordertype:"", //订单类型
-          sonOrder:1, //子订单id
+          ordertype:321, //订单类型
+          sonOrder:this.$route.query.orderId, //子订单id
           goodsStatus:"", //货物的状态
           phone:"", //官方联系电话
           number:"", //快递的编号
@@ -83,7 +83,7 @@
             url:self.$apiMember + "orderLogistics/info",
             params:{orderId:self.sonOrder,orderType:self.ordertype}
           }).then(function(res){
-            console.log(res.data.data);
+            console.log(res);
             self.CourierName = res.data.data.result.expName;
             self.number = res.data.data.result.number;
             self.phone = res.data.data.result.expPhone;
@@ -113,7 +113,7 @@
           }else{
             var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
             logisticsMsg.style.height = "100%";
-            logisticsMsg.style.overflow = "auto";
+            // logisticsMsg.style.overflow = "auto";
             logisticsMsg.style.transition = "all 1s";
             this.packDrops = "点击收起详情";
           }
@@ -234,7 +234,7 @@
   /*物流地址--结束*/
   /*物流信息--开始*/
   .logisticsMsg{
-    height: 100%;
+    /*height: 100%;*/
     background-color: #fff;
     padding-top: .3rem;
   }

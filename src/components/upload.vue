@@ -50,6 +50,7 @@
         // 校验格式，格式不对直接跳出
         let type = e.target.files[0].name.split('.')[1]
         if (this.type.indexOf(type) === -1) {
+          this.$message.error('上传图片格式不支持！')
           return false
         }
         // 请求
@@ -63,22 +64,27 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
           processData: false,
         }).then(function (response) {
-          self.urlList[index].url = response.data.data
-          if (self.urlList.length < self.max) {
-            self.urlList.push({
-              url: '',
-              edit: false
+          if (response.data.code === '081') {
+            self.urlList[index].url = response.data.data
+            if (self.urlList.length < self.max) {
+              self.urlList.push({
+                url: '',
+                edit: false
+              })
+            }
+            // 请求成功后回调
+            let array = []
+            self.urlList.forEach((now,index)=>{
+              array.push(now.url)
             })
+            if (array[array.length-1].url === '') {
+              array.splice(array.length-1,1)
+            }
+            self.$emit('success',array)
+          }else {
+            self.$message.error(response.data.msg)
           }
-          // 请求成功后回调
-          let array = []
-          self.urlList.forEach((now,index)=>{
-            array.push(now.url)
-          })
-          if (array[array.length-1].url === '') {
-            array.splice(array.length-1,1)
-          }
-          self.$emit('success',array)
+
         })
       },
       remove (index) {

@@ -15,11 +15,22 @@
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   export default {
     name: "accountCardB",
     data () {
       return {
         balance:0
+      }
+    },
+    computed: {
+      ...mapState([
+        "userData"
+      ])
+    },
+    watch: {
+      userData (value) {
+        this.balance = Number(value.netcard_balance);
       }
     },
     created () {

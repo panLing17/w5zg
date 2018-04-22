@@ -41,7 +41,7 @@
           }).then(function (response) {
             if (response.data.code === '081') {
               _this.$message.success(response.data.msg)
-              _this.$router.push('/my')
+              _this.$router.go(-1)
             }else {
               _this.$message.error(response.data.msg);
             }
