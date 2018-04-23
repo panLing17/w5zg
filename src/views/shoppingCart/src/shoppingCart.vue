@@ -1,34 +1,35 @@
 <template lang="pug">
-  .shoppingCartBox.mescroll#shoppingCartMescroll
+  div
     nav-bar(background="white")
       .topLeft(slot="left")
         .sanjiao
         span {{location.city.name}}
       .topCenter(slot="center") 购物车
       .topRight(slot="right")
-    .cartTypeTab
-      ul
-        li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
-          p 门店自提
-          span(class="animated", :class="{rubberBand:flag}") {{shoppingCartGoodsNum.carryNum}}
-        li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
-          p 快递配送
-          span(class="animated", :class="{swing:flag}") {{shoppingCartGoodsNum.sendNum}}
-      p(:style="{left:nowTab*50+'%'}")
-    .content(v-loading="loading")
-      transition(name="fade", mode="out-in")
-        router-view(style="min-height:calc(100vh - 6rem)")
-      .title
-        .line
-        p 推荐
-      w-recommend(:listData="recommendGoods", background="white")
-      .settlement
-        .left
-          w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
-          p 全选
-        .right
-          .prive 合计：{{computedPrice | price-filter}}
-          .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+    .shoppingCartBox.mescroll#shoppingCartMescroll
+      .cartTypeTab
+        ul
+          li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
+            p 门店自提
+            span(class="animated", :class="{rubberBand:flag}") {{shoppingCartGoodsNum.carryNum}}
+          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
+            p 快递配送
+            span(class="animated", :class="{swing:flag}") {{shoppingCartGoodsNum.sendNum}}
+        p(:style="{left:nowTab*50+'%'}")
+      .content(v-loading="loading")
+        transition(name="fade", mode="out-in")
+          router-view(style="min-height:calc(100vh - 6rem)")
+        .title
+          .line
+          p 推荐
+        w-recommend(:listData="recommendGoods", background="white")
+        .settlement
+          .left
+            w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
+            p 全选
+          .right
+            .prive 合计：{{computedPrice | price-filter}}
+            .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
 </template>
 
 <script>
@@ -316,6 +317,7 @@
   }
   /* 上拉刷新下俩加载 */
   #shoppingCartMescroll {
+    padding-top: 1.3rem;
     top: 0;
     bottom: 0;
     height: auto;
