@@ -14,7 +14,7 @@
         .itemDec 金额：
         .itemContent
           input(placeholder="请输入发放金额", type="number", v-model="form.money")
-    .confirmBtn(@click="grant") 确认
+    .confirmBtn(@click="check") 确认
 </template>
 
 <script>
@@ -29,6 +29,22 @@
         }
       },
       methods:{
+        check () {
+          let mobileReg = /^1\d{10}$/
+          if (!mobileReg.test(this.form.mobile)) {
+            this.$message.error('手机号格式不正确！')
+            return
+          }
+          if (!this.form.money  || Number(this.form.money) < 0) {
+            this.$message.error('发放金额不能小于0！')
+            return
+          }
+          if (Number(this.form.money) > this.$store.state.userData.netcard_balance) {
+            this.$message.error('发放金额不能大于总额！')
+            return
+          }
+          this.grant()
+        },
         grant () {
           let _this = this;
           this.$ajax({
@@ -41,7 +57,7 @@
           }).then(function (response) {
             if (response.data.code === '081') {
               _this.$message.success(response.data.msg)
-              _this.$router.go(-1)
+              _this.$router.push('/my')
             }else {
               _this.$message.error(response.data.msg);
             }

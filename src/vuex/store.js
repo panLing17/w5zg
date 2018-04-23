@@ -7,6 +7,7 @@ const state = {
   userData: '',
   shoppingCount: 0,
   viewDirection: 'slide-fade',
+  footerShow:false,
   location: {
     province:{
       name: '江苏省',

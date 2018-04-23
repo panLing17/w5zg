@@ -5,13 +5,14 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 退款/售后
       .topRight(slot="right")
-        img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search
+        <!--img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search-->
         img(src="../../../../../assets/img/msg_0.png").msg
     .orderStatus
       ul.wrapStatus
         li.status(v-for="(item,index) in status" @click="statusChange(index)" :class="{active:index===statusActive}") {{item}}
+        li.line(:style="{left:statusActive*25+'%'}")
     .mescroll#saleMescroll
-      .contentWrapper
+      .contentWrapper(ref="contentWrapper")
         .content(v-for="(item,index) in orderDetail", v-if="!isEmpty")
           .top
             .left
@@ -131,6 +132,7 @@
         statusChange (index) {
           this.statusActive = index
           this.mescroll.destroy();
+          this.mescroll.scrollTo( 0, 300 );
           this.$mescrollInt("saleMescroll",this.upCallback);
         },
         confirm (id) {
@@ -209,12 +211,14 @@
   }
   .orderStatus ul.wrapStatus{
     display: flex;
-    justify-content: space-between;
+    position: relative;
   }
   .orderStatus ul.wrapStatus li.status{
     line-height: 1rem;
     font-size: .4rem;
     color: rgb(153,153,153);
+    flex: 1;
+    text-align: center;
   }
   /*订单的状态--结束*/
   /*订单内容--开始*/
@@ -246,6 +250,9 @@
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
     display: flex;
+    height: 2.92rem;
+    overflow: hidden;
+    position: relative;
   }
   .center .image{
     flex: none;
@@ -259,9 +266,15 @@
   .center .goodsDetails{
     margin-left: .3rem;
     flex: 1;
+    height: 100%;
+    position: relative;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .center .goodsDetails .property{
     margin-top: .1rem;
@@ -272,9 +285,11 @@
     margin-right: .3rem;
   }
   .center .goodsDetails .amount{
-    margin-top: 1rem;
+    position: absolute;
     font-size: .35rem;
     color: rgb(153,153,153);
+    bottom: 0;
+    left: 0;
   }
   .bottom{
     background-color: #fff;
@@ -342,5 +357,13 @@
     text-align: center;
     color: rgb(153,153,153);
     font-size: .4rem;
+  }
+  .line {
+    width: 25%;
+    height: .053rem;
+    background: rgb(245,0,87);
+    position: absolute;
+    bottom: 0;
+    transition: all 0.5s;
   }
 </style>
