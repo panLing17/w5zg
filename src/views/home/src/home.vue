@@ -10,9 +10,9 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
+      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
         div(v-for="(tag, index) in banner", style="width:100%" , @click="goActivity(index)")
-          img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
+          img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
       .title

@@ -35,7 +35,7 @@
             this.$message.error('手机号格式不正确！')
             return
           }
-          if (!this.form.money  || Number(this.form.money) < 0) {
+          if (!this.form.money  || Number(this.form.money) <= 0) {
             this.$message.error('发放金额不能小于0！')
             return
           }

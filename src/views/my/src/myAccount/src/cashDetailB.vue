@@ -7,7 +7,7 @@
         .topRight(slot="right")
           p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="openFilter") 筛选
       transition(name="fade")
-        .mask(v-show="filterShow", @click="filterShow=false")
+        .mask(v-show="filterShow", @click.stop="filterShow=false")
       .filterBoxWrapper
         transition(name="fold")
           .filterBox(v-show="filterShow")
@@ -40,16 +40,6 @@
             filterActive: 1
           }
         },
-      watch: {
-        // 模态框出现禁止页面滑动
-        filterShow (cur, old) {
-          if (cur) {
-            document.getElementsByTagName('body')[0].style.overflow = 'hidden';
-          }else {
-            document.getElementsByTagName('body')[0].style.overflow = 'auto';
-          }
-        }
-      },
       filters: {
         // 保留两位小数点
         number (value) {

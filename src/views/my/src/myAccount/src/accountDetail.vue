@@ -10,7 +10,7 @@
           span.dec 第三方明细
           img.icon(:src="drop?require('../../../../../assets/img/drop-down@2x.png'):require('../../../../../assets/img/pack-up@2x.png')", v-show="itemActive===1", @click.stop="dropChange")
     transition(name="fade")
-      .mask(v-show="filterShow", @click="closeFilter")
+      .mask(v-show="filterShow", @click.stop="closeFilter")
     .filterBoxWrapper
       transition(name="fold")
         .filterBox(v-show="filterShow")
@@ -38,14 +38,6 @@
       watch: {
         filterActive () {
           this.$router.replace({path:`/my/accountDetailContent/${this.itemActive}/${this.filterActive}`});
-        },
-        // 模态框出现禁止页面滑动
-        filterShow (cur, old) {
-          if (cur) {
-            document.getElementsByTagName('body')[0].style.overflow = 'hidden';
-          }else {
-            document.getElementsByTagName('body')[0].style.overflow = 'auto';
-          }
         }
       },
       mounted () {
