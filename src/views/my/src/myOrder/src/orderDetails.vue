@@ -356,13 +356,20 @@
                   self.leftBtn = "批量退款";
                   self.rightBtn = "提醒发货";
                   arrays[i].orderInfoStatus = "待发货";
+                  var mArr = arrays[i].orderDetail;
+                  for (var j = 0; j < mArr.length; j++) {
+                    console.log(mArr[j].refund_status);
+                    if(mArr[j].refund_status != null){
+                      arrays[i].btnF = "取消申请";
+                    }
+                  }
                 }
                 if (res.data.data[0].delivery_ways == "自提"){
                   arrays[i].morethenFlag = false;
                   arrays[i].moreBtnFlag =false;
                   arrays[i].btnSFlag = true;
                   arrays[i].btnFFlag = true;
-                  arrays[i].btnF = "申请退货";
+                  arrays[i].btnF = "申请退款";
                   arrays[i].btnS = "提货码";
                   //提货码按钮的颜色
                   //var btnsDiv = document.getElementsByClassName("btnS")[0];
@@ -373,6 +380,13 @@
                   self.leftBtn = "批量退款";
                   self.rightBtn = "申请退款";
                   arrays[i].orderInfoStatus = "待备货";
+                  var mArr = arrays[i].orderDetail;
+                  for (var j = 0; j < mArr.length; j++) {
+                    console.log(mArr[j].refund_status);
+                    if(mArr[j].refund_status != null){
+                      arrays[i].btnF = "取消申请";
+                    }
+                  }
                 }
               }
 

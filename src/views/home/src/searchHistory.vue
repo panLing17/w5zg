@@ -7,7 +7,7 @@
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
           input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()")
-      .topRight(slot="right" @click="$router.go(-1)") 取消
+      .topRight(slot="right" @click="backRouter()") 取消
     .history(v-show="searchFlag")
       ul.top
         li.left 历史搜索

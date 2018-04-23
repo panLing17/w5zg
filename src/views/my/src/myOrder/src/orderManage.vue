@@ -77,7 +77,8 @@
 
       },
       mounted(){
-        this.jump();
+        console.log(this.$route.query.id);
+        //this.jump();
         this.keepStatus();
         this.$mescrollInt("orderManageMescroll",this.upCallback);
         //this.request();
@@ -98,22 +99,6 @@
         },
         //判断上一页点击的索引值
         jump(){
-          if (this.$route.query.id == 1) {
-            this.num = 1;
-            this.state = 1;
-          }
-          if (this.$route.query.id == 2) {
-            this.num = 2;
-            this.state = 2;
-          }
-          if (this.$route.query.id == 3) {
-            this.num = 3;
-            this.state = 4;
-          }
-          if (this.$route.query.id == 4) {
-            this.num = 4;
-            this.state = 3;
-          }
           this.request();
         },
 
@@ -150,18 +135,45 @@
           
           this.request();
         },
+        //保持状态判断
         keepStatus(){
-          console.log(this.$route.query.nums);
-          if (this.$route.query.nums == undefined) {
-            this.num = 0;
-          } else{
-            this.num = this.$route.query.nums;
+          if (this.$route.query.id) {
+            var lineDiv = document.getElementsByClassName("lineDiv")[0];
+            lineDiv.style.transition = "all .5s";
+            if (this.$route.query.id == 1) {
+              this.num = 1;
+              this.state = 1;
+              lineDiv.style.left = "19%";
+            }
+            if (this.$route.query.id == 2) {
+              this.num = 2;
+              this.state = 2;
+              lineDiv.style.left = "40.5%";
+            }
+            if (this.$route.query.id == 3) {
+              this.num = 3;
+              this.state = 4;
+              lineDiv.style.left = "62%";
+            }
+            if (this.$route.query.id == 4) {
+              this.num = 4;
+              this.state = 3;
+              lineDiv.style.left = "83.5%";
+            }
+          } else {
+            console.log(this.$route.query.nums);
+            if (this.$route.query.nums == undefined) {
+              this.num = 0;
+            } else{
+              this.num = this.$route.query.nums;
+            }
+            
+            this.state = this.$route.query.states;
+            var lineDiv = document.getElementsByClassName("lineDiv")[0];
+            lineDiv.style.left = this.$route.query.lefts;
+            console.log(this.state);
           }
           
-          this.state = this.$route.query.states;
-          var lineDiv = document.getElementsByClassName("lineDiv")[0];
-          lineDiv.style.left = this.$route.query.lefts;
-          console.log(this.state);
           this.request(); 
         },
         //判断两个按钮上的文字
@@ -372,9 +384,6 @@
     bottom: 0;
     height: auto;
     position: fixed;
-  }
-  .underLine{
-    border-bottom:
   }
   .active{
     color: rgb(244,0,87) !important;
