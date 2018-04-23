@@ -1,5 +1,5 @@
 <template lang="pug">
-  .commodityList.mescroll#pageMescroll(@touchmove="notScroll($event)")
+  .commodityList.mescroll#pageMescroll
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
@@ -42,7 +42,7 @@
     .mask
       .lefter(@click="lefterBack()")
       .righter
-        filtrate(@ievent="ievent" v-show="filtrateFlag")
+        filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
     .bottomPlaceholder
 </template>
 
@@ -105,7 +105,6 @@
       //遮罩层出现后不让页面滑动
       notScroll (e) {
         e.preventDefault();
-        e.stopPropagation();
       },
       //搜索商品
       searchGoods(){
@@ -187,8 +186,8 @@
       },
       //筛选左滑
       leftScroll(){
-        var _this = this;
-        //this.$mescrollInt("",this.upCallback);
+        this.mescroll.lockDownScroll(true);
+        this.mescroll.lockUpScroll(true);
         this.filtrateFlag = true;
         this.allBrandFlag = false;
         var mask = document.getElementsByClassName("mask")[0];
@@ -198,19 +197,16 @@
         mask.style.left = 0;
         mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
-        //this.stop();
-        //this.$mescrollInt("pageMescroll",this.upCallback) = null;
       },
       lefterBack(){
-        //_this.$mescrollInt("pageMescroll",this.upCallback);
+        this.mescroll.lockDownScroll(false);
+        this.mescroll.lockUpScroll(false);
         var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
         mask.style.left = "100%";
         mask.style.opacity = 0;
         mask.style.transition = "left .3s, opacity .3s";
         commodityList.style.overflow = "scroll";
-        //this.move();
-        this.$mescrollInt("pageMescroll",this.upCallback);
       },
       //从筛选传值过来
       ievent(data){

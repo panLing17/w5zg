@@ -39,7 +39,7 @@
           span.num {{item.orderNum}}  
       .center
         .image
-          img(:src="item.imageSrc")
+          img(:src="")
         .goodsDetails
           .words 法国PELLIOT秋冬新品户外冲锋衣男
           .property
@@ -98,7 +98,7 @@
     .bottomList
         ul.goodsList#box
           li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../../../assets/img/my_goods.png")
+            img(src="")
             .wrapWords
               .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
               .price ￥516.22
@@ -112,7 +112,6 @@
 </template>
 
 <script>
-    import myGoods from '../../../../../assets/img/my_goods.png'
     export default {
       name: "orderDetails",
       data(){
@@ -123,24 +122,7 @@
           rightBtn:"物流信息",
           flag:false,
           recommendGoods: [],
-          orderDetail:[
-            {
-              orderNum:"2018031401",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031402",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031403",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031404",
-              imageSrc:myGoods,
-            }
-          ]
+          orderDetail:[]
         }
       },
       created(){

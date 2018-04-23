@@ -37,38 +37,12 @@
         img(src="../../../../../assets/img/right.png")
 </template>
 <script>
-  import myGoods from '../../../../../assets/img/my_goods.png'
   export default {
     name: 'selectService',
     data () {
       return {
         msg: false,
-        goodsList:[
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黄色",
-            size:"L",
-            amount:1,
-            checked:false
-          },
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黑色",
-            size:"XL",
-            amount:1,
-            checked:false
-          },
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"红色",
-            size:"M",
-            amount:1,
-            checked:false
-          }
-        ]
+        goodsList:[]
       }
     },
     mounted () {

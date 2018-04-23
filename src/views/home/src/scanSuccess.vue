@@ -20,20 +20,21 @@
         li(v-for="item in goodsDetails").details
           ul
             li.img
-              img(v-bind:src="item.imgSrc")
+              img(v-bind:src="")
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
-              span ￥{{item.price}}  
+              span ￥{{item.price}}
             li.region
-              span {{item.region}} 
+              span {{item.region}}
               span {{item.buyerNum}} 人已购买
     #returnTop(@click="topFunction()")
       img(src="../../../assets/img/my_top@2x.png")
-    .downOver 已到最底部              
+    .downOver 已到最底部
 </template>
 <script>
   import my_goods from '../../../assets/img/my_goods.png'
+
   export default {
     name: 'scanSuccess',
     data () {
@@ -66,7 +67,7 @@
     mounted () {
       // 当网页向下滑动 40px 出现"返回顶部" 按钮
       window.onscroll = function() {scrollFunction()};
-       
+
       function scrollFunction() {
           if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
               document.getElementById("returnTop").style.display = "block";
@@ -176,7 +177,7 @@
     border-top-right-radius: .3rem;
     width: 4.46rem;
   }
-  
+
   .goodsList li.details li.goodsMsg{
     font-size: .4rem;
     padding: 0 .2rem;

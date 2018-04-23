@@ -11,7 +11,7 @@
         .check
           w-checkbox(v-model="item.checked", @change="check")
         .image
-          img(:src="item.imgSrc")
+          img(:src="")
         .goodsDetails
           .words {{item.words}}
           .property
@@ -25,39 +25,13 @@
     .next(@click="flag && $router.push('/my/selectService')") 下一步              
 </template>
 <script>
-  import myGoods from '../../../../../assets/img/my_goods.png'
   export default {
     name: 'applyAfterSale',
     data () {
       return {
         flag:true,
         msg: false,
-        goodsList:[
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黄色",
-            size:"L",
-            amount:1,
-            checked:false
-          },
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黑色",
-            size:"XL",
-            amount:1,
-            checked:false
-          },
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"红色",
-            size:"M",
-            amount:1,
-            checked:false
-          }
-        ]
+        goodsList:[]
       }
     },
     mounted () {

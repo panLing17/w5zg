@@ -36,6 +36,10 @@
           show: {
             type: Boolean,
             default: false
+          },
+          message: {
+            type: String,
+            default: ""
           }
         },
         data(){
@@ -59,6 +63,7 @@
           }
         },
         mounted(){
+          console.log(this.message);
           //品牌名
           this.brandNames();
           document.getElementsByClassName("filtrate")[0].style.overflow = "scroll";
@@ -112,6 +117,7 @@
             this.num1 = null;
             this.num2 = null;
             this.num3 = null;
+            this.showBrand = true;
             var min = document.getElementsByClassName("min")[0];
             var max = document.getElementsByClassName("max")[0];
             min.value = "";
