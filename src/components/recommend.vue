@@ -5,9 +5,9 @@
         img(:src="item.gi_image_url | img-filter")
         .text <span v-if="item.carry_type!==2">可自提</span>{{item.goods_name}}
         .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-          span 可省100元
+          span 可省{{item.economize_price}}元
         .price(v-else) {{item.price | price-filter}}
-          span 可省100元
+          span 可省{{item.economize_price}}元
 </template>
 
 <script>
