@@ -14,19 +14,20 @@
             .btn(:class="{'active':filterActive===0}", @click="filterChange(0)") 全部
             .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 收入
             .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 支出
-      .detailBox(v-if="!isEmpty")
-        ul.detailList
-          li(v-for="item in cashDetail")
-            .block.top
-              .left {{item.trade_type | tradeType}}
-              .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
-            .block.center
-              .left 商户ID：{{item.source_id}}
-              .right 现金券ID:{{item.serial_number}}
-            .block.bottom
-              .left(v-if="item.orderNo") 订单号：{{item.orderNo}}
-              .right {{item.creation_time}}
-      .nodata(v-if="isEmpty") 暂无相关记录流水
+      .mescroll#mescroll
+        .detailBox(v-if="!isEmpty")
+          ul.detailList
+            li(v-for="item in cashDetail")
+              .block.top
+                .left {{item.trade_type | tradeType}}
+                .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
+              .block.center
+                .left 商户ID：{{item.source_id}}
+                .right 现金券ID:{{item.serial_number}}
+              .block.bottom
+                .left(v-if="item.orderNo") 订单号：{{item.orderNo}}
+                .right {{item.creation_time}}
+        .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -40,7 +41,13 @@
           }
         },
       created () {
-         this.getCashDetail(0);
+
+      },
+      mounted () {
+        this.$mescrollInt("mescroll",this.upCallback);
+      },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
       },
       watch: {
         // 模态框出现禁止页面滑动
@@ -82,27 +89,49 @@
         }
       },
       methods: {
-        getCashDetail (type) {
+        upCallback: function(page) {
+          let self = this;
+          this.getListDataFromNet(page.num, page.size, function(curPageData) {
+            if(page.num === 1){
+              self.cashDetail = [];
+            }
+            self.cashDetail = self.cashDetail.concat(curPageData)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function() {
+            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr();
+          })
+        },
+        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
           let _this = this;
-          this.cashDetail = [];
-          let form = {};
-          if (type === 1) {
+          let form = {
+            page: pageNum,
+            rows: pageSize
+          };
+          if (this.filterActive === 1) {
             form.type = '125';
-          }else if (type === 2) {
+          }else if (this.filterActive === 2) {
             form.type = '126';
           }
+
           this.$ajax({
             method: 'get',
             url: this.$apiTransaction + 'logNetcard/logs',
-            params:form
+            params: form
           }).then(function (response) {
-            _this.cashDetail = response.data.data;
+            if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
+              successCallback&&successCallback(response.data.data.rows);//成功回调
+            }else {
+              _this.mescroll.endErr();
+            }
           })
         },
         filterChange (index) {
           this.filterActive = index;
           this.filterShow = false;
-          this.getCashDetail(index);
+          this.cashDetail = []
+          this.mescroll.resetUpScroll( true )
+          this.mescroll.scrollTo( 0, 300 );
         },
         openFilter () {
           this.filterShow = true;
@@ -112,6 +141,13 @@
 </script>
 
 <style scoped>
+  .mescroll {
+    position: fixed;
+    top: 1.3rem;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+  }
   .cashDetail {
     background: rgb(242,242,242);
     width: 100%;

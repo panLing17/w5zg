@@ -38,6 +38,7 @@ Vue.prototype.$mescrollInt = function (id,upFun,downFun) {
       //vue的案例请勿配置clearId和clearEmptyId,否则列表的数据模板会被清空
 //						clearId: "dataList",
 //						clearEmptyId: "dataList"
+      noMoreSize:1
     }
   })
 }

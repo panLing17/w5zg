@@ -264,6 +264,7 @@
     flex-wrap: nowrap;
     display: flex;
     position: relative;
+    height: 2.86rem;
   }
   .center .image {
     flex: none;
@@ -271,6 +272,8 @@
   .center .goodsDetails {
     flex: 1;
     overflow: hidden;
+    height: 100%;
+    position: relative;
   }
   .center .check{
     line-height: 2.4rem;
@@ -290,6 +293,10 @@
   }
   .center .goodsDetails .words{
     font-size: .35rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .center .goodsDetails .property{
     margin-top: .33rem;
@@ -300,7 +307,9 @@
     margin-right: .3rem;
   }
   .center .goodsDetails .count{
-    margin-top: 1rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     font-size: .35rem;
     color: rgb(153,153,153);
   }

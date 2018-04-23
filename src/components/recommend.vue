@@ -35,7 +35,8 @@
   }
 
   .goodsList li {
-    border: solid 1px #ccc;
+    /*border: solid 1px #ccc;*/
+    background: #fff;
     border-radius: 5px;
     overflow: hidden;
     width: 49%;
