@@ -10,7 +10,7 @@
       p {{$route.query.price | price-filter}}
     .paymentTypeTitle 请选择支付方式
     ul.paymentTypeSelect
-      li(@click="changeType('pricePay')")
+      //li(@click="changeType('pricePay')")
         img(src="../../../assets/img/pricePay.png")
         p
           span.top 账户余额
@@ -28,13 +28,13 @@
           span.top 微信支付
           span.bottom 亿万用户的选择,更快更安全
         w-checkbox(v-model="type.wePay")
-      li(@click="changeType('afterPay')")
+      //li(@click="changeType('afterPay')")
         img(src="../../../assets/img/afterPay.png")
         p
           span.top 货到付款
           span.bottom 您购买的商品不支持货到付款
         w-checkbox(v-model="type.afterPay")
-      li(@click="changeType('bankPay')")
+      //li(@click="changeType('bankPay')")
         img(src="../../../assets/img/bandPay.png")
         p
           span.top 银行卡支付

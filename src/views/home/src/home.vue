@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
+  div
     nav-bar(background="rgb(245,0,87)")
       .topLeft(slot="left", @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
@@ -9,25 +9,27 @@
         img(src="../../../assets/img/home扫描@2x.png", @click="searchCode")
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
-    carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
-      div(v-for="(tag, index) in banner", style="width:100%" , @click="goActivity(index)")
-        img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
-    hot-button(:list="hotButton")
-    l-news.news(:newsData="news")
-    .title
-      .line
-      p 活动
-    w-activity(:listData="activityGoods")
-    .title
-      .line
-      p 推荐
-    w-recommend(:listData="recommendGoods")
-    .bottomPlaceholder
+    div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
+      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:5rem")
+        div(v-for="(tag, index) in banner", style="width:100%" , @click="goActivity(index)")
+          img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:5rem")
+      hot-button(:list="hotButton")
+      l-news.news(:newsData="news")
+      .title
+        .line
+        p 活动
+      w-activity(:listData="activityGoods")
+      .title
+        .line
+        p 推荐
+      w-recommend(:listData="recommendGoods")
+      .bottomPlaceholder
 </template>
 <script>
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
+
   export default {
     name: 'home',
     data() {
@@ -63,11 +65,11 @@
       }
     },
     watch: {
-      loadingFlag () {
+      /*loadingFlag () {
         if (this.loadingFlag === 4) {
           this.animateHack()
         }
-      }
+      }*/
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
@@ -168,7 +170,7 @@
         let self = this
         setTimeout(function () {
           self.positionFixed = true
-        },400)
+        },0)
       },
       upCallback: function(page) {
         let self = this;
@@ -336,6 +338,7 @@
   /*顶部搜索--结束*/
 
   #homeMescroll {
+    padding-top: 1.3rem;
     top: 0;
     bottom: 0;
     height: auto;
