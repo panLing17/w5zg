@@ -2,7 +2,7 @@ import Vue from 'vue'
 import wCheckbox from './checkbox'
 import navBar from './navBar'
 import wInput from './input'
-import slideShow from './slideShow'
+// import slideShow from './slideShow'
 import searchInput from './searchInput'
 import wButton from './button'
 // ios风格开关
@@ -22,7 +22,7 @@ import Carousel from 'vue-m-carousel'
 Vue.component('w-checkbox', wCheckbox)
 Vue.component('nav-bar', navBar)
 Vue.component('w-input', wInput)
-Vue.component('slideShow',slideShow)
+// Vue.component('slideShow',slideShow)
 Vue.component('searchInput',searchInput)
 Vue.component('carousel', Carousel)
 Vue.component('w-button', wButton)

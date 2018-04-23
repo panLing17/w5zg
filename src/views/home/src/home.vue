@@ -64,11 +64,11 @@
       }
     },
     watch: {
-      loadingFlag () {
+      /*loadingFlag () {
         if (this.loadingFlag === 4) {
           this.animateHack()
         }
-      }
+      }*/
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
@@ -169,7 +169,7 @@
         let self = this
         setTimeout(function () {
           self.positionFixed = true
-        },400)
+        },0)
       },
       upCallback: function(page) {
         let self = this;
@@ -337,6 +337,7 @@
   /*顶部搜索--结束*/
 
   #homeMescroll {
+    padding-top: 1.3rem;
     top: 0;
     bottom: 0;
     height: auto;

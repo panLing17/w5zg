@@ -33,7 +33,6 @@
     pop3(ref="logistics", :data="logisticsData", title="物流公司", item-key="ultd_name", @selected="logisticsChange")
 </template>
 <script>
-  import myGoods from '../../../../../assets/img/my_goods.png'
   import pop2 from './pop2'
   import pop3 from './pop3'
   export default {
