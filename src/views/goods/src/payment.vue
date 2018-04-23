@@ -16,13 +16,13 @@
           span.top 账户余额
           span.bottom 账户余额：2000元
         w-checkbox(v-model="type.pricePay")
-      li(@click="changeType('aliPay')")
+      li(@click="changeType('aliPay')", v-if="!wxFlag")
         img(src="../../../assets/img/alipay.png")
         p
           span.top 支付宝
           span.bottom 抽奖赢礼券，最高200元
         w-checkbox(v-model="type.aliPay")
-      li(@click="changeType('wePay')")
+      li(@click="changeType('wePay')", v-else)
         img(src="../../../assets/img/wepay.png")
         p
           span.top 微信支付
@@ -58,6 +58,11 @@
         }
       },
       name: "payment",
+      computed: {
+        wxFlag () {
+          return this.isWeiXin()
+        }
+      },
       methods: {
         changeType (n) {
           for (let i in this.type) {
@@ -67,7 +72,7 @@
         },
         isWeiXin() {
           let ua = window.navigator.userAgent.toLowerCase()
-          if (ua.match(/MicroMessenger/i) === 'micromessenger') {
+          if (ua.match(/MicroMessenger/i) == 'micromessenger') {
             return true
           } else {
             return false
@@ -83,7 +88,7 @@
           let url = ''
           if (type === 'wePay') {
             if (this.isWeiXin()) {
-              url = 'thirdPay/wechat/payOrder'
+              url = 'thirdPay/wechat/payUrl'
             } else {
               url = 'thirdPay/wechat/h5/pushOrder'
             }

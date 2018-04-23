@@ -30,7 +30,8 @@ Vue.config.productionTip = false
 Vue.prototype.$ajax = axios
 //全局方法
 Vue.prototype.$method=method
-
+// 取消全部警告与错误提示
+Vue.config.silent = true
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

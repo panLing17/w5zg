@@ -68,7 +68,12 @@ axios.interceptors.response.use(
       })
       vm.$router.push('/login')
       localStorage.removeItem('token')
+    } else {
+      Message({
+        showClose: true,
+        message: error.message,
+        type: 'error'
+      })
     }
-    Message.error(error.message)
     return Promise.reject(error)
   })
