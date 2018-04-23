@@ -40,8 +40,8 @@
     height: 1.3rem;
   }
   .top {
-    position: fixed;
-    z-index: 9;
+    position: absolute;
+    z-index: 20;
     top: 0;
     left: 0;
     height: 1.3rem;

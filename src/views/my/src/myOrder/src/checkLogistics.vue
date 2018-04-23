@@ -9,7 +9,7 @@
     .content
       .center
         .image
-          img(src="../../../../../assets/img/my_goods.png")
+          img(src="")
         .goodsExplain
           .words {{goodsStatus}}
           .express {{CourierName}}: {{number}}

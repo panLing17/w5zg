@@ -6,7 +6,7 @@
       .topCenter(slot="center") 申请售后
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content(v-for="(item,index) in goodsList") 
+    .content(v-for="(item,index) in goodsList")
       .center
         .check
           w-checkbox(v-model="item.checked", @change="check")
@@ -22,10 +22,9 @@
     .totalCheck
       w-checkbox(@change="cMsg" v-model="msg")
       span 全选
-    .next(@click="flag && $router.push('/my/selectService')") 下一步              
+    .next(@click="flag && $router.push('/my/selectService')") 下一步
 </template>
 <script>
-  import myGoods from '../../../../../assets/img/my_goods.png'
   export default {
     name: 'applyAfterSale',
     data () {
@@ -33,30 +32,6 @@
         flag:true,
         msg: false,
         goodsList:[
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黄色",
-            size:"L",
-            amount:1,
-            checked:false
-          },
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"黑色",
-            size:"XL",
-            amount:1,
-            checked:false
-          },
-          {
-            imgSrc:myGoods,
-            words:"法国PELLIOT秋冬新品户外冲锋衣男",
-            color:"红色",
-            size:"M",
-            amount:1,
-            checked:false
-          }
         ]
       }
     },
@@ -137,7 +112,7 @@
     position: absolute;
     top: 44%;
     left: .3rem;
-  } 
+  }
   .center .image{
     margin-left: .8rem;
   }

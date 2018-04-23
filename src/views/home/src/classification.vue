@@ -18,50 +18,28 @@
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
-              span ￥{{item.price}}  
+              span ￥{{item.price}}
             li.region
-              span {{item.region}} 
+              span {{item.region}}
               span {{item.buyerNum}} 人已购买
     #returnTop(@click="topFunction()")
       img(src="../../../assets/img/my_top@2x.png")
-    .downOver 已到最底部  
+    .downOver 已到最底部
 
 </template>
 <script>
-  import myGoods from '../../../assets/img/my_goods.png'
   export default {
     name: 'classification',
     data () {
       return {
         goodsDetails:[
-          {
-            'imgSrc':myGoods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':568,
-            'region':'江苏南京',
-            'buyerNum':'167'
-          },
-          {
-            'imgSrc':myGoods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':379,
-            'region':'浙江杭州',
-            'buyerNum':'200'
-          },
-          {
-            'imgSrc':myGoods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':299,
-            'region':'安徽合肥',
-            'buyerNum':'101'
-          },
         ]
       }
     },
     mounted () {
  	  // 当网页向下滑动 40px 出现"返回顶部" 按钮
       window.onscroll = function() {scrollFunction()};
-       
+
       function scrollFunction() {
           if (document.body.scrollTop > 40 || document.documentElement.scrollTop > 40) {
               document.getElementById("returnTop").style.display = "block";
@@ -85,7 +63,7 @@
                 clearInterval(timer);
             }
         },30);
-      }   
+      }
     }
   }
 </script>

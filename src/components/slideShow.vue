@@ -14,7 +14,7 @@
               img( src="../assets/img/2.jpg")
           li
             a(href="https://www.baidu.com/")
-              img( src="../assets/img/3.jpg")              
+              img( src="../assets/img/3.jpg")
           li
             a(href="https://www.baidu.com/")
               img( src="../assets/img/4.jpg")
@@ -38,13 +38,13 @@
     name: 'home',
     data () {
       return {
-        
+
       }
     },
     mounted () {
-      
+
       window.onload = function(){
-         
+
           var imageCount = 5; //页面中用来轮播的图片有5张不同的
           //轮播图大盒子
           var banner = document.querySelector('.banner');
@@ -215,7 +215,7 @@
       }
     },
     methods: {
-      
+
     }
   }
 </script>

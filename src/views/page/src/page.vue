@@ -8,7 +8,7 @@
         searchInput(placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
         img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')")
       .topRight(slot="right")
-        img(src="../../../assets/img/msg_0.png")
+        img(src="../../../assets/img/msg_0.png" v-show="false")
     .content
       .left
         ul

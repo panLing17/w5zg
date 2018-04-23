@@ -15,13 +15,13 @@
         .addressee
           span.man 收件人:
             strong kariley
-          span.phone 135****6807  
+          span.phone 135****6807
       .address
         span 收货地址:
         strong 江苏省南京市玄武区 699-22 江苏软件园24栋
     .pickUpGoodsCode
       span 提货码
-      strong SHXNJ251    
+      strong SHXNJ251
     .itemStatus
       .left
         .image
@@ -31,12 +31,12 @@
           .top 买家已提货
           .bottom 2018-03-16 13:30:30
       .right
-        img(src="../../../../../assets/img/right.png")     
+        img(src="../../../../../assets/img/right.png")
     .content(v-for="(item,index) in orderDetail")
       .top
         .left
           span.orderNum 订单编号:
-          span.num {{item.orderNum}}  
+          span.num {{item.orderNum}}
       .center
         .image
           img(:src="item.imageSrc")
@@ -50,8 +50,8 @@
           .price ￥596.00
           .smallBtn(@click="$router.push('/my/applyAfterSale')") {{smallBtn}}
       .bottom(v-show="flag")
-        span.shop 提货门店: 
-        span 门店南京市 建邺区 新街口 中央广场    
+        span.shop 提货门店:
+        span 门店南京市 建邺区 新街口 中央广场
     .total
       ul
         li.totalQuantity
@@ -98,7 +98,7 @@
     .bottomList
         ul.goodsList#box
           li(v-for="item in recommendGoods" , @click="goGoods(item.goodsId)")
-            img(src="../../../../../assets/img/my_goods.png")
+            img(src="")
             .wrapWords
               .text 商品拆散你都没法跟你阿萨德你看啥都能扩大萨德你看
               .price ￥516.22
@@ -112,7 +112,6 @@
 </template>
 
 <script>
-    import myGoods from '../../../../../assets/img/my_goods.png'
     export default {
       name: "orderDetails",
       data(){
@@ -124,22 +123,6 @@
           flag:false,
           recommendGoods: [],
           orderDetail:[
-            {
-              orderNum:"2018031401",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031402",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031403",
-              imageSrc:myGoods,
-            },
-            {
-              orderNum:"2018031404",
-              imageSrc:myGoods,
-            }
           ]
         }
       },
@@ -155,9 +138,9 @@
       methods:{
         copyText() {
           var orderNums = document.getElementsByClassName("orderNums")[0];
-          //orderNums.select();        
+          //orderNums.select();
           document.execCommand("Copy"); // 执行浏览器复制命令
-          alert("复制成功");      
+          alert("复制成功");
         },
 
         upCallback: function(page) {
@@ -279,7 +262,7 @@
     background-color: #fff;
     margin-top: .2rem;
     padding-left: .8rem;
-    color: rgb(244,0,87); 
+    color: rgb(244,0,87);
   }
   .pickUpGoodsCode span{
     font-size: .4rem;
@@ -354,9 +337,9 @@
     overflow-x:auto;
     display: flex;
     position: relative;
-  } 
+  }
   .center .image{
-    
+
   }
   .center .image img{
     width: 2.5rem;

@@ -1,96 +1,97 @@
 <template lang="pug">
-  .goodsBox.mescroll#goodsDetailMescroll
-    .banner
-      nav-bar(background="rgba(255,255,255,.7)", height="0", border-bottom="none")
-        .topLeft(slot="left")
-          img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-        .topCenter(slot="center") 商品
-        .topRight(slot="right")
-          // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
-      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
-        div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
-          img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
-    .goodsInfo
-      .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
-      .stateChuiNiu
-        span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
-        img(src="../../../assets/img/pinkNext.png")
-      .price(v-if="userData.member_type === '092'")
-        span 直供价
-        p {{goodsData.direct_supply_interval}}
-        .salePrice 统一零售价：{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}
-      .price(v-else)
-        span 专柜价
-        p {{goodsData.counter_interval}}
-        .salePrice 统一零售价：{{goodsData.retail_interval}}
-      ul.saveMoney
-        li.red
-          .label 现金券
-          .text 省{{makeMoney.useCardEconomyPrice}}元
-        li.gray
-          .label 直接购买
-          .text 约省{{makeMoney.directEconomyPrice}}元
-        li.gray
-          .label 通用券
-          .text 约省{{makeMoney.useTicketEconomyPricce}}元
-    .numberBox
-      ul.number
-        li 邮费{{goodsData.goi_freight}}
-        li 库存{{goodsData.storage_num}}
-        li 已售{{goodsData.gi_salenum}}
-    ul.card(v-if="userData !== ''")
-      li
-        .cartType
-          .my 我的
-          .name 现金券
-        .cartPrice
-          .price {{userData.netcard_balance | price-filter}}
-          .name 余额
-        .leftRadio
-        .righttRadio
-      li
-        .cartType
-          .my 我的
-          .name 通用券
-        .cartPrice
-          .price {{userData.cash_balance | price-filter}}
-          .name 余额
-        .leftRadio
-        .righttRadio
-    .size(@click="onlySelectSpecFun")
-      .left 规格
-        span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
-      img(src="../../../assets/img/right.png").right
-    .distribution(@click="distribution")
-      .top
-        .left 配送方式
-        .right
-          span {{disTypeName}}
-          span(style="color: rgb(246,0,88);") 有货<img src="../../../assets/img/right.png">
-      .bottom
-        .location
-          img(src="../../../assets/img/citySearch.png")
-          span {{location.province.name}}
-          span {{location.city.name}}
-        .hour 下单完成后将在xx小时内发货
-    .title
-      .line
-      p 详情
-    .content(v-html="desc")
-    .title
-      .line
-      p 推荐
-    w-recommend(:listData="recommendGoods", background="white")
-    .buttons
-      .left(@click="shoppingCartAdd") 加入购物车
-      .right(@click="buy") 立即购买
-    select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec")
-    dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
-    store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
-    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
-    share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
-    onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
-    <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
+  div
+    nav-bar(background="rgba(255,255,255,.7)", height="0", border-bottom="none")
+      .topLeft(slot="left")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topCenter(slot="center") 商品
+      .topRight(slot="right")
+        // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
+    .goodsBox.mescroll#goodsDetailMescroll
+      .banner
+        carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
+          div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
+            img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
+      .goodsInfo
+        .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
+        .stateChuiNiu
+          span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
+          img(src="../../../assets/img/pinkNext.png")
+        .price(v-if="userData.member_type === '092'")
+          span 直供价
+          p {{goodsData.direct_supply_interval}}
+          .salePrice 统一零售价：{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}
+        .price(v-else)
+          span 专柜价
+          p {{goodsData.counter_interval}}
+          .salePrice 统一零售价：{{goodsData.retail_interval}}
+        ul.saveMoney
+          li.red
+            .label 现金券
+            .text 省{{makeMoney.useCardEconomyPrice}}元
+          li.gray
+            .label 直接购买
+            .text 约省{{makeMoney.directEconomyPrice}}元
+          li.gray
+            .label 通用券
+            .text 约省{{makeMoney.useTicketEconomyPricce}}元
+      .numberBox
+        ul.number
+          li 邮费{{goodsData.goi_freight}}
+          li 库存{{goodsData.storage_num}}
+          li 已售{{goodsData.gi_salenum}}
+      ul.card(v-if="userData !== ''")
+        li
+          .cartType
+            .my 我的
+            .name 现金券
+          .cartPrice
+            .price {{userData.netcard_balance | price-filter}}
+            .name 余额
+          .leftRadio
+          .righttRadio
+        li
+          .cartType
+            .my 我的
+            .name 通用券
+          .cartPrice
+            .price {{userData.cash_balance | price-filter}}
+            .name 余额
+          .leftRadio
+          .righttRadio
+      .size(@click="onlySelectSpecFun")
+        .left 规格
+          span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
+        img(src="../../../assets/img/right.png").right
+      .distribution(@click="distribution")
+        .top
+          .left 配送方式
+          .right
+            span {{disTypeName}}
+            span(style="color: rgb(246,0,88);") 有货<img src="../../../assets/img/right.png">
+        .bottom
+          .location
+            img(src="../../../assets/img/citySearch.png")
+            span {{location.province.name}}
+            span {{location.city.name}}
+          .hour 下单完成后将在xx小时内发货
+      .title
+        .line
+        p 详情
+      .content(v-html="desc")
+      .title
+        .line
+        p 推荐
+      w-recommend(:listData="recommendGoods", background="white")
+      .buttons
+        .left(@click="shoppingCartAdd") 加入购物车
+        .right(@click="buy") 立即购买
+      select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec")
+      dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
+      store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
+      city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
+      share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
+      onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
+      <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
 
 <script>
