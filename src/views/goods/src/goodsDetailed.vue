@@ -5,9 +5,11 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 商品
       .topRight(slot="right")
+        img(src="../../../assets/img/customerservice@3x.png", style="width:.5rem", @click="$router.push('/service')")
         // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
     .goodsBox.mescroll#goodsDetailMescroll
       .banner
+
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
@@ -24,22 +26,22 @@
           span 专柜价
           p {{goodsData.counter_interval}}
           .salePrice 统一零售价：{{goodsData.retail_interval}}
-        ul.saveMoney
+        ul.saveMoney(v-if="userData.member_type !== '092'")
           li.red
             .label 现金券
-            .text 省{{makeMoney.useCardEconomyPrice}}元
+            .text 省{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}元
           li.gray
             .label 直接购买
-            .text 约省{{makeMoney.directEconomyPrice}}元
+            .text 约省{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}元
           li.gray
             .label 通用券
-            .text 约省{{makeMoney.useTicketEconomyPricce}}元
+            .text 约省{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}元
       .numberBox
         ul.number
           li 邮费{{goodsData.goi_freight}}
           li 库存{{goodsData.storage_num}}
           li 已售{{goodsData.gi_salenum}}
-      ul.card(v-if="userData !== ''")
+      ul.card(v-if="userData !== '' && userData.member_type !== '092'")
         li
           .cartType
             .my 我的
@@ -82,6 +84,7 @@
         .line
         p 推荐
       w-recommend(:listData="recommendGoods", background="white")
+    div
       .buttons
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
