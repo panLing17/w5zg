@@ -41,7 +41,7 @@
                   span.price 合计 :
                     strong.priceNum {{item.oi_pay_price | price-filter}}
           .button
-            .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
+            .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
             .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .noData(v-if="isEmpty") 暂无更多记录    
 </template>
@@ -204,7 +204,25 @@
             
           }
           if (e.target.innerText == "删除订单") {
-            alert("没有！");
+            this.$confirm({
+              title: '确认',
+              message: '真的要这样做吗',
+              confirm: () => {
+                let self = this;
+                self.$ajax({
+                  method:"post",
+                  url:self.$apiTransaction + "order/delOrder",
+                  params:{
+                    totalOrderId:id
+                  }
+                }).then(function(res){
+                  self.request();
+                })
+              },
+              noConfirm: () => {
+
+              }
+            })
           }
 
         },
@@ -437,7 +455,7 @@
   }
   .lineDiv{
     width: 15%;
-    height: .1rem;
+    height: 2.5px;
     background-color: rgb(244,0,87);
     position: absolute;
     left: 0;

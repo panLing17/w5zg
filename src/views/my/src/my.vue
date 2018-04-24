@@ -247,9 +247,15 @@
     text-align: center;
     line-height: 1.6rem;
   }
+  .head .center .headPic li{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+  }
   .head .center .headPic img{
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
   }
   .head .center .userName{

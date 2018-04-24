@@ -9,7 +9,7 @@
           img(src="../../../assets/img/searchInput搜索图标@2x.png")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
-        .searchbtn(@click="searchGoods()" v-show="false") 搜索
+        .searchbtn(v-show="false") 搜索
     ul.wrap
       li.left
         ul
@@ -62,7 +62,7 @@
         check: true,
         checked: false,
         change: false,
-        change1: false,
+        change1: true,
         change2: false,
         recommendGoods: [],
         style: false,
@@ -72,7 +72,7 @@
         pickUps: "", //自提不自提
         checkFlag: false,
         noKey: true,
-        order: "", //字段排序
+        order: 1, //字段排序
         keyWord: "", //关键字
         sort: "", //正序倒序
       }
@@ -97,7 +97,7 @@
       //让页面加载时将搜索的文字拼到url上
       //this.onload();
       //进入页面时加载
-      this.request();
+      //this.request();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -106,10 +106,6 @@
       //遮罩层出现后不让页面滑动
       notScroll (e) {
         e.preventDefault();
-      },
-      //搜索商品
-      searchGoods(){
-        this.exhibition();
       },
       //让页面加载时将搜索的文字拼到url上
       onload(){
@@ -244,7 +240,6 @@
         } else{
           this.order = "";
         }
-        this.order = 1;
         this.request();
       },
       //销量排序
@@ -254,7 +249,11 @@
         this.change = false;
         this.check = true;
         this.checked = false;
-        this.order = 2;
+        if (this.change2 == true) {
+          this.order = 2;
+        } else {
+          this.order = "";
+        }
         this.request();
       },
       exchange:function(){
@@ -315,8 +314,7 @@
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
             sortFieldType: self.order //字段排序
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }
         }).then(function(response){
           // if(response.data.data.length<=0){
           //   self.message = "";
@@ -349,7 +347,7 @@
           url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: 1, //页码
-            rows: 20, //每页长度
+            rows: 5, //每页长度
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
             endPrice: self.maxPrice, //结束价格区间
@@ -516,7 +514,6 @@
     background: rgb(242,242,242);
   }
   .goodsList li{
-    border: solid 1px #ccc;
     border-radius: 5px;
     overflow: hidden;
     width: 49%;
@@ -623,7 +620,7 @@
   }
   /*蒙板--结束*/
   .bottomPlaceholder{
-    height: 1.5rem;
+    height: 0;
   }
   .scrollWarpClass{
     z-index: 103 !important;
