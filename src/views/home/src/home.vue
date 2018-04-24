@@ -15,13 +15,9 @@
           img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      .title
-        .line
-        p 活动
+      .title1
       w-activity(:listData="activityGoods")
-      .title
-        .line
-        p 推荐
+      .title2
       w-recommend(:listData="recommendGoods")
       .bottomPlaceholder
 </template>
@@ -355,14 +351,19 @@
     margin-top: 6px;
   }
 
-  .title{
-    height: .8rem;
+  .title1, .title2{
+    height: 1rem;
     width: 100%;
-    position: relative;
-    display: flex;
-    background: #f2f2f2;
-    justify-content: center;
-    align-items: center;
+    margin-top: 6px;
+  }
+  .title1 {
+    margin-bottom: 6px;
+    background: url("../../../assets/img/louceng1.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+  .title2 {
+    background: url("../../../assets/img/louceng2.png") no-repeat top left;
+    background-size: 100% 100%;
   }
   .line{
     height: 1px;
