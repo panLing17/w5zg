@@ -1,5 +1,5 @@
 <template lang="pug">
-  .orderManage.mescroll#orderManageMescroll
+  .wrapNav
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="backJump()")
@@ -7,42 +7,43 @@
       .topRight(slot="right")
         img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()").search
         img(src="../../../../../assets/img/msg_0.png" v-show="false").msg
-    .orderStatus
-      ul.wrapStatus
-        li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
-        .lineDiv
-    .wrapContent    
-      .content(v-for="(item,index) in orderDetail")
-        .top
-          .left
-            span.orderNum 订单编号:
-            span.num {{item.total_order_no}}
-          .right#state {{item.orderStatus}}
-        .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
-          .image
-            img(:src="items | img-filter" v-for="items in item.logoList")
-          .goodsDetails(v-show="item.logoList.length<=1")
-            .goodsExplain
-              span.words {{item.goodsName[0]}}
-            .cont
-              .property
-                span.color(v-for="items in item.spec_json") {{items.gspec_value}}
-                span.size
-              .quantity
-                span.count x {{item.totalCount}}
-        .bottom
-          .left(v-if="false")
-            .goodsCode 提货码: {{item.goodsCode}}
-          .right
-            .total
-              .totalNumber
-                span.amount 共计 {{item.totalCount}} 件商品
-                span.price 合计 :
-                  strong.priceNum {{item.oi_pay_price | price-filter}}
-        .button
-          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
-          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
-    .noData(v-if="isEmpty") 暂无更多记录    
+    .orderManage.mescroll#orderManageMescroll
+      .orderStatus
+        ul.wrapStatus
+          li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
+          .lineDiv
+      .wrapContent    
+        .content(v-for="(item,index) in orderDetail")
+          .top
+            .left
+              span.orderNum 订单编号:
+              span.num {{item.total_order_no}}
+            .right#state {{item.orderStatus}}
+          .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
+            .image
+              img(:src="items | img-filter" v-for="items in item.logoList")
+            .goodsDetails(v-show="item.logoList.length<=1")
+              .goodsExplain
+                span.words {{item.goodsName[0]}}
+              .cont
+                .property
+                  span.color(v-for="items in item.spec_json") {{items.gspec_value}}
+                  span.size
+                .quantity
+                  span.count x {{item.totalCount}}
+          .bottom
+            .left(v-if="false")
+              .goodsCode 提货码: {{item.goodsCode}}
+            .right
+              .total
+                .totalNumber
+                  span.amount 共计 {{item.totalCount}} 件商品
+                  span.price 合计 :
+                    strong.priceNum {{item.oi_pay_price | price-filter}}
+          .button
+            .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
+            .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
+      .noData(v-if="isEmpty") 暂无更多记录    
 </template>
 
 <script>
@@ -398,6 +399,7 @@
     min-height: 100vh;
     position: absolute;
     z-index: 100;
+    margin-top: 1.3rem;
   }
   .topCenter{
     font-size: .5rem;

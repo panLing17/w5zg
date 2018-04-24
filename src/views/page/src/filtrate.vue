@@ -36,6 +36,10 @@
           show: {
             type: Boolean,
             default: false
+          },
+          message: {
+            type: String,
+            default: ""
           }
         },
         data(){
@@ -59,9 +63,9 @@
           }
         },
         mounted(){
+          console.log(this.message);
           //品牌名
           this.brandNames();
-          document.getElementsByClassName("filtrate")[0].style.overflow = "scroll";
         },
         methods:{
           //加载品牌名
@@ -112,6 +116,7 @@
             this.num1 = null;
             this.num2 = null;
             this.num3 = null;
+            this.showBrand = true;
             var min = document.getElementsByClassName("min")[0];
             var max = document.getElementsByClassName("max")[0];
             min.value = "";
@@ -187,6 +192,8 @@
   background-color: #fff;
   /*float: right;*/
   z-index: 101;
+  overflow-y:auto;
+  -webkit-overflow-scrolling: touch;
 }
 .filtrate .wrap{
   padding: .5rem 0 2.9rem;

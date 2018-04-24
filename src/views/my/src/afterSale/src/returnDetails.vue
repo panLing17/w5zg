@@ -358,11 +358,11 @@
     margin-left: 1rem;
   }
   .btn {
-    width: 2.2rem;
-    height: 1rem;
-    border-radius: 1rem;
+    width: 2rem;
+    height: .8rem;
+    border-radius: .8rem;
     text-align: center;
-    line-height: 1rem;
+    line-height: .8rem;
     font-size: .4rem;
     color: rgb(244,0,87);
     border: 1px solid rgb(244,0,87);

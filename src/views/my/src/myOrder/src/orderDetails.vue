@@ -68,16 +68,16 @@
         li.aggregate
           span 订单合计
           span {{totalPrice | price-filter}}
-        li.netGoldCard
-          span 网金卡抵扣
+        li.netGoldCard(v-show="BOrC=='091'")
+          span 现金券抵扣
           span {{deductionCard | price-filter}}
-        li.coupon
+        li.coupon(v-show="BOrC=='091'")
           span 通用券抵扣
           span {{deductionTicket | price-filter}}
       .bottoms
         span.payment 实付金额
         span.money {{payPrice | price-filter}}
-    .cashCoupon 返 {{deductionTicket | price-filter}} 元通用券
+    .cashCoupon(v-show="BOrC=='091'") 返 {{presentPrice | price-filter}} 元通用券
     .orderNumber
       ul
         li.code.selects
@@ -136,9 +136,9 @@
           address:"", //地址
           payPrice:"", //实付金额
           totalPrice:"", //总金额
-          deductionCard:"", //网金卡
-          presentPrice:"", //返现金
-          deductionTicket:"", //通用券
+          deductionCard:"", //现金券
+          presentPrice:"", //返现通用券
+          deductionTicket:"", //通用券抵扣
           recipients:"", //收件人
           phone: "", //收件人手机号
           orderId:this.$route.query.orderId, //从订单管理传来的商品id
@@ -150,12 +150,15 @@
           recommendGoods: [],
           orderDetails:[],
           TotalOrderId:"", //总的订单id
+          BOrC:"" //判断用户身份
         }
       },
       created(){
 
       },
       mounted(){
+        //判断用户身份
+        this.judgeBOrC();
         this.$mescrollInt("orderMescroll",this.upCallback);
         //this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示
@@ -167,6 +170,17 @@
         this.mescroll.hideTopBtn();
       },
       methods:{
+        //判断此时账号是B端还是C端
+        judgeBOrC(){
+          let self = this;
+          self.$ajax({
+            method:"get",
+            url:self.$apiMember + 'member/currentMember',
+            params:{}
+          }).then(function(res){
+            self.BOrC = res.data.data.member_type;
+          })
+        },
         //判断最下方的两个按钮都隐藏时下方的白条消失
         judgeWhiteBar(){
           var leftBtn = document.getElementsByClassName("leftBtn")[0];
@@ -351,7 +365,7 @@
                   arrays[i].btnSFlag = true;
                   arrays[i].btnFFlag = true;
                   arrays[i].btnF = "申请退款";
-                  arrays[i].btnS = "物流信息";
+                  arrays[i].btnS = "提醒发货";
                   self.leftBtnFlag = true;
                   self.leftBtn = "批量退款";
                   self.rightBtn = "提醒发货";
@@ -370,7 +384,7 @@
                   arrays[i].btnSFlag = true;
                   arrays[i].btnFFlag = true;
                   arrays[i].btnF = "申请退款";
-                  arrays[i].btnS = "提货码";
+                  arrays[i].btnS = "提醒发货";
                   //提货码按钮的颜色
                   //var btnsDiv = document.getElementsByClassName("btnS")[0];
                   //btnsDiv.style.backgroundColor = "rgb(244,0,87)";
@@ -465,7 +479,7 @@
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
 
-            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address}});
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
           }
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款") {
@@ -491,7 +505,7 @@
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address}});
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
           }
           //没有
           if (e.target.innerHTML == "提醒发货") {

@@ -2,7 +2,6 @@ import Vue from 'vue'
 import router from '../router/index.js'
 import axios from 'axios'
 import Message from 'vue-multiple-message'
-import store from '../vuex/store'
 
 
 // axios.defaults.baseURL = process.env.API_ROOT
