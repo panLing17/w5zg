@@ -22,7 +22,7 @@
           span.top 支付宝
           span.bottom 抽奖赢礼券，最高200元
         w-checkbox(v-model="type.aliPay")
-      li(@click="changeType('wePay')", v-else)
+      li(@click="changeType('wePay')")
         img(src="../../../assets/img/wepay.png")
         p
           span.top 微信支付

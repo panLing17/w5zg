@@ -23,13 +23,14 @@
           .line
           p 推荐
         w-recommend(:listData="recommendGoods", background="white")
-        .settlement
-          .left
-            w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
-            p 全选
-          .right
-            .prive 合计：{{computedPrice | price-filter}}
-            .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+    div
+      .settlement
+        .left
+          w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
+          p 全选
+        .right
+          .prive 合计：{{computedPrice | price-filter}}
+          .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
 </template>
 
 <script>
