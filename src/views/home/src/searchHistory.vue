@@ -83,7 +83,7 @@
       //判断回退事件
       backRouter(){
         if (this.$route.query.relNum == 1) {
-          this.$router.push('/page/commodityList');
+          this.$router.push('/home');
         } else{
           this.$router.go(-1);
         }
