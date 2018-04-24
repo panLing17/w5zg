@@ -25,7 +25,7 @@
               .left 流水单号：{{item.trade_no}}
               .right {{item.payment_channel | paymentChannel}}
             .block.bottom
-              .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
+              .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_no}}
               .right {{item.creation_time}}
       .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
