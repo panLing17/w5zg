@@ -82,11 +82,12 @@
     methods: {
       //判断回退事件
       backRouter(){
-        if (this.$route.query.relNum == 1) {
-          this.$router.push('/home');
-        } else{
-          this.$router.go(-1);
-        }
+        // if (this.$route.query.relNum == 1) {
+        //   this.$router.push('/home');
+        // } else{
+        //   this.$router.go(-1);
+        // }
+        this.$router.push('/home');
       },  
       //显示搜索结果
       resultShow(){

@@ -11,7 +11,7 @@
         li.letters(:id="'anchorz-'+oIndex") {{value}}
         li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event,item.bi_id)") {{item.bi_name}}
         li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
-    ul.letter
+    ul.letter(v-show="false")
       li #
       li(v-for="(item,index) in letter" @click="goAnchorz('#anchorz-'+index)") {{item}} 
       li #             

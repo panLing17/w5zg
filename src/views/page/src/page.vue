@@ -191,20 +191,22 @@
   /*顶部搜索--结束*/
   /*中间内容部分左边--开始*/
   .content{
+    width: 100%;
     height: 100vh;
     padding-bottom: 2rem;
     background-color: #fff;
+    position: absolute;
   }
   .content .left{
     width: 21%;
     height: 100vh;
-    /*position: fixed;
+    /*position: absolute;
     top: 1.3rem;
-    left: 0;
-    bottom: 0;*/
+    left: 0;*/
     float: left;
     background-color: rgb(242,242,242);
-    overflow-y: scroll;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
@@ -223,12 +225,12 @@
     width: 79%;
     height: 100vh;
     background-color: #fff;
-    /*position: fixed;
+    /*position: absolute;
     top: 1.3rem;
-    right: 0;
-    bottom: 0;*/
-    float: right;
-    overflow-y: scroll;
+    right: 0;*/
+    float: left;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .right ul.tabs{
     padding-top: .45rem;

@@ -5,8 +5,8 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png")
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')" v-model="message")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
         .searchbtn(@click="searchGoods()" v-show="false") 搜索
@@ -435,7 +435,7 @@
     border: 0;
     outline: none;
     font-size: .3rem;
-    margin-left: .1rem;
+    margin-left: .4rem;
     background-color: rgb(238,238,238);
   }
 /*搜索框样式--结束*/
