@@ -3,11 +3,10 @@
     ul.goodsList(:style="{background:background}")
       li(v-for="item in listData" , @click.prevent="goGoods(item.gspu_id)")
         img(:src="item.gi_image_url | img-filter")
-        .text <span v-if="item.carry_type!==2">可自提</span>{{item.goods_name}}
+        .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
         .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-          span 可省{{item.economize_price}}元
+          span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
         .price(v-else) {{item.price | price-filter}}
-          span 可省{{item.economize_price}}元
 </template>
 
 <script>
@@ -45,15 +44,20 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
   }
 
   .goodsList li img {
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-height: 4rem;
   }
 
   .text {
-    margin: .1rem;
-    height: .8rem;
+    margin: 4.2rem .1rem .1rem;
+    height: .85rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

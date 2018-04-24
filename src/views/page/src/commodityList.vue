@@ -5,32 +5,32 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png")
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')" v-model="message")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
-        .searchbtn(@click="searchGoods()" v-show="false") 搜索
+        .searchbtn(v-show="false") 搜索
+    ul.wrap
+      li.left
+        ul
+          li(@click="changes1()" :class="{active:change1}") 综合
+          li(@click="changes2()" :class="{active:change2}") 销量
+      li.right
+        ul
+          li.showStyle(@click="exchange()")
+            img(src="../../../assets/img/pageBigList.png" v-show="!flags")
+            img(src="../../../assets/img/pageList.png" v-show="flags")
+          li.price(@click="liftOrSort()")
+            .priceWords(:class="{active:change}") 价格
+            .topDown
+              img(src="../../../assets/img/pageAsc.png" v-show="check").top
+              img(src="../../../assets/img/pageAscChecked.png" v-show="!check").top
+              img(src="../../../assets/img/pageDesc.png" v-show="!checked").down
+              img(src="../../../assets/img/pageDescChecked.png" v-show="checked").down
+          li.filters(@click="leftScroll()") | 筛选
+            img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
       .content
-        ul.wrap
-          li.left
-            ul
-              li(@click="changes1()" :class="{active:change1}") 综合
-              li(@click="changes2()" :class="{active:change2}") 销量
-          li.right
-            ul
-              li.showStyle(@click="exchange()")
-                img(src="../../../assets/img/pageBigList.png" v-show="!flags")
-                img(src="../../../assets/img/pageList.png" v-show="flags")
-              li.price(@click="liftOrSort()")
-                .priceWords(:class="{active:change}") 价格
-                .topDown
-                  img(src="../../../assets/img/pageAsc.png" v-show="check").top
-                  img(src="../../../assets/img/pageAscChecked.png" v-show="!check").top
-                  img(src="../../../assets/img/pageDesc.png" v-show="!checked").down
-                  img(src="../../../assets/img/pageDescChecked.png" v-show="checked").down
-              li.filters(@click="leftScroll()") | 筛选
-                img(src="../../../assets/img/pageFiltrate.png")
         .bottomList
           ul.goodsList#box
             li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
@@ -40,11 +40,11 @@
                 .price {{item.price | price-filter}}
                   span 可省100元
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
-      .mask
-        .lefter(@click="lefterBack()")
-        .righter
-          filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
       .bottomPlaceholder
+    .mask
+      .lefter(@click="lefterBack()")
+      .righter
+        filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
 </template>
 
 <script>
@@ -62,7 +62,7 @@
         check: true,
         checked: false,
         change: false,
-        change1: false,
+        change1: true,
         change2: false,
         recommendGoods: [],
         style: false,
@@ -72,7 +72,7 @@
         pickUps: "", //自提不自提
         checkFlag: false,
         noKey: true,
-        order: "", //字段排序
+        order: 1, //字段排序
         keyWord: "", //关键字
         sort: "", //正序倒序
       }
@@ -97,7 +97,7 @@
       //让页面加载时将搜索的文字拼到url上
       //this.onload();
       //进入页面时加载
-      this.request();
+      //this.request();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -106,10 +106,6 @@
       //遮罩层出现后不让页面滑动
       notScroll (e) {
         e.preventDefault();
-      },
-      //搜索商品
-      searchGoods(){
-        this.exhibition();
       },
       //让页面加载时将搜索的文字拼到url上
       onload(){
@@ -244,7 +240,6 @@
         } else{
           this.order = "";
         }
-        this.order = 1;
         this.request();
       },
       //销量排序
@@ -254,7 +249,11 @@
         this.change = false;
         this.check = true;
         this.checked = false;
-        this.order = 2;
+        if (this.change2 == true) {
+          this.order = 2;
+        } else {
+          this.order = "";
+        }
         this.request();
       },
       exchange:function(){
@@ -315,8 +314,7 @@
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
             sortFieldType: self.order //字段排序
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          }
         }).then(function(response){
           // if(response.data.data.length<=0){
           //   self.message = "";
@@ -349,7 +347,7 @@
           url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: 1, //页码
-            rows: 20, //每页长度
+            rows: 5, //每页长度
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
             endPrice: self.maxPrice, //结束价格区间
@@ -383,7 +381,7 @@
 <style scoped>
   #pageMescroll {
     position: fixed;
-    top: 0;
+    top: 1.3rem;
     bottom: 0;
     /*height: auto;*/
     z-index: 100;
@@ -397,7 +395,7 @@
     min-height: 100vh;
     background: rgb(242,242,242);
     padding-bottom: 2rem;
-    margin-top: 1.3rem;
+    /*margin-top: 1.3rem;*/
   }
   /*顶部搜索--开始*/
   .topCenter{
@@ -435,16 +433,16 @@
     border: 0;
     outline: none;
     font-size: .3rem;
-    margin-left: .1rem;
+    margin-left: .4rem;
     background-color: rgb(238,238,238);
   }
-/*搜索框样式--结束*/
+  /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
   .content{
     padding-bottom: 2rem;
     overflow: hidden;
   }
-  .content ul.wrap{
+  ul.wrap{
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -452,6 +450,8 @@
     padding: 0 .3rem;
     background-color: #fff;
     position: fixed;
+    top: 1.3rem;
+    z-index: 101;
   }
   ul.wrap li{
     font-size: .4rem;
@@ -506,7 +506,7 @@
   .bottomList{
     margin-top: 1.2rem;
   }
-  .goodsList {
+  .goodsList{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -514,14 +514,14 @@
     background: rgb(242,242,242);
   }
   .goodsList li{
-    border: solid 1px #ccc;
     border-radius: 5px;
     overflow: hidden;
     width: 49%;
     float: left;
     margin-bottom: .2rem;
+    background-color: #fff;
   }
-  .goodsList li img {
+  .goodsList li img{
     width: 100%;
   }
   .text{
@@ -544,7 +544,7 @@
     justify-content: space-between;
     align-items: center;
   }
-  .price span {
+  .price span{
     font-weight: 500;
     font-size: .3rem;
   }
@@ -570,6 +570,7 @@
   .toggle li .wrapWords{
     margin-left: .3rem;
     width: 100%;
+    background-color: #fff;
   }
   .toggle .wrapWords .text{
     width: 100%;
@@ -601,7 +602,7 @@
     left: 110%;
     right: 0;
     bottom: 0;
-    z-index: 101;
+    z-index: 105;
     display: flex;
   }
   .mask .lefter{
@@ -618,8 +619,8 @@
     overflow: scroll;
   }
   /*蒙板--结束*/
-  .bottomPlaceholder {
-    height: 1.5rem;
+  .bottomPlaceholder{
+    height: 0;
   }
   .scrollWarpClass{
     z-index: 103 !important;

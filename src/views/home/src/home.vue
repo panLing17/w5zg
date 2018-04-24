@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    nav-bar(background="rgb(245,0,87)")
+    nav-bar(background="rgb(245,0,87)", border-bottom="none")
       .topLeft(slot="left", @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
         span.city {{cityName}}
@@ -30,6 +30,7 @@
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
+
   export default {
     name: 'home',
     data() {
@@ -75,13 +76,13 @@
       this.$mescrollInt("homeMescroll",this.upCallback);
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
-        city.style.fontSize = .5 + "rem";
+        city.style.fontSize = .45 + "rem";
       }
       if (city.innerText.length == 3) {
-        city.style.fontSize = .3 + "rem";
+        city.style.fontSize = .25 + "rem";
       }
       if (city.innerText.length == 4) {
-        city.style.fontSize = .4 + "rem";
+        city.style.fontSize = .35 + "rem";
       }
       // 获取banner
       this.getBanner()

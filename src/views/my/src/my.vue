@@ -34,12 +34,15 @@
         li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 >
       ul.bottom
         li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
+          //.badge 2
           img(src="../../../assets/img/my_obligation@2x.png")
           .character 待付款
         li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
+          //.badge 2
           img(src="../../../assets/img/my_readyfordelivery@2x.png")
           .character 待发货
         li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
+          //.badge 2
           img(src="../../../assets/img/my_waitforreceiving2@2x.png")
           .character 待收货
         li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
@@ -247,9 +250,15 @@
     text-align: center;
     line-height: 1.6rem;
   }
+  .head .center .headPic li{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    overflow: hidden;
+  }
   .head .center .headPic img{
-    width: 1.6rem;
-    height: 1.6rem;
+    width: 100%;
+    height: 100%;
     border-radius: 50%;
   }
   .head .center .userName{
@@ -439,5 +448,21 @@
     position: absolute;
     background: #f2f2f2 ;
     padding: 0 .2rem;
+  }
+  .bottom li {
+    position: relative;
+  }
+  .badge {
+    width: .4rem;
+    height: .4rem;
+    border-radius: 50%;
+    background: rgb(246,0,87);
+    color: #fff;
+    font-size: .29rem;
+    position: absolute;
+    right: 0;
+    top: -0.2rem;
+    line-height: .4rem;
+    text-align: center;
   }
 </style>

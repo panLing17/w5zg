@@ -16,13 +16,13 @@
           .price(v-if="showSuccess")
             span.wrapper
               sup ￥
-              strong 188
+              strong {{price}}
       .formWrapper
         .text(v-if="showSuccess")
           p 恭喜您
-          p 获得 “万物商城” 现金券188元
+          p 获得 “万物商城” 现金券{{price}}元
         .form
-          input(placeholder="请输入手机号领取", v-model="phone", type="number")
+          input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
 
 </template>
@@ -33,41 +33,52 @@
     data () {
       return {
         phone: '',
-        isLoginFlag: true,
-        showSuccess:false
+        isLoginFlag: false,
+        showSuccess:false,
+        url: '',
+        price: 0
       }
     },
     created () {
       this.isLogin();
+      this.getUrl()
     },
     methods: {
+      getUrl () {
+        this.url = this.$route.query.redirect_url
+      },
       receive () {
-        // if (this.isLoginFlag) {
-        //   let reg = /^1[0-9]{10}$/;
-        //   if (!reg.test(this.phone)) {
-        //     this.$message.error('手机号码格式不正确！');
-        //     return;
-        //   }
-        // }
-        // this.getTicket();
-        this.showSuccess = true;
+        if (!this.isLoginFlag) {
+          let reg = /^1[0-9]{10}$/;
+          if (!reg.test(this.phone)) {
+            this.$message.error('手机号码格式不正确！');
+            return;
+          }
+        }
+        if (!this.showSuccess){
+          this.getTicket();
+        }else {
+          return
+        }
+
       },
       isLogin () {
         this.phone = this.$store.state.userData.mi_phone;
         if (this.phone && this.phone.trim().length === 11) {
-          this.isLoginFlag = false;
+          this.isLoginFlag = true;
         }
       },
       getTicket () {
         let _this = this;
         this.$ajax({
           method: 'get',
-          url: this.$apiTransaction + 'netcard/qrcodeByB/64ffb3347276e90e5e2428bbdc2f5c31',
+          url: this.url,
           params:{
             mobile: this.phone
           }
         }).then(function (response) {
           if (response.data.code === '081') {
+            _this.price = response.data.data
             _this.$message.success('领取成功')
             _this.showSuccess = true;
           }else {
