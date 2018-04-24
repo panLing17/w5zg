@@ -56,7 +56,7 @@
             }
           }).then(function (response) {
             if (response.data.code === '081') {
-              _this.$message.success(response.data.msg)
+              _this.$message.success('发放成功！')
               _this.$router.push('/my')
             }else {
               _this.$message.error(response.data.msg);
