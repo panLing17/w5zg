@@ -10,27 +10,27 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
         .searchbtn(@click="searchGoods()" v-show="false") 搜索
+    ul.wrap
+      li.left
+        ul
+          li(@click="changes1()" :class="{active:change1}") 综合
+          li(@click="changes2()" :class="{active:change2}") 销量
+      li.right
+        ul
+          li.showStyle(@click="exchange()")
+            img(src="../../../assets/img/pageBigList.png" v-show="!flags")
+            img(src="../../../assets/img/pageList.png" v-show="flags")
+          li.price(@click="liftOrSort()")
+            .priceWords(:class="{active:change}") 价格
+            .topDown
+              img(src="../../../assets/img/pageAsc.png" v-show="check").top
+              img(src="../../../assets/img/pageAscChecked.png" v-show="!check").top
+              img(src="../../../assets/img/pageDesc.png" v-show="!checked").down
+              img(src="../../../assets/img/pageDescChecked.png" v-show="checked").down
+          li.filters(@click="leftScroll()") | 筛选
+            img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
       .content
-        ul.wrap
-          li.left
-            ul
-              li(@click="changes1()" :class="{active:change1}") 综合
-              li(@click="changes2()" :class="{active:change2}") 销量
-          li.right
-            ul
-              li.showStyle(@click="exchange()")
-                img(src="../../../assets/img/pageBigList.png" v-show="!flags")
-                img(src="../../../assets/img/pageList.png" v-show="flags")
-              li.price(@click="liftOrSort()")
-                .priceWords(:class="{active:change}") 价格
-                .topDown
-                  img(src="../../../assets/img/pageAsc.png" v-show="check").top
-                  img(src="../../../assets/img/pageAscChecked.png" v-show="!check").top
-                  img(src="../../../assets/img/pageDesc.png" v-show="!checked").down
-                  img(src="../../../assets/img/pageDescChecked.png" v-show="checked").down
-              li.filters(@click="leftScroll()") | 筛选
-                img(src="../../../assets/img/pageFiltrate.png")
         .bottomList
           ul.goodsList#box
             li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
@@ -40,11 +40,11 @@
                 .price {{item.price | price-filter}}
                   span 可省100元
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
-      .mask
-        .lefter(@click="lefterBack()")
-        .righter
-          filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
       .bottomPlaceholder
+    .mask
+      .lefter(@click="lefterBack()")
+      .righter
+        filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
 </template>
 
 <script>
@@ -383,7 +383,7 @@
 <style scoped>
   #pageMescroll {
     position: fixed;
-    top: 0;
+    top: 1.3rem;
     bottom: 0;
     /*height: auto;*/
     z-index: 100;
@@ -397,7 +397,7 @@
     min-height: 100vh;
     background: rgb(242,242,242);
     padding-bottom: 2rem;
-    margin-top: 1.3rem;
+    /*margin-top: 1.3rem;*/
   }
   /*顶部搜索--开始*/
   .topCenter{
@@ -438,13 +438,13 @@
     margin-left: .4rem;
     background-color: rgb(238,238,238);
   }
-/*搜索框样式--结束*/
+  /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
   .content{
     padding-bottom: 2rem;
     overflow: hidden;
   }
-  .content ul.wrap{
+  ul.wrap{
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -452,6 +452,8 @@
     padding: 0 .3rem;
     background-color: #fff;
     position: fixed;
+    top: 1.3rem;
+    z-index: 101;
   }
   ul.wrap li{
     font-size: .4rem;
@@ -506,7 +508,7 @@
   .bottomList{
     margin-top: 1.2rem;
   }
-  .goodsList {
+  .goodsList{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -520,8 +522,9 @@
     width: 49%;
     float: left;
     margin-bottom: .2rem;
+    background-color: #fff;
   }
-  .goodsList li img {
+  .goodsList li img{
     width: 100%;
   }
   .text{
@@ -544,7 +547,7 @@
     justify-content: space-between;
     align-items: center;
   }
-  .price span {
+  .price span{
     font-weight: 500;
     font-size: .3rem;
   }
@@ -570,6 +573,7 @@
   .toggle li .wrapWords{
     margin-left: .3rem;
     width: 100%;
+    background-color: #fff;
   }
   .toggle .wrapWords .text{
     width: 100%;
@@ -601,7 +605,7 @@
     left: 110%;
     right: 0;
     bottom: 0;
-    z-index: 101;
+    z-index: 105;
     display: flex;
   }
   .mask .lefter{
@@ -618,7 +622,7 @@
     overflow: scroll;
   }
   /*蒙板--结束*/
-  .bottomPlaceholder {
+  .bottomPlaceholder{
     height: 1.5rem;
   }
   .scrollWarpClass{

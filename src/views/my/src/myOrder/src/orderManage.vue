@@ -7,11 +7,11 @@
       .topRight(slot="right")
         img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()").search
         img(src="../../../../../assets/img/msg_0.png" v-show="false").msg
+    .orderStatus
+      ul.wrapStatus
+        li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
+        .lineDiv    
     .orderManage.mescroll#orderManageMescroll
-      .orderStatus
-        ul.wrapStatus
-          li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
-          .lineDiv
       .wrapContent    
         .content(v-for="(item,index) in orderDetail")
           .top
@@ -381,7 +381,7 @@
 
 <style scoped>
   #orderManageMescroll{
-    top: 0;
+    top: 1.3rem;
     bottom: 0;
     height: auto;
     position: fixed;
@@ -399,7 +399,7 @@
     min-height: 100vh;
     position: absolute;
     z-index: 100;
-    margin-top: 1.3rem;
+    /*margin-top: 1.3rem;*/
   }
   .topCenter{
     font-size: .5rem;

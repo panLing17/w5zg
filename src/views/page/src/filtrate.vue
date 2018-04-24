@@ -191,7 +191,7 @@
   height: 100%;
   background-color: #fff;
   /*float: right;*/
-  z-index: 101;
+  z-index: 103;
   overflow-y:auto;
   -webkit-overflow-scrolling: touch;
 }
