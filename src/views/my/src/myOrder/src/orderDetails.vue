@@ -478,11 +478,10 @@
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-
             this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
           }
           //进入到申请退货页面
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款") {
+          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
             items.delivery_id = item.delivery_id
             this.$store.commit('getReturnGoods', items)
             this.$router.push({path:'/my/refundReturn'});
@@ -494,7 +493,7 @@
         judgeBtnS(e,item, items){
           console.log(item);
           //进入到申请退货页面
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款") {
+          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
             items.delivery_id = item.delivery_id
             this.$store.commit('getReturnGoods', items)
             this.$router.push({path:'/my/refundReturn'});
@@ -720,7 +719,7 @@
     margin-right: .2rem;
   }
   .top .right{
-    font-size:  .4rem;
+    font-size: .4rem;
     color: rgb(244,0,87);
   }
   .center{

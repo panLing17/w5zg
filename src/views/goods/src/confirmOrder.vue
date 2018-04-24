@@ -100,8 +100,10 @@
     mounted () {
       this.getLocation()
       this.computedPrice()
-      // 请求计算通用券与抵用金额
-      this.getVoucher()
+      // 如果用户不是b请求计算通用券与抵用金额
+      if (this.$store.state.userData.member_type !== '092') {
+        this.getVoucher()
+      }
     },
     methods:{
       submit () {

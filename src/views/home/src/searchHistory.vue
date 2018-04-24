@@ -82,11 +82,12 @@
     methods: {
       //判断回退事件
       backRouter(){
-        if (this.$route.query.relNum == 1) {
-          this.$router.push('/home');
-        } else{
-          this.$router.go(-1);
-        }
+        // if (this.$route.query.relNum == 1) {
+        //   this.$router.push('/home');
+        // } else{
+        //   this.$router.go(-1);
+        // }
+        this.$router.push('/home');
       },  
       //显示搜索结果
       resultShow(){
@@ -208,7 +209,7 @@
 <style scoped>
 #historyMescroll{
   position: fixed;
-  top: 0;
+  top: 1.3rem;
   bottom: 0;
 }
 .searchHistory{
@@ -217,7 +218,7 @@
   min-height: 100vh;
   z-index: 103;
   background-color: rgb(242,242,242);
-  margin-top: 1.3rem;
+  /*margin-top: 1.3rem;*/
 }
 .active{
   color: #fff !important;

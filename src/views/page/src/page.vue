@@ -26,7 +26,6 @@
 </template>
 
 <script>
-
   export default {
     name: "page",
     data(){
@@ -44,13 +43,13 @@
     mounted(){
       var city = document.getElementsByClassName("city")[0];
       if (city.innerText.length == 2) {
-        city.style.fontSize = .5 + "rem";
+        city.style.fontSize = .45 + "rem";
       }
       if (city.innerText.length == 3) {
-        city.style.fontSize = .3 + "rem";
+        city.style.fontSize = .25 + "rem";
       }
       if (city.innerText.length == 4) {
-        city.style.fontSize = .4 + "rem";
+        city.style.fontSize = .35 + "rem";
       }
 
       //一级分类
@@ -151,6 +150,7 @@
     height: 100vh;
     background: rgb(242,242,242);
     padding-bottom: 2rem;
+    overflow: hidden;
   }
   /*顶部搜索--开始*/
   .topLeft{
@@ -191,20 +191,23 @@
   /*顶部搜索--结束*/
   /*中间内容部分左边--开始*/
   .content{
+    width: 100%;
     height: 100vh;
     padding-bottom: 2rem;
     background-color: #fff;
+    /*position: absolute;*/
   }
   .content .left{
     width: 21%;
     height: 100vh;
-    /*position: fixed;
+    /*position: absolute;
     top: 1.3rem;
-    left: 0;
-    bottom: 0;*/
+    left: 0;*/
     float: left;
     background-color: rgb(242,242,242);
-    overflow-y: scroll;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 3rem;
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
@@ -223,12 +226,13 @@
     width: 79%;
     height: 100vh;
     background-color: #fff;
-    /*position: fixed;
+    /*position: absolute;
     top: 1.3rem;
-    right: 0;
-    bottom: 0;*/
-    float: right;
-    overflow-y: scroll;
+    right: 0;*/
+    float: left;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 3rem;
   }
   .right ul.tabs{
     padding-top: .45rem;
