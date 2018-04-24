@@ -7,7 +7,7 @@
       .topRight(slot="right")
         p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="filterShow=true") 筛选
     transition(name="fade")
-      .mask(v-show="filterShow", @click="filterShow=false")
+      .mask(v-show="filterShow", @click.stop="filterShow=false")
     .filterBoxWrapper
       transition(name="fold")
         .filterBox(v-show="filterShow")
@@ -19,18 +19,19 @@
             .btn(:class="{'active':filterActive===4}", @click="filterChange(4,128)") 消费返点
             .btn(:class="{'active':filterActive===5}", @click="filterChange(5,123)") 充值提成
             .btn(:class="{'active':filterActive===6}", @click="filterChange(6,124)") 返点退款
-    .content
-      .detailBox(v-if="!isEmpty")
-        ul.detailList
-          li(v-for="item in cashDetail")
-            .block.top
-              .left {{item.trade_type | tradeType}}
-              .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
-            .block.center
-              .left 流水单号: {{item.serial_number}}
-            .block.bottom
-              .right {{item.creation_time}}
-      .nodata(v-if="isEmpty") 暂无相关记录流水
+    .mescroll#mescroll
+      .content
+        .detailBox(v-if="!isEmpty")
+          ul.detailList
+            li(v-for="item in cashDetail")
+              .block.top
+                .left {{item.trade_type | tradeType}}
+                .right {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
+              .block.center
+                .left 流水单号: {{item.serial_number}}
+              .block.bottom
+                .right {{item.creation_time}}
+        .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -40,7 +41,8 @@
         return {
           cashDetail: [],
           filterShow: false,
-          filterActive: 1
+          filterActive: 1,
+          type: 0
         }
       },
       filters: {
@@ -73,25 +75,53 @@
       created () {
         this.getData(0);
       },
+      mounted () {
+        this.$mescrollInt("mescroll",this.upCallback);
+      },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+      },
       methods: {
-        getData (type) {
+        upCallback: function(page) {
+          let self = this;
+          this.getListDataFromNet(page.num, page.size, function(curPageData) {
+            if(page.num === 1){
+              self.cashDetail = [];
+            }
+            self.cashDetail = self.cashDetail.concat(curPageData)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function() {
+            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr();
+          })
+        },
+        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
           let _this = this;
-          let form = {};
-          if (type != 0) {
-            form.type = type+'';
-          }
+          let form = {
+            page: pageNum,
+            rows: pageSize,
+            type: this.type+''
+          };
+
           this.$ajax({
             method: 'get',
             url: this.$apiTransaction + 'logAccount/logs/unsettle',
-            params:form
+            params: form
           }).then(function (response) {
-            _this.cashDetail = response.data.data;
+            if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
+              successCallback&&successCallback(response.data.data.rows);//成功回调
+            }else {
+              _this.mescroll.endErr();
+            }
           })
         },
         filterChange (index,type) {
           this.filterActive = index;
           this.filterShow = false;
-          this.getData(type);
+          this.type = type
+          this.cashDetail = []
+          this.mescroll.resetUpScroll( true )
+          this.mescroll.scrollTo( 0, 300 );
         }
       }
     }

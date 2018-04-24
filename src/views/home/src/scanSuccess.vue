@@ -20,7 +20,7 @@
         li(v-for="item in goodsDetails").details
           ul
             li.img
-              img(v-bind:src="")
+              img(v-bind:src="item.imgSrc")
             li.goodsMsg
               span {{item.goodsMsg}}
             li.price
@@ -33,34 +33,11 @@
     .downOver 已到最底部
 </template>
 <script>
-  import my_goods from '../../../assets/img/my_goods.png'
-
   export default {
     name: 'scanSuccess',
     data () {
       return {
          goodsDetails:[
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':568,
-            'region':'江苏南京',
-            'buyerNum':'167'
-          },
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':379,
-            'region':'浙江杭州',
-            'buyerNum':'200'
-          },
-          {
-            'imgSrc':my_goods,
-            'goodsMsg':'法国PELLIOT秋冬新品户外冲锋衣',
-            'price':299,
-            'region':'安徽合肥',
-            'buyerNum':'101'
-          },
         ]
       }
     },

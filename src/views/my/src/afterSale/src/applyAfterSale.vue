@@ -6,12 +6,12 @@
       .topCenter(slot="center") 申请售后
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content(v-for="(item,index) in goodsList") 
+    .content(v-for="(item,index) in goodsList")
       .center
         .check
           w-checkbox(v-model="item.checked", @change="check")
         .image
-          img(:src="")
+          img(:src="item.imgSrc")
         .goodsDetails
           .words {{item.words}}
           .property
@@ -22,7 +22,7 @@
     .totalCheck
       w-checkbox(@change="cMsg" v-model="msg")
       span 全选
-    .next(@click="flag && $router.push('/my/selectService')") 下一步              
+    .next(@click="flag && $router.push('/my/selectService')") 下一步
 </template>
 <script>
   export default {
@@ -31,7 +31,8 @@
       return {
         flag:true,
         msg: false,
-        goodsList:[]
+        goodsList:[
+        ]
       }
     },
     mounted () {
@@ -111,7 +112,7 @@
     position: absolute;
     top: 44%;
     left: .3rem;
-  } 
+  }
   .center .image{
     margin-left: .8rem;
   }

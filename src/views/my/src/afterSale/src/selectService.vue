@@ -6,7 +6,7 @@
       .topCenter(slot="center") 选择服务类型
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content(v-for="(item,index) in goodsList") 
+    .content(v-for="(item,index) in goodsList")
       .center
         .image
           img(:src="item.imgSrc")
@@ -25,7 +25,7 @@
           .top 仅退款
           .bottom 未收到包裹(包含未确认收货), 或卖家协商同意前提下
       .right
-        img(src="../../../../../assets/img/right.png")  
+        img(src="../../../../../assets/img/right.png")
     .aRefundReturn(@click="goToReturn()")
       .left
         .image
@@ -42,7 +42,8 @@
     data () {
       return {
         msg: false,
-        goodsList:[]
+        goodsList:[
+        ]
       }
     },
     mounted () {
@@ -68,7 +69,7 @@
       cMsg(){
         for (var i = this.goodsList.length - 1; i >= 0; i--) {
           this.goodsList[i].checked = true;
-          this.msg = true; 
+          this.msg = true;
         }
       },
 
@@ -76,7 +77,7 @@
         for (var i = this.goodsList.length - 1; i >= 0; i--) {
           if(this.goodsList[i].checked != true){
             this.msg = false;
-          } 
+          }
         }
       }
     }
@@ -114,7 +115,7 @@
     position: absolute;
     top: 44%;
     left: .3rem;
-  } 
+  }
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
