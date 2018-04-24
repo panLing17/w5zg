@@ -9,7 +9,7 @@
             li(v-for="item in list")
               img(:src="item.gi_img_url | img-filter")
         .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
-          .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.counter_price | price-filter}}
+          .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.counter_price| price-filter}}
           .price(v-else) {{0 | price-filter}}
           .store 库存{{realGoodsData.storage_num}}
           .size 选择 颜色 尺寸
