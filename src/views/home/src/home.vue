@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    nav-bar(background="rgb(245,0,87)")
+    nav-bar(background="rgb(245,0,87)", border-bottom="none")
       .topLeft(slot="left", @click="goToCitySearch()")
         img(src="../../../assets/img/home定位按钮@2x.png")
         span.city {{cityName}}

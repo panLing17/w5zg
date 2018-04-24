@@ -14,7 +14,7 @@
         .itemDec 金额：
         .itemContent
           input(placeholder="请输入发放金额", type="number", v-model="form.money")
-    .confirmBtn(@click="check") 确认
+    .confirmBtn( :style="{background:grantFlag?'#ff80ab':'#f50057'}", @click="check") 确认
 </template>
 
 <script>
@@ -25,7 +25,8 @@
           form: {
             mobile: '',
             money: ''
-          }
+          },
+          grantFlag: false
         }
       },
       methods:{
@@ -43,7 +44,12 @@
             this.$message.error('发放金额不能大于总额！')
             return
           }
-          this.grant()
+          if (!this.grantFlag) {
+            this.grantFlag = !this.grantFlag
+            this.grant()
+          }else {
+            return
+          }
         },
         grant () {
           let _this = this;
@@ -60,8 +66,8 @@
               _this.$router.push('/my')
             }else {
               _this.$message.error(response.data.msg);
+              _this.grantFlag = false
             }
-
           })
         }
       }
@@ -115,7 +121,6 @@
   margin: 2rem auto 0;
   width: 68%;
   height: 1.3rem;
-  background: #f50057;
   border-radius: 1.2rem;
   font-size: .4rem;
   text-align: center;

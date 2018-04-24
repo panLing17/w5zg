@@ -98,7 +98,7 @@
     z-index: 100;
   }
   .item {
-    margin-top: .26rem;
+    margin-bottom: .26rem;
     width: 100%;
     height: 3.33rem;
   }
