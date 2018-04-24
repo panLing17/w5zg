@@ -78,8 +78,7 @@
           self.productList = res.data.data;
         })
       },
-
-
+      //点击左侧一级分类切换右边二三级
       tab(item,index,id){
         // if (item == "品牌") {
         //   this.flag = true;
@@ -194,19 +193,17 @@
   .content{
     height: 100vh;
     padding-bottom: 2rem;
+    background-color: #fff;
   }
   .content .left{
     width: 21%;
-    /*height: 100%;*/
-    position: fixed;
+    height: 100vh;
+    /*position: fixed;
     top: 1.3rem;
     left: 0;
-    bottom: 0;
+    bottom: 0;*/
     float: left;
-    /*background-color: rgb(242,242,242);*/
-    /*overflow-y: scroll;*/
-  }
-  .content .left ul{
+    background-color: rgb(242,242,242);
     overflow-y: scroll;
   }
   .content .left ul li{
@@ -222,12 +219,12 @@
   }
   /*中间内容左边--结束*/
   /*中间内容右边--开始*/
-  .right{
+  .content .right{
     width: 79%;
     height: 100vh;
     background-color: #fff;
-    /*position: absolute;
-    top: 0;
+    /*position: fixed;
+    top: 1.3rem;
     right: 0;
     bottom: 0;*/
     float: right;
@@ -256,9 +253,7 @@
   }
   .right ul.tabs ul.listOfGoods li{
     width: 1.9rem;
-    margin-bottom: .4rem;
-    margin-left: .3rem;
-    margin-right: .2rem;
+    margin: 0 .2rem .4rem .3rem;
   }
   .right ul.tabs ul.listOfGoods li img{
     width: 1.9rem;

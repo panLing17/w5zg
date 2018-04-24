@@ -66,7 +66,6 @@
           console.log(this.message);
           //品牌名
           this.brandNames();
-          document.getElementsByClassName("filtrate")[0].style.overflow = "scroll";
         },
         methods:{
           //加载品牌名
@@ -193,6 +192,8 @@
   background-color: #fff;
   /*float: right;*/
   z-index: 101;
+  overflow-y:auto;
+  -webkit-overflow-scrolling: touch;
 }
 .filtrate .wrap{
   padding: .5rem 0 2.9rem;

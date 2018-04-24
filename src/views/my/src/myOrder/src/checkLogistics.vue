@@ -9,7 +9,7 @@
     .content
       .center
         .image
-          img(src="")
+          img(:src="goodsPics | img-filter")
         .goodsExplain
           .words {{goodsStatus}}
           .express {{CourierName}}: {{number}}
@@ -44,6 +44,7 @@
       name: "checkLogistics",
       data(){
         return{
+          goodsPics:this.$route.query.goodsPic, //商品的图片
           address:this.$route.query.address, //接收订单详情页面的地址
           ordertype:321, //订单类型
           sonOrder:this.$route.query.orderId, //子订单id

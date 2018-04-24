@@ -1,39 +1,40 @@
 <template lang="pug">
-  .searchHistory.mescroll#historyMescroll
+  .wrapNav
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
           input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
-    .history(v-show="searchFlag")
-      ul.top
-        li.left 历史搜索
-        li.right(@click="clearHistory()")
-          img(src="../../../assets/img/searchHistory_clear.png") 
-      ul.cont(v-if="flag")
-        li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}
-      .empty(v-else="flag") 暂无搜索历史          
-    .discover(v-show="searchFlag")
-      ul.top
-        li.left 搜索发现
-        li.right(@click="toggle")
-          img(src="../../../assets/img/searchHistory显示图层.png" v-if="showDiscover")
-          img(src="../../../assets/img/searchHistory隐藏图层.png" v-else="showDiscover") 
-      ul.cont(v-show="showDiscover")
-        li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
-    .result(v-show="resultFlag")
-      .words 没有搜索到
-        span.strong 此类
-        span 商品，及相关商品    
-    .title
-      .line
-      p 推荐
-    w-recommend#dataId(:listData="recommendGoods")
-    .bottomPlaceholder    
-          
+    .searchHistory.mescroll#historyMescroll
+      .wrapTwo  
+        .history(v-show="searchFlag")
+          ul.top
+            li.left 历史搜索
+            li.right(@click="clearHistory()")
+              img(src="../../../assets/img/searchHistory_clear.png") 
+          ul.cont(v-if="flag")
+            li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}
+          .empty(v-else="flag") 暂无搜索历史          
+        .discover(v-show="searchFlag")
+          ul.top
+            li.left 搜索发现
+            li.right(@click="toggle")
+              img(src="../../../assets/img/searchHistory显示图层.png" v-if="showDiscover")
+              img(src="../../../assets/img/searchHistory隐藏图层.png" v-else="showDiscover") 
+          ul.cont(v-show="showDiscover")
+            li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
+        .result(v-show="resultFlag")
+          .words 没有搜索到
+            span.strong 此类
+            span 商品，及相关商品    
+      .title
+        .line
+        p 推荐
+      w-recommend#dataId(:listData="recommendGoods")
+      .bottomPlaceholder       
 </template>
 <script>
  
@@ -96,7 +97,6 @@
       },
       //搜索商品去商品展示页
       searchGoods(){
-        console.log(this.msg);
         let self = this;
         self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true}});
       },
@@ -108,9 +108,7 @@
           url:self.$apiGoods + "goodsSearch/queryGoodsHistoryList",
           params:{}
         }).then(function(res){
-          console.log(res.data.data);
           self.record1 = res.data.data;
-          console.log(self.record1);
         })
       },
       //搜索发现
@@ -121,9 +119,7 @@
           url:self.$apiGoods + "goodsSearch/searchDiscovery",
           params:{}
         }).then(function(res){
-          console.log(res.data.data);
           self.record2 = res.data.data;
-          console.log(self.record2);
         })
       },
 
@@ -201,7 +197,6 @@
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          console.log(response.data.data);
           successCallback&&successCallback(response.data.data);//成功回调
         })
       }
@@ -211,12 +206,18 @@
 </script>
 
 <style scoped>
+#historyMescroll{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+}
 .searchHistory{
   width: 100%;
   position: absolute;
-  z-index: 100;
   min-height: 100vh;
-  background-color: #fff;
+  z-index: 103;
+  background-color: rgb(242,242,242);
+  margin-top: 1.3rem;
 }
 .active{
   color: #fff !important;
@@ -246,20 +247,23 @@
   border: 0;
   outline: none;
   font-size: .3rem;
-  margin-left: .1rem;
+  margin-left: .4rem;
   background-color: rgb(238,238,238);
 }
 /*搜索框样式--结束*/
 /*历史搜索--开始*/
+.wrapTwo{
+  background-color: #fff;
+}
 .history,
 .discover{
-  padding: 0 .3rem;
+  padding: .6rem .3rem .3rem;
+  background-color: #fff;
 }
 .history ul.top,
 .discover ul.top{
   display: flex;
   justify-content: space-between;
-  margin-top: .6rem;
 }
 .history ul.top li.left,
 .discover ul.top li.left{
@@ -286,13 +290,11 @@
   margin-top: .45rem;
   color: rgb(51,51,51);
 }
-
 .empty{
   width: 100%;
   text-align: center;
 }
 /*历史搜索--结束*/
-
 /*搜索结果显示--开始*/
 .result{
   padding: .7rem .6rem 1.2rem;
@@ -307,7 +309,6 @@
 }
 /*搜索结果显示--结束*/
 .title{
-  margin-top: .5rem;
   height: .8rem;
   width: 100%;
   position: relative;
@@ -323,7 +324,7 @@
 }
 .title p{
   position: absolute;
-  background: #f2f2f2 ;
+  background: #f2f2f2;
   padding: 0 .2rem;
 }
 .bottomPlaceholder {

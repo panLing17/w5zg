@@ -1,5 +1,5 @@
 <template lang="pug">
-  .searchOrder.mescroll#searchOrderMescroll
+  .wrapNav
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="backTo()")
@@ -10,51 +10,52 @@
           .clear(@click="clearName()") x
       .topRight(slot="right")
         .topRight(slot="right" @click="backTo()") 取消
-    .history(v-show="showHistory")
-      ul.top
-        li.left 历史搜索
-        li.right(@click="clearHistory()")
-          img(src="../../../../../assets/img/searchHistory_clear.png") 
-      ul.cont(v-if="flag")
-        li(v-for="(item,index) in record1" @click="change1($event,index)" :class="{active:selected1==index}") {{item.gsr_keywords}}
-      .empty(v-else="flag") 暂无搜索历史
-    .searchRel(v-show="showRel") 没有搜索到此订单  
-    .wrapContent(v-show="showOrder")  
-      .content(v-for="(item,index) in orderDetail")
-        .top
-          .left
-            span.orderNum 订单编号:
-            span.num {{item.total_order_no}}
-          .right#states {{item.orderStatus}}  
-        .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'搜索订单',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
-          .image
-            img(:src="items | img-filter" v-for="items in item.logoList")
-          .goodsDetails(v-show="item.logoList.length<=1")
-            .goodsExplain
-              span.words(v-for="val in item.goodsName") {{val}}
-            .cont
-              .property
-                span.color(v-for="items in item.spec_json") {{items.gspec_value}}
-                span.size 
-              .quantity  
-                span.count x {{item.totalCount}} 
-        .bottom
-          .left(v-if="false")
-            .goodsCode 提货码: {{item.goodsCode}}
-          .right
-            .total
-              .totalNumber
-                span.amount 共计 {{item.totalCount}} 件商品
-                span.price 合计 :
-                  strong.priceNum {{item.oi_pay_price | price-filter}}
-        .button
-          .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款' && item.buttonL !== '取消申请'") {{item.buttonL}}
-          .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '取消申请'") {{item.buttonR}}
-    .title(v-show="recommendFlag")
-      .line
-      p 推荐
-    w-recommend#dataId(:listData="recommendGoods" v-show="recommendFlag")
-    .bottomPlaceholder(v-show="recommendFlag")        
+    .searchOrder.mescroll#searchOrderMescroll
+      .history(v-show="showHistory")
+        ul.top
+          li.left 历史搜索
+          li.right(@click="clearHistory()")
+            img(src="../../../../../assets/img/searchHistory_clear.png") 
+        ul.cont(v-if="flag")
+          li(v-for="(item,index) in record1" @click="change1($event,index)" :class="{active:selected1==index}") {{item.gsr_keywords}}
+        .empty(v-else="flag") 暂无搜索历史
+      .searchRel(v-show="showRel") 没有搜索到此订单  
+      .wrapContent(v-show="showOrder")  
+        .content(v-for="(item,index) in orderDetail")
+          .top
+            .left
+              span.orderNum 订单编号:
+              span.num {{item.total_order_no}}
+            .right#states {{item.orderStatus}}  
+          .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'搜索订单',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
+            .image
+              img(:src="items | img-filter" v-for="items in item.logoList")
+            .goodsDetails(v-show="item.logoList.length<=1")
+              .goodsExplain
+                span.words(v-for="val in item.goodsName") {{val}}
+              .cont
+                .property
+                  span.color(v-for="items in item.spec_json") {{items.gspec_value}}
+                  span.size 
+                .quantity  
+                  span.count x {{item.totalCount}} 
+          .bottom
+            .left(v-if="false")
+              .goodsCode 提货码: {{item.goodsCode}}
+            .right
+              .total
+                .totalNumber
+                  span.amount 共计 {{item.totalCount}} 件商品
+                  span.price 合计 :
+                    strong.priceNum {{item.oi_pay_price | price-filter}}
+          .button
+            .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '删除订单' && item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款' && item.buttonL !== '取消申请'") {{item.buttonL}}
+            .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '取消申请'") {{item.buttonR}}
+      .title(v-show="recommendFlag")
+        .line
+        p 推荐
+      w-recommend#dataId(:listData="recommendGoods" v-show="recommendFlag")
+      .bottomPlaceholder(v-show="recommendFlag")        
 </template>
 
 <script>
@@ -168,7 +169,7 @@
         },
         //删除搜索框中用户输入的内容
         clearName(){
-          //订单列表显示
+          //订单列表隐藏
           this.showOrder = false;
           //输入框中的文字被清除
           this.msg = "";
@@ -178,6 +179,8 @@
           this.showRel = false;
           //重新请求获取历史记录
           this.searchHistory();
+          //推荐内容显示
+          this.recommendFlag = true;
         },
         //清除历史搜索记录
         clearHistory(){
@@ -425,6 +428,7 @@
   z-index: 100;
   min-height: 100vh;
   background-color: rgb(242,242,242);
+  margin-top: 1.3rem;
 }
 .active{
   color: #fff !important;

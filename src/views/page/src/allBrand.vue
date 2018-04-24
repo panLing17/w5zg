@@ -66,7 +66,6 @@
           }
         },
         mounted(){
-          // window.onscroll = function() {};
           //商品字母列表
           this.loading();
           //搜索的历史
@@ -177,10 +176,13 @@
 }
 /*品牌--开始*/
 .brand{
+  height: 100%;
   padding: 0 .3rem;
   display: flex;
   justify-content: space-between;
   font-size: .4rem;
+  overflow-y:auto;
+  -webkit-overflow-scrolling: touch;
 }
 .brand img{ 
   width: .5rem;

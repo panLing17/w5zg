@@ -365,7 +365,7 @@
                   arrays[i].btnSFlag = true;
                   arrays[i].btnFFlag = true;
                   arrays[i].btnF = "申请退款";
-                  arrays[i].btnS = "物流信息";
+                  arrays[i].btnS = "提醒发货";
                   self.leftBtnFlag = true;
                   self.leftBtn = "批量退款";
                   self.rightBtn = "提醒发货";
@@ -479,7 +479,7 @@
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
 
-            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address}});
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
           }
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款") {
@@ -505,7 +505,7 @@
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address}});
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
           }
           //没有
           if (e.target.innerHTML == "提醒发货") {
