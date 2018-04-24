@@ -90,6 +90,13 @@
             }
       },
       logout () {
+        this.$ajax({
+          method: 'get',
+          url: this.$apiMember + 'member/logout',
+          params: {}
+        }).then(function (response) {
+
+        })
         localStorage.clear()
         this.$router.push('/my')
       }

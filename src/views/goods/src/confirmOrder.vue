@@ -75,7 +75,9 @@
           netCard: 0
         },
         // 是否禁用switch
-        switchFlag: false
+        switchFlag: false,
+        // 提交订单flag，防止用户多次点击
+        submitFlag: true
       }
     },
     computed:{
@@ -107,19 +109,23 @@
     },
     methods:{
       submit () {
-        // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单
-        if (this.$route.query.type === 'direct') {
-          if (this.$route.query.since === 'true') {
-            this.directSince()
+        if (this.submitFlag) {
+          // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单
+          if (this.$route.query.type === 'direct') {
+            if (this.$route.query.since === 'true') {
+              this.directSince()
+            } else {
+              this.directDistribution()
+            }
           } else {
-            this.directDistribution()
+            if (this.$route.query.since === 'true') {
+              this.shoppingCartSince()
+            } else {
+              this.shoppingCartDistribution()
+            }
           }
         } else {
-          if (this.$route.query.since === 'true') {
-            this.shoppingCartSince()
-          } else {
-            this.shoppingCartDistribution()
-          }
+          this.$message.warning('稍安勿躁,请勿疯狂点击')
         }
       },
       /* 立即购买快递配送订单生成 */
@@ -131,6 +137,8 @@
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/nowSendOrder',
@@ -156,6 +164,8 @@
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/submitNowCarryOrder',
@@ -189,6 +199,8 @@
           cartId.push(now.cartId)
         })
         cartId = cartId.join(',')
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/submitCarryOrder',
@@ -218,6 +230,8 @@
           cartId.push(now.cartId)
         })
         cartId = cartId.join(',')
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/submitSendOrder',
