@@ -3,8 +3,8 @@
     ul.goodsList
       li(v-for="(i,index) in listData.slice(0,4)", @click="toNext(index)")
         img(:src="i.image | img-filter")
-    .columLine
-    .rowLine
+    //.columLine
+    //.rowLine
 </template>
 
 <script>

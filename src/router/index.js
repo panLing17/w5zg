@@ -56,6 +56,10 @@ const router = new Router ({
       name: '商品详情',
       component: Goods.goodsDetailed
     }, {
+      path: '/service',
+      name: '在线客服',
+      component: Goods.service
+    }, {
       path: '/confirmOrder',
       name: '确认订单',
       component: Goods.confirmOrder
@@ -479,6 +483,14 @@ router.beforeEach ((to, from, next) => {
       }
     },10)
   }
+  // 路由切换时隐藏页脚
+  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车') {
+    store.state.footerShow = true
+  }else {
+    store.state.footerShow = false
+  }
   next()
+
+
 })
 export default router

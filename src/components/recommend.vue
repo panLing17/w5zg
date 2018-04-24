@@ -1,13 +1,13 @@
 <template lang="pug">
   .bottomList
     ul.goodsList(:style="{background:background}")
-      li(v-for="item in listData" , @click="goGoods(item.gspu_id)")
+      li(v-for="item in listData" , @click.prevent="goGoods(item.gspu_id)")
         img(:src="item.gi_image_url | img-filter")
         .text <span v-if="item.carry_type!==2">可自提</span>{{item.goods_name}}
         .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-          span 可省100元
+          span 可省{{item.economize_price}}元
         .price(v-else) {{item.price | price-filter}}
-          span 可省100元
+          span 可省{{item.economize_price}}元
 </template>
 
 <script>
@@ -35,7 +35,8 @@
   }
 
   .goodsList li {
-    border: solid 1px #ccc;
+    /*border: solid 1px #ccc;*/
+    background: #fff;
     border-radius: 5px;
     overflow: hidden;
     width: 49%;

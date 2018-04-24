@@ -22,6 +22,7 @@
 
 <script>
   import {mapState} from 'vuex';
+
   export default {
     name: 'login',
     computed: mapState(['userData']),
@@ -94,9 +95,9 @@
     border-radius: .5rem;
   }
   .bottomButton {
-    position: absolute;
+    margin-top: 3rem;
     width: 100%;
-    bottom: 3rem;
+
     left: 0;
     display: flex;
     justify-content: center;

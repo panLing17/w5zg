@@ -14,7 +14,7 @@
             .dec
               span 尾号{{bankInfo.bank_card | cardNo}}
               span {{bankInfo.mbc_type}}
-        .nothing(v-if="!bankInfo")
+        .nothing(v-if="!bankInfo", @click="$router.push('/my/addBankCard')")
           .icon
             img(src="../../../../../assets/img/add2@2x.png")
           .info 请添加银行卡
@@ -83,8 +83,10 @@
             url: this.$apiMember + 'memberBank/memberbankcards',
             params:{}
           }).then(function (response) {
-            _this.bankInfo = response.data.data[0];
-            _this.form.bankId = _this.bankInfo.id
+            if (response.data.code === '081') {
+              _this.bankInfo = response.data.data[0];
+              _this.form.bankId = _this.bankInfo.id
+            }
           });
         },
         getBalance () {
@@ -106,7 +108,6 @@
             url: this.$apiTransaction + 'withdraw',
             params: this.form,
           }).then(function (response) {
-            console.log(response.data.data)
             _this.$message.success('提现成功')
             _this.$router.go(-1)
           })

@@ -312,7 +312,7 @@
 	.myTreasure ul.top{
 		display: flex;
 		justify-content: space-between;
-		border-bottom: 1px solid rgb(153,153,153);
+		border-bottom: 1px solid #d7d7d7;
 		padding-bottom: .4rem;
 		margin: 0 .4rem;
 	}

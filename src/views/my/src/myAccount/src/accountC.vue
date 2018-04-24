@@ -7,26 +7,27 @@
       .topRight(slot="right")
         p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="openFilter") 筛选
     transition(name="fade")
-      .mask(v-show="filterShow", @click="filterShow=false")
+      .mask(v-show="filterShow", @click.stop="filterShow=false")
     .filterBoxWrapper
       transition(name="fold")
         .filterBox(v-show="filterShow")
           .btn(:class="{'active':filterActive===1}", @click="filterChange(1)") 全部
           .btn(:class="{'active':filterActive===2}", @click="filterChange(2)") 收入
           .btn(:class="{'active':filterActive===3}", @click="filterChange(3)") 支出
-    .detailBox(v-if="!isEmpty")
-      ul.detailList
-        li(v-for="item in cashDetail")
-          .block.top
-            .left {{item.trade_in_out=='126' ? '消费记录':'消费退款'}}
-            .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
-          .block.center
-            .left 流水单号：{{item.trade_no}}
-            .right {{item.payment_channel | paymentChannel}}
-          .block.bottom
-            .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
-            .right {{item.creation_time}}
-    .nodata(v-if="isEmpty") 暂无相关记录流水
+    .mescroll#mescroll
+      .detailBox(v-if="!isEmpty")
+        ul.detailList
+          li(v-for="item in cashDetail")
+            .block.top
+              .left {{item.trade_in_out=='126' ? '消费记录':'消费退款'}}
+              .right {{item.trade_in_out=='126'?'-':'+'}}{{item.tran_money | number}}
+            .block.center
+              .left 流水单号：{{item.trade_no}}
+              .right {{item.payment_channel | paymentChannel}}
+            .block.bottom
+              .left {{item.trade_in_out=='126'?'订单号：':'退货单号：'}}{{item.order_id}}
+              .right {{item.creation_time}}
+      .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>
 
 <script>
@@ -55,16 +56,6 @@
         return text;
       }
     },
-    watch: {
-      // 模态框出现禁止页面滑动
-      filterShow (cur, old) {
-        if (cur) {
-          document.getElementsByTagName('body')[0].style.overflow = 'hidden';
-        }else {
-          document.getElementsByTagName('body')[0].style.overflow = 'auto';
-        }
-      }
-    },
     computed: {
       // 判断数据是否为空
       isEmpty () {
@@ -75,31 +66,55 @@
         }
       }
     },
-    created () {
-      this.getCashDetail(1);
+    mounted () {
+      this.$mescrollInt("mescroll",this.upCallback);
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
     },
     methods: {
-      getCashDetail (type) {
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if(page.num === 1){
+            self.cashDetail = [];
+          }
+          self.cashDetail = self.cashDetail.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         let _this = this;
-        this.cashDetail = [];
-        let form = { };
-        if (type === 2) {
+        let form = {
+          page: pageNum,
+          rows: pageSize
+        };
+        if (this.filterActive === 2) {
           form.type = '125';
-        }else if (type === 3) {
+        }else if (this.filterActive === 3) {
           form.type = '126';
         }
         this.$ajax({
           method: 'get',
           url: this.$apiTransaction + 'logThirdpay/logs',
-          params:form
+          params: form
         }).then(function (response) {
-          _this.cashDetail =  response.data.data;
-        });
+          if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
+            successCallback&&successCallback(response.data.data.rows);//成功回调
+          }else {
+            _this.mescroll.endErr();
+          }
+        })
       },
       filterChange (index) {
         this.filterActive = index;
         this.filterShow = false;
-        this.getCashDetail(index);
+        this.cashDetail = []
+        this.mescroll.resetUpScroll( true )
+        this.mescroll.scrollTo( 0, 300 );
       },
       openFilter () {
         this.filterShow = true;

@@ -1,6 +1,6 @@
 <template lang="pug">
     div.box
-      img(src="../../../assets/img/HEADLINE@3x.png")
+      img(src="../../../assets/img/headline.png")
       div
         ul#newsList
           li(v-for="(item,index) in newsData ", @click="$router.push({path: '/home/headlinesDetail',query:{url: item.i_photo}})") {{item.i_title}}
@@ -47,7 +47,7 @@
   }
   .box>img{
     width: 1.6rem;
-    height: 1.2rem;
+    height: 1rem;
     color: #fc8b6d;
     font-size: .4rem;
     text-align: center;
@@ -67,7 +67,7 @@
     line-height: .6rem;
     color: #666;
   }
-  .box>div>ul>li:nth-child(2n+1){
-    border-bottom: #ddd 1px solid;
-  }
+  /*.box>div>ul>li:nth-child(2n+1){*/
+    /*border-bottom: #ddd 1px solid;*/
+  /*}*/
 </style>

@@ -24,7 +24,7 @@
       },
       borderBottom: {
         type: String,
-        default: 'solid 1px rgb(204,204,204)'
+        default: 'solid 1px #f2f2f2'
       },
       height: {
         type: String,
@@ -40,8 +40,8 @@
     height: 1.3rem;
   }
   .top {
-    position: fixed;
-    z-index: 9;
+    position: absolute;
+    z-index: 20;
     top: 0;
     left: 0;
     height: 1.3rem;
@@ -50,7 +50,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: solid 1px #eee;
+    border-bottom: solid 1px #f2f2f2;
     font-size: .4rem;
     font-weight: 600;
     color: #333333;

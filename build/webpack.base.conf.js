@@ -74,7 +74,6 @@ module.exports = {
   },
   // 此处配置使用script标签引入的js 不会被打包
   externals: {
-    $: 'window.jQuery',
-    tinymce: 'window.tinymce'
+    $: 'window.jQuery'
   },
 }

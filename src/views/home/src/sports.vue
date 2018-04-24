@@ -82,7 +82,6 @@
         },
         upCallback: function(page) {
           let self = this;
-          this.keywords = this.$route.params.keywords;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
             if(page.num === 1){
               self.recommendGoods = [];
@@ -141,7 +140,6 @@
     text-indent: 100px;
   }
   .list {
-    background: #fff;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -150,7 +148,8 @@
   .item {
     float: left;
     width: 49%;
-    border: solid 1px #ccc;
+    /*border: solid 1px #ccc;*/
+    background:#fff;
     border-radius: 5px;
     overflow: hidden;
     margin-bottom: .2rem;
@@ -171,8 +170,8 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-    height: 1.2rem;
     margin-top: 4.2rem;
+    height: .96rem;
   }
   .maybe {
     padding: .1rem .2rem;
@@ -181,6 +180,7 @@
     border-radius: .4rem;
     display: inline-block;
     margin-right: .13rem;
+    line-height: 1;
   }
   .name {
     color: rgb(51,51,51);
