@@ -37,6 +37,7 @@
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
   import {mapState} from 'vuex'
+
   export default {
     name: 'home',
     data () {

@@ -35,6 +35,7 @@
 <script>
   import pop2 from './pop2'
   import pop3 from './pop3'
+
   export default {
     name: 'express',
     components:{ pop2, pop3},

@@ -1,5 +1,5 @@
 <template lang="pug">
-  .commodityList.mescroll#pageMescroll(@touchmove="notScroll($event)")
+  .wrapNav
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
@@ -10,40 +10,41 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
         .searchbtn(@click="searchGoods()" v-show="false") 搜索
-    .content
-      ul.wrap
-        li.left
-          ul
-            li(@click="changes1()" :class="{active:change1}") 综合
-            li(@click="changes2()" :class="{active:change2}") 销量
-        li.right
-          ul
-            li.showStyle(@click="exchange()")
-              img(src="../../../assets/img/pageBigList.png" v-show="!flags")
-              img(src="../../../assets/img/pageList.png" v-show="flags")
-            li.price(@click="liftOrSort()")
-              .priceWords(:class="{active:change}") 价格
-              .topDown
-                img(src="../../../assets/img/pageAsc.png" v-show="check").top
-                img(src="../../../assets/img/pageAscChecked.png" v-show="!check").top
-                img(src="../../../assets/img/pageDesc.png" v-show="!checked").down
-                img(src="../../../assets/img/pageDescChecked.png" v-show="checked").down
-            li.filters(@click="leftScroll()") | 筛选
-              img(src="../../../assets/img/pageFiltrate.png")
-      .bottomList
-        ul.goodsList#box
-          li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
-            img(:src="item.gi_image_url | img-filter")
-            .wrapWords
-              .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
-              .price {{item.price | price-filter}}
-                span 可省100元
-              .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>             
-    .mask
-      .lefter(@click="lefterBack()")
-      .righter
-        filtrate(@ievent="ievent" v-show="filtrateFlag")
-    .bottomPlaceholder
+    .commodityList.mescroll#pageMescroll
+      .content
+        ul.wrap
+          li.left
+            ul
+              li(@click="changes1()" :class="{active:change1}") 综合
+              li(@click="changes2()" :class="{active:change2}") 销量
+          li.right
+            ul
+              li.showStyle(@click="exchange()")
+                img(src="../../../assets/img/pageBigList.png" v-show="!flags")
+                img(src="../../../assets/img/pageList.png" v-show="flags")
+              li.price(@click="liftOrSort()")
+                .priceWords(:class="{active:change}") 价格
+                .topDown
+                  img(src="../../../assets/img/pageAsc.png" v-show="check").top
+                  img(src="../../../assets/img/pageAscChecked.png" v-show="!check").top
+                  img(src="../../../assets/img/pageDesc.png" v-show="!checked").down
+                  img(src="../../../assets/img/pageDescChecked.png" v-show="checked").down
+              li.filters(@click="leftScroll()") | 筛选
+                img(src="../../../assets/img/pageFiltrate.png")
+        .bottomList
+          ul.goodsList#box
+            li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
+              img(:src="item.gi_image_url | img-filter")
+              .wrapWords
+                .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
+                .price {{item.price | price-filter}}
+                  span 可省100元
+                .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
+      .mask
+        .lefter(@click="lefterBack()")
+        .righter
+          filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
+      .bottomPlaceholder
 </template>
 
 <script>
@@ -69,7 +70,7 @@
         minPrice: "", //开始价格区间
         maxPrice: "", //结束价格区间
         pickUps: "", //自提不自提
-        checkFlag: false, 
+        checkFlag: false,
         noKey: true,
         order: "", //字段排序
         keyWord: "", //关键字
@@ -105,23 +106,10 @@
       //遮罩层出现后不让页面滑动
       notScroll (e) {
         e.preventDefault();
-        e.stopPropagation();
       },
       //搜索商品
       searchGoods(){
         this.exhibition();
-      },
-      //滑动限制
-      stop(){
-        var mo = function(e){e.preventDefault();};
-        document.body.style.overflow = 'hidden';
-        document.addEventListener("touchmove",mo,false);//禁止页面滑动
-      },
-      //取消滑动限制
-      move(){
-        var mo = function(e){e.preventDefault();};
-        document.body.style.overflow = '';//出现滚动条
-        document.removeEventListener("touchmove",mo,false);
       },
       //让页面加载时将搜索的文字拼到url上
       onload(){
@@ -158,9 +146,6 @@
           }
         }).then(function(res){
           self.recommendGoods = res.data.data;
-
-          console.log(self.recommendGoods);
-
           if(self.recommendGoods.length<=0){
             self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
           }else{
@@ -172,7 +157,6 @@
                 self.recommendGoods[i].carryFlag = false;
               }
             }
-            console.log(self.recommendGoods);
           }
         })
       },
@@ -187,10 +171,9 @@
       },
       //筛选左滑
       leftScroll(){
-        var _this = this;
-        //this.$mescrollInt("",this.upCallback);
+        this.mescroll.lockDownScroll(true);
+        this.mescroll.lockUpScroll(true);
         this.filtrateFlag = true;
-        this.allBrandFlag = false;
         var mask = document.getElementsByClassName("mask")[0];
         var lefter = document.getElementsByClassName("lefter")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
@@ -198,19 +181,16 @@
         mask.style.left = 0;
         mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
-        //this.stop();
-        //this.$mescrollInt("pageMescroll",this.upCallback) = null;
       },
       lefterBack(){
-        //_this.$mescrollInt("pageMescroll",this.upCallback);
+        this.mescroll.lockDownScroll(false);
+        this.mescroll.lockUpScroll(false);
         var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
         mask.style.left = "100%";
         mask.style.opacity = 0;
         mask.style.transition = "left .3s, opacity .3s";
         commodityList.style.overflow = "scroll";
-        //this.move();
-        this.$mescrollInt("pageMescroll",this.upCallback);
       },
       //从筛选传值过来
       ievent(data){
@@ -249,8 +229,7 @@
           this.minPrice = data.minPrice;
           this.checkFlag = true;
         }
-        console.log(this.brandId);
-        this.request();  
+        this.request();
       },
 
       //综合排序
@@ -308,7 +287,7 @@
         if (this.check == true) {
           this.sort = 1;
         }
-        this.request(); 
+        this.request();
       },
       upCallback: function(page) {
         let self = this;
@@ -349,11 +328,11 @@
               }
               if (response.data.data[i].carry_type == 2) {
                 response.data.data[i].carryFlag = false;
-              } 
+              }
             }
             successCallback&&successCallback(response.data.data);//成功回调
           // }
-          
+
         })
 
 //        .catch(function(error) {
@@ -394,7 +373,6 @@
                 self.recommendGoods[i].carryFlag = false;
               }
             }
-            console.log(self.recommendGoods);
           }
         })
       }
@@ -407,7 +385,7 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    height: auto;
+    /*height: auto;*/
     z-index: 100;
   }
   .active{
@@ -419,6 +397,7 @@
     min-height: 100vh;
     background: rgb(242,242,242);
     padding-bottom: 2rem;
+    margin-top: 1.3rem;
   }
   /*顶部搜索--开始*/
   .topCenter{
@@ -616,7 +595,7 @@
   /*切换成列表模式的样式--结束*/
   /*蒙板--开始*/
   .mask{
-    background-color: rgb(0,0,0,0.3);
+    background-color: rgba(0,0,0,0.3);
     position: fixed;
     top: 0;
     left: 110%;
