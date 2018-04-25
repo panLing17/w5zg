@@ -64,7 +64,7 @@
         },
         alFlag () {
           let ua = window.navigator.userAgent.toLowerCase()
-          if (ua.match(/MicroMessenger/i) == 'aplipay') {
+          if (ua.match(/Alipay/i) == 'alipay') {
             return true
           } else {
             return false

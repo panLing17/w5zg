@@ -202,6 +202,12 @@
     width: 3rem;
     height: 10rem;
     overflow-y: auto;
+    /* 兼容safari滑动 */
+    -webkit-overflow-scrolling: touch
+  }
+  .list li{
+    /* 兼容safari滑动 */
+    min-height: 1px;
   }
   .slider {
     height: 1px;

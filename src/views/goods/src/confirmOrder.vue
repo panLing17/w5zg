@@ -36,7 +36,7 @@
         p {{price | price-filter}}
     ul.switchList
       li
-        .left 网金卡
+        .left 现金券
         .right
           span 可抵扣{{netAndCommitCard.netCard}}
           toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
@@ -246,7 +246,7 @@
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
-      // 网金卡变化
+      // 现金券变化
       netCardChange () {
         this.getVoucher()
       },
