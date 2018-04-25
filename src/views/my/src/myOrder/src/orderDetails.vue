@@ -57,8 +57,12 @@
           .contDiv {{item.pick_up_no}}
           .bottomDiv(@click="pickUpNoFinish()") 完成
       .bottom(v-show="flag")
-        span.shop 提货门店:
-        span {{item.si_name}}
+        p
+          span.shop 提货门店:
+          span {{item.si_name}}
+        p
+          span.shop 门店地址:
+          span {{item.address}} 
     .total
       ul
         li.totalQuantity
@@ -876,11 +880,14 @@
   }
   .bottom{
     border-top: 1px solid rgb(242,242,242);
-    height: .8rem;
-    line-height: .8rem;
+    /*height: .8rem;*/
+    /*line-height: .8rem;*/
     background-color: #fff;
     padding: .1rem .3rem 0;
     font-size: .35rem;
+  }
+  .bottom p{
+    margin-top: .1rem;
   }
   /*商品的详情--结束*/
   /*总商品的统计--开始*/
