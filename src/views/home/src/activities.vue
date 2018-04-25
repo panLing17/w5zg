@@ -55,6 +55,7 @@
   .goodsList li img {
     width: 100%;
     height: 100%;
+    pointer-events: none;
   }
   /* 十字线 */
   .columLine {

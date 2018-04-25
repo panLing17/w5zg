@@ -16,15 +16,16 @@
               img.img(:src="item.gi_image_url | img-filter")
               .nameWrapper
                 // carry_type 1可自提 2不可自提
-                span.maybe(v-if="item.carry_type===1") 可自提
+                span.maybe(v-if="item.carry_type===1") 专柜提货
                 span.name {{item.gi_name}}
               .price
                 span.current ￥{{item.price | round}}
-                span.save 可省XXX元
+                span.save(v-if="userData.member_type !== '092' && item.economize_price !== 0") 可省{{item.economize_price}}元
         .noData(v-if="isEmpty") 暂无推荐商品
 </template>
 
 <script>
+  import {mapState} from 'vuex'
     export default {
       name: "sports",
       data () {
@@ -32,7 +33,7 @@
           banner: [],
           recommendGoods: [],
           parentId: null,
-          parentType: null
+          parentType: null,
         }
       },
       filters: {
@@ -45,6 +46,7 @@
         }
       },
       computed: {
+        ...mapState(['userData']),
         // 判断数据是否为空
         isEmpty () {
           if (this.recommendGoods == null || this.recommendGoods.length === 0) {
@@ -171,7 +173,7 @@
     -webkit-line-clamp: 2;
     overflow: hidden;
     margin-top: 4.2rem;
-    height: .96rem;
+    height: .85rem;
   }
   .maybe {
     padding: .1rem .2rem;
@@ -193,6 +195,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    justify-content: space-between;
   }
   .current {
     font-weight: 400;

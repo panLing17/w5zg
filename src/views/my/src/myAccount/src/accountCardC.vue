@@ -1,6 +1,6 @@
 <template lang="pug">
   .accountCardBox
-    nav-bar(background="white")
+    nav-bar(background="white", style="position: fixed; z-index: 200;")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 现金券
@@ -40,6 +40,7 @@
     height: 100vh;
     position: absolute;
     z-index: 100;
+    overflow: auto;
   }
   .tabBox {
     height: .93rem;

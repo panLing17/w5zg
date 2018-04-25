@@ -32,10 +32,10 @@
             .text 省{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}元
           li.gray
             .label 直接购买
-            .text 约省{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}元
+            .text 省{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}元
           li.gray
             .label 通用券
-            .text 约省{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}元
+            .text 省{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}元
       .numberBox
         ul.number
           li 邮费{{goodsData.goi_freight}}
@@ -654,7 +654,7 @@
     display: flex;
   }
   .saveMoney li .label{
-    width: 1.3rem;
+    width: 1.4rem;
     text-align: center;
   }
   .saveMoney li .text{

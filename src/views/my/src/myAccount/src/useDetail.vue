@@ -114,7 +114,9 @@
   .useDetailBox {
     padding: 0 .2rem;
     box-sizing: border-box;
-    margin-top: 1.13rem;
+    margin-top: 2.43rem;
+    height: calc(100vh - 2.43rem);
+    overflow: auto;
   }
   .item {
     background: #fff;
