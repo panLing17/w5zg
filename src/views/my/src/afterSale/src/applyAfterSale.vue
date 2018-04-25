@@ -6,77 +6,71 @@
       .topCenter(slot="center") 申请售后
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content(v-for="(item,index) in goodsList")
+    .content(v-for="(item,index) in goodsList", @click="change(index)")
       .center
         .check
-          w-checkbox(v-model="item.checked", @change="check")
+          w-checkbox(:msg="item.checked", @change="change(index)")
         .image
-          img(:src="item.imgSrc")
+          img(:src="item.logo | img-filter")
         .goodsDetails
-          .words {{item.words}}
+          .words {{item.goods_name}}
           .property
-            span.color {{item.color}}
-            span.size {{item.size}}
+            span(v-for="i in item.spec_json") {{i.gspec_value}}
           .amount x
-            span {{item.amount}}
-    .totalCheck
-      w-checkbox(@change="cMsg" v-model="msg")
-      span 全选
-    .next(@click="flag && $router.push('/my/selectService')") 下一步
+            span {{item.goods_num}}
+    <!--.totalCheck-->
+      <!--w-checkbox(@change="cMsg" v-model="msg")-->
+      <!--span 全选-->
+    .next(@click="toNext") 下一步
 </template>
 <script>
   export default {
     name: 'applyAfterSale',
     data () {
       return {
-        flag:true,
-        msg: false,
-        goodsList:[
-        ]
+        goodsList:[]
       }
     },
-    mounted () {
-      this.check();
+    created () {
+      this.getList()
     },
     methods: {
-      cMsg(flag){
-        this.goodsList.forEach((now)=>{
-          now.checked = flag;
-          this.msg = flag;
-          if (flag == false) {
-            var next = document.getElementsByClassName("next")[0];
-            next.style.backgroundColor = "rgb(153,153,153)";
-            this.flag = false;
+      toNext () {
+        this.goodsList.forEach((item, index) => {
+          if (item.checked) {
+            item.delivery_id = this.$store.state.returnGoods.slice(this.$store.state.returnGoods.length-1,this.$store.state.returnGoods.length);
+            this.$store.commit('getReturnGoods', item);
+            this.$router.replace({path:'/my/refundReturn'});
           }
-          if (flag == true) {
-            var next = document.getElementsByClassName("next")[0];
-            next.style.backgroundColor = "rgb(244,0,87)";
-            this.flag = true;
-          }
-        });
+        })
       },
-
-      check(){
-        let n = 0;
-        this.goodsList.forEach((now)=>{
-          console.log(now);
-          if (now.checked === false) {
-            this.msg = false;
-            var next = document.getElementsByClassName("next")[0];
-            next.style.backgroundColor = "rgb(153,153,153)";
-            this.flag = false;
-          } else {
-            n += 1;
-            var next = document.getElementsByClassName("next")[0];
-            next.style.backgroundColor = "rgb(244,0,87)";
-            this.flag = true;
+      getList () {
+        this.goodsList = []
+        let _this = this
+        let temp = this.$store.state.returnGoods.slice(0,this.$store.state.returnGoods.length-1)
+        temp.forEach((item, index)=>{
+          console.log(item)
+          if (item.refund_status == null) {
+            item.checked = false
+            _this.goodsList.push(item)
           }
-        });
-        if (n === this.goodsList.length) {
-          this.msg = true;
-        }
+        })
+        this.goodsList[0].checked = true
       },
-
+      change (index) {
+        let temp = this.goodsList
+        temp.forEach((item, i) => {
+          if (index === i) {
+            item.checked = true
+          }else {
+            item.checked = false
+          }
+        })
+        temp.forEach((item2, i2) => {
+          this.$set(this.goodsList,i2,item2)
+        })
+        temp = null
+      }
     }
   }
 </script>
@@ -101,12 +95,12 @@
     background-color: #fff;
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
-    white-space:nowrap;
-    overflow-x:auto;
+    flex-wrap:wrap;
     display: flex;
     position: relative;
   }
   .center .check{
+    flex: none;
     line-height: 2.4rem;
     margin-right: .3rem;
     position: absolute;
@@ -115,27 +109,37 @@
   }
   .center .image{
     margin-left: .8rem;
+    flex: none;
   }
   .center .image img{
-    width: 2.5rem;
+    width: 2.32rem;
+    height: 2.32rem;
     border-radius: .2rem;
   }
   .center .goodsDetails{
     margin-left: .3rem;
+    flex: 1;
+    position: relative;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
   .center .goodsDetails .property{
     margin-top: .1rem;
     font-size: .35rem;
     color: rgb(153,153,153);
   }
-  .center .goodsDetails .property span.size{
-    margin-left: .3rem;
+  .center .goodsDetails .property span{
+    margin-right: .3rem;
   }
   .center .goodsDetails .amount{
-    margin-top: 1rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     font-size: .35rem;
     color: rgb(153,153,153);
   }

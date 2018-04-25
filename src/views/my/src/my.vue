@@ -34,15 +34,18 @@
         li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 >
       ul.bottom
         li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
-          .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0") {{orderCount.unPayOrder}}
+          .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
+            i(v-if="orderCount.unPayOrder>99") +
           img(src="../../../assets/img/my_obligation@2x.png")
           .character 待付款
         li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
-          .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0") {{orderCount.unSendOrder}}
+          .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center'}") {{orderCount.unSendOrder}}
+            i(v-if="orderCount.unSendOrder>99") +
           img(src="../../../assets/img/my_readyfordelivery@2x.png")
           .character 待发货
         li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
-          .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0") {{orderCount.unRecieveOrder}}
+          .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center'}") {{orderCount.unRecieveOrder}}
+            i(v-if="orderCount.unRecieveOrder>99") +
           img(src="../../../assets/img/my_waitforreceiving2@2x.png")
           .character 待收货
         li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
@@ -472,8 +475,8 @@
     position: relative;
   }
   .badge {
-    width: .4rem;
-    height: .4rem;
+    width: .5rem;
+    height: .5rem;
     border-radius: 50%;
     background: rgb(246,0,87);
     color: #fff;
@@ -481,7 +484,12 @@
     position: absolute;
     right: 0;
     top: -0.2rem;
-    line-height: .4rem;
-    text-align: center;
+    line-height: .5rem;
+  }
+  .badge i {
+    position: absolute;
+    top: -.1rem;
+    right: .05rem;
+    font-size: .29rem;
   }
 </style>
