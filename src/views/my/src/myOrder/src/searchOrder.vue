@@ -19,7 +19,8 @@
         ul.cont(v-if="flag")
           li(v-for="(item,index) in record1" @click="change1($event,index)" :class="{active:selected1==index}") {{item.gsr_keywords}}
         .empty(v-else="flag") 暂无搜索历史
-      .searchRel(v-show="showRel") 没有搜索到此订单  
+      .searchRel(v-show="showRel")
+        img(src="../../../../../assets/img/emptyOrder.png")  
       .wrapContent(v-show="showOrder")  
         .content(v-for="(item,index) in orderDetail")
           .top
@@ -425,9 +426,11 @@
 <style scoped>
 /*没有搜索到此订单的样式--开始*/
 .searchRel{
-  padding: .5rem .3rem 0;
+  padding: 1rem 0 .3rem;
   text-align: center;
-  font-size: .4rem;
+}
+.searchRel img{
+  width: 3rem;
 }
 /*没有搜索到此订单的样式--结束*/
 .active{

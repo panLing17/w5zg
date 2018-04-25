@@ -333,28 +333,24 @@
 	.myOrderForm,
 	.myTreasure{
 		background-color: #fff;
-		padding: .4rem 0 .5rem;
+		padding: .2rem 0 .4rem;
 		margin-top: .2rem;
 	}
 	.myOrderForm ul.top,
 	.myTreasure ul.top{
 		display: flex;
 		justify-content: space-between;
-		border-bottom: 1px solid #d7d7d7;
-		padding-bottom: .4rem;
-		margin: 0 .4rem;
+		border-bottom: 1px solid #f2f2f2;
+		padding: 0 .4rem .2rem;
 	}
 	.myOrderForm ul.top li,
 	.myTreasure ul.top li{
 		font-size: .4rem;
-		font-weight: bold;
 	}
-	.myOrderForm ul.top li:nth-child(2) img,
-	.myTreasure ul.top li:nth-child(2) img{
-		width: 1.3rem;
-		vertical-align: top;
-		margin-top: .05rem;
-	}
+  .myOrderForm ul.top li:nth-child(2){
+    padding-top: .1rem;
+    font-size: .3rem;
+  }
 	.myOrderForm ul.bottom{
 		display: flex;
 		justify-content: space-around;
@@ -366,40 +362,48 @@
   .myOrderForm ul.bottom li:nth-child(4){
     margin-left: .7rem;
   }
+  .myOrderForm ul.bottom li:nth-child(2) img{
+    width: .68rem;
+  }
   .myOrderForm ul.bottom li:nth-child(3) img{
-    width: .75rem;
+    width: .7rem;
   }
   .myOrderForm ul.bottom li:nth-child(4) img{
-    width: .65rem;
+    width: .6rem;
   }
   .myOrderForm ul.bottom li:nth-child(5){
     margin-left: .3rem;
   }
+  .myOrderForm ul.bottom li:nth-child(5) img{
+    width: .68rem;
+  }
 	.myOrderForm ul.bottom li img{
-		width: .7rem;
+		width: .68rem;
 	}
   .myOrderForm ul.bottom li .character{
+    margin-top: .2rem;
     text-align: center;
-    color: rgb(51,51,51);
-    font-size: .35rem;
+    color: rgb(151,151,151);
+    font-size: .3rem;
   }
 	/*我的订单和我的财富--结束*/
 	/*我的财富独有的样式--开始*/
 	.myTreasure ul.bottom{
 		display: flex;
-		justify-content: space-around;
-		padding: .4rem 1rem 0;
+		justify-content: space-between;
+		padding: .4rem .8rem 0;
 	}
   .myTreasure ul.bottom li{
     text-align: center;
-    margin-right: .5rem;
+    /*margin-right: .5rem;*/
   }
 	.myTreasure ul.bottom li img{
 		width: .8rem;
 	}
   .myTreasure ul.bottom li .words{
-    color: rgb(51,51,51);
-    font-size: .35rem;
+    margin-top: .2rem;
+    color: rgb(151,151,151);
+    font-size: .3rem;
   }
 	/*我的财富独有的样式--结束*/
 	/*商品大图展示--开始*/

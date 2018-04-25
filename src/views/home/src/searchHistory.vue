@@ -75,11 +75,18 @@
       this.searchDiscover();
       //显示搜索结果
       this.resultShow();
+      //进页面时就让输入框聚焦
+      this.toFocusOn();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods: {
+      //进页面时就让输入框聚焦
+      toFocusOn(){
+        var oInput = document.getElementsByTagName("input")[0];
+        oInput.focus();
+      },
       //判断回退事件
       backRouter(){
         // if (this.$route.query.relNum == 1) {

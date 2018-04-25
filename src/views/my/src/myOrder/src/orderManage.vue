@@ -43,7 +43,8 @@
           .button
             .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
             .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
-      .noData(v-if="isEmpty") 暂无更多记录    
+      .noData(v-if="isEmpty")
+        img(src="../../../../../assets/img/emptyOrder.png")    
 </template>
 
 <script>
@@ -317,7 +318,7 @@
                 }
               }
               if (response.data.data[i].order_status == "已取消") {
-                arr[i].buttonL = "删除订单";
+                arr[i].buttonL = "取消申请";
                 arr[i].buttonR = "再次购买";
                 arr[i].orderStatus = "已取消";
               }
@@ -381,7 +382,7 @@
                 }
               }
               if (response.data.data[i].order_status == "已取消") {
-                self.orderDetail[i].buttonL = "删除订单";
+                self.orderDetail[i].buttonL = "取消申请";
                 self.orderDetail[i].buttonR = "再次购买";
                 self.orderDetail[i].orderStatus = "已取消";
               }
@@ -603,5 +604,8 @@
     color: rgb(153,153,153);
     font-size: .4rem;
     z-index: 202;
+  }
+  .noData img{
+    width: 4rem;
   }
 </style>
