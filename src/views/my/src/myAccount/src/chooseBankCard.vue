@@ -159,12 +159,9 @@
     z-index: 100;
   }
   .content {
-    min-height: calc(100vh - 1.3rem);
-    display: flex;
-    flex-flow: column;
   }
   .list {
-    flex: 1;
+
   }
   /*.item {
     height: 2.4rem;
@@ -216,9 +213,9 @@
 
   }
   .add {
-    flex: 0;
-    padding: .26rem 0;
+    margin-top: 2rem;
     text-align: center;
+    font-size: 0;
   }
   .add img {
     width: 68%;

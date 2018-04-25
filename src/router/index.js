@@ -425,6 +425,11 @@ const router = new Router ({
               path: '/my/footMark',
               name: '足迹',
               component:My.footMark
+            },
+            {
+              path: '/my/promote',
+              name: '申请商户资质',
+              component: MyAccount.promote
             }
           ]
         }

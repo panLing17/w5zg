@@ -27,6 +27,11 @@
         li.left 地址管理
         li.right
           img(src="../../../assets/img/next@2x.png")
+    .feedback(v-if="userData.member_type === '091'")
+      ul.wrap(@click="$router.push('/my/feedback')")
+        li.left 申请商户资质
+        li.right
+          img(src="../../../assets/img/next@2x.png")
     .feedback
       ul.wrap(@click="$router.push('/my/feedback')")
         li.left 意见反馈

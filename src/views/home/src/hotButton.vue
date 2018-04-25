@@ -42,7 +42,7 @@
 <style scoped>
   .box {
     width: 100%;
-    height: 3.6rem;
+    height: 4.2rem;
     background: white;
     padding: .2rem 0;
     display: flex;
@@ -68,7 +68,7 @@
     width: 1rem;
   }
   .box > ul > li > span {
-    margin-top: .1rem;
+    margin-top: .2rem;
     font-size: .32rem;
     font-style: normal;
     line-height: 1;

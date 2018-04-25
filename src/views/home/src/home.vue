@@ -15,9 +15,9 @@
           img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      .title1
+      img.title1(src="../../../assets/img/louceng1.png")
       w-activity(:listData="activityGoods")
-      .title2
+      img.title2(src="../../../assets/img/louceng2.png")
       w-recommend(:listData="recommendGoods")
       .bottomPlaceholder
 </template>
@@ -330,6 +330,7 @@
     color: #fff;
     margin-left: .2rem;
     word-break: break-all;
+    font-size: .48rem;
   }
   .topCenter{
     position: relative;
@@ -371,14 +372,14 @@
     height: 1rem;
     width: 100%;
   }
-  .title1 {
-    background: url("../../../assets/img/louceng1.png") no-repeat top left;
-    background-size: 100% 100%;
-  }
-  .title2 {
-    background: url("../../../assets/img/louceng2.png") no-repeat top left;
-    background-size: 100% 100%;
-  }
+  /*.title1 {*/
+    /*background: url("../../../assets/img/louceng1.png") no-repeat top left;*/
+    /*background-size: 100% 100%;*/
+  /*}*/
+  /*.title2 {*/
+    /*background: url("../../../assets/img/louceng2.png") no-repeat top left;*/
+    /*background-size: 100% 100%;*/
+  /*}*/
   .line{
     height: 1px;
     width: 3rem;
