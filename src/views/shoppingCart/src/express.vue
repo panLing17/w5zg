@@ -1,6 +1,8 @@
 <template lang="pug">
   .expressBox
     goods-card.goodsCard(v-for="(i,index) in goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
+    div(v-if="goodsList.length<1", style="min-height:100vh")
+      img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
         span 失效商品
@@ -191,5 +193,11 @@
     margin-right: .2rem;
     font-size: .3rem;
     color: rgb(255,128,171);
+  }
+  /* 空购物车 */
+  .zeroGoods {
+    width: 100%;
+    padding: .2rem;
+    margin: 1rem 0;
   }
 </style>

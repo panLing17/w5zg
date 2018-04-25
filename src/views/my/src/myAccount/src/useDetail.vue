@@ -194,7 +194,6 @@
     width: 100%;
     text-align: center;
     color: rgb(153,153,153);
-    font-size: .4rem;
   }
   .nodata img {
     width: 2.6rem;
