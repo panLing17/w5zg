@@ -32,23 +32,25 @@
         .right
           span.orderStatus {{item.orderInfoStatus}}
       .center(v-for="items in item.orderDetail")
-        .image
-          img(:src="items.logo | img-filter")
-        .goodsDetails
-          .words {{items.goods_name}}
-          .wrapAttr
-            .left
-              .property(v-for="skus in items.spec_json")
-                span.color {{skus.gspec_value}}
-                span.size(v-if="false") {{skus.gspec_value}}
-              .amount x{{items.goods_num}}
-            .right
-              .price {{items.sale_price | price-filter}}
-          .wrapBtn
-            .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
-              .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,items)") {{moreBtnCont}}
-            .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item, items)") {{item.btnF}}
-            .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item, items)") {{item.btnS}}
+        .wrapGoods
+          .image
+            img(:src="items.logo | img-filter")
+          .goodsDetails
+            .words {{items.goods_name}}
+            .wrapAttr
+              .left
+                .property(v-for="skus in items.spec_json")
+                  span.color {{skus.gspec_value}}
+                  span.size(v-if="false") {{skus.gspec_value}}
+                .amount 
+                  span.nums x{{items.goods_num}}
+              .right
+                .price {{items.sale_price | price-filter}}
+      .wrapBtn
+        .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
+          .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
+        .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
+        .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)") {{item.btnS}}
       .pickUpNum(v-show="pickUpNoFlag")
         .alertFrame
           .topDiv 提货码
@@ -181,18 +183,6 @@
             self.BOrC = res.data.data.member_type;
           })
         },
-        //判断最下方的两个按钮都隐藏时下方的白条消失
-        judgeWhiteBar(){
-          var leftBtn = document.getElementsByClassName("leftBtn")[0];
-          console.log(leftBtn.style.display == "");
-          var rightBtn = document.getElementsByClassName("rightBtn")[0];
-          console.log(rightBtn.style.display == "");
-          if (leftBtn.style.display == "" && rightBtn.style.display == "") {
-            this.whiteBarFlag = false;
-          } else {
-            this.whiteBarFlag = true;
-          }
-        },
         //倒计时
         countDown(times){
           let self = this;
@@ -236,7 +226,6 @@
                   url:self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
                   params:{}
                 }).then(function(res){
-                  console.log(res);
                   self.$router.go(-1);
                 })
               },
@@ -268,7 +257,6 @@
 
         //更多展示功能按钮
         moreShow(e){
-          console.log(e.target.children[0].style.display);
           if (e.target.children[0].style.display == "" || e.target.children[0].style.display == "none") {
             e.target.children[0].style.display = "block";
           } else {
@@ -278,15 +266,20 @@
         },
         //点击更多后展示的按钮
         judgeMoreBtn(e,item,items){
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款") {
-            items.delivery_id = item.delivery_id
-            this.$store.commit('getReturnGoods', items)
-            this.$router.push({path:'/my/refundReturn'});
+          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+            if (items.length > 1) {
+              items.push(item.delivery_id);
+              this.$store.commit('getReturnGoods', items);
+              this.$router.push({path:'/my/applyAfterSale'});
+            }else if(items.length === 1) {
+              items[0].delivery_id = item.delivery_id;
+              this.$store.commit('getReturnGoods', items[0]);
+              this.$router.push({path:'/my/refundReturn'});
+            }
           }
         },
         //订单详情展示
         orderDetailShow(){
-          console.log(this.$route.query.orderId);
           let self = this;
           self.$ajax({
             method:"post",
@@ -295,7 +288,6 @@
               orderTotalId:self.orderId
             }
           }).then(function(res){
-            console.log(res.data.data);
             self.totalOrderNum = res.data.data[0].total_order_no;
             self.recipients = res.data.data[0].carry_person;
             self.phone = res.data.data[0].carry_phone;
@@ -333,7 +325,6 @@
             //判断货物状态来决定
             var arrays = res.data.data[0].orderInfo;
             for (var i = 0; i < arrays.length; i++) {
-              console.log(arrays[i].orderInfo_status);
               if (arrays[i].orderInfo_status == "（退货）售后") {
                   //arrays[j].refund_status
                   arrays[i].morethenFlag = false;
@@ -372,7 +363,6 @@
                   arrays[i].orderInfoStatus = "待发货";
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
-                    console.log(mArr[j].refund_status);
                     if(mArr[j].refund_status != null){
                       arrays[i].btnF = "取消申请";
                     }
@@ -396,7 +386,6 @@
                   arrays[i].orderInfoStatus = "待备货";
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
-                    console.log(mArr[j].refund_status);
                     if(mArr[j].refund_status != null){
                       arrays[i].btnF = "取消申请";
                     }
@@ -478,25 +467,36 @@
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address}});
           }
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
-            items.delivery_id = item.delivery_id
-            this.$store.commit('getReturnGoods', items)
-            this.$router.push({path:'/my/refundReturn'});
+            if (items.length > 1) {
+              items.push(item.delivery_id);
+              this.$store.commit('getReturnGoods', items);
+              this.$router.push({path:'/my/applyAfterSale'});
+            }else if(items.length === 1) {
+              items[0].delivery_id = item.delivery_id;
+              this.$store.commit('getReturnGoods', items[0]);
+              this.$router.push({path:'/my/refundReturn'});
+            }
           }
           if (e.target.innerHTML == "取消订单"){
 
           }
         },
-        judgeBtnS(e,item, items){
-          console.log(item);
+        judgeBtnS(e,item,items){
           //进入到申请退货页面
           if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
-            items.delivery_id = item.delivery_id
-            this.$store.commit('getReturnGoods', items)
-            this.$router.push({path:'/my/refundReturn'});
+            if (items.length > 1) {
+              items.push(item.delivery_id);
+              this.$store.commit('getReturnGoods', items);
+              this.$router.push({path:'/my/applyAfterSale'});
+            }else if(items.length === 1) {
+              items[0].delivery_id = item.delivery_id;
+              this.$store.commit('getReturnGoods', items[0]);
+              this.$router.push({path:'/my/refundReturn'});
+            } 
           }
           //支付
           if (e.target.innerHTML == "支付") {
@@ -504,7 +504,7 @@
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
-            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:items.logo}});
+            this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address}});
           }
           //没有
           if (e.target.innerHTML == "提醒发货") {
@@ -533,7 +533,6 @@
                   url:self.$apiTransaction + "order/confirmTakeGood/"+item.order_id,
                   params:{}
                 }).then(function(res){
-                  console.log(res);
                   self.$router.push('/my/orderManage');
                 })
               },
@@ -701,6 +700,8 @@
   /*商品的详情--开始*/
   .content{
     margin-top: .2rem;
+    background-color: #fff;
+    padding-bottom: .2rem;
   }
   .content .top{
     height: .8rem;
@@ -726,11 +727,11 @@
     background-color: #fff;
     padding: .3rem .3rem .2rem;
     border-bottom: 1px solid rgb(242,242,242);
-    display: flex;
+    /*display: flex;*/
     position: relative;
   }
-  .center .image{
-
+  .center .wrapGoods{
+    display: flex;
   }
   .center .image img{
     width: 2.5rem;
@@ -757,12 +758,12 @@
     color: rgb(153,153,153);
   }
   .center .goodsDetails .property span.color{
-    margin-right: .3rem;
+    margin-right: .5rem;
   }
   .center .goodsDetails .amount{
-    margin-top: .15rem;
+    padding-top: .1rem;
     margin-left: .5rem;
-    font-size: .35rem;
+    font-size: .37rem;
     color: rgb(153,153,153);
   }
   .center .goodsDetails .price{
@@ -770,12 +771,13 @@
     font-size: .35rem;
     color: rgb(244,0,87);
   }
-  .center .goodsDetails .wrapBtn{
-    margin-top: .8rem;
+  .wrapBtn{
+    margin-top: .2rem;
+    padding-right: .3rem;
     display: flex;
     justify-content: flex-end;
   }
-  .center .goodsDetails .btn{
+  .wrapBtn .btn{
     width: 1.8rem;
     height: .7rem;
     border-radius: .8rem;
