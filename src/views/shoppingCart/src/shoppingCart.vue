@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     nav-bar(background="white")
-      .topLeft(slot="left")
+      .topLeft(slot="left", @click="$router.push('/home/citySearch')")
         .sanjiao
         span {{location.city.name}}
       .topCenter(slot="center") 购物车
@@ -220,7 +220,6 @@
   .shoppingCartBox {
     background-color: rgb(242,242,242);
     padding-bottom: 3rem;
-    min-height: 100vh;
   }
   .slider {
     margin-left: 30%;

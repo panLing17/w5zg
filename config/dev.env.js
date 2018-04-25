@@ -13,6 +13,7 @@ module.exports = merge(prodEnv, {
   MEMBER_PREFIEX: '""',
   GOODS_PREFIEX: '""',
   TRADING_PREFIEX: '""',
-  APP_PREFIEX: '""'
+  APP_PREFIEX: '""',
+  IMG_URL: '"http://w5zg-mall-test.oss-cn-hangzhou.aliyuncs.com/"'
 })
 

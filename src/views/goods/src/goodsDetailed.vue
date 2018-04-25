@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 商品
       .topRight(slot="right")
-        img(src="../../../assets/img/customerservice@3x.png", style="width:.5rem", @click="$router.push('/service')")
+        img(src="../../../assets/img/customerservice@3x.png", style="width:.5rem", @click="goService")
         // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
     .goodsBox.mescroll#goodsDetailMescroll
       .banner
@@ -31,12 +31,12 @@
             .label 现金券
             .text 省{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}元
           li.gray
-            .label 直接购买
+            .label 直 购
             .text 省{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}元
           li.gray
             .label 通用券
             .text 省{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}元
-      .numberBox
+      .numberBox(v-if="false")
         ul.number
           li 邮费{{goodsData.goi_freight}}
           li 库存{{goodsData.storage_num}}
@@ -69,13 +69,18 @@
           .left 配送方式
           .right
             span {{disTypeName}}
-            span(style="color: rgb(246,0,88);") 有货<img src="../../../assets/img/right.png">
+            span(style="color: rgb(246,0,88);") {{maxStoreNum>0 ? '有货' : '无货'}}<img src="../../../assets/img/right.png">
         .bottom
           .location
             img(src="../../../assets/img/citySearch.png")
             span {{location.province.name}}
             span {{location.city.name}}
-          .hour 下单完成后将在xx小时内发货
+          .hour 17:00前付款，预计xx月xx日发货
+      // 改动后的邮费
+      .numberBox
+        ul.number
+          li 邮费 包邮
+          //li 邮费 {{goodsData.goi_freight}}
       .title
         .line
         p 详情
@@ -88,7 +93,7 @@
       .buttons
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec")
+      select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
       store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
@@ -138,6 +143,8 @@
         price: 0,
         // 门店ID
         storeId: '',
+        // 当前最大库存
+        maxStoreNum: '',
         // 根据此属性判断，选择地址等一系列是否来自立即购买按钮
         ofBuy: false,
         onlySelectSpec: true,
@@ -200,8 +207,29 @@
       }
     },
     methods:{
+      // 规格组件挂载并请求详情后
+      specLoad (data) {
+        this.maxStoreNum = data.maxStoreNum
+        this.selectedSpec = data.spec
+      },
+      // 前往客服
+      goService () {
+        let goodsData = {
+          show : 1, // 1为打开， 其他参数为隐藏（包括非零元素）
+          title : this.goodsData.gi_name,
+          desc : '',
+          picture : this.$method.imgUrlFilter(this.goodsData.gi_image_url),
+          note : '备注',
+          url : window.location.href
+        }
+        this.$store.commit('getNowGoodsData',  goodsData)
+        this.$router.push('/service')
+      },
       // 获取能省多少钱
       getMakeMoney (id) {
+        if (id === undefined) {
+          return
+        }
         let self = this
         this.$ajax({
           method: 'get',
@@ -654,7 +682,7 @@
     display: flex;
   }
   .saveMoney li .label{
-    width: 1.4rem;
+    width: 1.2rem;
     text-align: center;
   }
   .saveMoney li .text{
