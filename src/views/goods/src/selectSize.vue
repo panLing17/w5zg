@@ -127,7 +127,10 @@
           // 派发此组件load事件 (用于返回库存与规格)
           let data = {
             maxStoreNum: self.realGoodsData.storage_num,
-            spec: specData.specList
+            spec: specData.specList,
+            counter_price: self.realGoodsData.counter_price ? self.realGoodsData.counter_price : 0,
+            retail_price: self.realGoodsData.retail_price ? self.realGoodsData.retail_price : 0,
+            direct_supply_price: self.realGoodsData.direct_supply_price ? self.realGoodsData.direct_supply_price : 0
           }
           self.$emit('load',data)
         })

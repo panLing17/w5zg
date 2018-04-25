@@ -20,11 +20,11 @@
           img(src="../../../assets/img/pinkNext.png")
         .price(v-if="userData.member_type === '092'")
           span 直供价
-          p {{goodsData.direct_supply_interval}}
+          p {{goodsData.direct_supply_interval | price-filter}}
           .salePrice 统一零售价：{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}
         .price(v-else)
           span 专柜价
-          p {{goodsData.counter_interval}}
+          p {{goodsData.counter_interval | price-filter}}
           .salePrice 统一零售价：{{goodsData.retail_interval}}
         ul.saveMoney(v-if="userData.member_type !== '092'")
           li.red
@@ -207,10 +207,13 @@
       }
     },
     methods:{
-      // 规格组件挂载并请求详情后
+      // 规格组件挂载并请求详情后或规格变化
       specLoad (data) {
         this.maxStoreNum = data.maxStoreNum
         this.selectedSpec = data.spec
+        this.goodsData.direct_supply_interval = data.direct_supply_price
+        this.goodsData.counter_interval = data.counter_price
+        this.goodsData.retail_interval = data.retail_price
       },
       // 前往客服
       goService () {

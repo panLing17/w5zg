@@ -45,7 +45,7 @@
         .right
           toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
-      .left 实付：{{computedPriceText | price-filter}}
+      .left 实付：￥{{computedPriceText}}
       .right(@click="submit") 提交订单
     location-select(:show="flag", :location="locationList", @close="locationSelectClose")
 </template>
