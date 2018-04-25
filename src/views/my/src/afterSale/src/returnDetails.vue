@@ -181,7 +181,7 @@
     font-size: .35rem;
   }
   /*订单的状态信息--结束*/
-  /*退款总金额和网金卡--开始*/
+  /*退款总金额和现金券--开始*/
   .returnTotalMoney,
   .coupon{
     background-color: #fff;
@@ -207,7 +207,7 @@
   .coupon ul li{
     font-size: .4rem;
   }
-  /*退款总金额和网金卡--结束*/
+  /*退款总金额和现金券--结束*/
   /*退款途径--开始*/
   .refundWay{
     background-color: #fff;

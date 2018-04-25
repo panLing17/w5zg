@@ -321,7 +321,7 @@ const router = new Router ({
             },
             {
               path: '/my/grantCard',
-              name: '发放网金卡',
+              name: '发放现金券',
               component: MyAccount.grantCard
             },
             {
@@ -336,12 +336,12 @@ const router = new Router ({
             },
             {
               path: '/my/grantCardRandom',
-              name: '随机发放网金卡',
+              name: '随机发放现金券',
               component: MyAccount.grantCardRandom
             },
             {
               path: '/my/accountCardC',
-              name: '我的网金卡C',
+              name: '我的现金券C',
               component: MyAccount.accountCardC,
               children:[
                 {

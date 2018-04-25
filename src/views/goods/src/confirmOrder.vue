@@ -36,7 +36,7 @@
         p {{price | price-filter}}
     ul.switchList
       li
-        .left 网金卡
+        .left 现金券
         .right
           span 可抵扣{{netAndCommitCard.netCard}}
           toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
@@ -75,7 +75,9 @@
           netCard: 0
         },
         // 是否禁用switch
-        switchFlag: false
+        switchFlag: false,
+        // 提交订单flag，防止用户多次点击
+        submitFlag: true
       }
     },
     computed:{
@@ -107,19 +109,23 @@
     },
     methods:{
       submit () {
-        // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单
-        if (this.$route.query.type === 'direct') {
-          if (this.$route.query.since === 'true') {
-            this.directSince()
+        if (this.submitFlag) {
+          // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单
+          if (this.$route.query.type === 'direct') {
+            if (this.$route.query.since === 'true') {
+              this.directSince()
+            } else {
+              this.directDistribution()
+            }
           } else {
-            this.directDistribution()
+            if (this.$route.query.since === 'true') {
+              this.shoppingCartSince()
+            } else {
+              this.shoppingCartDistribution()
+            }
           }
         } else {
-          if (this.$route.query.since === 'true') {
-            this.shoppingCartSince()
-          } else {
-            this.shoppingCartDistribution()
-          }
+          this.$message.warning('稍安勿躁,请勿疯狂点击')
         }
       },
       /* 立即购买快递配送订单生成 */
@@ -131,6 +137,8 @@
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/nowSendOrder',
@@ -156,6 +164,8 @@
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/submitNowCarryOrder',
@@ -189,6 +199,8 @@
           cartId.push(now.cartId)
         })
         cartId = cartId.join(',')
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/submitCarryOrder',
@@ -218,6 +230,8 @@
           cartId.push(now.cartId)
         })
         cartId = cartId.join(',')
+        // 点击按钮失效
+        this.submitFlag = false
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + 'order/submitSendOrder',
@@ -232,7 +246,7 @@
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
-      // 网金卡变化
+      // 现金券变化
       netCardChange () {
         this.getVoucher()
       },

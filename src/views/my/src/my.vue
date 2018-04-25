@@ -202,7 +202,7 @@
       goBankCard () {
         this.$router.push('/my/chooseBankCard')
       },
-      // 前往网金卡
+      // 前往现金券
       goNetKingCard () {
         // 前往小B端
         if (this.$store.state.userData.member_type === '092') {

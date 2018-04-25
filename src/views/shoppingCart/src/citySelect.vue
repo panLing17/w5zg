@@ -1,7 +1,7 @@
 <template lang="pug">
   .citySelectBox
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close")
+      .bg(v-if="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
@@ -12,7 +12,7 @@
           .left
             ul
               li(v-for="(i,index) in cityList", :class="{leftChecked:index===leftChecked}", @click="leftClick(index, i.city_no)") {{i.city_name}}
-          .right
+          .right(@touchmove.prevent="")
             ul
               li(v-for="(i,index) in storeList", :class="{rightChecked:index===rightChecked}", @click="rightClick(index, i.bs_id)") {{i.bs_name}}
 </template>
@@ -89,7 +89,7 @@
         }).then(function (response) {
           self.storeList = response.data.data.storeList
         })
-      }
+      },
     }
   }
 </script>

@@ -150,8 +150,12 @@
       },
       // 前往确认订单
       goConfirmOrder () {
+        let flag = false
         let data= []
         this.$store.state.shoppingCartSelected.forEach((now)=>{
+          if (now.goods_num>now.storage_num) {
+            flag = true
+          }
           let spec = []
           now.specVOList.forEach((n)=>{
             spec.push(n.gspec_value)
@@ -180,6 +184,11 @@
             }
           })
         })
+        // 如果有大于库存的商品
+        if (flag) {
+          this.$message.error('存在库存不足商品')
+          return
+        }
         this.$store.commit('transferGive',data)
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'

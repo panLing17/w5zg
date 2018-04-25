@@ -64,7 +64,7 @@
           span 订单合计
           span ￥2000.00
         li.netGoldCard
-          span 网金卡抵扣
+          span 现金券抵扣
           span ￥500.00
         li.coupon
           span 通用券抵扣
