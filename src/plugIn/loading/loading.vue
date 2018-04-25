@@ -1,7 +1,7 @@
 <template lang="pug">
   .loading
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut", :duration="{ enter: 50, leave: 300 }")
-      .bg(v-if="show", :style="{height:height}", @touchmove="notScroll")
+      .bg(v-if="show", :style="{height:height}", @touchmove.prevent="")
         .box
           img(src="../../assets/img/loading@2x.png")
 </template>

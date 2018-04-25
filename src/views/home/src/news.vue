@@ -66,6 +66,9 @@
     height: .6rem;
     line-height: .6rem;
     color: #666;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   /*.box>div>ul>li:nth-child(2n+1){*/
     /*border-bottom: #ddd 1px solid;*/

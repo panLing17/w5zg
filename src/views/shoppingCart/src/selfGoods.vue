@@ -33,7 +33,7 @@
                 w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
-            .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>快递配送
+            .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>切换至快递配送
             .right
               span {{i.pro_Name}} {{i.city_name}}
               img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")

@@ -161,7 +161,6 @@
           }
         }).then(function (response) {
           _this.price = response.data.data.price;
-          console.log(_this.price)
         })
       },
       // 获取商品信息

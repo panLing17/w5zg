@@ -15,9 +15,9 @@
           img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      .title1
+      img.title1(src="../../../assets/img/louceng1.png")
       w-activity(:listData="activityGoods")
-      .title2
+      img.title2(src="../../../assets/img/louceng2.png")
       w-recommend(:listData="recommendGoods")
       .bottomPlaceholder
 </template>
@@ -264,10 +264,10 @@
         let _this = this
          wx.scanQRCode({
           desc: 'scanQRCode desc',
-          needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
           scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
           success: function (res) {
-            alert(res.resultStr)
+            /*alert(res.resultStr)
             let id = _this.GetQueryString(res.resultStr, 'containerId')
             _this.$ajax({
               method: 'post',
@@ -279,9 +279,9 @@
             }).then(function (response) {
               response.data.code = response.data.code.toString()
               if (response.data.code === '100') {
-                _this.$message.success('扫码成功，请您开柜')
+                _this.$message.success('扫码成功')
               }
-            })
+            })*/
           },
           error: function(res){
             if(res.errMsg.indexOf('function_not_exist') > 0){
@@ -330,6 +330,7 @@
     color: #fff;
     margin-left: .2rem;
     word-break: break-all;
+    font-size: .48rem;
   }
   .topCenter{
     position: relative;
@@ -371,14 +372,14 @@
     height: 1rem;
     width: 100%;
   }
-  .title1 {
-    background: url("../../../assets/img/louceng1.png") no-repeat top left;
-    background-size: 100% 100%;
-  }
-  .title2 {
-    background: url("../../../assets/img/louceng2.png") no-repeat top left;
-    background-size: 100% 100%;
-  }
+  /*.title1 {*/
+    /*background: url("../../../assets/img/louceng1.png") no-repeat top left;*/
+    /*background-size: 100% 100%;*/
+  /*}*/
+  /*.title2 {*/
+    /*background: url("../../../assets/img/louceng2.png") no-repeat top left;*/
+    /*background-size: 100% 100%;*/
+  /*}*/
   .line{
     height: 1px;
     width: 3rem;

@@ -16,7 +16,8 @@ import addBankConfirm from './src/addBankConfirm'
 import revenue from './src/revenue'
 import accountC from './src/accountC'
 import receiveTicket from './src/receiveTicket'
+import promote from './src/promote'
 
 export default {
-  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue,accountC,receiveTicket
+  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue,accountC,receiveTicket,promote
 }

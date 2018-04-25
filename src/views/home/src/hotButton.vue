@@ -3,9 +3,11 @@
     ul
       li(v-for="(item, index) in list.slice(0,4)")
         img(:src="item.image | img-filter" , @click="toNext(1,index)")
+        span {{item.title}}
     ul
       li(v-for="(item, index) in list.slice(4,8)", @click="toNext(2,index)")
         img(:src="item.image | img-filter" )
+        span {{item.title}}
 </template>
 
 <script>
@@ -40,9 +42,9 @@
 <style scoped>
   .box {
     width: 100%;
-    height: 3.6rem;
+    height: 4.2rem;
     background: white;
-    padding: 10px 0;
+    padding: .2rem 0;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -63,6 +65,12 @@
   }
 
   .box > ul > li > img {
-    height: 100%;
+    width: 1rem;
+  }
+  .box > ul > li > span {
+    margin-top: .2rem;
+    font-size: .32rem;
+    font-style: normal;
+    line-height: 1;
   }
 </style>

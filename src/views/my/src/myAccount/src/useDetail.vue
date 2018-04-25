@@ -12,7 +12,8 @@
         p.dec.last {{item.tn_end_time}} 前使用
         img.icon(:src="iconImg(index)")
         img.bg(:src="bgImg")
-    .nodata(v-if="isEmpty") 暂无相关记录
+    .nodata(v-if="isEmpty")
+      img(src="../../../../../assets/img/noCard.png")
 </template>
 
 <script>
@@ -194,5 +195,8 @@
     text-align: center;
     color: rgb(153,153,153);
     font-size: .4rem;
+  }
+  .nodata img {
+    width: 2.6rem;
   }
 </style>
