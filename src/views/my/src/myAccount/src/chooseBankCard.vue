@@ -18,8 +18,7 @@
                 .cardNo **** **** **** {{item.bank_card | cardNo}}
               img.checked(src="../../../../../assets/img/checked@2x.png", v-if="item.isChecked")
             .remove(ref="remove", @click.stop="remove(item.id)") 删除
-      .add
-        img(src="../../../../../assets/img/newbankcard@2x.png", @click="$router.push('/my/addBankCard')")
+      .add(@click="$router.push('/my/addBankCard')")
 </template>
 
 <script>
@@ -213,13 +212,15 @@
 
   }
   .add {
-    margin-top: 2rem;
+    margin: 2rem auto 0;
     text-align: center;
     font-size: 0;
-  }
-  .add img {
     width: 68%;
+    height: 1rem;
+    background: url("../../../../../assets/img/newbankcard@2x.png") no-repeat top left;
+    background-size: 100% 100%;
   }
+
   .slide {
     width: 100%;
     height: 100%;

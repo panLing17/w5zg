@@ -25,7 +25,7 @@
                 .left 卡号: {{item.serial_number}}
                 .right(v-if="item.end_time") 到期日: {{item.end_time}}
               .block.bottom
-                .left 用户ID: {{item.source_id}}
+                .left 用户ID: {{item.memberID}}
                 .right {{item.creation_time}}
         .nodata(v-if="isEmpty") 暂无相关记录流水
 </template>

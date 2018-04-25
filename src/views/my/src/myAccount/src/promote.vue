@@ -18,7 +18,8 @@
             input(type="number", v-model="form.phone")
         .block
           .left 所在地区:
-          .right.arrow(@click="show=true") {{form.area}}
+          .right.arrow(@click="show=true")
+            input(type="text", disabled="disabled", v-model="form.area")
         .block.big
           .left 详细地址:
           .right
@@ -26,8 +27,8 @@
         .block
           .left 邮箱号:
           .right
-            input(type="text", v-model="form.email")
-      .btn(:style="{background:btn.btnBg,color:btn.col}") {{btn.btnText}}
+            input(type="text", v-model="form.email", @input="poll")
+      .btn(:style="{background:btn.btnBg,color:btn.col}", @click="check") {{btn.btnText}}
     city-select(:show="show", @close="show=false", @change="cityChange")
 </template>
 
@@ -50,14 +51,43 @@
           },
           btn: {
             btnText: '提交申请',
-            btnBg: 'rgb(255,128,171)',
+            btnBg: 'rgb(245,0,87)',
             col: '#fff'
-          }
+          },
+          flag: 0
         }
       },
+      mounted () {
+
+      },
       methods: {
+        check () {
+          if (this.form.companyName.trim().length <= 0) {
+            this.$message.error('机构名称不能为空！')
+            return
+          }
+          if (!/^1\d{10}$/.test(this.form.phone)) {
+            this.$message.error('手机号格式不正确！')
+            return
+          }
+          if (this.form.area.trim().length <= 0) {
+            this.$message.error('所在地区不能为空！')
+            return
+          }
+          if (this.form.detail.trim().length <= 0) {
+            this.$message.error('详细地址不能为空！')
+            return
+          }
+          if (!/^[A-Za-z\d]+([-_.][A-Za-z\d]+)*@([A-Za-z\d]+[-.])+[A-Za-z\d]{2,5}$/.test(this.form.email)) {
+            this.$message.error('邮箱格式不正确！')
+            return
+          }
+          this.submitData()
+        },
+        submitData () {
+
+        },
         cityChange (data) {
-          console.log(data)
           this.form.area = data.pro.name+' '+data.city.name+' '+data.area.name
         }
       }
@@ -121,14 +151,20 @@
     background-size: .2rem auto;
     line-height: 1.2rem;
   }
-  .block .big {
+  .arrow input {
+    width: calc(100% - .2rem);
+    background: #fff;
+    display: inline-block;
+    vertical-align: top;
+  }
+  .block.big {
     height: 2.6rem;
   }
   .right textarea {
     resize: none;
     width: 100%;
     height: 100%;
-    padding-top: .4rem;
+    padding: .4rem .4rem 0 0;
     box-sizing: border-box;
     border: none;
     outline: none;
