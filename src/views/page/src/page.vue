@@ -41,23 +41,37 @@
       }
     },
     mounted(){
-      var city = document.getElementsByClassName("city")[0];
-      if (city.innerText.length == 2) {
-        city.style.fontSize = .45 + "rem";
-      }
-      if (city.innerText.length == 3) {
-        city.style.fontSize = .25 + "rem";
-      }
-      if (city.innerText.length == 4) {
-        city.style.fontSize = .35 + "rem";
-      }
-
+      //判断显示城市的字数
+      this.judgeCityNum();
       //一级分类
       this.request();
-      //第一个二级分类
-      //this.one();
+      //判断显示当前城市
+      this.judgeCity();  
     },
     methods:{
+      //判断显示城市的字数
+      judgeCityNum(){
+        var citys = document.getElementsByClassName("city")[0];
+        console.log(citys.innerText);
+        if (citys.innerText.length == 2) {
+          citys.style.fontSize = .4 + "rem";
+        }
+        if (citys.innerText.length == 3) {
+          citys.style.fontSize = .2 + "rem";
+        }
+        if (citys.innerText.length == 4) {
+          citys.style.fontSize = .35 + "rem";
+        }
+      },
+      //判断显示当前的城市
+      judgeCity(){
+        if (this.$route.query.routeParams) {
+          this.cityName = this.$route.query.routeParams;
+        } else{
+          this.cityName = "南京";
+        }
+      },
+      
       goToCitySearch:function(){
         this.$router.push({
            name: '城市搜索',
@@ -165,7 +179,6 @@
     width: 1rem;
     display: inline-block;
     vertical-align: middle;
-    font-size: .5rem;
     font-weight: 400;
     color: rgb(52,52,52);
     margin-left: .2rem;

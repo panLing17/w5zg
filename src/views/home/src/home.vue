@@ -15,14 +15,9 @@
           img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      div(style="height:.2rem")
-      .title(v-if="false")
-        .line
-        p 活动
+      .title1
       w-activity(:listData="activityGoods")
-      .title
-        .line
-        p 推荐
+      .title2
       w-recommend(:listData="recommendGoods")
       .bottomPlaceholder
 </template>
@@ -74,16 +69,6 @@
     },
     mounted() {
       this.$mescrollInt("homeMescroll",this.upCallback);
-      var city = document.getElementsByClassName("city")[0];
-      if (city.innerText.length == 2) {
-        city.style.fontSize = .45 + "rem";
-      }
-      if (city.innerText.length == 3) {
-        city.style.fontSize = .25 + "rem";
-      }
-      if (city.innerText.length == 4) {
-        city.style.fontSize = .35 + "rem";
-      }
       // 获取banner
       this.getBanner()
       // 获取新闻
@@ -96,11 +81,38 @@
       this.wxConfig()
       // 动画hack
       this.animateHack()
+      //判断显示当前的城市
+      this.judgeCity()
+      //判断显示城市的字数
+      this.judgeCityNum()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
     },
     methods: {
+      //判断显示城市的字数
+      judgeCityNum(){
+        var citys = document.getElementsByClassName("city")[0];
+        console.log(citys.innerText);
+        if (citys.innerText.length == 2) {
+          citys.style.fontSize = .4 + "rem";
+        }
+        if (citys.innerText.length == 3) {
+          citys.style.fontSize = .2 + "rem";
+        }
+        if (citys.innerText.length == 4) {
+          citys.style.fontSize = .35 + "rem";
+        }
+      },
+      //判断显示当前的城市
+      judgeCity(){
+        if (this.$route.query.routeParams) {
+          this.cityName = this.$route.query.routeParams;
+        } else{
+          this.cityName = "南京";
+        }
+      },
+      //跳到搜索历史页
       jump:function(){
         this.$router.push('/home/searchHistory');
       },
@@ -314,7 +326,6 @@
     width: 1rem;
     display: inline-block;
     vertical-align: middle;
-    font-size: .5rem;
     font-weight: 400;
     color: #fff;
     margin-left: .2rem;
@@ -356,14 +367,17 @@
     margin-top: 6px;
   }
 
-  .title{
-    height: .8rem;
+  .title1, .title2{
+    height: 1rem;
     width: 100%;
-    position: relative;
-    display: flex;
-    background: #f2f2f2;
-    justify-content: center;
-    align-items: center;
+  }
+  .title1 {
+    background: url("../../../assets/img/louceng1.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+  .title2 {
+    background: url("../../../assets/img/louceng2.png") no-repeat top left;
+    background-size: 100% 100%;
   }
   .line{
     height: 1px;

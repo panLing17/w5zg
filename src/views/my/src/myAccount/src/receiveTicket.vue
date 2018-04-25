@@ -2,7 +2,7 @@
   .receiveTicket
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.replace('/home')")
       .topCenter(slot="center") 万物商城现金券
       .topRight(slot="right")
     .content
@@ -18,9 +18,10 @@
               sup ￥
               strong {{price}}
       .formWrapper
-        .text(v-if="showSuccess")
-          p 恭喜您
-          p 获得 “万物商城” 现金券{{price}}元
+        transition(name="scale")
+          .text(v-if="showSuccess")
+            p 恭喜您
+            p 获得 “万物商城” 现金券{{price}}元
         .form
           input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
@@ -48,6 +49,7 @@
         this.url = this.$route.query.redirect_url
       },
       receive () {
+        let _this = this
         if (!this.isLoginFlag) {
           let reg = /^1[0-9]{10}$/;
           if (!reg.test(this.phone)) {
@@ -55,7 +57,14 @@
             return;
           }
         }
+
         if (!this.showSuccess){
+          if (this.isLoginFlag && this.phone.length!==11) {
+            this.getUserData(function () {
+              _this.getTicket();
+            })
+            return
+          }
           this.getTicket();
         }else {
           return
@@ -63,10 +72,23 @@
 
       },
       isLogin () {
-        this.phone = this.$store.state.userData.mi_phone;
-        if (this.phone && this.phone.trim().length === 11) {
+        if (localStorage.hasOwnProperty('token')) {
           this.isLoginFlag = true;
+          this.getUserData()
         }
+      },
+      getUserData (callback) {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/currentMember',
+          params: {}
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            self.phone = response.data.data.mi_phone
+            callback && callback()
+          }
+        })
       },
       getTicket () {
         let _this = this;
@@ -79,12 +101,11 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             _this.price = response.data.data
-            _this.$message.success('领取成功')
             _this.showSuccess = true;
+            _this.$router.replace('/home')
           }else {
             _this.$message.error(response.data.msg);
           }
-
         })
       }
     }
@@ -143,6 +164,13 @@
     line-height: 1.5;
     width: 100%;
     text-align: center;
+    transform: scale(1);
+  }
+  .scale-enter-active, .scale-leave-active {
+    transition: all 1s;
+  }
+  .scale-enter, .scale-leave-to {
+    transform: scale(4);
   }
   .form {
     margin-top: 2rem;
@@ -206,7 +234,7 @@
     width: 100%;
     text-align: center;
     position: absolute;
-    bottom: .5rem;
+    bottom: .8rem;
     left: 0;
     font-size: 1rem;
     color: rgb(231,55,62);
@@ -216,9 +244,8 @@
     font-size: 1.78rem;
   }
   .wrapper sup {
-    position: absolute;
-    left: 28%;
-    top: .2rem;
+    position: relative;
+    top: -.2rem;
   }
   .imagesWrapper {
     flex: none;
@@ -226,4 +253,5 @@
     position: relative;
     overflow: hidden;
   }
+
 </style>

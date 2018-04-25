@@ -34,15 +34,15 @@
         li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 >
       ul.bottom
         li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
-          //.badge 2
+          .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0") {{orderCount.unPayOrder}}
           img(src="../../../assets/img/my_obligation@2x.png")
           .character 待付款
         li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
-          //.badge 2
+          .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0") {{orderCount.unSendOrder}}
           img(src="../../../assets/img/my_readyfordelivery@2x.png")
           .character 待发货
         li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
-          //.badge 2
+          .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0") {{orderCount.unRecieveOrder}}
           img(src="../../../assets/img/my_waitforreceiving2@2x.png")
           .character 待收货
         li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
@@ -85,10 +85,14 @@
         name:this.$route.query.routeParams,
         page: 1,
         // 切换动画hack
-        positionFixed: false
+        positionFixed: false,
+        orderCount:{}
       }
     },
     computed: mapState(['userData']),
+    created () {
+      this.getOrderCount()
+    },
     mounted(){
       this.$mescrollInt("myMescroll",this.upCallback);
       this.getUserData()
@@ -100,6 +104,21 @@
       this.mescroll.hideTopBtn();
     },
     methods: {
+      // 获取订单各状态数量
+      getOrderCount () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: this.$apiTransaction + 'order/countByOrderStatus',
+          params: {}
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            _this.orderCount = response.data.data
+          }else {
+            _this.$message.error(response.data.msg)
+          }
+        })
+      },
       /* 切换动画修复 */
       animateHack () {
         setTimeout(()=>{

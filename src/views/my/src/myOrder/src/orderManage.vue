@@ -455,7 +455,7 @@
   }
   .lineDiv{
     width: 15%;
-    height: 2.5px;
+    height: 2px;
     background-color: rgb(244,0,87);
     position: absolute;
     left: 0;
