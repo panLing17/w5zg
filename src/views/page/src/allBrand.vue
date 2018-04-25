@@ -96,7 +96,11 @@
           },
           viewMore:function(key,e,oIndex){  
             if(e.target.innerText == "收起更多"){
-              this.num = 9;
+              if (key.list.length>=9) {
+                this.num = 9;
+              } else{
+                this.num = key.list.length;
+              }
               key.words = "查看更多";
             }
             if(e.target.innerText == "查看更多") {
@@ -111,6 +115,16 @@
               url:this.$apiGoods + "goods/brand/all",
               params:{},
             }).then(function(res){
+              console.log(res.data.data);
+              // self.letterBrandList = {}
+              // for(let i in res.data.data) {
+              //   self.letterBrandList[i] = {}
+              //   self.letterBrandList[i].list = res.data.data[i]
+              //   self.letterBrandList[i].words = "查看更多"
+              // }
+              if (res.data.data.i == undefined) {
+                self.letterBrandList.I.list = "";
+              }
               self.letterBrandList.A.list = res.data.data.a;
               self.letterBrandList.B.list = res.data.data.b;
               self.letterBrandList.C.list = res.data.data.c;
@@ -119,7 +133,7 @@
               self.letterBrandList.F.list = res.data.data.f;
               self.letterBrandList.G.list = res.data.data.g;
               self.letterBrandList.H.list = res.data.data.h;
-              self.letterBrandList.I.list = res.data.data.i;
+              //self.letterBrandList.I.list = res.data.data.i;
               self.letterBrandList.J.list = res.data.data.j;
               self.letterBrandList.K.list = res.data.data.k;
               self.letterBrandList.L.list = res.data.data.l;

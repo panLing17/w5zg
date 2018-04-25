@@ -1,7 +1,7 @@
 <template lang="pug">
   .page
     nav-bar
-      .topLeft(slot="left" @click="goToCitySearch()")
+      .topLeft(slot="left")
         img(src="../../../assets/img/page三角0.png")
         span.city {{cityName}}
       .topCenter(slot="center")
