@@ -370,10 +370,8 @@
   .title1, .title2{
     height: 1rem;
     width: 100%;
-    margin-top: 6px;
   }
   .title1 {
-    margin-bottom: 6px;
     background: url("../../../assets/img/louceng1.png") no-repeat top left;
     background-size: 100% 100%;
   }

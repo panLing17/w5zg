@@ -29,12 +29,12 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding: .2rem;
-    background: rgb(242, 242, 242);
+    padding: 0 .2rem;
+    background: rgb(242,242,242);
   }
 
   .goodsList li {
-    /*border: solid 1px #ccc;*/
+    border: solid 1px #f2f2f2;
     background: #fff;
     border-radius: 5px;
     overflow: hidden;
