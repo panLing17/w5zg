@@ -46,7 +46,9 @@ const state = {
   // 头条详情内容
   headlinesDetail: "",
   // 退货商品信息
-  returnGoods:{}
+  returnGoods: {},
+  // 当前商品信息（客服处使用）
+  nowGoodsData: {}
 }
 const mutations = {
   transferGive (state, data) {
@@ -92,6 +94,10 @@ const mutations = {
   },
   getReturnGoods (state, data) {
     state.returnGoods = data
+  },
+  // 更改当前商品数据
+  getNowGoodsData (state, data) {
+    state.nowGoodsData = data
   }
 }
 const actions = {

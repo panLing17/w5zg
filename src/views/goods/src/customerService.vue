@@ -10,6 +10,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
     name: "customer-service",
     data () {
@@ -17,30 +18,33 @@
         url: ''
       }
     },
+    computed:{...mapState(['userData'])},
     mounted () {
       this.config()
     },
     methods:{
       config () {
         let self = this
+        let newUserData
+        if (this.userData) {
+          newUserData = {
+            uid: this.userData.member_id,
+            name: this.userData.mi_nickname,
+            email: '',
+            mobile: this.userData.mi_phone
+          }
+        } else {
+          newUserData = {
+            uid: Math.random(),
+            name:'游客',
+            email:'',
+            mobile:''
+          }
+        }
         ysf.on({
           'onload': function(){
-            ysf.config({
-              uid:"1442286211167",
-              name:'test1111',
-              email:'test@163.com',
-              mobile:'13888888888'
-
-
-            });
-            ysf.product({
-              show : 1, // 1为打开， 其他参数为隐藏（包括非零元素）
-              title : '标题',
-              desc : '商品描述',
-              picture : '商品图片地址',
-              note : '备注',
-              url : '跳转链接'
-            });
+            ysf.config(newUserData);
+            ysf.product(self.$store.state.nowGoodsData);
 
           }
         })

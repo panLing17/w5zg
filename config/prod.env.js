@@ -1,7 +1,7 @@
 module.exports = {
   NODE_ENV: '"production"' ,
   REQ_PRE : '"http://"',
-  API_ROOT: '".w5zg.com:"',
+  API_ROOT: '".w5zg.cn:"',
   MEMBER_PORT: '"80"',
   GOODS_PORT: '"80"',
   TRADING_PORT: '"80"',
@@ -9,5 +9,6 @@ module.exports = {
   MEMBER_PREFIEX: '"member"',
   GOODS_PREFIEX: '"goods"',
   TRADING_PREFIEX: '"trading"',
-  APP_PREFIEX: '"app"'
+  APP_PREFIEX: '"app"',
+  IMG_URL: '"http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/"'
 }

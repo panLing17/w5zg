@@ -100,7 +100,7 @@
       removeTouchDisable () {
         this.$emit('buy')
       },
-      // 校验库存与获得skuId
+      // 校验库存与获得skuId（此请求每次挂载后都会执行）
       getStoreNum () {
         // 获取选中的规格
         let specData = {
@@ -124,6 +124,12 @@
           self.realGoodsData = response.data.data
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)
+          // 派发此组件load事件 (用于返回库存与规格)
+          let data = {
+            maxStoreNum: self.realGoodsData.storage_num,
+            spec: specData.specList
+          }
+          self.$emit('load',data)
         })
       },
       buy () {

@@ -100,6 +100,7 @@
     border-top: solid 1px #eee;
   }
   .bottom .right {
+    flex-grow: 1;
     display: flex;
     align-items: center;
   }

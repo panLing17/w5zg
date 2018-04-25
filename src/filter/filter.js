@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
 Vue.filter('img-filter', function (value) {
-  let url = 'http://w5zg-mall-test.oss-cn-hangzhou.aliyuncs.com/' + value
+  let url = process.env.IMG_URL + value
   // var url = 'http://192.168.1.119/' + value
   return url
 })
