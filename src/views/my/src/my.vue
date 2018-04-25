@@ -229,8 +229,13 @@
 </script>
 
 <style scoped>
+  #myMescroll{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
   .myBox {
-    /*height: 100vh;*/
+    min-height: 100vh;
     width: 100%;
     background-color: rgb(242,242,242);
     padding-bottom: 2rem;
