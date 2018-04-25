@@ -69,7 +69,7 @@
         // 判断数据是否为空
         isEmpty () {
           if (this.orderDetail == null || this.orderDetail.length === 0) {
-            return true;
+            return true;  
           }else {
             return false;
           }
@@ -399,6 +399,9 @@
 </script>
 
 <style scoped>
+  #orderManageMescroll .mescroll-upwarp{
+    visibility: hidden !important;
+  }
   #orderManageMescroll{
     top: 1.3rem;
     bottom: 0;
@@ -603,7 +606,7 @@
     text-align: center;
     color: rgb(153,153,153);
     font-size: .4rem;
-    z-index: 202;
+    z-index: 205;
   }
   .noData img{
     width: 4rem;
