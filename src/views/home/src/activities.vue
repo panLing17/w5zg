@@ -60,22 +60,18 @@
   /* 十字线 */
   .columLine {
     position: absolute;
-    width: 1px;
-    height: 5rem;
+    width: 2px;
+    height: 6rem;
     left: 50%;
-    top: 50%;
-    margin-left: -.5px;
-    margin-top: -2.5rem;
+    top: 0;
     background: #f2f2f2;
   }
   .rowLine {
     position: absolute;
-    width: 9rem;
-    height: 1px;
-    left: 50%;
+    width: 100%;
+    height: 2px;
+    left: 0;
     top: 50%;
-    margin-left: -4.5rem;
-    margin-top: -.5px;
     background: #f2f2f2;
   }
 </style>
