@@ -400,7 +400,7 @@
 
 <style scoped>
   #orderManageMescroll .mescroll-upwarp{
-    visibility: hidden !important;
+    display: none !important;
   }
   #orderManageMescroll{
     top: 1.3rem;
