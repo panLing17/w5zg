@@ -365,6 +365,9 @@
 		padding: .4rem .2rem 0;
     text-align: center;
 	}
+  .myOrderForm ul.bottom li{
+    position: relative;
+  }
   .myOrderForm ul.bottom li:nth-child(2),
   .myOrderForm ul.bottom li:nth-child(3),
   .myOrderForm ul.bottom li:nth-child(4){
@@ -402,8 +405,6 @@
     clear: both;
   }
 	.myTreasure ul.bottom{
-		/*display: flex;*/
-		/*justify-content: space-between;*/
 		padding: .4rem .8rem 0;
 	}
   .myTreasure ul.bottom li:nth-child(1),

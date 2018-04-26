@@ -82,7 +82,7 @@
                 width:"4rem",
                 height:"1rem",
                 left:"3rem",
-                bottom:"2rem",
+                bottom:".6rem",
                 textAlign:"center",
                 lineHeight:"1rem",
                 color:"#fff",

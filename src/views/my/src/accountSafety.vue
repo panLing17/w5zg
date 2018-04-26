@@ -22,7 +22,8 @@
           img(src="../../../assets/img/next@2x.png")
 </template>
 <script>
-  import {mapState} from  'vuex'
+  import {mapState} from 'vuex'
+
   export default {
     name: 'accountSafety',
     data () {
@@ -117,7 +118,7 @@
   .loginPassword ul.wrap,
   .paymentPassword ul.wrap,
   .paymentPattern ul.wrap{
-    border-bottom: 1px solid rgb(204,204,204);
+    border-bottom: 1px solid #f2f2f2;
   }
   /*微信,QQ,支付宝下方边框--结束*/
 
