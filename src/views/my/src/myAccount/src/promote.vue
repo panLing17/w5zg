@@ -66,7 +66,7 @@
             this.$message.error('机构名称不能为空！')
             return
           }
-          if (!/^1\d{10}$/.test(this.form.phone)) {
+          if (!/^1[3|4|5|8|9][0-9]\d{8}$/.test(this.form.phone)) {
             this.$message.error('手机号格式不正确！')
             return
           }

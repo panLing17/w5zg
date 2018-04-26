@@ -92,6 +92,7 @@
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
       },
       mounted(){
         // 获取数据
