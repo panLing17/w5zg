@@ -2,7 +2,7 @@
   .page
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/page三角0.png")
+        img(src="../../../assets/img/location.png")
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
@@ -46,7 +46,11 @@
       //一级分类
       this.request();
       //判断显示当前城市
-      this.judgeCity();  
+      this.judgeCity();
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy();
     },
     methods:{
       //判断显示城市的字数
@@ -71,7 +75,7 @@
           this.cityName = "南京";
         }
       },
-      
+
       goToCitySearch:function(){
         this.$router.push({
            name: '城市搜索',

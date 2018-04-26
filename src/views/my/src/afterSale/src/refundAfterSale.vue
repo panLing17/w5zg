@@ -92,6 +92,7 @@
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
       },
       mounted(){
         // 获取数据
@@ -132,8 +133,8 @@
         },
         statusChange (index) {
           this.statusActive = index
-          this.mescroll.destroy();
           this.mescroll.scrollTo( 0, 300 );
+          this.mescroll.destroy();
           this.$mescrollInt("saleMescroll",this.upCallback);
         },
         confirm (id) {

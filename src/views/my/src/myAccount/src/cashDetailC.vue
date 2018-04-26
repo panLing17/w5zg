@@ -48,6 +48,7 @@
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
       },
       filters: {
         // 保留两位小数点

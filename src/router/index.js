@@ -31,7 +31,13 @@ const router = new Router ({
       path: '/login',
       name: '登录',
       component: User.login
-    }, {
+    },
+    {
+      path: '/login2',
+      name: '验证码登录',
+      component: User.login2
+    },
+    {
       path: '/register1',
       name: '注册1',
       component: User.register1
@@ -430,6 +436,11 @@ const router = new Router ({
               path: '/my/promote',
               name: '申请商户资质',
               component: MyAccount.promote
+            },
+            {
+              path: '/goods/paymentResults',
+              name: '支付成功',
+              component: Goods.paymentResults
             }
           ]
         }

@@ -2,7 +2,7 @@
   div
     nav-bar(background="rgb(245,0,87)", border-bottom="none")
       .topLeft(slot="left")
-        img(src="../../../assets/img/home定位按钮@2x.png")
+        img(src="../../../assets/img/定位图标@2x.png", style="width: .3rem;")
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称", @focus="jump")
@@ -15,9 +15,11 @@
           img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      img.title1(src="../../../assets/img/louceng1.png")
+      <!--img.title1(src="../../../assets/img/louceng1.png")-->
+      .title1
       w-activity(:listData="activityGoods")
-      img.title2(src="../../../assets/img/louceng2.png")
+      <!--img.title2(src="../../../assets/img/louceng2.png")-->
+      .title2
       w-recommend(:listData="recommendGoods")
       .bottomPlaceholder
 </template>
@@ -373,14 +375,14 @@
     height: 1rem;
     width: 100%;
   }
-  /*.title1 {*/
-    /*background: url("../../../assets/img/louceng1.png") no-repeat top left;*/
-    /*background-size: 100% 100%;*/
-  /*}*/
-  /*.title2 {*/
-    /*background: url("../../../assets/img/louceng2.png") no-repeat top left;*/
-    /*background-size: 100% 100%;*/
-  /*}*/
+  .title1 {
+    background: url("../../../assets/img/louceng1.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+  .title2 {
+    background: url("../../../assets/img/louceng2.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
   .line{
     height: 1px;
     width: 3rem;

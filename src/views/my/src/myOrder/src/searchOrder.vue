@@ -102,6 +102,10 @@
         //加载推荐商品
         this.getListDataFromNets();
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
+      },
       methods:{
         //判断页面回退
         backTo(){
@@ -339,6 +343,7 @@
               self.recommendFlag = false;
               self.showOrder = true;
               self.showHistory = false;
+              self.showRel = false;
               for (var i=0; i<self.orderDetail.length; i++) {
                 if (self.orderDetail[i].order_status == "（退货）售后") {
                   self.orderDetail[i].buttonL = "取消申请";

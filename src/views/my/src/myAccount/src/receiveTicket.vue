@@ -51,7 +51,7 @@
       receive () {
         let _this = this
         if (!this.isLoginFlag) {
-          let reg = /^1[0-9]{10}$/;
+          let reg = /^1[3|4|5|8|9][0-9]\d{8}$/;
           if (!reg.test(this.phone)) {
             this.$message.error('手机号码格式不正确！');
             return;
@@ -102,7 +102,10 @@
           if (response.data.code === '081') {
             _this.price = response.data.data
             _this.showSuccess = true;
-            _this.$router.replace('/home')
+            _this.$message.warn('5秒后跳往首页')
+            setTimeout(()=>{
+              _this.$router.replace('/home')
+            },5000)
           }else {
             _this.$message.error(response.data.msg);
           }
