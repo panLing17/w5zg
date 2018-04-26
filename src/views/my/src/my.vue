@@ -396,14 +396,21 @@
   }
 	/*我的订单和我的财富--结束*/
 	/*我的财富独有的样式--开始*/
+  .myTreasure ul.bottom:after{
+    content: "";
+    display: block;
+    clear: both;
+  }
 	.myTreasure ul.bottom{
-		display: flex;
-		justify-content: space-between;
+		/*display: flex;*/
+		/*justify-content: space-between;*/
 		padding: .4rem .8rem 0;
 	}
-  .myTreasure ul.bottom li{
+  .myTreasure ul.bottom li:nth-child(1),
+  .myTreasure ul.bottom li:nth-child(2){
     text-align: center;
-    /*margin-right: .5rem;*/
+    float: left;
+    margin-right: 2.7rem;
   }
 	.myTreasure ul.bottom li img{
 		width: .8rem;
@@ -414,41 +421,6 @@
     font-size: .3rem;
   }
 	/*我的财富独有的样式--结束*/
-	/*商品大图展示--开始*/
-  .goodsList{
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: .2rem;
-    background: #fff;
-  }
-  .goodsList li{
-    border: solid 1px #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    width: 49%;
-    float: left;
-    margin-bottom: .2rem;
-  }
-  .goodsList li img {
-    width: 100%;
-  }
-  .text{
-    margin: .1rem;
-  }
-  .goodsList .price{
-    margin: .2rem .1rem;
-    color: rgb(246,0,87);
-    font-weight: 600;
-    font-size: .4rem;
-  }
-  .bottom{
-    margin: .1rem;
-    display: flex;
-    justify-content: space-between;
-    color: #aaaaaa;
-  }
-  /*商品大图展示--结束*/
   .bottomPlaceholder {
     height: 1.5rem;
   }
@@ -479,9 +451,6 @@
     position: absolute;
     background: #f2f2f2 ;
     padding: 0 .2rem;
-  }
-  .bottom li {
-    position: relative;
   }
   .badge {
     width: .5rem;
