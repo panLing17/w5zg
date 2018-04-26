@@ -106,7 +106,6 @@
     text-align: center;
     color: #999;
   }
-
   /*选中颜色*/
   .checked {
     color: rgb(245,0,87);

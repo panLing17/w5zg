@@ -75,12 +75,13 @@
             img(src="../../../assets/img/citySearch.png")
             span {{location.province.name}}
             span {{location.city.name}}
-          .hour 17:00前付款，预计xx月xx日发货
+          .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
+          .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
       .numberBox
         ul.number
-          li 邮费 包邮
-          //li 邮费 {{goodsData.goi_freight}}
+          //li 邮费 包邮
+          li 邮费 {{goodsData.goi_freight}}元
       .title
         .line
         p 详情
@@ -118,6 +119,8 @@
       return {
         // 能省多少钱
         makeMoney: {},
+        // 到货日期
+        getGoodsDate: '',
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
@@ -193,10 +196,12 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
     },
     watch: {
       skuId (val) {
         this.getMakeMoney (val)
+        this.getDate(val)
       },
       $route () {
         this.getGoodsDetailed()
@@ -240,6 +245,20 @@
           params: {}
         }).then(function (response) {
           self.makeMoney = response.data.data
+        })
+      },
+      // 获取到货日期
+      getDate (id) {
+        if (id === undefined) {
+          return
+        }
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goods/sku/'+ id +'/goodsReadyTime',
+          params: {}
+        }).then(function (response) {
+          self.getGoodsDate = response.data.data
         })
       },
       // 获取商品详情
@@ -330,9 +349,6 @@
           }
         } else {
           this.selectFlag = true
-          this.onTouchMove(true)
-          document.body.style.overflow='hidden'
-          document.body.style.height="100vh"
           // 返回顶部
           this.mescroll.hideTopBtn()
         }
@@ -355,9 +371,6 @@
           }
         } else {
           this.selectFlag = true
-          this.onTouchMove(true)
-          document.body.style.overflow='hidden'
-          document.body.style.height="100vh"
           // 隐藏返回顶部
           this.mescroll.hideTopBtn()
         }
@@ -392,7 +405,8 @@
             spec: spec,
             number: this.content,
             goodsName: this.goodsData.gi_name,
-            price: this.price
+            price: this.price,
+            freight: this.goodsData.goi_freight
           }]
           // 传入中转
           this.$store.commit('transferGive', orderData)
@@ -436,7 +450,8 @@
             spec: spec,
             number: this.content,
             goodsName: this.goodsData.gi_name,
-            price: this.price
+            price: this.price,
+            freight: this.goodsData.goi_freight
           }]
           // 发送请求判断库存
           let specData = {
@@ -487,8 +502,6 @@
       },
       selectClose () {
         this.selectFlag = false
-        this.onTouchMove(false)
-        document.body.style.overflow='auto'
       },
       confirmSpec (data) {
         // 赋值信息
@@ -496,8 +509,6 @@
         this.content = data.content
         this.selectedSpec = data.spec
         this.selectFlag = false
-        this.onTouchMove(false)
-        document.body.style.overflow='auto'
       },
       distribution () {
         // 此生明，这次选择地址等一系列操作《《不不不不》》来自购买按钮
@@ -527,8 +538,6 @@
         } else {
           this.expressNext()
         }
-        this.onTouchMove(false)
-        document.body.style.overflow='auto'
       },
       // 关闭门店选择
       closeSelectStore () {
@@ -552,16 +561,6 @@
           this.selectStoreFlag = true
           this.disTypeName = '专柜自提'
         }
-      },
-      onTouchMove(inFlag) {
-        if (inFlag) {
-          document.addEventListener('touchmove', this.onHandler, false);
-        } else {
-          document.removeEventListener('touchmove', this.onHandler, false);
-        }
-      },
-      onHandler(e) {
-        e.preventDefault();
       },
       upCallback: function(page) {
         let self = this;

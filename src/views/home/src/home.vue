@@ -70,7 +70,7 @@
       }*/
     },
     mounted() {
-      // this.$mescrollInt("homeMescroll",this.upCallback);
+      this.$mescrollInt("homeMescroll",this.upCallback);
       // 获取banner
       this.getBanner()
       // 获取新闻
@@ -90,7 +90,7 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
-      this.mescroll.destroy();
+      this.mescroll.destroy()
     },
     methods: {
       //判断显示城市的字数

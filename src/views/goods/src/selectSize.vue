@@ -1,10 +1,10 @@
 <template lang="pug">
   .selectSizeBox
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close", @touchmove="notScroll")
+      .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show", @touchstart="touchStart", @touchmove="touchMove")
-        .photosBox(@touchstart="removeTouchDisable",  @touchmove="disableDefaultMove")
+        .photosBox()
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
             li(v-for="item in list")
               img(:src="item.gi_img_url | img-filter")
@@ -97,9 +97,9 @@
           this.$message.error('商品库存不足')
         }
       },
-      removeTouchDisable () {
+      /*removeTouchDisable () {
         this.$emit('buy')
-      },
+      },*/
       // 校验库存与获得skuId（此请求每次挂载后都会执行）
       getStoreNum () {
         // 获取选中的规格
@@ -167,35 +167,14 @@
       touchStart (e) {
         this.startY = e.targetTouches[0].clientY
       },
-      // 阻止默认滑动
-      disableDefaultMove (e) {
-        e.preventDefault()
-      },
       // 滑动中
       touchMove (e) {
-        e.preventDefault()
         this.moveY = e.targetTouches[0].clientY
         // 滑动距离超过100 执行样式变换
-        if( this.startY -this.moveY > 100) {
+        if( this.startY -this.moveY > 70) {
           this.smallPhotoFlag = true
           this.list.splice(1,this.list.length-1)
-          // 延迟0.8秒 移除禁止触摸
-          setTimeout(()=>{
-            this.$emit('buy')
-          },800)
-
         }
-
-      },
-      onTouchMove(inFlag) {
-        if (inFlag) {
-          document.addEventListener('touchmove', this.onHandler, false);
-        } else {
-          document.removeEventListener('touchmove', this.onHandler, false);
-        }
-      },
-      onHandler(e) {
-        e.preventDefault();
       }
     }
   }
