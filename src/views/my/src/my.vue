@@ -423,7 +423,7 @@
   }
 	/*我的财富独有的样式--结束*/
   .bottomPlaceholder {
-    height: 1.5rem;
+    /*height: 1.5rem;*/
   }
   #myMescroll{
     top: 0;

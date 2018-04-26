@@ -404,7 +404,7 @@
     animation-direction: alternate;
   }
   .bottomPlaceholder {
-    height: 1.5rem;
+    /*height: 1.5rem;*/
   }
   @keyframes opacity-fade {
     from {
