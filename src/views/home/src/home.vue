@@ -2,7 +2,7 @@
   div
     nav-bar(background="rgb(245,0,87)", border-bottom="none")
       .topLeft(slot="left")
-        img(src="../../../assets/img/home定位按钮@2x.png", style="width: .3rem;")
+        img(src="../../../assets/img/定位图标@2x.png", style="width: .3rem;")
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称", @focus="jump")
@@ -70,7 +70,7 @@
       }*/
     },
     mounted() {
-      this.$mescrollInt("homeMescroll",this.upCallback);
+      // this.$mescrollInt("homeMescroll",this.upCallback);
       // 获取banner
       this.getBanner()
       // 获取新闻

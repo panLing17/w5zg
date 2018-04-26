@@ -132,8 +132,8 @@
         },
         statusChange (index) {
           this.statusActive = index
-          this.mescroll.destroy();
           this.mescroll.scrollTo( 0, 300 );
+          this.mescroll.destroy();
           this.$mescrollInt("saleMescroll",this.upCallback);
         },
         confirm (id) {
