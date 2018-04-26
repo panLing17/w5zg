@@ -53,6 +53,7 @@
     name: "price-pay",
     props: {
       show: Boolean,
+      orderId: String
     },
     data() {
       return {
@@ -94,7 +95,7 @@
               for (let a = 0; a < pwdList.length; a++) {
                 payPassword += pwdList[a].value
               }
-              alert(payPassword)
+              this.pay(payPassword)
               //提交支付请求
               //this.subPayment(payPassword)
             }
@@ -113,6 +114,21 @@
           }
         }
         pwdList[a].value = ""
+      },
+      pay (pwd) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiTransaction +  'balance/pay',
+          params: {
+            totalOrderId: self.orderId,
+            payPwd: pwd
+          },
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.$router.push('/goods/paymentResults')
+          }
+        })
       }
     }
   }

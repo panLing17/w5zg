@@ -105,7 +105,7 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
-      this.mescroll.destroy()
+      this.mescroll.destroy();
     },
     methods: {
       // 获取订单各状态数量
