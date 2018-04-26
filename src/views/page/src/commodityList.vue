@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')" v-model="message")
+          input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,msgs:message}})" v-model="message")
           img(src="../../../assets/img/searchInput搜索图标@2x.png")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
@@ -439,7 +439,6 @@
   /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
   .content{
-    padding-bottom: 2rem;
     overflow: hidden;
   }
   ul.wrap{
@@ -620,7 +619,7 @@
   }
   /*蒙板--结束*/
   .bottomPlaceholder{
-    height: 0;
+    /*height: 0;*/
   }
   .scrollWarpClass{
     z-index: 103 !important;

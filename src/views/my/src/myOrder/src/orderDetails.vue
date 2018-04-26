@@ -981,7 +981,7 @@
   /*我的推荐--结束*/
 
   .bottomPlaceholder {
-    height: 1.5rem;
+    /*height: 1.5rem;*/
   }
   #orderMescroll{
     top: 0;

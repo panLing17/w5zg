@@ -2,7 +2,7 @@
   .page
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/page三角0.png")
+        img(src="../../../assets/img/location.png")
         span.city {{cityName}}
       .topCenter(slot="center")
         searchInput(placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
