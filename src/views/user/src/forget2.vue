@@ -37,7 +37,7 @@
         console.log($codeList)
         this.pwdStatus = true
         //校验规则 正则表达式  只允许输入 数字跟字母
-        var reg = /^[A-Za-z0-9]{6,20}$/;
+        var reg = /^\S{6,20}$/;
         if(!reg.test(this.form.pwd)){
           this.passwordError = $code('268')
           return
