@@ -80,6 +80,7 @@
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
       },
       methods: {
         upCallback: function(page) {
