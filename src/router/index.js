@@ -430,6 +430,11 @@ const router = new Router ({
               path: '/my/promote',
               name: '申请商户资质',
               component: MyAccount.promote
+            },
+            {
+              path: '/goods/paymentResults',
+              name: '支付成功',
+              component: Goods.paymentResults
             }
           ]
         }

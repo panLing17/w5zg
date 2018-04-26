@@ -28,7 +28,7 @@
         li.right
           img(src="../../../assets/img/next@2x.png")
     .feedback(v-if="userData.member_type === '091'")
-      ul.wrap(@click="$router.push('/my/feedback')")
+      ul.wrap(@click="$router.push('/my/promote')")
         li.left 申请商户资质
         li.right
           img(src="../../../assets/img/next@2x.png")

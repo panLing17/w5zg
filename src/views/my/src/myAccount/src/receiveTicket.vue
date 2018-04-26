@@ -102,7 +102,10 @@
           if (response.data.code === '081') {
             _this.price = response.data.data
             _this.showSuccess = true;
-            _this.$router.replace('/home')
+            _this.$message.warn('5秒后跳往首页')
+            setTimeout(()=>{
+              _this.$router.replace('/home')
+            },5000)
           }else {
             _this.$message.error(response.data.msg);
           }
