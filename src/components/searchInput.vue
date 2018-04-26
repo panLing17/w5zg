@@ -48,8 +48,12 @@
   .searchInput input{
     border: 0;
     outline: none;
-    font-size: .3rem;
+    font-size: .37rem;
+    color: #333;
     margin-left: .1rem;
     background-color: #f2f2f2;
+  }
+  input::-webkit-input-placeholder{
+    color:#ccc;
   }
 </style>

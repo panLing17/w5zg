@@ -60,6 +60,9 @@
       // 判断数据是否为空
       isEmpty () {
         if (this.cashDetail == null || this.cashDetail.length === 0) {
+          this.$nextTick(()=> {
+            this.mescroll.hideUpScroll();
+          })
           return true;
         }else {
           return false;
@@ -106,6 +109,7 @@
           if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
             successCallback&&successCallback(response.data.data.rows);//成功回调
           }else {
+
             _this.mescroll.endErr();
           }
         })
