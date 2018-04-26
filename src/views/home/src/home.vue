@@ -90,6 +90,7 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
+      this.mescroll.destroy();
     },
     methods: {
       //判断显示城市的字数

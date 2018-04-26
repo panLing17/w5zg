@@ -102,6 +102,10 @@
         //加载推荐商品
         this.getListDataFromNets();
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
+      },
       methods:{
         //判断页面回退
         backTo(){
@@ -131,18 +135,18 @@
             if (self.record1 == "") {
               self.flag = false;
             }
-            var removeElement = function(arr, elm) {
-              for(var i=0; i< arr.length; i++) {
-                if(arr[i].gsr_keywords==elm) {
-                    arr.splice(i,1);
-                    i--;
-                }
-              }
-              return arr
-            };
-            var arr = self.record1;
-            console.log(removeElement(arr,"")); // [2, 3, 7, 9]
-            console.log(self.record1);
+            // var removeElement = function(arr, elm) {
+            //   for(var i=0; i< arr.length; i++) {
+            //     if(arr[i].gsr_keywords==elm) {
+            //         arr.splice(i,1);
+            //         i--;
+            //     }
+            //   }
+            //   return arr
+            // };
+            // var arr = self.record1;
+            // console.log(removeElement(arr,"")); // [2, 3, 7, 9]
+            // console.log(self.record1);
           })
         },
         //按商品名称搜索生成订单
@@ -339,6 +343,7 @@
               self.recommendFlag = false;
               self.showOrder = true;
               self.showHistory = false;
+              self.showRel = false;
               for (var i=0; i<self.orderDetail.length; i++) {
                 if (self.orderDetail[i].order_status == "（退货）售后") {
                   self.orderDetail[i].buttonL = "取消申请";

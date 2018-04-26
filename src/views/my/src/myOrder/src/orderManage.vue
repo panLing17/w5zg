@@ -86,6 +86,10 @@
         //this.request();
         
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
+      },
       methods:{
         //回退判断
         backJump(){
@@ -399,7 +403,7 @@
 </script>
 
 <style scoped>
-  #orderManageMescroll .mescroll-upwarp{
+  #orderManageMescroll .mescroll-hardware{
     display: none !important;
   }
   #orderManageMescroll{
