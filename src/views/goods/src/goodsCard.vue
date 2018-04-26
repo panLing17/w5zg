@@ -19,7 +19,7 @@
     .bottom(v-else)
       .left 运费
       .right
-        span 包邮
+        span {{data.freight}}元
         img
 </template>
 
@@ -92,6 +92,7 @@
     color: rgb(246,0,87);
   }
   .bottom {
+    width: 100%;
     margin-top: .3rem;
     display: flex;
     justify-content: space-between;
@@ -100,7 +101,6 @@
     border-top: solid 1px #eee;
   }
   .bottom .right {
-    flex-grow: 1;
     display: flex;
     align-items: center;
   }

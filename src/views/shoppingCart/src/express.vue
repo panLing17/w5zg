@@ -1,7 +1,7 @@
 <template lang="pug">
   .expressBox
     goods-card.goodsCard(v-for="(i,index) in goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
-    div(v-if="goodsList.length<1", style="min-height:100vh")
+    div(v-if="goodsList.length<1", style="min-height:100vh").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
@@ -195,8 +195,13 @@
     color: rgb(255,128,171);
   }
   /* 空购物车 */
+  .zeroGoodsBox {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
   .zeroGoods {
-    width: 100%;
+    width: 80%;
     padding: .2rem;
     margin: 1rem 0;
   }
