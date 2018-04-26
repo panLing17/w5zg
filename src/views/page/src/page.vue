@@ -175,7 +175,7 @@
     width: 1.8rem;
   }
   .topLeft img{
-    width: .4rem;
+    width: .3rem;
     vertical-align: middle;
     margin-left: .1rem;
   }
