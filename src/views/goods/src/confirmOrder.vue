@@ -45,7 +45,7 @@
         .right
           toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
-      .left 实付：￥{{computedPriceText}}
+      .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
     location-select(:show="flag", :location="locationList", @close="locationSelectClose")
 </template>
@@ -125,7 +125,7 @@
             }
           }
         } else {
-          this.$message.warning('稍安勿躁,请勿疯狂点击')
+          this.$message.warning('稍安勿躁,请勿重复点击')
         }
       },
       /* 立即购买快递配送订单生成 */
@@ -151,7 +151,7 @@
           }
         }).then(function (response) {
           console.log(response.data.data)
-          self.$message.success('成功生成订单')
+          // self.$message.success('成功生成订单')
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
@@ -180,7 +180,7 @@
           }
         }).then(function (response) {
           if (response.data.optSuc) {
-            self.$message.success('成功生成订单')
+            // self.$message.success('成功生成订单')
             self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
           }
         })
@@ -212,7 +212,7 @@
             carryPhone: self.phone
           }
         }).then(function (response) {
-          self.$message.success('成功生成订单')
+          // self.$message.success('成功生成订单')
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },
@@ -242,7 +242,7 @@
             deliveryId: self.giveGoodsAddress.id
           }
         }).then(function (response) {
-          self.$message.success('成功生成订单')
+          // self.$message.success('成功生成订单')
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
       },

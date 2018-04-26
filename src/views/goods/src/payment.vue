@@ -10,7 +10,7 @@
       p {{$route.query.price | price-filter}}
     .paymentTypeTitle 请选择支付方式
     ul.paymentTypeSelect
-      //li(@click="changeType('pricePay')")
+      li(@click="changeType('pricePay')")
         img(src="../../../assets/img/pricePay.png")
         p
           span.top 账户余额
@@ -42,12 +42,15 @@
         w-checkbox(v-model="type.bankPay")
     .comfirm
       w-button(@click="payment") 确认支付
+    price-pay(:show="priceShow", @close="closePricePay")
 </template>
 
 <script>
+    import pricePay from './pricePay'
     export default {
       data () {
         return {
+          priceShow: false,
           type:{
             pricePay: false,
             aliPay: false,
@@ -58,6 +61,9 @@
         }
       },
       name: "payment",
+      components: {
+        pricePay
+      },
       computed: {
         wxFlag () {
           return this.isWeiXin()
@@ -94,6 +100,10 @@
             }
           }
           let url = ''
+          if (type === 'pricePay') {
+            this.priceShow = true
+            return
+          }
           if (type === 'wePay') {
             if (this.isWeiXin()) {
               url = 'thirdPay/wechat/payUrl'
@@ -123,6 +133,10 @@
               window.location = response.data.data
             }
           })
+        },
+        // 关闭余额支付
+        closePricePay () {
+          this.priceShow = false
         }
       }
     }

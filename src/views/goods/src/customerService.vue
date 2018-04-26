@@ -57,8 +57,8 @@
 <style scoped>
   .ifra {
     width: 100%;
-    height: 100vh;
-    position: relative;
+    height: calc(100vh + 48px);
+    position: absolute;
     top: -48px;
   }
   .ifra h2{

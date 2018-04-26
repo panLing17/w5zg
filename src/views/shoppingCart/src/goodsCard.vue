@@ -32,7 +32,7 @@
                 .specData
                   p
                     span(v-for="(item,specIndex) in i.specVOList") {{item.gspec_value}}{{specIndex < i.specVOList.length-1 ? ',' : ''}}
-                  img(src="../../../assets/img/next@2x.png")
+                  //img(src="../../../assets/img/next@2x.png")
                 w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
               .specOk(@click="edit(true,index)") 完成
           .bottom
