@@ -119,7 +119,7 @@
         return{
           whiteBarFlag:true, //最下方的白条的显隐
           pickUpNoFlag:"", //提货码的显隐
-          freight:0, //运费
+          freight:"", //运费
           orderInfoStatus:"", //订单状态
           totalOrderNum:this.$route.query.orderNo, //总订单编号
           totalNumber:this.$route.query.totalNum, //从上个页面传来的商品总量
@@ -310,6 +310,7 @@
             self.sendTime = res.data.data[0].send_time;
             self.payTime = res.data.data[0].pay_time;
             self.receiveTime = res.data.data[0].receive_time;
+            self.freight = res.data.data[0].totalFreight;
             //总订单的id
             self.TotalOrderId = res.data.data[0].total_order_id;
             //判断是否自提
