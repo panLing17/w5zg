@@ -81,7 +81,7 @@
       .numberBox
         ul.number
           //li 邮费 包邮
-          li 邮费 {{goodsData.goi_freight}}元
+          li 邮费 {{freight}}元
       .title
         .line
         p 详情
@@ -121,6 +121,8 @@
         makeMoney: {},
         // 到货日期
         getGoodsDate: '',
+        // 当前规格运费
+        freight: 0,
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
@@ -219,6 +221,13 @@
         this.goodsData.direct_supply_interval = data.direct_supply_price
         this.goodsData.counter_interval = data.counter_price
         this.goodsData.retail_interval = data.retail_price
+        this.freight = data.goi_freight
+        // 根据用户类型为确认订单页价格赋值
+        if (this.userData.member_type === '092') {
+          this.price = data.direct_supply_price
+        } else {
+          this.price = data.counter_price
+        }
       },
       // 前往客服
       goService () {
@@ -451,7 +460,7 @@
             number: this.content,
             goodsName: this.goodsData.gi_name,
             price: this.price,
-            freight: this.goodsData.goi_freight
+            freight: this.freight
           }]
           // 发送请求判断库存
           let specData = {

@@ -130,7 +130,8 @@
             spec: specData.specList,
             counter_price: self.realGoodsData.counter_price ? self.realGoodsData.counter_price : 0,
             retail_price: self.realGoodsData.retail_price ? self.realGoodsData.retail_price : 0,
-            direct_supply_price: self.realGoodsData.direct_supply_price ? self.realGoodsData.direct_supply_price : 0
+            direct_supply_price: self.realGoodsData.direct_supply_price ? self.realGoodsData.direct_supply_price : 0,
+            goi_freight: self.realGoodsData.goi_freight
           }
           self.$emit('load',data)
         })
