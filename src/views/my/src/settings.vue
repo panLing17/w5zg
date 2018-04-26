@@ -46,7 +46,8 @@
       w-button(@click="logout") 退出登录
 </template>
 <script>
-  import {mapState} from  'vuex'
+  import {mapState} from 'vuex'
+
   export default {
     name: 'settings',
     data () {
@@ -81,7 +82,7 @@
                 width:"4rem",
                 height:"1rem",
                 left:"3rem",
-                bottom:"2rem",
+                bottom:".6rem",
                 textAlign:"center",
                 lineHeight:"1rem",
                 color:"#fff",
@@ -212,7 +213,7 @@
   /*用户头像,账户安全下方的边框--开始*/
   .avatar ul.wrap,
   .accountSafety ul.wrap{
-	  border-bottom: 1px solid rgb(204,204,204);
+	  border-bottom: 1px solid #f2f2f2;
   }
   /*用户头像,账户安全下方的边框--结束*/
   /*退出登录--开始*/

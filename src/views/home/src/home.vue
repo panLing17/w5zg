@@ -332,7 +332,7 @@
     color: #fff;
     margin-left: .2rem;
     word-break: break-all;
-    font-size: .48rem;
+    font-size: .4rem;
   }
   .topCenter{
     position: relative;
@@ -406,7 +406,7 @@
     animation-direction: alternate;
   }
   .bottomPlaceholder {
-    height: 1.5rem;
+    /*height: 1.5rem;*/
   }
   @keyframes opacity-fade {
     from {

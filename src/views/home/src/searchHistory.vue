@@ -50,7 +50,7 @@
         flag:true,
         show:true,
         hide:false,
-        showDiscover:"", //搜索发现的显隐
+        showDiscover:true, //搜索发现的显隐
         record1:[],
         record2:[],
         msg:""
@@ -149,6 +149,14 @@
             confirm: () => {
               //alert('确定')
               this.flag = false;
+              let self = this;
+              self.$ajax({
+                method:"post",
+                url:self.$apiGoods + "goodsSearch/deleteGoodsHistoryList",
+                params:{}
+              }).then(function(res){
+                this.historys();
+              })
             },
             noConfirm: () => {
               //alert('取消')

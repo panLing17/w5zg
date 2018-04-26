@@ -182,7 +182,7 @@
     line-height: 2.2rem;
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid rgb(204,204,204);
+    border-bottom: 1px solid #f2f2f2;
   }
   .avatar ul.wrap li.left,
   .nickname ul.wrap li.left,

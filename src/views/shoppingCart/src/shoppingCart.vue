@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     nav-bar(background="white")
-      .topLeft(slot="left", @click="$router.push('/home/citySearch')")
+      .topLeft(slot="left")
         .sanjiao
         span {{location.city.name}}
       .topCenter(slot="center") 购物车
