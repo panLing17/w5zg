@@ -69,6 +69,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: .37rem;
   }
   /*.box>div>ul>li:nth-child(2n+1){*/
     /*border-bottom: #ddd 1px solid;*/
