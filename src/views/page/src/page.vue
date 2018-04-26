@@ -46,7 +46,7 @@
       //一级分类
       this.request();
       //判断显示当前城市
-      this.judgeCity();  
+      this.judgeCity();
     },
     methods:{
       //判断显示城市的字数
@@ -71,7 +71,7 @@
           this.cityName = "南京";
         }
       },
-      
+
       goToCitySearch:function(){
         this.$router.push({
            name: '城市搜索',

@@ -1,7 +1,7 @@
 <template lang="pug">
   .expressBox
     self-goods.goodsCard( @tab="changeType", :goodsList="goodsList")
-    div(v-if="goodsList.length<1", style="min-height:100vh")
+    div(v-if="goodsList.length<1", style="min-height:100vh;text-align: center;")
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
     .disableGoodsBox(v-if="disableGoodsList.length>0")
       .title
@@ -138,8 +138,8 @@
   }
   /* 空购物车 */
   .zeroGoods {
-    width: 100%;
+    width: 50%;
     padding: .2rem;
-    margin: 1rem 0;
+    margin: 3rem 0;
   }
 </style>
