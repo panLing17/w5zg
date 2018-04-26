@@ -38,7 +38,7 @@
               .wrapWords
                 .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
                 .price {{item.price | price-filter}}
-                  span 可省100元
+                  span 可省{{item.economize_price}}元
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
       .bottomPlaceholder
     .mask
@@ -101,6 +101,7 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
+      this.mescroll.destroy();
     },
     methods:{
       //遮罩层出现后不让页面滑动

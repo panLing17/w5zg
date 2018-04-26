@@ -67,6 +67,10 @@
         //判断是商品订单还是退货订单
         this.judgeOrderType();
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
+      },
       methods:{
         //判断是商品订单还是退货订单
         judgeOrderType(){

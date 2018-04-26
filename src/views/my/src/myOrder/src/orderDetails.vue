@@ -174,6 +174,7 @@
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
       },
       methods:{
         //判断此时账号是B端还是C端

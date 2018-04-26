@@ -102,6 +102,10 @@
         //加载推荐商品
         this.getListDataFromNets();
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy();
+      },
       methods:{
         //判断页面回退
         backTo(){

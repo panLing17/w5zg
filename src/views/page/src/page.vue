@@ -48,6 +48,10 @@
       //判断显示当前城市
       this.judgeCity();
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy();
+    },
     methods:{
       //判断显示城市的字数
       judgeCityNum(){
