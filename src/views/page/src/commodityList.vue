@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/page')")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/home')")
       .topCenter(slot="center")
         .searchInput
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,msgs:message}})" v-model="message")
@@ -191,6 +191,8 @@
       },
       //从筛选传值过来
       ievent(data){
+        this.mescroll.lockDownScroll(false);
+        this.mescroll.lockUpScroll(false);
         var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
         if (data.flag1 == true) {
@@ -317,10 +319,10 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
-          // if(response.data.data.length<=0){
-          //   self.message = "";
-          //   self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
-          // } else {
+          if(response.data.data.length<=0){
+            self.message = "";
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
+          } else {
             for (var i = 0; i < response.data.data.length; i++) {
               if (response.data.data[i].carry_type == 1) {
                 response.data.data[i].carryFlag = true;
@@ -330,7 +332,7 @@
               }
             }
             successCallback&&successCallback(response.data.data);//成功回调
-          // }
+          }
 
         })
 
@@ -348,7 +350,7 @@
           url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: 1, //页码
-            rows: 5, //每页长度
+            rows: 4, //每页长度
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
             endPrice: self.maxPrice, //结束价格区间
