@@ -49,26 +49,27 @@
         this.url = this.$route.query.redirect_url
       },
       receive () {
-        let _this = this
-        if (!this.isLoginFlag) {
-          let reg = /^1[3|4|5|8|9][0-9]\d{8}$/;
-          if (!reg.test(this.phone)) {
-            this.$message.error('手机号码格式不正确！');
-            return;
-          }
-        }
-
-        if (!this.showSuccess){
-          if (this.isLoginFlag && this.phone.length!==11) {
-            this.getUserData(function () {
-              _this.getTicket();
-            })
-            return
-          }
-          this.getTicket();
-        }else {
-          return
-        }
+        this.showSuccess = true
+        // let _this = this
+        // if (!this.isLoginFlag) {
+        //   let reg = /^1[3|4|5|8|9][0-9]\d{8}$/;
+        //   if (!reg.test(this.phone)) {
+        //     this.$message.error('手机号码格式不正确！');
+        //     return;
+        //   }
+        // }
+        //
+        // if (!this.showSuccess){
+        //   if (this.isLoginFlag && this.phone.length!==11) {
+        //     this.getUserData(function () {
+        //       _this.getTicket();
+        //     })
+        //     return
+        //   }
+        //   this.getTicket();
+        // }else {
+        //   return
+        // }
 
       },
       isLogin () {
@@ -167,13 +168,13 @@
     line-height: 1.5;
     width: 100%;
     text-align: center;
-    transform: scale(1);
+    transform: scale(1.3);
   }
   .scale-enter-active, .scale-leave-active {
     transition: all 1s;
   }
   .scale-enter, .scale-leave-to {
-    transform: scale(4);
+    transform: scale(0);
   }
   .form {
     margin-top: 2rem;
