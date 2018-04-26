@@ -10,7 +10,7 @@
       p {{$route.query.price | price-filter}}
     .paymentTypeTitle 请选择支付方式
     ul.paymentTypeSelect
-      li(@click="changeType('pricePay')")
+      li(@click="changeType('pricePay')", v-if="userData.member_type === '092' ")
         img(src="../../../assets/img/pricePay.png")
         p
           span.top 账户余额
@@ -42,11 +42,12 @@
         w-checkbox(v-model="type.bankPay")
     .comfirm
       w-button(@click="payment") 确认支付
-    price-pay(:show="priceShow", @close="closePricePay")
+    price-pay(:show="priceShow", @close="closePricePay", :orderId="$route.query.id")
 </template>
 
 <script>
     import pricePay from './pricePay'
+    import {mapState} from 'vuex'
     export default {
       data () {
         return {
@@ -75,7 +76,13 @@
           } else {
             return false
           }
-        }
+        },
+        ...mapState(['userData'])
+      },
+      mounted () {
+        this.priceZero()
+        // 判断用户有无支付密码
+        this.havePayPwd()
       },
       methods: {
         changeType (n) {
@@ -137,6 +144,36 @@
         // 关闭余额支付
         closePricePay () {
           this.priceShow = false
+        },
+        // 检验订单金额
+        priceZero () {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url:self.$apiTransaction +  'order/isPayPriceZero',
+            params: {
+              totalOrderId: self.$route.query.id
+            },
+          }).then(function (response) {
+            if (response.data.data) {
+              self.priceShow = true
+            }
+          })
+        },
+        // 判断用户有无支付密码
+        havePayPwd () {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url:self.$apiMember +  'member/check/isEmptyPayPwd',
+            params: {
+            },
+          }).then(function (response) {
+            if (response.data.data) {
+              self.$message.warning('请设置支付密码')
+              self.$router.push({path:'/my/updatePassword1',query:{routeParams:2}})
+            }
+          })
         }
       }
     }

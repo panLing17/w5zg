@@ -2,7 +2,7 @@
   div
     nav-bar(background="white")
       .topLeft(slot="left")
-        .sanjiao
+        img(src="../../../assets/img/citySearch@2x.png", style="height:.4rem; margin-right:.1rem")
         span {{location.city.name}}
       .topCenter(slot="center") 购物车
       .topRight(slot="right")
