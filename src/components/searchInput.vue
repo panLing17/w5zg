@@ -8,7 +8,7 @@
     name: 'home',
     data () {
       return {
-         
+
       }
     },
     props: {
@@ -36,7 +36,7 @@
   .searchInput{
     width: 6.5rem;
     height: .9rem;
-    background-color: rgb(238,238,238);
+    background-color: #f2f2f2;
     border-radius: .9rem;
     line-height: .9rem;
   }
@@ -50,6 +50,6 @@
     outline: none;
     font-size: .3rem;
     margin-left: .1rem;
-    background-color: rgb(238,238,238);
+    background-color: #f2f2f2;
   }
 </style>

@@ -20,10 +20,17 @@
     background: rgb(242,242,242);
     width: 100%;
     height: 100vh;
-    position: absolute;
     z-index: 100;
+    position: absolute;
+
   }
   .img {
     width: 100%;
+    min-height: 500px;
+  }
+  .content {
+    height: calc(100vh - 1.3rem);
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
   }
 </style>
