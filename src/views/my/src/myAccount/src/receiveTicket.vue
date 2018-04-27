@@ -1,8 +1,8 @@
 <template lang="pug">
   .receiveTicket
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.replace('/home')")
+      .topLeft(slot="left", @click="$router.replace('/home')")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 万物商城现金券
       .topRight(slot="right")
     .content(v-loading="loadingFlag")
@@ -205,11 +205,14 @@
     width: 3.2rem;
     height: 3.2rem;
     margin-top: .5rem;
-    pointer-events: auto;
+    pointer-events: auto !important;
   }
   .dec {
     margin-top: .1rem;
     font-size:.4rem;
     color: #fff;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

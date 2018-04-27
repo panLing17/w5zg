@@ -1,8 +1,8 @@
 <template lang="pug">
   .returnDetails
     nav-bar
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 退款详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
@@ -369,5 +369,8 @@
     position: absolute;
     bottom: 0.2rem;
     right: .5rem;
+  }
+  img {
+    pointer-events: none !important;
   }
 </style>

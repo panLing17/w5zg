@@ -1,8 +1,8 @@
 <template lang="pug">
   .revenue
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 预计收入明细
       .topRight(slot="right")
         p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="filterShow=true") 筛选
@@ -257,5 +257,8 @@
   .btn.active {
     background: rgb(255,128,171);
     color: #fff;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

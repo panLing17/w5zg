@@ -1,8 +1,8 @@
 <template lang="pug">
   .account
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 账户
       .topRight(slot="right")
     .headerBox
@@ -132,5 +132,8 @@
   .arrow {
     background: url("../../../../../assets/img/more@2x.png") no-repeat center right .21rem #fff;
     background-size: .25rem auto;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

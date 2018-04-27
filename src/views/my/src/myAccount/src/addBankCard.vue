@@ -1,8 +1,8 @@
 <template lang="pug">
   .addBankCard
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 添加银行卡
       .topRight(slot="right")
     .content
@@ -268,5 +268,8 @@
     bottom: .53rem;
     left: 0;
     background: linear-gradient(0deg,rgba(242,242,242,.8),rgba(242,242,242,.4));
+  }
+  img {
+    pointer-events: none;
   }
 </style>

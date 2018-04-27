@@ -1,8 +1,8 @@
 <template lang="pug">
   .grantCardRandom
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 随机发放现金券
       .topRight(slot="right", @click="shareShow=true") 分享
     transition(name="fade")
@@ -141,5 +141,8 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%,-35%);
+  }
+  img {
+    pointer-events: none;
   }
 </style>

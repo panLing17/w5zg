@@ -1,8 +1,8 @@
 <template lang="pug">
   .express
     nav-bar
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 填写快递
     <!--.addressee(@click="$router.push('/my/checkAddressee')")-->
       <!--.lefter-->
@@ -282,4 +282,5 @@
   input::placeholder{
     color: rgb(153,153,153);
   }
+
 </style>

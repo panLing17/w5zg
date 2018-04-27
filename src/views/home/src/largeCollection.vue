@@ -1,8 +1,8 @@
 <template lang="pug">
   .largeConllection
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="color: rgb(245,0,87);") {{$route.query.title}}
       .topRight(slot="right")
     .content(v-if="!isEmpty")
@@ -111,5 +111,8 @@
     text-align: center;
     color: rgb(153,153,153);
     font-size: .4rem;
+  }
+  img {
+    pointer-events: none !important;
   }
 </style>
