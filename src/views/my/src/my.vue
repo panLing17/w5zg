@@ -1,5 +1,5 @@
 <template lang="pug">
-  div.myBox.mescroll#myMescroll(:class="{positionFixed: positionFixed}")
+  div.myBox.mescroll#myMescroll(:class="{positionFixed: positionFixed}" v-loading="loadingFlag < 3")
     .head
       .top
         .lefter
@@ -89,7 +89,8 @@
         page: 1,
         // 切换动画hack
         positionFixed: false,
-        orderCount:{}
+        orderCount:{},
+        loadingFlag:0
       }
     },
     computed: mapState(['userData']),
@@ -121,6 +122,7 @@
           }else {
             _this.$message.error(response.data.msg)
           }
+          self.loadingFlag += 1
         })
       },
       /* 切换动画修复 */
@@ -141,6 +143,7 @@
           if (response.data.data.member_type === '092') {
             self.getUserInfo()
           }
+          self.loadingFlag += 1
         })
       },
       getUserInfo:function(){
@@ -151,6 +154,7 @@
           params: {}
         }).then(function (response) {
           self.accoutBalance = response.data.data.accoutBalance
+          self.loadingFlag += 1
         })
       },
       getFootmarkNum:function(){
@@ -163,6 +167,7 @@
         }).then(function (response) {
           if (response.data.optSuc) {
             self.footmarkNum = response.data.data
+            self.loadingFlag += 1
           }
         })
       },
@@ -197,6 +202,7 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           successCallback&&successCallback(response.data.data);//成功回调
+          self.loadingFlag += 1
         })
       },
       // 前往银行卡
