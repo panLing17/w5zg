@@ -99,11 +99,105 @@
         })
       },
       /* 上传头像 */
+      // uploadPhoto (e) {
+      //   // 请求
+      //   let self = this
+      //   let data = new FormData()
+      //   data.append('imageFile', e.target.files[0])
+      //   this.$ajax({
+      //     method: 'post',
+      //     url: self.$apiMember + 'member/uploadAvatar',
+      //     data: data,
+      //     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
+      //     processData: false,
+      //   }).then(function (response) {
+      //     self.headPicChange(response.data.data)
+      //   })
+      // },
+
+
+
+
+
       uploadPhoto (e) {
+        // 校验格式，格式不对直接跳出
+        let type = e.target.files[0].name.substr(e.target.files[0].name.lastIndexOf('.')+1)
+        type = type.toLowerCase()
+        if (['png', 'jpg', 'gif', 'jpeg' ,'bmp'].indexOf(type) === -1) {
+          this.$message.error('上传图片格式不支持！')
+          return false
+        }
+
+        let _this = this
+        let fileObj = e.target.files[0]; // js 获取文件对象
+        if(fileObj.size/1024 > 1025) { //大于1M，进行压缩上传
+          this.photoCompress(fileObj, {
+            quality: 0.5
+          }, function(base64Codes){
+            let temp = _this.dataURLtoFile(base64Codes, e.target.files[0].name)
+            _this.upload(temp)
+          });
+        }else{ //小于等于1M 原图上传
+          this.upload(fileObj)
+        }
+
+      },
+      photoCompress(file,w,objDiv){
+        let _this = this
+        let ready=new FileReader();
+        /*开始读取指定的Blob对象或File对象中的内容. 当读取操作完成时,readyState属性的值会成为DONE,如果设置了onloadend事件处理程序,则调用之.同时,result属性中将包含一个data: URL格式的字符串以表示所读取文件的内容.*/
+        ready.readAsDataURL(file);
+        ready.onload=function(e){
+          let re= e.target.result.toString();
+          _this.canvasDataURL(re,w,objDiv)
+        }
+      },
+      canvasDataURL(path, obj, callback){
+        let img = new Image();
+        img.src = path;
+        img.onload = function(){
+          let that = this;
+          // 默认按比例压缩
+          let w = 150,
+            h = 150;
+          let quality = 0.7;  // 默认图片质量为0.7
+          //生成canvas
+          let canvas = document.createElement('canvas');
+          let ctx = canvas.getContext('2d');
+          // 创建属性节点
+          let anw = document.createAttribute("width");
+          anw.nodeValue = w;
+          let anh = document.createAttribute("height");
+          anh.nodeValue = h;
+          canvas.setAttributeNode(anw);
+          canvas.setAttributeNode(anh);
+          ctx.drawImage(that, 0, 0, w, h);
+          // 图像质量
+          if(obj.quality && obj.quality <= 1 && obj.quality > 0){
+            quality = obj.quality;
+          }
+          // quality值越小，所绘制出的图像越模糊
+          let base64 = canvas.toDataURL('image/', quality);
+          // 回调函数返回base64的值
+          callback(base64);
+        }
+      },
+      // base64转file
+      dataURLtoFile(dataurl, filename) {
+
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--){
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new File([u8arr], filename, {type:mime});
+      },
+      upload (blobFile) {
         // 请求
         let self = this
         let data = new FormData()
-        data.append('imageFile', e.target.files[0])
+        data.append('imageFile', blobFile)
         this.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/uploadAvatar',
@@ -114,6 +208,23 @@
           self.headPicChange(response.data.data)
         })
       },
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       /* 修改用户头像 */
       headPicChange (url) {
         let self = this
