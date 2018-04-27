@@ -5,8 +5,10 @@
         img(src="../../../assets/img/定位图标@2x.png", style="width: .3rem;")
         span.city {{cityName}}
       .topCenter(slot="center")
-        searchInput(placeholder="请输入商品名称", @focus="jump")
-        img(src="../../../assets/img/home扫描@2x.png", @click="searchCode")
+        .searchInput
+          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()").leftImg
+          input(:type="type",placeholder="请输入商品名称" @keyup.enter="searchGoods()" @focus="jump") 
+          img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
@@ -338,12 +340,33 @@
   .topCenter{
     position: relative;
   }
-  .topCenter img{
-    width: .6rem;
-    position: absolute;
-    top: .15rem;
-    right: .25rem;
-  }
+  /*搜索框样式--开始*/
+.searchInput{
+  width: 6.5rem;
+  height: .9rem;
+  background-color: rgb(238,238,238);
+  border-radius: .9rem;
+  line-height: .9rem;
+}
+.searchInput img.leftImg{
+  width: .4rem;
+  vertical-align: middle;
+  margin-left: .2rem;
+}
+.searchInput img.rightImg{
+  width: .4rem;
+  vertical-align: middle;
+  margin-left: .2rem;
+}
+.searchInput input{
+  width: 70%;
+  border: 0;
+  outline: none;
+  font-size: .3rem;
+  margin-left: .4rem;
+  background-color: rgb(238,238,238);
+}
+/*搜索框样式--结束*/
   .topRight{
     margin-right: .1rem;
   }
