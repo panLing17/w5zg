@@ -821,7 +821,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    font-family: "simsun";
+    font-family: "Verdana";
   }
   .center .goodsDetails .wrapAttr .left{
     display: flex;
@@ -833,7 +833,7 @@
     margin-top: .1rem;
     font-size: .35rem;
     color: rgb(153,153,153);
-    font-family: "simsun";
+    font-family: "Verdana";
   }
   .center .goodsDetails .property span.color{
     margin-right: .5rem;
