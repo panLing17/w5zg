@@ -828,6 +828,12 @@
   }
   .center .goodsDetails .words{
     font-size: .35rem;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
   }
   .center .goodsDetails .property{
     margin-top: .1rem;

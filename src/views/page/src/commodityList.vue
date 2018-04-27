@@ -319,10 +319,10 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
-          // if(response.data.data.length<=0){
-          //   self.message = "";
-          //   self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
-          // } else {
+          if(response.data.data.length<=0){
+            self.message = "";
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
+          } else {
             for (var i = 0; i < response.data.data.length; i++) {
               if (response.data.data[i].carry_type == 1) {
                 response.data.data[i].carryFlag = true;
@@ -332,7 +332,7 @@
               }
             }
             successCallback&&successCallback(response.data.data);//成功回调
-          // }
+          }
 
         })
 
@@ -360,6 +360,7 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
+          console.log(response.data.data);
           //self.recommendGoods = response.data.data;//成功回调
           if(response.data.data.length<=0){
             self.message = "";
@@ -583,7 +584,12 @@
   .toggle .wrapWords .text{
     width: 100%;
     margin-top: .1rem;
-    word-wrap: break-word;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
   }
   .toggle .wrapWords .price{
     width: 100%;
