@@ -17,7 +17,7 @@
             img(src="../../../../../assets/img/wechat2@2x.png")
         .close(@click="shareShow=false") 取消
     .content
-      qrcode(:value="img", :options="{ size: 200 }")
+      qrcode(:value="img", :options="{ size: 180 }")
 </template>
 
 <script>
