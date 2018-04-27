@@ -104,7 +104,7 @@
       getStoreNum () {
         // 获取选中的规格
         let specData = {
-          'W5MALLTOKEN': localStorage.getItem('token'),
+          //'W5MALLTOKEN': localStorage.getItem('token'),
           'cityId': this.$store.state.location.city.id,
           'gspu_id': this.$route.query.id,
           'specList': [

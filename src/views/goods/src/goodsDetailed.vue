@@ -15,9 +15,10 @@
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
       .goodsInfo
         .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
-        .stateChuiNiu
-          span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
-          img(src="../../../assets/img/pinkNext.png")
+        a(href="tel:4008-947-999")
+          .stateChuiNiu
+            span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
+            img(src="../../../assets/img/pinkNext.png")
         .price(v-if="userData.member_type === '092'")
           span 直供价
           p {{goodsData.direct_supply_interval | price-filter}}

@@ -11,16 +11,17 @@
           div(v-for="tag in banner", style="width:100%" )
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
         .recommendWrapper(v-if="!isEmpty")
-          ul.list
-            li.item(v-for="item in recommendGoods", @click="$router.push({path: '/goodsDetailed',query: {id: item.gspu_id}})")
-              img.img(:src="item.gi_image_url | img-filter")
-              .nameWrapper
-                // carry_type 1可自提 2不可自提
-                span.maybe(v-if="item.carry_type===1") 专柜提货
-                span.name {{item.gi_name}}
-              .price
-                span.current ￥{{item.price | round}}
-                span.save(v-if="userData.member_type !== '092' && item.economize_price !== 0") 可省{{item.economize_price}}元
+          w-recommend(:listData="recommendGoods")
+          <!--ul.list-->
+            <!--li.item(v-for="item in recommendGoods", @click="$router.push({path: '/goodsDetailed',query: {id: item.gspu_id}})")-->
+              <!--img.img(:src="item.gi_image_url | img-filter")-->
+              <!--.nameWrapper-->
+                <!--// carry_type 1可自提 2不可自提-->
+                <!--span.maybe(v-if="item.carry_type===1") 专柜提货-->
+                <!--span.name {{item.gi_name}}-->
+              <!--.price-->
+                <!--span.current ￥{{item.price | round}}-->
+                <!--span.save(v-if="userData.member_type !== '092' && item.economize_price !== 0") 可省{{item.economize_price}}元-->
         .noData(v-if="isEmpty") 暂无推荐商品
 </template>
 
@@ -148,70 +149,67 @@
   .recommendWrapper {
     margin-top: .26rem;
   }
-  .carousel-dot {
-    text-indent: 100px;
-  }
-  .list {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: .2rem;
-  }
-  .item {
-    float: left;
-    width: 49%;
-    /*border: solid 1px #ccc;*/
-    background:#fff;
-    border-radius: 5px;
-    overflow: hidden;
-    margin-bottom: .2rem;
-    position: relative;
-  }
-  .img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    max-height: 4rem;
-  }
-  .nameWrapper {
-    padding: 0 .1rem;
-    font-size: .26rem;
-    line-height: 1.5;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    margin-top: 4.2rem;
-    height: .85rem;
-  }
-  .maybe {
-    padding: .1rem .2rem;
-    background: rgb(245,0,87);
-    color: #fff;
-    border-radius: .4rem;
-    display: inline-block;
-    margin-right: .13rem;
-    line-height: 1;
-  }
-  .name {
-    color: rgb(51,51,51);
-  }
-  .price {
-    margin-top: .33rem;
-    padding:0 .1rem .26rem;
-    font-size: .29rem;
-    color: rgb(245,0,87);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    display: flex;
-    justify-content: space-between;
-  }
-  .current {
-    font-weight: 400;
-    margin-right: .26rem;
-  }
+  /*.list {*/
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    /*flex-wrap: wrap;*/
+    /*padding: .2rem;*/
+  /*}*/
+  /*.item {*/
+    /*float: left;*/
+    /*width: 49%;*/
+    /*!*border: solid 1px #ccc;*!*/
+    /*background:#fff;*/
+    /*border-radius: 5px;*/
+    /*overflow: hidden;*/
+    /*margin-bottom: .2rem;*/
+    /*position: relative;*/
+  /*}*/
+  /*.img {*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*width: 100%;*/
+    /*max-height: 4rem;*/
+  /*}*/
+  /*.nameWrapper {*/
+    /*padding: 0 .1rem;*/
+    /*font-size: .32rem;*/
+    /*!*line-height: 1.5;*!*/
+    /*display: -webkit-box;*/
+    /*-webkit-box-orient: vertical;*/
+    /*-webkit-line-clamp: 2;*/
+    /*overflow: hidden;*/
+    /*margin-top: 4.2rem;*/
+    /*height: .85rem;*/
+  /*}*/
+  /*.maybe {*/
+    /*padding: .1rem .2rem;*/
+    /*background: rgb(245,0,87);*/
+    /*color: #fff;*/
+    /*border-radius: .4rem;*/
+    /*display: inline-block;*/
+    /*margin-right: .13rem;*/
+    /*line-height: 1;*/
+  /*}*/
+  /*.name {*/
+    /*color: rgb(51,51,51);*/
+  /*}*/
+  /*.price {*/
+    /*margin-top: .33rem;*/
+    /*padding:0 .1rem .26rem;*/
+    /*font-size: .29rem;*/
+    /*color: rgb(245,0,87);*/
+    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+  /*}*/
+  /*.current {*/
+    /*font-weight: 400;*/
+    /*margin-right: .26rem;*/
+  /*}*/
   .noData {
     position: absolute;
     top: 50%;
@@ -223,6 +221,6 @@
     font-size: .4rem;
   }
   img {
-    pointer-events: none !important;
+    pointer-events: none;
   }
 </style>

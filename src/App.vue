@@ -145,4 +145,7 @@ a{text-decoration:none}
   width: 1rem;
   z-index: 200;
 }
+.scrollWarpClass {
+  pointer-events: auto !important;
+}
 </style>

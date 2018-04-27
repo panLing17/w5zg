@@ -170,6 +170,6 @@
   }
   /*下一步--结束*/
   img {
-    pointer-events: none !important;
+    pointer-events: none;
   }
 </style>

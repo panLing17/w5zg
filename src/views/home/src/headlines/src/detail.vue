@@ -34,6 +34,6 @@
     -webkit-overflow-scrolling: touch;
   }
   img {
-    pointer-events: none !important;
+    pointer-events: none;
   }
 </style>
