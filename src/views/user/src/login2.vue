@@ -61,7 +61,7 @@
         },1000)
       },
       lightUp () {
-        let reg = /^1[3|4|5|8|9][0-9]\d{8}$/;
+        let reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0-9])|(18[0-9]))\\d{8}$/;
         if (reg.test(this.form.phone)) {
           this.iconFlag.phone = true
         }else {

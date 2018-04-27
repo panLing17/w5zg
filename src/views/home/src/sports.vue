@@ -73,12 +73,18 @@
           this.parentType = this.$route.query.parentType;
         },
         getBanner () {
+          let acCataType;
+          switch (this.parentType) {
+            case '361': acCataType = 114; break;
+            case '362': acCataType = 115; break;
+            case '363': acCataType = 116; break;
+          }
           let self = this
           this.$ajax({
             method: 'get',
             url: this.$apiApp + 'index/advertiseContentList',
             params: {
-              acCataType: 115,
+              acCataType: acCataType,
               acCataTypeId: this.$route.query.actId
             },
           }).then(function (response) {
