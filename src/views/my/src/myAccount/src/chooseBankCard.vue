@@ -1,8 +1,8 @@
 <template lang="pug">
   .chooseBankCard
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 账户
       .topRight(slot="right")
     .content
@@ -253,5 +253,8 @@
     text-align: center;
     font-size: .4rem;
     line-height: 2.4rem;
+  }
+  img {
+    pointer-events: none !important;
   }
 </style>
