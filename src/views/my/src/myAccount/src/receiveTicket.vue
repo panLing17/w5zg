@@ -83,7 +83,6 @@
         })
       },
       getTicket () {
-        console.log(111)
         let _this = this;
         this.$ajax({
           method: 'get',
