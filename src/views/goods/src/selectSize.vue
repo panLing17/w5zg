@@ -120,7 +120,9 @@
         this.$ajax({
           method: 'post',
           url: self.$apiGoods + 'goods/sku/detail',
-          data: specData
+          params: {
+            gc:JSON.stringify(specData)
+          }
         }).then(function (response) {
           // 根据sku切换展示图片
           let skuGoodsData = self.list[0]
