@@ -126,7 +126,7 @@
           },
         }).then(function (response) {
           if (response.data.optSuc) {
-            self.$router.push('/goods/paymentResults')
+            self.$router.push({path:'/goods/paymentResults',query:{type:0,price:self.$route.query.price}})
           }
         })
       }
