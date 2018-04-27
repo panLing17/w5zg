@@ -821,7 +821,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    font-family: "Verdana";
+    font-family: "黑体";
   }
   .center .goodsDetails .wrapAttr .left{
     display: flex;

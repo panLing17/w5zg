@@ -14,7 +14,7 @@
       li.left
         ul
           li(@click="changes1()" :class="{active:change1}") 综合
-          li(@click="changes2()" :class="{active:change2}") 销量
+          li(@click="changes2()" :class="{active:change2}" v-if="false") 销量
       li.right
         ul
           li.showStyle(@click="exchange()")
