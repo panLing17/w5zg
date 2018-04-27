@@ -6,17 +6,21 @@
       .topCenter(slot="center") 万物商城现金券
       .topRight(slot="right")
     .content(v-loading="loadingFlag")
-      img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")
+      <!--img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")-->
       .form(v-if="!showSuccess")
-        input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
-        .btn(@click="receive") 点击领取
-        .text 万物商城送你现金券，购物更省钱！
+        .formTop
+        .formBottom
+          input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
+          .btn(@click="receive") 点击领取
+          .text 万物商城送你现金券，购物更省钱！
       .successWrapper(v-if="showSuccess")
-        .price {{price}}
-          span 元
-        .goHome(@click="$router.replace('/home')") 进入万物商城首页
-        img.ewm(src="../../../../../assets/img/gzh.jpg")
-        .dec 长按关注“万物商城”公众号
+        .topWrapper
+          .price {{price}}
+            span 元
+        .bottomWrapper
+          .goHome(@click="$router.replace('/home')") 进入万物商城首页
+          img.ewm(src="../../../../../assets/img/gzh.jpg")
+          .dec 长按关注“万物商城”公众号
 </template>
 
 <script>
@@ -91,13 +95,12 @@
             mobile: this.phone
           }
         }).then(function (response) {
+          _this.loadingFlag = false
           if (response.data.code === '081') {
             _this.price = response.data.data
             _this.showSuccess = true;
-            _this.loadingFlag = false
           }else {
             _this.$message.error(response.data.msg);
-            _this.loadingFlag = false
           }
         })
       }
@@ -133,10 +136,23 @@
   }
   .form {
     position: absolute;
-    top: 10rem;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
     z-index: 150;
+  }
+  .formTop {
+    width: 100%;
+    height: 60%;
+    background: url("../../../../../assets/img/issue1@2x.png") no-repeat top left;
+    background-size: 100% 100%;
+  }
+  .formBottom {
+    height: 40%;
+    width: 100%;
+    background: #c72d26;
+    position: relative;
   }
   .form input, .form .btn {
     width: 7.45rem;
@@ -144,8 +160,10 @@
     border-radius: 1rem;
   }
   .form input {
-    display: inline-block;
-    vertical-align: top;
+    position: absolute;
+    top: .5rem;
+    left: 50%;
+    transform: translateX(-50%);
     background: rgb(242,242,242);
     border: none;
     outline: none;
@@ -155,7 +173,10 @@
     box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
   }
   .form .btn {
-    margin: .4rem auto 0;
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     background: #fecb37;
     color: #c72d26;
     font-size: .43rem;
@@ -165,7 +186,11 @@
   .text {
     font-size: .4rem;
     color: #fff;
-    margin-top: .58rem;
+    position: absolute;
+    top: 3.5rem;
+    left: 0;
+    width: 100%;
+    text-align: center;
   }
   .successWrapper {
     position: absolute;
@@ -175,22 +200,41 @@
     left: 0;
     z-index: 150;
   }
+  .topWrapper {
+    width: 100%;
+    height: 50%;
+    position: relative;
+    background: url("../../../../../assets/img/issue2@3x(1).png") no-repeat top left;
+    background-size: 100% 100%;
+
+  }
   .price {
-    margin-top:5rem;
+    position: absolute;
+    bottom: .8rem;
+    left: 0;
     width: 100%;
     text-align: center;
-    font-size: 2.2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: #c72d26;
-    letter-spacing: -.2rem;
+    letter-spacing: -.1rem;
     transform: scale(1, 1.2);
   }
   .price span {
     font-size: .7rem;
     margin-left: .1rem;
   }
+  .bottomWrapper {
+    height: 50%;
+    width: 100%;
+    background: #c72d26;
+    position: relative;
+  }
   .goHome {
-    margin: 1.5rem auto 0;
+    position: absolute;
+    top: .5rem;
+    left: 50%;
+    transform: translateX(-50%);
     width: 7.7rem;
     height: 1.2rem;
     background: #f2f2f2;
@@ -204,11 +248,11 @@
   .ewm {
     width: 3.2rem;
     height: 3.2rem;
-    margin-top: .5rem;
+    margin-top: 2rem;
     pointer-events: auto !important;
   }
   .dec {
-    margin-top: .1rem;
+    margin-top: .2rem;
     font-size:.4rem;
     color: #fff;
   }

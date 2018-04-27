@@ -97,7 +97,7 @@
       //让页面加载时将搜索的文字拼到url上
       //this.onload();
       //进入页面时加载
-      //this.request();
+      // this.request();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -127,36 +127,36 @@
         //this.exhibition();
       },
       //商品的展示
-      exhibition(){
-        let self = this;
-        self.$ajax({
-          method:"post",
-          url:self.$apiGoods + "goodsSearch/spus",
-          params:{
-            carryType: self.pickUps, //自提不自提
-            startPrice: self.minPrice, //开始价格区间
-            endPrice: self.maxPrice, //结束价格区间
-            bi_id: self.brandId, //品牌的id
-            sortType: self.sort, //正序倒序
-            keywords: self.message, //关键字
-            sortFieldType: self.order //字段排序
-          }
-        }).then(function(res){
-          self.recommendGoods = res.data.data;
-          if(self.recommendGoods.length<=0){
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
-          }else{
-            for (var i = 0; i < self.recommendGoods.length; i++) {
-              if(self.recommendGoods[i].carry_type == 1){
-                self.recommendGoods[i].carryFlag = true;
-              }
-              if (self.recommendGoods[i].carry_type == 2) {
-                self.recommendGoods[i].carryFlag = false;
-              }
-            }
-          }
-        })
-      },
+      // exhibition(){
+      //   let self = this;
+      //   self.$ajax({
+      //     method:"post",
+      //     url:self.$apiGoods + "goodsSearch/spus",
+      //     params:{
+      //       carryType: self.pickUps, //自提不自提
+      //       startPrice: self.minPrice, //开始价格区间
+      //       endPrice: self.maxPrice, //结束价格区间
+      //       bi_id: self.brandId, //品牌的id
+      //       sortType: self.sort, //正序倒序
+      //       keywords: self.message, //关键字
+      //       sortFieldType: self.order //字段排序
+      //     }
+      //   }).then(function(res){
+      //     self.recommendGoods = res.data.data;
+      //     if(self.recommendGoods.length<=0){
+      //       self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
+      //     }else{
+      //       for (var i = 0; i < self.recommendGoods.length; i++) {
+      //         if(self.recommendGoods[i].carry_type == 1){
+      //           self.recommendGoods[i].carryFlag = true;
+      //         }
+      //         if (self.recommendGoods[i].carry_type == 2) {
+      //           self.recommendGoods[i].carryFlag = false;
+      //         }
+      //       }
+      //     }
+      //   })
+      // },
       //进入商品详情
       goGoods(goodsId){
         this.$router.push({
@@ -320,8 +320,7 @@
           }
         }).then(function(response){
           if(response.data.data.length<=0){
-            self.message = "";
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           } else {
             for (var i = 0; i < response.data.data.length; i++) {
               if (response.data.data[i].carry_type == 1) {
@@ -363,8 +362,7 @@
           console.log(response.data.data);
           //self.recommendGoods = response.data.data;//成功回调
           if(response.data.data.length<=0){
-            self.message = "";
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           } else{
             self.recommendGoods = response.data.data;
             for (var i = 0; i < self.recommendGoods.length; i++) {

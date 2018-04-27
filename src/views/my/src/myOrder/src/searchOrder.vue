@@ -75,6 +75,8 @@
           flag:true, //显示搜索记录
           record1:[], //历史搜索
           orderDetail:[], //请求后的数据商品的订单列表放入这里
+          judgeEmpty:"", //判断返回订单数组为不为空
+          number:0
         }
       },
       props: {
@@ -99,8 +101,6 @@
         //this.request();
         //从详情返回时的执行
         this.judgeUrl();
-        //加载推荐商品
-        this.getListDataFromNets();
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
@@ -186,6 +186,8 @@
           this.searchHistory();
           //推荐内容显示
           this.recommendFlag = true;
+          //让推荐商品加载
+          this.number = 0;
         },
         //清除历史搜索记录
         clearHistory(){
@@ -195,6 +197,7 @@
             url:self.$apiTransaction + "orderSearchRecord/delOrderSearch",
             params:{},
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+
           }).then(function(res){
             console.log(res);
             self.searchHistory();
@@ -250,14 +253,26 @@
         //下拉加载页面
         upCallback: function(page) {
           let self = this;
-          this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1) self.orderDetail = []
-            self.orderDetail = self.orderDetail.concat(curPageData)
-            self.mescroll.endSuccess(curPageData.length)
-          }, function() {
-            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-            self.mescroll.endErr();
-          })
+          if (self.number == 0) {
+            self.getListDataFromNets(page.num, page.size, function(curPageData) {
+              if(page.num === 1) self.recommendGoods = []
+              self.recommendGoods = self.recommendGoods.concat(curPageData)
+              self.mescroll.endSuccess(curPageData.length)
+            }, function() {
+              //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+              self.mescroll.endErr();
+            })
+          } else{
+            self.getListDataFromNet(page.num, page.size, function(curPageData) {
+              if(page.num === 1) self.orderDetail = []
+              self.orderDetail = self.orderDetail.concat(curPageData)
+              self.mescroll.endSuccess(curPageData.length)
+            }, function() {
+              //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+              self.mescroll.endErr();
+            })
+          }
+          
         },
         getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
           let self = this;
@@ -274,7 +289,11 @@
             console.log(response.data.data);
             var arr = response.data.data;
             for (var i=0; i<arr.length; i++) {
-
+              if (arr[i].order_status == "（退货）售后") {
+                arr[i].buttonL = "取消申请";
+                arr[i].buttonR = "取消申请";
+                arr[i].orderStatus = "（退货）售后";
+              }
               if (arr[i].order_status == "待付款") {
                 arr[i].buttonL = "取消订单";
                 arr[i].buttonR = "支付";
@@ -335,11 +354,13 @@
           }).then(function(response){
             self.orderDetail = response.data.data;
             if (self.orderDetail.length <= 0) {
+              self.number = 0;
               self.showOrder = false;
               self.showHistory = false;
               self.showRel = true;
               self.recommendFlag = true;
             } else{
+              self.number = 1;
               self.recommendFlag = false;
               self.showOrder = true;
               self.showHistory = false;
@@ -414,13 +435,14 @@
             method: 'post',
             url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
             params: {
-              page: 1,
-              rows: 5
+              page: pageNum,
+              rows: pageSize
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            //successCallback&&successCallback(response.data.data);//成功回调
-            self.recommendGoods = response.data.data;
+            console.log(response);
+            successCallback&&successCallback(response.data.data);//成功回调
+            //self.recommendGoods = response.data.data;
           })
         },
 
@@ -465,7 +487,7 @@
 }
 .topRight{
   color: rgb(245,0,87);
-  font-size: .45rem;
+  font-size: .4rem;
   font-weight: 400;
 }
 /*搜索框样式--开始*/

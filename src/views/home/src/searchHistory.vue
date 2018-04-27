@@ -53,7 +53,7 @@
         showDiscover:true, //搜索发现的显隐
         record1:[],
         record2:[],
-        msg:this.$route.query.msgs
+        msg:this.$route.query.messages
       }
     },
     props: {
@@ -247,7 +247,7 @@
 
 .topRight{
   color: rgb(245,0,87);
-  font-size: .45rem;
+  font-size: .4rem;
   font-weight: 400;
 }
 /*搜索框样式--开始*/
