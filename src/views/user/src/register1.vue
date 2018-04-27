@@ -39,7 +39,21 @@
         }
       }
     },
+    mounted () {
+      this.getToken()
+    },
     methods: {
+      getToken () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/getSessionId',
+          params: {}
+        }).then(function (response) {
+          self.form.W5MALLTOKEN = response.data.data
+          self.getPicCode()
+        })
+      },
       getPicCode() {
         this.version += 1
         this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version

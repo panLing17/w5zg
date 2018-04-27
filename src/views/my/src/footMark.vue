@@ -14,7 +14,7 @@
             .text
               .price
                 span {{i.price | price-filter}}
-                span(@click.stop="show = true")
+                span(@click.stop="show = true", v-show="false")
                   i
                   i
                   i

@@ -191,8 +191,8 @@
       this.getGoodsDesc()
       this.getBanner()
       this.getSpec()
-      // 防止从订单页回退，skuid并没变化导致的可省金额不变化的问题
-      let sku = this.skuId === '' ? 0 : this.skuId
+      // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
+      if(this.skuId){this.$store.commit('getSkuId','')}
       this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback)
@@ -203,8 +203,10 @@
     },
     watch: {
       skuId (val) {
-        this.getMakeMoney (val)
-        this.getDate(val)
+        if (val) {
+          this.getMakeMoney (val)
+          this.getDate(val)
+        }
       },
       $route () {
         this.getGoodsDetailed()
@@ -344,6 +346,13 @@
         },50)
       },
       shoppingCartAdd () {
+        // 如果没登录，直接跳往登录
+        if (!localStorage.hasOwnProperty('token')) {
+          this.$router.push('/login')
+          this.$message.warning('请先登录')
+          return
+        }
+        //
         this.ofBuy = false
         this.shoppingCartFlag = true
         // 并且，告诉组件，此操作有后续操作
@@ -364,6 +373,12 @@
         }
       },
       buy () {
+        // 如果没登录，直接跳往登录
+        if (!localStorage.hasOwnProperty('token')) {
+          this.$router.push('/login')
+          this.$message.warning('请先登录')
+          return
+        }
         // 关闭购物车flag
         this.shoppingCartFlag = false
         // 此生明，这次选择地址等一系列操作来自购买按钮
@@ -480,7 +495,9 @@
           this.$ajax({
             method: 'post',
             url: self.$apiGoods + 'goods/sku/detail',
-            data: specData
+            params: {
+              gc: JSON.stringify(specData)
+            }
           }).then(function (response) {
             if (response.data.data.storage_num>0) {
               // 传入中转

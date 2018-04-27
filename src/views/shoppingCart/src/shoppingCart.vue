@@ -76,11 +76,22 @@
       // 获取商品数量
       this.getGoodsNum()
       // loading加载
-      let s = 500  // 基础秒数
-      let math = Math.random() * 1000 // 随机秒数
+      let s = 300  // 基础秒数
+      let math = Math.random() * 500 // 随机秒数
       setTimeout(()=>{
         this.loading = false
       },s+math)
+    },
+    watch:{
+      $route () {
+        this.loading = true
+        // loading加载
+        let s = 300  // 基础秒数
+        let math = Math.random() * 500 // 随机秒数
+        setTimeout(()=>{
+          this.loading = false
+        },s+math)
+      }
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
