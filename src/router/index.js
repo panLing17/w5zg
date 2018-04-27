@@ -58,6 +58,10 @@ const router = new Router ({
       name: '忘记密码2',
       component: User.forget2
     }, {
+      path: '/firstPayPassword',
+      name: '首次设置支付密码',
+      component: User.firstPayPassword
+    }, {
       path: '/goodsDetailed',
       name: '商品详情',
       component: Goods.goodsDetailed

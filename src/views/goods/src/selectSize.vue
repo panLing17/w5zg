@@ -104,6 +104,7 @@
       getStoreNum () {
         // 获取选中的规格
         let specData = {
+          'W5MALLTOKEN': localStorage.getItem('token'),
           'cityId': this.$store.state.location.city.id,
           'gspu_id': this.$route.query.id,
           'specList': [
@@ -121,6 +122,10 @@
           url: self.$apiGoods + 'goods/sku/detail',
           data: specData
         }).then(function (response) {
+          // 根据sku切换展示图片
+          let skuGoodsData = self.list[0]
+          skuGoodsData.gi_img_url = response.data.data.logo
+          self.list.splice(0,1,skuGoodsData)
           self.realGoodsData = response.data.data
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)
@@ -172,9 +177,20 @@
       touchMove (e) {
         this.moveY = e.targetTouches[0].clientY
         // 滑动距离超过100 执行样式变换
-        if( this.startY -this.moveY > 70) {
+        if ( this.startY -this.moveY > 70) {
           this.smallPhotoFlag = true
           this.list.splice(1,this.list.length-1)
+        }
+        if (this.moveY - this.startY > 70) {
+          this.smallPhotoFlag = false
+          let obj={};
+          obj=JSON.parse(JSON.stringify(this.photos))
+          obj.forEach((now,index)=>{
+            if (index!==0) {
+              this.list.push(now)
+            }
+          })
+          console.log(obj)
         }
       }
     }
