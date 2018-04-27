@@ -14,7 +14,7 @@
         img(src="../../../assets/img/pricePay.png")
         p
           span.top 账户余额
-          span.bottom 账户余额：2000元
+          span.bottom
         w-checkbox(v-model="type.pricePay")
       li(@click="changeType('aliPay')",  v-if="!wxFlag")
         img(src="../../../assets/img/alipay.png")
@@ -171,7 +171,7 @@
           }).then(function (response) {
             if (response.data.data) {
               self.$message.warning('请设置支付密码')
-              self.$router.push({path:'/my/updatePassword1',query:{routeParams:2}})
+              self.$router.push('/firstPayPassword')
             }
           })
         }
