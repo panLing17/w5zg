@@ -5,27 +5,18 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.replace('/home')")
       .topCenter(slot="center") 万物商城现金券
       .topRight(slot="right")
-    .content
-      .decWrapper
-        .title 万物商城
-        .dec 800大品牌  线上下单 | 专柜提货
-      .imagesWrapper
-        img.z3(src="../../../../../assets/img/three@2x.png")
-        img.z1(src="../../../../../assets/img/one@2x.png")
-        transition(name="fold")
-          .price(v-if="showSuccess")
-            span.wrapper
-              sup ￥
-              strong {{price}}
-      .formWrapper
-        transition(name="scale")
-          .text(v-if="showSuccess")
-            p 恭喜您
-            p 获得 “万物商城” 现金券{{price}}元
-        .form
-          input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
-          .btn(@click="receive") 点击领取
-
+    .content(v-loading="loadingFlag")
+      img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")
+      .form(v-if="!showSuccess")
+        input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
+        .btn(@click="receive") 点击领取
+        .text 万物商城送你现金券，购物更省钱！
+      .successWrapper(v-if="showSuccess")
+        .price {{price}}
+          span 元
+        .goHome(@click="$router.replace('/home')") 进入万物商城首页
+        img.ewm(src="../../../../../assets/img/gzh.jpg")
+        .dec 长按关注“万物商城”公众号
 </template>
 
 <script>
@@ -37,7 +28,8 @@
         isLoginFlag: false,
         showSuccess:false,
         url: '',
-        price: 0
+        price: 0,
+        loadingFlag: false
       }
     },
     created () {
@@ -49,28 +41,27 @@
         this.url = this.$route.query.redirect_url
       },
       receive () {
-        this.showSuccess = true
-        // let _this = this
-        // if (!this.isLoginFlag) {
-        //   let reg = /^1[3|4|5|8|9][0-9]\d{8}$/;
-        //   if (!reg.test(this.phone)) {
-        //     this.$message.error('手机号码格式不正确！');
-        //     return;
-        //   }
-        // }
-        //
-        // if (!this.showSuccess){
-        //   if (this.isLoginFlag && this.phone.length!==11) {
-        //     this.getUserData(function () {
-        //       _this.getTicket();
-        //     })
-        //     return
-        //   }
-        //   this.getTicket();
-        // }else {
-        //   return
-        // }
+        let _this = this
+        if (!this.isLoginFlag) {
+          let reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(17[0-9])|(18[0-9]))\\d{8}$/;
+          if (!reg.test(this.phone)) {
+            this.$message.error('手机号码格式不正确！');
+            return;
+          }
+        }
 
+        if (!this.showSuccess){
+          this.loadingFlag = true
+          if (this.isLoginFlag && this.phone.length!==11) {
+            this.getUserData(function () {
+              _this.getTicket();
+            })
+            return
+          }
+          this.getTicket();
+        }else {
+          return
+        }
       },
       isLogin () {
         if (localStorage.hasOwnProperty('token')) {
@@ -103,12 +94,10 @@
           if (response.data.code === '081') {
             _this.price = response.data.data
             _this.showSuccess = true;
-            _this.$message.warn('5秒后跳往首页')
-            setTimeout(()=>{
-              _this.$router.replace('/home')
-            },5000)
+            _this.loadingFlag = false
           }else {
             _this.$message.error(response.data.msg);
+            _this.loadingFlag = false
           }
         })
       }
@@ -118,7 +107,7 @@
 
 <style scoped>
   input::-webkit-input-placeholder{
-    color:rgb(204,204,204);
+    color:#ccc;
   }
   .receiveTicket {
     position: absolute;
@@ -133,51 +122,21 @@
     text-align: center;
     display: flex;
     flex-direction: column;
-  }
-  .decWrapper {
-    flex: none;
-  }
-  .title {
-    margin-top: 1.33rem;
-    font-size: .64rem;
-    color: rgb(51,51,51);
-  }
-  .dec {
-    font-size: .42rem;
-    color: rgb(102,102,102);
-    margin-top: .34rem;
+    position: relative;
   }
   .bg {
-    width: 100%;
-    height: 4.45rem;
-    position: relative;
-    z-index: 150;
-  }
-  .formWrapper {
-    background:rgb(231,55,62);
-    flex: 1;
-    position: relative;
-    z-index: 200;
-  }
-  .text {
     position: absolute;
+    width: 100%;
+    height: 100%;
     top: 0;
     left: 0;
-    color: #fff;
-    font-size: .43rem;
-    line-height: 1.5;
-    width: 100%;
-    text-align: center;
-    transform: scale(1.3);
-  }
-  .scale-enter-active, .scale-leave-active {
-    transition: all 1s;
-  }
-  .scale-enter, .scale-leave-to {
-    transform: scale(0);
   }
   .form {
-    margin-top: 2rem;
+    position: absolute;
+    top: 10rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 150;
   }
   .form input, .form .btn {
     width: 7.45rem;
@@ -193,69 +152,64 @@
     text-align: center;
     color: rgb(51,51,51);
     font-size: .43rem;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
   }
   .form .btn {
     margin: .4rem auto 0;
-    background: rgb(255,147,30);
-    color: #fff;
+    background: #fecb37;
+    color: #c72d26;
     font-size: .43rem;
     line-height: 1rem;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
   }
-  .z1, .z3 {
-    width: 100%;
+  .text {
+    font-size: .4rem;
+    color: #fff;
+    margin-top: .58rem;
   }
-  .z3 {
+  .successWrapper {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 200;
-  }
-  .z1 {
-    position: absolute;
-    left: 0;
-    bottom: -1rem;
-    z-index: 100
-  }
-  .price {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 150;
     width: 100%;
     height: 100%;
-    background: url("../../../../../assets/img/two@2x.png") no-repeat top left;
-    background-size: 100%;
-    transform: translate3d(0,0,0);
+    top: 0;
+    left: 0;
+    z-index: 150;
   }
-  .price.fold-enter-active, .price.fold-leave-active {
-    transition: all 0.5s;
-  }
-  .price.fold-enter, .price.fold-leave-to {
-    transform: translate3d(0,100%,0);
-  }
-  .price .wrapper {
-    display: inline-block;
+  .price {
+    margin-top:5rem;
     width: 100%;
     text-align: center;
-    position: absolute;
-    bottom: .8rem;
-    left: 0;
-    font-size: 1rem;
-    color: rgb(231,55,62);
-    font-weight: 900;
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #c72d26;
+    letter-spacing: -.2rem;
+    transform: scale(1, 1.2);
   }
-  .wrapper strong {
-    font-size: 1.78rem;
+  .price span {
+    font-size: .7rem;
+    margin-left: .1rem;
   }
-  .wrapper sup {
-    position: relative;
-    top: -.2rem;
+  .goHome {
+    margin: 1.5rem auto 0;
+    width: 7.7rem;
+    height: 1.2rem;
+    background: #f2f2f2;
+    color: #7e7e7e;
+    border-radius: 1rem;
+    line-height: 1.2rem;
+    text-align: center;
+    font-size: .4rem;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
   }
-  .imagesWrapper {
-    flex: none;
-    height: 5.5rem;
-    position: relative;
-    overflow: hidden;
+  .ewm {
+    width: 3.2rem;
+    height: 3.2rem;
+    margin-top: .5rem;
+    pointer-events: auto;
   }
-
+  .dec {
+    margin-top: .1rem;
+    font-size:.4rem;
+    color: #fff;
+  }
 </style>
