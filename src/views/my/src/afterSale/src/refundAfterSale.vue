@@ -374,6 +374,6 @@
     transition: all 0.5s;
   }
   img {
-    pointer-events: none !important;
+    pointer-events: none ;
   }
 </style>

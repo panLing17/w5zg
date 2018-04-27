@@ -371,6 +371,6 @@
     right: .5rem;
   }
   img {
-    pointer-events: none !important;
+    pointer-events: none;
   }
 </style>

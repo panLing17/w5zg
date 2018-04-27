@@ -9,9 +9,9 @@
       .content
         .successContent(v-if="type==0")
           .infoWrapper
-            .price ￥200.00
+            .price ￥{{price}}
             .dec 支付成功
-            .git 获得￥200.00元现金券
+            <!--.git 获得￥200.00元现金券-->
             .btnWrapper
               .left(@click="$router.push('/home')") 返回首页
               .right() 查看订单
@@ -31,14 +31,26 @@
     name: "paymentResults",
     data () {
       return {
+        recommendGoods: [],
         type: 0,
-        recommendGoods: []
+        price: 0
       }
     },
+   created () {
+      this.getData()
+   },
     mounted () {
       this.$mescrollInt("mescroll",this.upCallback);
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy();
+    },
     methods: {
+      getData () {
+        this.type = this.$route.query.type
+        this.price = this.$route.query.price
+      },
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {

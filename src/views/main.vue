@@ -110,7 +110,5 @@
   .checked {
     color: rgb(245,0,87);
   }
-  img {
-    pointer-events: none;
-  }
+
 </style>

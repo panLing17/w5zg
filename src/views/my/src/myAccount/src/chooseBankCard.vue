@@ -255,6 +255,6 @@
     line-height: 2.4rem;
   }
   img {
-    pointer-events: none !important;
+    pointer-events: none;
   }
 </style>
