@@ -10,7 +10,7 @@ module.exports = {
   GOODS_PREFIEX: '"debug.goods"',
   TRADING_PREFIEX: '"debug.trading"',
   APP_PREFIEX: '"debug.app"',
-  IMG_URL: '"http://w5zg-mall-test.oss-cn-hangzhou.aliyuncs.com/"',
+  IMG_URL: '"http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/"',
   // IMG_URL: '"http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/"',
   // MEMBER_PREFIEX: '"member"',
   // GOODS_PREFIEX: '"goods"',

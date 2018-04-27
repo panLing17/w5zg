@@ -169,6 +169,7 @@
             storeName: now.store_name,
             photo: now.logo,
             cartId: now.sc_id,
+            freight:now.sku_freight,
             storeLocation: {
               province: {
                 name: now.pro_Name,
