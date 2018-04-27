@@ -77,23 +77,25 @@
         // 是否禁用switch
         switchFlag: false,
         // 提交订单flag，防止用户多次点击
-        submitFlag: true
+        submitFlag: true,
+        // 当前所有总运费
+        allFreight: 0
       }
     },
     computed:{
       computedPriceText () {
         if (this.netCardFlag && this.commonTicketFlag) {
-          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard)
+          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard) + this.allFreight
         } else if (this.commonTicketFlag) {
-          return this.price - this.netAndCommitCard.commTicket
+          return this.price - this.netAndCommitCard.commTicket + this.allFreight
         }
         else if (this.netCardFlag) {
-          return this.price - this.netAndCommitCard.netCard
+          return this.price - this.netAndCommitCard.netCard + this.allFreight
         }
         else if (this.commonTicketFlag) {
-          return this.price - this.netAndCommitCard.commTicket
+          return this.price - this.netAndCommitCard.commTicket + this.allFreight
         } else {
-          return this.price
+          return this.price + this.allFreight
         }
       },
       ...mapState(['transfer','giveGoodsAddress'])
@@ -102,12 +104,26 @@
     mounted () {
       this.getLocation()
       this.computedPrice()
+      this.computedFreight()
       // 如果用户不是b请求计算通用券与抵用金额
       if (this.$store.state.userData.member_type !== '092') {
         this.getVoucher()
       }
     },
     methods:{
+      // 计算总邮费
+      computedFreight () {
+        let allFreight = 0
+        this.$store.state.transfer.forEach((now)=>{
+          allFreight += now.freight
+        })
+        if (this.$route.query.since === 'false') {
+          this.allFreight = allFreight
+        } else {
+          this.allFreight = 0
+        }
+
+      },
       submit () {
         if (this.submitFlag) {
           // 先判断是购物车提交还是直接购买，再判断是自提订单还是配送订单

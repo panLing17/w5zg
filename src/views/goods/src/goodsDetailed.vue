@@ -192,8 +192,10 @@
       this.getBanner()
       this.getSpec()
       // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
-      if(this.skuId){this.$store.commit('getSkuId','')}
-      this.getMakeMoney(sku)
+      if(this.skuId){
+        this.$store.commit('getSkuId','')
+      }
+      // this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback)
     },

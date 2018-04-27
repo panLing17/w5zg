@@ -75,9 +75,11 @@
     padding: 0 10px;
     width: 100%;
     border-bottom: solid 1px #eee;
+    font-size: .35rem;
   }
   .tips {
     padding: 0 10px;
+    font-size: .35rem;
   }
   .bottom {
     padding: 5px 10px;
@@ -91,6 +93,7 @@
     line-height: 20px;
     background: rgb(245,0,87);
     color: white;
+    font-size: .35rem;
   }
   .no {
     width: 50px;
@@ -98,5 +101,6 @@
     height: 20px;
     line-height: 20px;
     background: #ddd;
+    font-size: .35rem;
   }
 </style>
