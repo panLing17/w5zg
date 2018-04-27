@@ -528,6 +528,12 @@
   }
   .text{
     margin: .1rem;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    word-break: break-all;
   }
   .text span{
     font-size: .3rem;
