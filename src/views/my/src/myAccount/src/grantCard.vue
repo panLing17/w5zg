@@ -1,8 +1,8 @@
 <template lang="pug">
   .grantCardBox
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 发放现金券
       .topRight(slot="right")
     .formBox
@@ -127,4 +127,7 @@
   line-height: 1.3rem;
   color: #fff;
 }
+  img {
+    pointer-events: none;
+  }
 </style>

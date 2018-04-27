@@ -152,4 +152,7 @@
     padding-left: 1rem;
     outline: none;
   }
+  img {
+    pointer-events: auto !important;
+  }
 </style>

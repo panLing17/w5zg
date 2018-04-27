@@ -1,8 +1,8 @@
 <template lang="pug">
   .withdrawals
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 提现
       .topRight(slot="right")
     .content
@@ -238,5 +238,8 @@
     font-size: .4rem;
     color: #fff;
     margin: 1.6rem auto 0;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

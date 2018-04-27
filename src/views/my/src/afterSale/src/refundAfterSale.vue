@@ -1,8 +1,8 @@
 <template lang="pug">
   .refundAfterSale
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 退款/售后
       .topRight(slot="right")
         <!--img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search-->
@@ -372,5 +372,8 @@
     position: absolute;
     bottom: 0;
     transition: all 0.5s;
+  }
+  img {
+    pointer-events: none !important;
   }
 </style>

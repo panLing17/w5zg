@@ -198,4 +198,7 @@
   .nodata img {
     width: 2.6rem;
   }
+  img {
+    pointer-events: none;
+  }
 </style>

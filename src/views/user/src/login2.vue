@@ -1,8 +1,8 @@
 <template lang="pug">
   .phoneLogin
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 验证码登录
       .topRight(slot="right")
     .content
@@ -143,5 +143,8 @@
     line-height: 1rem;
     background: rgb(245,0,87);
     border-radius: .6rem;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

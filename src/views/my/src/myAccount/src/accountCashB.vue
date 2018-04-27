@@ -1,8 +1,8 @@
 <template lang="pug">
   div.accountCardBox
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 现金券
       .topRight(slot="right")
         p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="$router.push('/my/cashDetailB')") 明细
@@ -87,5 +87,8 @@
     box-sizing: border-box;
     background: url("../../../../../assets/img/more@2x.png") no-repeat center right .2rem #fff;
     background-size: .25rem auto;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

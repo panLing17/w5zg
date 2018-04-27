@@ -1,8 +1,8 @@
 <template lang="pug">
     .cashDetail
       nav-bar(background="white")
-        .topLeft(slot="left")
-          img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        .topLeft(slot="left", @click="$router.go(-1)")
+          img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
         .topCenter(slot="center") 现金券明细
         .topRight(slot="right")
           p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="openFilter") 筛选
@@ -250,5 +250,8 @@
     text-align: center;
     color: rgb(153,153,153);
     font-size: .4rem;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

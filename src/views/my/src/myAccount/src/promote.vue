@@ -1,8 +1,8 @@
 <template lang="pug">
   .promote
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 申请商户资质
       .topRight(slot="right")
     .headerBox
@@ -182,5 +182,8 @@
     text-align: center;
     color: #fff;
     font-size: .4rem;
+  }
+  img {
+    pointer-events: none;
   }
 </style>

@@ -1,8 +1,8 @@
 <template lang="pug">
   .applyAfterSale
     nav-bar
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 申请售后
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
@@ -169,4 +169,7 @@
     font-size: .4rem;
   }
   /*下一步--结束*/
+  img {
+    pointer-events: none !important;
+  }
 </style>

@@ -1,8 +1,8 @@
 <template lang="pug">
   .addBankConfirm
     nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 添加银行卡
       .topRight(slot="right")
     .content
@@ -113,5 +113,7 @@
     text-align: center;
     border-radius: .53rem;
   }
-
+  img {
+    pointer-events: none;
+  }
 </style>
