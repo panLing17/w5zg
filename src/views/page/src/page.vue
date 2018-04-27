@@ -1,5 +1,5 @@
 <template lang="pug">
-  .page
+  .page(v-loading="loadingFlag < 2")
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/location.png")
@@ -37,7 +37,8 @@
         num:0,
         cityName:this.$route.query.routeParams,
         pageName:[],
-        productList:[]
+        productList:[],
+        loadingFlag:0
       }
     },
     mounted(){
@@ -89,6 +90,7 @@
           params:{firstId:id}
         }).then(function(res){
           self.productList = res.data.data;
+          self.loadingFlag += 1
         })
       },
       //点击左侧一级分类切换右边二三级
@@ -123,6 +125,7 @@
           self.pageName = res.data.data;
           self.goodsName = res.data.data[0].gc_id;
           self.one(res.data.data[0].gc_id);
+          self.loadingFlag += 1
         });
       }
     }
