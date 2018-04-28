@@ -88,6 +88,8 @@
       }
     },
     mounted(){
+      //进入页面时加载
+      this.request();
       //根据判断是哪个页面传过来的关键字
       //this.keywordsSearch();
       //上拉加载
@@ -96,8 +98,6 @@
       //this.exhibition();
       //让页面加载时将搜索的文字拼到url上
       //this.onload();
-      //进入页面时加载
-      // this.request();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -319,9 +319,9 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
-          if(response.data.data.length<=0){
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
-          } else {
+          // if(response.data.data.length<=0){
+          //   self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
+          // } else {
             for (var i = 0; i < response.data.data.length; i++) {
               if (response.data.data[i].carry_type == 1) {
                 response.data.data[i].carryFlag = true;
@@ -331,7 +331,7 @@
               }
             }
             successCallback&&successCallback(response.data.data);//成功回调
-          }
+          // }
 
         })
 
@@ -349,7 +349,7 @@
           url:self.$apiGoods + "goodsSearch/spus",
           params:{
             page: 1, //页码
-            rows: 4, //每页长度
+            rows: 6, //每页长度
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
             endPrice: self.maxPrice, //结束价格区间

@@ -69,9 +69,6 @@
         // 判断数据是否为空
         isEmpty () {
           if (this.orderDetail == null || this.orderDetail.length === 0) {
-            this.$nextTick(()=> {
-              this.mescroll.hideUpScroll();
-            })
             return true;  
           }else {
             return false;

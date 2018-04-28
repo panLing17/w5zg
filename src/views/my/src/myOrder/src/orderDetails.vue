@@ -117,6 +117,7 @@
       name: "orderDetails",
       data(){
         return{
+          pickUpNums:"", //提货码
           whiteBarFlag:true, //最下方的白条的显隐
           pickUpNoFlag:"", //提货码的显隐
           freight:"", //运费
@@ -584,7 +585,7 @@
           }
           //没有
           if (e.target.innerHTML == "提醒发货") {
-            alert("逗你玩！")
+            alert("逗你玩！");
           }
           //点击弹出一个框显示提货码
           if (e.target.innerHTML == "提货码") {
