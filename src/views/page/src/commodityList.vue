@@ -441,7 +441,7 @@
   /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
   .content{
-    overflow: hidden;
+    
   }
   ul.wrap{
     display: flex;
