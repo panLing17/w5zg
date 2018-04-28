@@ -10,9 +10,9 @@
     .orderStatus
       ul.wrapStatus
         li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
-        .lineDiv    
+        .lineDiv
     .orderManage.mescroll#orderManageMescroll
-      .wrapContent    
+      .wrapContent
         .content(v-for="(item,index) in orderDetail")
           .top
             .left
@@ -44,7 +44,7 @@
             .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
             .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .noData(v-if="isEmpty")
-        img(src="../../../../../assets/img/emptyOrder.png")    
+        img(src="../../../../../assets/img/emptyOrder.png")
 </template>
 
 <script>
@@ -69,10 +69,7 @@
         // 判断数据是否为空
         isEmpty () {
           if (this.orderDetail == null || this.orderDetail.length === 0) {
-            this.$nextTick(()=> {
-              this.mescroll.hideUpScroll();
-            })
-            return true;  
+            return true;
           }else {
             return false;
           }
@@ -87,7 +84,7 @@
         this.keepStatus();
         this.$mescrollInt("orderManageMescroll",this.upCallback);
         //this.request();
-        
+
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
@@ -141,7 +138,7 @@
             lineDiv.style.left = "83.5%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
-          
+
           this.request();
         },
         //保持状态判断
@@ -176,14 +173,14 @@
             } else{
               this.num = this.$route.query.nums;
             }
-            
+
             this.state = this.$route.query.states;
             var lineDiv = document.getElementsByClassName("lineDiv")[0];
             lineDiv.style.left = this.$route.query.lefts;
             console.log(this.state);
           }
-          
-          this.request(); 
+
+          this.request();
         },
         //判断两个按钮上的文字
         buttonLeft(e,id){
@@ -209,7 +206,7 @@
                 //alert('取消')
               }
             })
-            
+
           }
           if (e.target.innerText == "删除订单") {
             this.$confirm({
