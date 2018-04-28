@@ -14,13 +14,14 @@
             <!--.git 获得￥200.00元现金券-->
             .btnWrapper
               .left(@click="$router.push('/home')") 返回首页
-              .right() 查看订单
+              <!--.right() 查看订单-->
         .errorContent(v-if="type==1")
           img.icon(src="../../../assets/img/图层15@2x.png")
           .dec 支付失败
           .btnWrapper
             .left(@click="$router.push('/home')") 返回首页
             .right(@click="$router.push('/my/orderManage')") 订单中心
+        img.ewm(src="../../../assets/img/gzh.jpg")
         .recommendWrapper
           .recommendTitle 推荐
           w-recommend(:listData="recommendGoods")
@@ -188,5 +189,11 @@
   .recommendTitle:after {
     right: 20%
   }
-
+  .ewm {
+    width: 30%;
+    margin-top: .26rem;
+  }
+  .content {
+    text-align: center;
+  }
 </style>

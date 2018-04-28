@@ -4,7 +4,7 @@
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 随机发放现金券
-      .topRight(slot="right", @click="shareShow=true") 分享
+      <!--.topRight(slot="right", @click="shareShow=true") 分享-->
     transition(name="fade")
       .mask(@click="shareShow=false", v-show="shareShow")
     transition(name="fold")
@@ -132,7 +132,7 @@
   }
   .content {
     height: calc(100vh - 1.3rem);
-    background: url("../../../../../assets/img/bottom@2x.png") no-repeat top left;
+    background: url("../../../../../assets/img/bottom@2x.png") no-repeat top left #303890;
     background-size: 100% 100%;
     position: relative;
   }
