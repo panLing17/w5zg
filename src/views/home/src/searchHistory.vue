@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus")
+          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()")
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
@@ -31,8 +31,7 @@
             span.strong 此类
             span 商品，及相关商品    
       .title
-        .line
-        p 推荐
+        img(src="../../../assets/img/recommend.png")
       w-recommend#dataId(:listData="recommendGoods")
       .bottomPlaceholder       
 </template>
@@ -77,6 +76,9 @@
       this.resultShow();
       //输入框自动聚焦
       this.inputFocus();
+
+      console.log(this.$route.query.messages);
+      console.log(this.$route.query.relNum);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -138,6 +140,8 @@
 
       handFocus () {
         this.$emit('focus', this.msg);
+        this.searchFlag = true;
+        this.resultFlag = false;
       },
 
       //清除历史搜索记录
@@ -338,15 +342,8 @@
   justify-content: center;
   align-items: center;
 }
-.line{
-  height: 1px;
-  width: 3rem;
-  background: #999;
-}
-.title p{
-  position: absolute;
-  background: #f2f2f2;
-  padding: 0 .2rem;
+.title img{
+  width: 55%;
 }
 .bottomPlaceholder {
   height: 1.5rem;
