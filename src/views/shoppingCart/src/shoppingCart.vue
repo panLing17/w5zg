@@ -20,8 +20,7 @@
         transition(name="fade", mode="out-in")
           router-view(style="min-height:calc(100vh - 6rem)")
         .title
-          .line
-          p 推荐
+          img(src="../../../assets/img/recommend.png")
         w-recommend(:listData="recommendGoods", background="white")
     div
       .settlement
@@ -296,15 +295,8 @@
     justify-content: center;
     align-items: center;
   }
-  .line{
-    height: 1px;
-    width: 3rem;
-    background: #999;
-  }
-  .title p{
-    position: absolute;
-    background: #f2f2f2 ;
-    padding: 0 .2rem;
+  .title img{
+    width: 55%;
   }
   /* 提交部分 */
   .settlement {

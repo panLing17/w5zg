@@ -7,14 +7,16 @@
       .topCenter(slot="center")
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()").leftImg
-          input(:type="type",placeholder="请输入商品名称" @keyup.enter="searchGoods()" @focus="jump") 
+          input(:type="type",placeholder="请输入商品名称" @keyup.enter="searchGoods()" @focus="jump")
           img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
-        div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")
-          img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")
+      .banner
+        carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
+          div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")
+            img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")
+        .shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
       <!--img.title1(src="../../../assets/img/louceng1.png")-->
@@ -439,5 +441,24 @@
     to {
       opacity: 1
     }
+  }
+  /* banner与底部扇形 */
+  .banner {
+    height: 4.2rem;
+    overflow: hidden;
+  }
+  .shanxing{
+    width:0;
+    height:0;
+    border-radius:5rem;
+    border-width:5rem;
+    border-style:solid;
+    border-color:white transparent transparent transparent;
+    overflow:hidden;
+    cursor:pointer;
+    margin: auto;
+    transform: scale(4,2);
+    position: relative;
+    top: calc(100% + 15px);
   }
 </style>
