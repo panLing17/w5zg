@@ -34,7 +34,7 @@
         .bottomList
           ul.goodsList#box
             li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
-              img(:src="item.gi_image_url | img-filter")
+              img(:src="item.gi_image_url | img-filter" @click.prevent="")
               .wrapWords
                 .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
                 .price {{item.price | price-filter}}
