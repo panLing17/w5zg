@@ -15,8 +15,8 @@
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
       .goodsInfo
         .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
-        a(href="tel:4008-947-999")
-          .stateChuiNiu
+        <!--a(href="tel:4008-947-999")-->
+          .stateChuiNiu(@click="saveMoneyTipsFlag = true")
             span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
             img(src="../../../assets/img/pinkNext.png")
         .price(v-if="userData.member_type === '092'")
@@ -27,7 +27,7 @@
           span 专柜价
           p {{goodsData.counter_interval | price-filter}}
           .salePrice 统一零售价：{{goodsData.retail_interval}}
-        ul.saveMoney(v-if="userData.member_type !== '092'")
+        ul.saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag = true")
           li.red
             .label 现金券
             .text 省{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}元
@@ -101,6 +101,8 @@
       city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
       share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
       onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
+      card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
+      saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
 
@@ -111,6 +113,8 @@
   import storeSelect from './storeSelect'
   import shareSelect from './shareSelect'
   import onlyStoreSelect from './onlyStoreSelect'
+  import cardTips from './cardTips'
+  import saveMoneyTips from './saveMoneyTips'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
 
@@ -153,6 +157,10 @@
         maxStoreNum: '',
         // 根据此属性判断，选择地址等一系列是否来自立即购买按钮
         ofBuy: false,
+        // 卡券介绍
+        cardTipsFlag: false,
+        // 省钱介绍
+        saveMoneyTipsFlag: false,
         onlySelectSpec: true,
         recommendGoods: [
           {
@@ -185,15 +193,17 @@
       },*/
       ...mapState(['location', 'userData','skuId'])
     },
-    components: {selectSize,citySelect,disType,storeSelect,shareSelect,onlyStoreSelect},
+    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips},
     mounted () {
       this.getGoodsDetailed()
       this.getGoodsDesc()
       this.getBanner()
       this.getSpec()
       // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
-      if(this.skuId){this.$store.commit('getSkuId','')}
-      this.getMakeMoney(sku)
+      if(this.skuId){
+        this.$store.commit('getSkuId','')
+      }
+      // this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback)
     },
@@ -624,13 +634,13 @@
       tips (type) {
         switch (type){
           case 0:
-            this.$alert('专柜提货','去专柜提货,随去随拿')
+            this.$alert('专柜提货','平台支持平台下单，专柜自提，如您需要自提请在配送页选择自提，在收到备货完成的短信提醒后至指定专柜自提。')
             break
           case 1:
-            this.$alert('专柜比价','跟专柜比价格，不便宜你打我')
+            this.$alert('专柜比价','平台比品牌专柜折后价，再便宜30-70%，建议您比较后再购买。')
             break
           case 2:
-            this.$alert('专柜体验','去专柜体验，假不假试了就知道')
+            this.$alert('专柜体验','平台所售商品专柜商品完全一致，建议您在专柜体验（试穿）后再购买。')
             break
         }
 

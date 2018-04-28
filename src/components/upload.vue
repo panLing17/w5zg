@@ -48,7 +48,7 @@
     methods:{
       uploadPhoto (e,index) {
         // 校验格式，格式不对直接跳出
-        let type = e.target.files[0].name.split('.')[1]
+        let type = e.target.files[0].name.substr(e.target.files[0].name.lastIndexOf('.')+1)
         type = type.toLowerCase()
         if (this.type.indexOf(type) === -1) {
           this.$message.error('上传图片格式不支持！')
@@ -61,9 +61,7 @@
           this.photoCompress(fileObj, {
             quality: 0.5
           }, function(base64Codes){
-            console.log(base64Codes)
             let temp = _this.dataURLtoFile(base64Codes, e.target.files[0].name)
-            console.log(temp.size)
             _this.upload(temp, index)
           });
         }else{ //小于等于1M 原图上传
