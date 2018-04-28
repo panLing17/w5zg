@@ -319,7 +319,7 @@
           vcode: '',
           type: '1'
         },
-        agreementShow:true
+        agreementShow:false
       }
     },
     mounted () {

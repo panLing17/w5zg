@@ -42,25 +42,27 @@
           li 邮费{{goodsData.goi_freight}}
           li 库存{{goodsData.storage_num}}
           li 已售{{goodsData.gi_salenum}}
-      ul.card(v-if="userData !== '' && userData.member_type !== '092'")
-        li
-          .cartType
-            .my 我的
-            .name 现金券
-          .cartPrice
-            .price {{userData.netcard_balance | price-filter}}
-            .name 余额
-          .leftRadio
-          .righttRadio
-        li
-          .cartType
-            .my 我的
-            .name 通用券
-          .cartPrice
-            .price {{userData.cash_balance | price-filter}}
-            .name 余额
-          .leftRadio
-          .righttRadio
+      .cardBox(style="position:relative")
+        ul.card(v-if="userData !== '' && userData.member_type !== '092'")
+          li(@click="$router.push('/my/accountCardC')")
+            .cartType
+              .my 我的
+              .name 现金券
+            .cartPrice
+              .price {{userData.netcard_balance | price-filter}}
+              .name 余额
+            .leftRadio
+            .righttRadio
+          li(@click="$router.push('/my/accountUniversalC')")
+            .cartType
+              .my 我的
+              .name 通用券
+            .cartPrice
+              .price {{userData.cash_balance | price-filter}}
+              .name 余额
+            .leftRadio
+            .righttRadio
+        img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .size(@click="onlySelectSpecFun")
         .left 规格
           span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
@@ -765,9 +767,8 @@
   /* 卡片部分 */
   .card{
     margin-top: .2rem;
-    padding: 0 .5rem;
+    padding: 0 .2rem;
     display: flex;
-    justify-content: space-between;
   }
   .card li{
     position: relative;
@@ -777,6 +778,9 @@
     border: none;
     border-radius: .1rem;
     display: flex;
+  }
+  .card li:last-child{
+    margin-left: .4rem;
   }
   .card li>.cartType {
     background-color: rgb(244,0,87);
