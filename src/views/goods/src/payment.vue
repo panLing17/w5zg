@@ -82,7 +82,7 @@
       mounted () {
         this.priceZero()
         // 判断用户有无支付密码
-        this.havePayPwd()
+        // this.havePayPwd()
       },
       methods: {
         changeType (n) {
@@ -157,6 +157,7 @@
           }).then(function (response) {
             if (response.data.data) {
               self.priceShow = true
+              self.havePayPwd()
             }
           })
         },

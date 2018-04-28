@@ -24,8 +24,8 @@
 
 <style scoped>
   .alertBox {
-    height: 100vh;
-    width: 100vh;
+    height: 100%;
+    width: 100%;
   }
   .alertBox .bg {
     width: 100vh;
@@ -34,6 +34,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 21;
   }
   .alertBox .main {
     position: fixed;
@@ -44,16 +45,20 @@
     margin-left: -3.5rem;
     top: 50%;
     left: 50%;
+    padding: 0 .3rem;
+    z-index: 22;
   }
   .main .title {
-    height: .6rem;
-    background-color: rgb(255,128,171);
+    color: #000;
+    font-size: .35rem;
+    font-weight: 600;
+    height: 1rem;
     display: flex;
     align-items: center;
-    padding-left: .2rem;
-    color: white;
+    border-bottom: solid 1px #ddd;
   }
   .main p {
-    padding: .2rem;
+    padding: .2rem 0;
+    color: #666;
   }
 </style>

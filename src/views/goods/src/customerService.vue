@@ -55,6 +55,10 @@
 </script>
 
 <style scoped>
+  .serviceBox {
+    width: 100%;
+    position: relative;
+  }
   .ifra {
     width: 100%;
     height: calc(100vh + 48px);
