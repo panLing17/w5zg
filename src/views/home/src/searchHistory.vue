@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()")
+          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus" v-focus)
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
@@ -55,6 +55,13 @@
         msg:this.$route.query.messages
       }
     },
+    directives:{
+      focus:{
+        inserted:function(el){
+          el.focus()
+        }
+      }
+    },
     props: {
       type: {
         type: String,
@@ -74,26 +81,12 @@
       this.searchDiscover();
       //显示搜索结果
       this.resultShow();
-      //输入框自动聚焦
-      this.inputFocus();
-
-      console.log(this.$route.query.messages);
-      console.log(this.$route.query.relNum);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
     },
     methods: {
-      //输入框自动聚焦
-      inputFocus(){
-        console.log(this.$route.query.changeFocus == true);
-        if (this.$route.query.changeFocus == true) {
-          var oInput = document.getElementsByTagName("input")[0];
-          console.log(oInput);
-          oInput.focus();
-        }
-      },
       //判断回退事件
       backRouter(){
         // if (this.$route.query.relNum == 1) {
