@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center") {{$route.query.title}}
+      .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
     .mescroll#sportsMescroll
       .content
@@ -116,9 +116,9 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
+            if (response.data.code === '081') {
               successCallback&&successCallback(response.data.data.rows);//成功回调
-            }else {
+            } else {
               self.mescroll.endErr();
             }
           })

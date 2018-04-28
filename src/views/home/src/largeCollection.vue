@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="color: rgb(245,0,87);") {{$route.query.title}}
+      .topCenter(slot="center", style="color: rgb(245,0,87);width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
     .content(v-if="!isEmpty")
       ul.list
