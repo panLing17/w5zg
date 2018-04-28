@@ -451,8 +451,9 @@
     padding: 0 .3rem;
     background-color: #fff;
     position: fixed;
-    top: 1.3rem;
+    top: 1.29rem;
     z-index: 101;
+    border-top: 1px solid #f2f2f2;
   }
   ul.wrap li{
     font-size: .4rem;
