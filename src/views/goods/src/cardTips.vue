@@ -14,7 +14,7 @@
             li
               p <span>现金券购买:</span>节省金额为该产品可使用现金券的最高额度。
             li
-              p <span>现金购买:</span>节省金额为此产品以专柜价现金购买时，可返还顾客的通用券金额。
+              p <span>直购:</span>节省金额为此产品以专柜价现金购买时，可返还顾客的通用券金额。
             li
               p <span>通用券购买:</span>节省金额为该产品可使用通用券的所有额度。
 </template>
@@ -123,11 +123,12 @@
   }
   .text li span{
     margin-right: .2rem;
-    color: #666;
+    color: #555;
     font-size: .3rem;
   }
   .text li p{
     color: #999;
     font-size: .3rem;
+    line-height: .5rem;
   }
 </style>

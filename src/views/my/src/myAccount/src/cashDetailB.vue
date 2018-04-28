@@ -50,9 +50,6 @@
         // 判断数据是否为空
         isEmpty () {
           if (this.cashDetail == null || this.cashDetail.length === 0) {
-            this.$nextTick(()=> {
-              this.mescroll.hideUpScroll();
-            })
             return true;
           }else {
             return false;
@@ -111,8 +108,9 @@
           this.filterActive = index;
           this.filterShow = false;
           this.cashDetail = []
-          this.mescroll.resetUpScroll( true )
           this.mescroll.scrollTo( 0, 300 );
+          this.mescroll.destroy();
+          this.$mescrollInt("mescroll",this.upCallback);
         },
         openFilter () {
           this.filterShow = true;
