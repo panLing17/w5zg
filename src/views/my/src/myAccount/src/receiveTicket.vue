@@ -204,7 +204,7 @@
     width: 100%;
     height: 50%;
     position: relative;
-    background: url("../../../../../assets/img/issue2@3x(1).png") no-repeat top left;
+    background: url("../../../../../assets/img/issue2@3x.png") no-repeat top left;
     background-size: 100% 100%;
 
   }
