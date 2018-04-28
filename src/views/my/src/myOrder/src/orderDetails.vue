@@ -55,7 +55,7 @@
         .pickUpNum(v-show="pickUpNoFlag")
           .alertFrame
             .topDiv 提货码
-            .contDiv {{item.pick_up_no}}
+            .contDiv {{pickUpNums}}
             .bottomDiv(@click="pickUpNoFinish()") 完成
         .bottom(v-show="flag")
           p
@@ -590,6 +590,7 @@
           //点击弹出一个框显示提货码
           if (e.target.innerHTML == "提货码") {
             this.pickUpNoFlag = true;
+            this.pickUpNums = item.pick_up_no;
             var orderDetails = document.getElementsByClassName("orderDetails")[0];
             orderDetails.style.overflow = "hidden";
           }
@@ -1056,7 +1057,7 @@
   }
   .pickUpNum .alertFrame .bottomDiv{
     font-size: .4rem;
-    border-top: 1px solid rgb(180,180,180);
+    border-top: 1px solid #f2f2f2;
     text-align: center;
     color: rgb(244,0,87);
     line-height: .8rem;
