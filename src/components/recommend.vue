@@ -57,7 +57,7 @@
 
   .text {
     margin: 4.2rem .1rem .1rem;
-    height: .86rem;
+    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;

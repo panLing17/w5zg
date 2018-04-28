@@ -53,8 +53,7 @@
             .cancel(@click="buttonLeft($event,item.total_order_id)" v-show=" item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款' && item.buttonL !== '取消申请'") {{item.buttonL}}
             .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .title(v-show="recommendFlag")
-        .line
-        p 推荐
+        img(src="../../../../../assets/img/recommend.png")
       w-recommend#dataId(:listData="recommendGoods" v-show="recommendFlag")
       .bottomPlaceholder(v-show="recommendFlag")        
 </template>
@@ -710,14 +709,7 @@
   align-items: center;
   margin-top: .3rem;
 }
-.line{
-  height: 1px;
-  width: 3rem;
-  background: #999;
-}
-.title p{
-  position: absolute;
-  background: #f2f2f2 ;
-  padding: 0 .2rem;
+.title img{
+  width: 55%;
 }
 </style>

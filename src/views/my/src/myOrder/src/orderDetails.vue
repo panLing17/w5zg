@@ -1,112 +1,112 @@
 <template lang="pug">
-  .orderDetails.mescroll#orderMescroll
+  .wrapNav
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
-    .topStatus(v-if="false") {{countDowns}}
-    .goodsReceipt(v-if="deliveryFlag")
-      .consignee
-        img(src="../../../../../assets/img/citySearch@2x.png")
-        .addressee
-          span.man 收件人:
-            strong {{recipients}}
-          span.phone {{phone}}
-      .address
-        span 收货地址:
-        strong {{address}}
-    .pickUpGoods(v-else="deliveryFlag")
-      .consignee
-        img(src="../../../../../assets/img/citySearch@2x.png")
-        .addressee
-          span.man 提货人:
-            strong {{recipients}}
-          span.phone {{phone}}
-    .content(v-for="(item,index) in orderDetails")
-      .top
-        .left
-          span.orderNum 订单编号:
-          span.num {{item.order_no}}
-        .right
-          span.orderStatus {{item.orderInfoStatus}}
-      .center(v-for="items in item.orderDetail")
-        .wrapGoods
-          .image
-            img(:src="items.logo | img-filter")
-          .goodsDetails
-            .words {{items.goods_name}}
-            .wrapAttr
-              .left
-                .property(v-for="skus in items.spec_json")
-                  span.color {{skus.gspec_value}}
-                  span.size(v-if="false") {{skus.gspec_value}}
-                .amount 
-                  span.nums x{{items.goods_num}}
-              .right
-                .price {{items.sale_price | price-filter}}
-      .wrapBtn
-        .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
-          .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
-        .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
-        .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)") {{item.btnS}}
-      .pickUpNum(v-show="pickUpNoFlag")
-        .alertFrame
-          .topDiv 提货码
-          .contDiv {{item.pick_up_no}}
-          .bottomDiv(@click="pickUpNoFinish()") 完成
-      .bottom(v-show="flag")
-        p
-          span.shop 提货门店:
-          span {{item.si_name}}
-        p
-          span.shop 门店地址:
-          span {{item.address}} 
-    .total
-      ul
-        li.totalQuantity
-          span 总数量
-          span x {{totalNumber}}
-        li.freight(v-show="freightFlag")
-          span 运费
-          span {{freight | price-filter}}
-        li.aggregate
-          span 订单合计
-          span {{totalPrice | price-filter}}
-        li.netGoldCard(v-show="BOrC=='091'")
-          span 现金券抵扣
-          span {{deductionCard | price-filter}}
-        li.coupon(v-show="BOrC=='091'")
-          span 通用券抵扣
-          span {{deductionTicket | price-filter}}
-      .bottoms
-        span.payment 实付金额
-        span.money {{payPrice | price-filter}}
-    .cashCoupon(v-show="BOrC=='091'") 返 {{presentPrice | price-filter}} 元通用券
-    .orderNumber
-      ul
-        li.code.selects
-          span 订单号:
-          span {{totalOrderNum}}
-        li.orderTime.selects
-          span 下单时间:
-          span {{createTime}}
-        li.payTime.selects
-          span 付款时间:
-          span {{payTime}}
-        li.sendTime.selects
-          span 发货时间:
-          span {{sendTime}}
-        li.receiveTime.selects
-          span 签收时间:
-          span {{receiveTime}}
-      .copy(@click="copyText(totalOrderNum)") 复制
-    .title
-      .line
-      p 推荐
-    w-recommend#dataId(:listData="recommendGoods")
-    .bottomPlaceholder
+    .orderDetails.mescroll#orderMescroll
+      .topStatus(v-if="false") {{countDowns}}
+      .goodsReceipt(v-if="deliveryFlag")
+        .consignee
+          img(src="../../../../../assets/img/citySearch@2x.png")
+          .addressee
+            span.man 收件人:
+              strong {{recipients}}
+            span.phone {{phone}}
+        .address
+          span 收货地址:
+          strong {{address}}
+      .pickUpGoods(v-else="deliveryFlag")
+        .consignee
+          img(src="../../../../../assets/img/citySearch@2x.png")
+          .addressee
+            span.man 提货人:
+              strong {{recipients}}
+            span.phone {{phone}}
+      .content(v-for="(item,index) in orderDetails")
+        .top
+          .left
+            span.orderNum 订单编号:
+            span.num {{item.order_no}}
+          .right
+            span.orderStatus {{item.orderInfoStatus}}
+        .center(v-for="items in item.orderDetail")
+          .wrapGoods
+            .image
+              img(:src="items.logo | img-filter")
+            .goodsDetails
+              .words {{items.goods_name}}
+              .wrapAttr
+                .left
+                  .property(v-for="skus in items.spec_json")
+                    span.color {{skus.gspec_value}}
+                    span.size(v-if="false") {{skus.gspec_value}}
+                  .amount 
+                    span.nums x{{items.goods_num}}
+                .right
+                  .price {{items.sale_price | price-filter}}
+        .wrapBtn
+          .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
+            .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
+          .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
+          .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)") {{item.btnS}}
+        .pickUpNum(v-show="pickUpNoFlag")
+          .alertFrame
+            .topDiv 提货码
+            .contDiv {{item.pick_up_no}}
+            .bottomDiv(@click="pickUpNoFinish()") 完成
+        .bottom(v-show="flag")
+          p
+            span.shop 提货门店:
+            span {{item.si_name}}
+          p
+            span.shop 门店地址:
+            span {{item.address}} 
+      .total
+        ul
+          li.totalQuantity
+            span 总数量
+            span x {{totalNumber}}
+          li.freight(v-show="freightFlag")
+            span 运费
+            span {{freight | price-filter}}
+          li.aggregate
+            span 订单合计
+            span {{totalPrice | price-filter}}
+          li.netGoldCard(v-show="BOrC=='091'")
+            span 现金券抵扣
+            span {{deductionCard | price-filter}}
+          li.coupon(v-show="BOrC=='091'")
+            span 通用券抵扣
+            span {{deductionTicket | price-filter}}
+        .bottoms
+          span.payment 实付金额
+          span.money {{payPrice | price-filter}}
+      .cashCoupon(v-show="BOrC=='091'") 返 {{presentPrice | price-filter}} 元通用券
+      .orderNumber
+        ul
+          li.code.selects
+            span 订单号:
+            span {{totalOrderNum}}
+          li.orderTime.selects
+            span 下单时间:
+            span {{createTime}}
+          li.payTime.selects
+            span 付款时间:
+            span {{payTime}}
+          li.sendTime.selects
+            span 发货时间:
+            span {{sendTime}}
+          li.receiveTime.selects
+            span 签收时间:
+            span {{receiveTime}}
+        .copy(@click="copyText(totalOrderNum)") 复制
+      .title
+        img(src="../../../../../assets/img/recommend.png")
+      w-recommend#dataId(:listData="recommendGoods")
+      .bottomPlaceholder
     .fixedBtn(v-show="whiteBarFlag")
       .leftBtn(v-show="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
       .rightBtn(@click="jumpToRight($event)" v-show="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货' && rightBtn !== '申请退款' && rightBtn !== '批量退款' && rightBtn !== '取消申请'") {{rightBtn}}
@@ -978,15 +978,8 @@
     justify-content: center;
     align-items: center;
   }
-  .line{
-    height: 1px;
-    width: 3rem;
-    background: #999;
-  }
-  .title p{
-    position: absolute;
-    background: #f2f2f2 ;
-    padding: 0 .2rem;
+  .title img{
+    width: 55%;
   }
   /*我的推荐--结束*/
 
@@ -994,7 +987,7 @@
     /*height: 1.5rem;*/
   }
   #orderMescroll{
-    top: 0;
+    top: 1.3rem;
     bottom: 0;
     height: auto;
     position: fixed;
