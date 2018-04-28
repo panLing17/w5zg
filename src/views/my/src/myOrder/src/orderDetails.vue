@@ -1057,7 +1057,7 @@
   }
   .pickUpNum .alertFrame .bottomDiv{
     font-size: .4rem;
-    border-top: 1px solid rgb(180,180,180);
+    border-top: 1px solid #f2f2f2;
     text-align: center;
     color: rgb(244,0,87);
     line-height: .8rem;

@@ -106,7 +106,7 @@
       //搜索商品去商品展示页
       searchGoods(){
         let self = this;
-        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true}});
+        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true}});   
       },
       //历史搜索
       historys(){
