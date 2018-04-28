@@ -105,9 +105,9 @@
             url: this.$apiTransaction + 'logAccount/logs',
             params: form
           }).then(function (response) {
-            if (response.data.data && response.data.data.rows && response.data.data.rows.length>0) {
+            if (response.data.code === '081') {
               successCallback&&successCallback(response.data.data.rows);//成功回调
-            }else {
+            } else {
               _this.mescroll.endErr();
             }
           })
