@@ -39,10 +39,10 @@
   .alertBox .main {
     position: fixed;
     background-color: white;
-    width: 7rem;
+    width: 9rem;
     height: 4rem;
     margin-top: -2rem;
-    margin-left: -3.5rem;
+    margin-left: -4.5rem;
     top: 50%;
     left: 50%;
     padding: 0 .3rem;
