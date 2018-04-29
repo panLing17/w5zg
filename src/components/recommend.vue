@@ -49,14 +49,14 @@
 
   .goodsList li img {
     width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    max-height: 4rem;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*max-height: 4rem;*/
   }
 
   .text {
-    margin: 4.2rem .1rem .1rem;
+    margin: 0.2rem .1rem .1rem;
     /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;

@@ -93,6 +93,7 @@
       watch: {
         '$route' (to, from) {
           this.mescroll.destroy();
+          this.$mescrollInt("orderManageMescroll",this.upCallback);
         }
       },
       methods:{
@@ -408,11 +409,11 @@
 </script>
 
 <style scoped>
-  #orderManageMescroll .mescroll-hardware{
-    display: none !important;
-  }
+  /*#orderManageMescroll .mescroll-hardware{*/
+    /*display: none !important;*/
+  /*}*/
   #orderManageMescroll{
-    top: 1.3rem;
+    top: 2.3rem;
     bottom: 0;
     height: auto;
     position: fixed;
@@ -426,11 +427,7 @@
   }
   .orderManage{
     background-color: rgb(242,242,242);
-    width: 100%;
-    min-height: 100vh;
-    position: absolute;
-    z-index: 100;
-    /*margin-top: 1.3rem;*/
+    padding-top: .3rem;
   }
   .topCenter{
     font-size: .5rem;
@@ -478,9 +475,9 @@
   }
   /*订单的状态--结束*/
   /*订单内容--开始*/
-  .wrapContent{
-    margin-top: 1.2rem;
-  }
+  /*.wrapContent{*/
+    /*margin-top: 1.2rem;*/
+  /*}*/
   .content{
     margin-bottom: .3rem;
   }
