@@ -63,7 +63,13 @@
             span {{item.si_name}}
           p
             span.shop 门店地址:
-            span {{item.address}} 
+            span {{item.address}}
+          p(v-if="item.shopFlag")
+            span.shop 门店联系人:
+            span 盖伦
+          p(v-if="item.shopFlag")
+            span.shop 门店联系方式:
+            span 12345678901       
       .total
         ul
           li.totalQuantity
@@ -117,6 +123,7 @@
       name: "orderDetails",
       data(){
         return{
+          shopFlag:"", //门店联系人，联系方式显隐
           pickUpNums:"", //提货码
           whiteBarFlag:true, //最下方的白条的显隐
           pickUpNoFlag:"", //提货码的显隐
@@ -387,6 +394,7 @@
                   }
                 }
                 if (res.data.data[0].delivery_ways == "自提"){
+                  arrays[i].shopFlag = false;
                   arrays[i].morethenFlag = false;
                   arrays[i].moreBtnFlag =false;
                   arrays[i].btnSFlag = true;
@@ -454,6 +462,7 @@
                   }
                 }
                 if (res.data.data[0].delivery_ways == "自提") {
+                  arrays[i].shopFlag = true;
                   arrays[i].morethenFlag = false;
                   arrays[i].moreBtnFlag =false;
                   arrays[i].btnSFlag = true;
@@ -899,7 +908,10 @@
     font-size: .35rem;
   }
   .bottom p{
-    margin-top: .1rem;
+    margin-top: .2rem;
+  }
+  .bottom p span:nth-child(2){
+    margin-left: .1rem;
   }
   /*商品的详情--结束*/
   /*总商品的统计--开始*/

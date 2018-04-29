@@ -49,7 +49,7 @@
         flag:true,
         show:true,
         hide:false,
-        showDiscover:true, //搜索发现的显隐
+        showDiscover:this.$store.state.searchFlag, //搜索发现的显隐
         record1:[],
         record2:[],
         msg:this.$route.query.messages
@@ -81,6 +81,7 @@
       this.searchDiscover();
       //显示搜索结果
       this.resultShow();
+      console.log(this.$store.state.searchFlag);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -170,6 +171,7 @@
 
       toggle:function(){
         this.showDiscover = !this.showDiscover;
+        this.$store.commit('getSearchDiscover', this.showDiscover);
       },
 
       change1: function(item,index){

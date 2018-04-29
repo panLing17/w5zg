@@ -90,11 +90,11 @@
         this.mescroll.hideTopBtn();
         this.mescroll.destroy();
       },
-    watch: {
+      watch: {
         '$route' (to, from) {
           this.mescroll.destroy();
-      }
-    },
+        }
+      },
       methods:{
         //回退判断
         backJump(){

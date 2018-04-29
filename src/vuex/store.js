@@ -98,6 +98,10 @@ const mutations = {
   // 更改当前商品数据
   getNowGoodsData (state, data) {
     state.nowGoodsData = data
+  },
+  // 记录搜索发现的显隐
+  getSearchDiscover(state, data) {
+    state.searchFlag = data
   }
 }
 const actions = {
