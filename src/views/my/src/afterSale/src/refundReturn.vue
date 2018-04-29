@@ -115,6 +115,7 @@
           this.returnTypeShow = false;
           this.reasonTitle = '退款原因';
         }
+        this.getReasonData()
       },
       // 选择退货方式
       returnStyleChange (num) {
@@ -142,13 +143,20 @@
       },
       getReasonData () {
         let _this = this;
+        let reasonType;
+        if (this.statusType === 0) {
+          reasonType = '184'
+        }else {
+          reasonType = '185'
+        }
         this.$ajax({
           method: 'get',
           url: this.$apiTransaction + 'rejectedReason/returnReason',
-          params:{}
+          params:{
+            reasonType: reasonType
+          }
         }).then(function (response) {
           _this.reasonData = response.data.data;
-
         })
       },
       getPrice() {

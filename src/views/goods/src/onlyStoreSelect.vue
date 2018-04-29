@@ -8,7 +8,7 @@
           span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
         ul.list
-          li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_name}}
+          li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_address}}
           li(v-if="storeList.length === 0") 该城市无可选门店
 </template>
 
