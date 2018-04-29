@@ -66,10 +66,10 @@
             span {{item.address}}
           p(v-if="item.shopFlag")
             span.shop 门店联系人:
-            span 盖伦
+            span {{linkMan}}
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
-            span 12345678901       
+            span {{linkPhone}}       
       .total
         ul
           li.totalQuantity
@@ -164,7 +164,9 @@
           recommendGoods: [],
           orderDetails:[],
           TotalOrderId:"", //总的订单id
-          BOrC:"" //判断用户身份
+          BOrC:"", //判断用户身份
+          linkMan:"", //门店联系人
+          linkPhone:"" //门店联系人电话
         }
       },
       created(){
@@ -483,6 +485,8 @@
                   arrays[i].orderInfoStatus = "待提货";
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
+                    self.linkMan = mArr[j].linkman;
+                    self.linkPhone = mArr[j].linkPhone;
                     if (mArr.length>1) {
                       if(mArr[j].refund_status == null){
                         arrays[i].btnF = "申请退款";
@@ -1006,7 +1010,6 @@
     height: auto;
     position: fixed;
   }
-
   /*底部的两个按钮--开始*/
   .fixedBtn{
     z-index: 102;
@@ -1045,7 +1048,7 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.2);
-    z-index: 200;
+    z-index: 300;
   }
   .pickUpNum .alertFrame{
     width: 5rem;
