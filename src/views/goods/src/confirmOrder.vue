@@ -33,7 +33,7 @@
       .goodsNum 共计{{content}}件商品
       .price
         span 合计
-        p {{price | price-filter}}
+        p {{computedPriceText | price-filter}}
     ul.switchList
       li
         .left 现金券
@@ -115,14 +115,15 @@
       computedFreight () {
         let allFreight = 0
         this.$store.state.transfer.forEach((now)=>{
-          allFreight += now.freight
+          if (now.freight>allFreight) {
+            allFreight = now.freight
+          }
         })
         if (this.$route.query.since === 'false') {
           this.allFreight = allFreight
         } else {
           this.allFreight = 0
         }
-
       },
       submit () {
         if (this.submitFlag) {

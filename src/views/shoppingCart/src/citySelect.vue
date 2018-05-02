@@ -15,6 +15,7 @@
           .right(@touchmove.prevent="")
             ul
               li(v-for="(i,index) in storeList", :class="{rightChecked:index===rightChecked}", @click="rightClick(index, i.bs_id)") {{i.bs_name}}
+              li(v-if="!storeList.length") {{leftChecked===-1 ? '请选择城市' : '该城市无可用门店'}}
 </template>
 
 <script>
