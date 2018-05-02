@@ -10,9 +10,9 @@
     .goodsBox.mescroll#goodsDetailMescroll
       .banner
 
-        carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:8rem")
+        carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:10rem")
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
-            img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:8rem")
+            img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
         .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
         <!--a(href="tel:4008-947-999")-->
@@ -42,8 +42,8 @@
           li 邮费{{goodsData.goi_freight}}
           li 库存{{goodsData.storage_num}}
           li 已售{{goodsData.gi_salenum}}
-      .cardBox(style="position:relative")
-        ul.card(v-if="userData !== '' && userData.member_type !== '092'")
+      .cardBox(style="position:relative", v-if="userData !== '' && userData.member_type !== '092'")
+        ul.card
           li(@click="$router.push('/my/accountCardC')")
             .cartType
               .my 我的
@@ -364,6 +364,11 @@
           this.$message.warning('请先登录')
           return
         }
+        // 判断库存
+        if (this.maxStoreNum<this.content) {
+          this.$message.warning('库存不足')
+          return
+        }
         //
         this.ofBuy = false
         this.shoppingCartFlag = true
@@ -389,6 +394,11 @@
         if (!localStorage.hasOwnProperty('token')) {
           this.$router.push('/login')
           this.$message.warning('请先登录')
+          return
+        }
+        // 判断库存
+        if (this.maxStoreNum<this.content) {
+          this.$message.warning('库存不足')
           return
         }
         // 关闭购物车flag

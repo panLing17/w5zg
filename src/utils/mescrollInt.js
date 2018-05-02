@@ -19,7 +19,7 @@ Vue.prototype.$mescrollInt = function (id,upFun,downFun) {
       },
       //以下参数可删除,不配置
       isBounce: false, //此处禁止ios回弹,解析(务必认真阅读,特别是最后一点): http://www.mescroll.com/qa.html#q10
-      page:{size:4},  //可配置每页4条数据,默认10
+      page:{size:8},  //可配置每页4条数据,默认10
       toTop:{ //配置回到顶部按钮
         src : image, //默认滚动到1000px显示,可配置offset修改
         warpClass: 'scrollWarpClass',
