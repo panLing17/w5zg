@@ -76,12 +76,12 @@
       }
     },
     mounted(){
+      //搜索发现
+      this.searchDiscover();
       //商品推荐
       this.$mescrollInt("historyMescroll",this.upCallback);
       //历史搜索
       this.historys();
-      //搜索发现
-      this.searchDiscover();
       //显示搜索结果
       this.resultShow();
       console.log(this.$store.state.searchFlag);
