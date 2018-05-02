@@ -1,5 +1,5 @@
 <template lang="pug">
-  .page(v-loading="loadingFlag < 2")
+  .wrapPage
     nav-bar
       .topLeft(slot="left")
         img(src="../../../assets/img/location.png")
@@ -8,23 +8,24 @@
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
-          img(src="../../../assets/img/home扫描@2x.png" @click="$router.push('/home/scan')" v-show="true").rightImg
+          img(src="../../../assets/img/home扫描@2x.png" v-show="true").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
-    .content
-      .left
-        ul
-          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-      .right(:class="{styles:flag}")
-        ul(v-for="(item,index) in productList").tabs
-          li.tabsList
-            .title
-              span.point(v-show="wordsShow")
-              span.letter {{item.gc_name}}
-            ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
-                img(:src="items.gc_icon | img-filter")
-                .words(v-show="wordsShow") {{items.gc_name}}
+    .page(v-loading="loadingFlag<2")
+      .content
+        .left
+          ul
+            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
+        .right(:class="{styles:flag}")
+          ul(v-for="(item,index) in productList").tabs
+            li.tabsList
+              .title
+                span.point(v-show="wordsShow")
+                span.letter {{item.gc_name}}
+              ul.listOfGoods
+                li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
+                  img(:src="items.gc_icon | img-filter")
+                  .words(v-show="wordsShow") {{items.gc_name}}
 </template>
 
 <script>
@@ -170,6 +171,7 @@
     background: rgb(242,242,242);
     padding-bottom: 2rem;
     overflow: hidden;
+    position: fixed;
   }
   /*顶部搜索--开始*/
   .topLeft{

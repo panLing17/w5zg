@@ -486,7 +486,7 @@
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
                     self.linkMan = mArr[j].linkman;
-                    self.linkPhone = mArr[j].linkPhone;
+                    self.linkPhone = mArr[j].phone;
                     if (mArr.length>1) {
                       if(mArr[j].refund_status == null){
                         arrays[i].btnF = "申请退款";
