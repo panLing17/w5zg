@@ -56,7 +56,6 @@
       //判断显示城市的字数
       judgeCityNum(){
         var citys = document.getElementsByClassName("city")[0];
-        console.log(citys.innerText);
         if (citys.innerText.length == 2) {
           citys.style.fontSize = .4 + "rem";
         }

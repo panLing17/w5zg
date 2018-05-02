@@ -289,7 +289,6 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            console.log(response.data.data);
             var arr = response.data.data;
             for (var i=0; i<arr.length; i++) {
               if (arr[i].order_status == "（退货）售后") {
@@ -409,9 +408,6 @@
 </script>
 
 <style scoped>
-  /*#orderManageMescroll .mescroll-hardware{*/
-    /*display: none !important;*/
-  /*}*/
   #orderManageMescroll{
     top: 2.2rem;
     bottom: 0;
@@ -475,9 +471,6 @@
   }
   /*订单的状态--结束*/
   /*订单内容--开始*/
-  /*.wrapContent{*/
-    /*margin-top: 1.2rem;*/
-  /*}*/
   .content{
     margin-bottom: .3rem;
   }

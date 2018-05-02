@@ -30,21 +30,23 @@
           li.filters(@click="leftScroll()") | 筛选
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
-      .content
-        .bottomList
-          ul.goodsList#box
-            li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
-              img(:src="item.gi_image_url | img-filter" @click.prevent="")
-              .wrapWords
-                .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
-                .price {{item.price | price-filter}}
-                  span 可省{{item.economize_price}}元
-                .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
-      .bottomPlaceholder
-    .mask
-      .lefter(@click="lefterBack()")
-      .righter
-        filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
+      transition(name="slide-fade")
+        .content(v-show="goodsFlag")
+          .bottomList
+            ul.goodsList#box
+              li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
+                img(:src="item.gi_image_url | img-filter" @click.prevent="")
+                .wrapWords
+                  .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
+                  .price {{item.price | price-filter}}
+                    span 可省{{item.economize_price}}元
+                  .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
+        .bottomPlaceholder
+    transition(name="slide-fade")  
+      .mask(v-show="maskFlag")
+        .lefter(@click="lefterBack()")
+        .righter
+          filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
 </template>
 
 <script>
@@ -75,6 +77,8 @@
         order: 1, //字段排序
         keyWord: "", //关键字
         sort: "", //正序倒序
+        maskFlag:false, //蒙板的显隐
+        goodsFlag:"", //商品列表展示的显隐
       }
     },
     props: {
@@ -168,37 +172,40 @@
       },
       //筛选左滑
       leftScroll(){
+        this.maskFlag = true;
         this.mescroll.lockDownScroll(true);
         this.mescroll.lockUpScroll(true);
         this.filtrateFlag = true;
-        var mask = document.getElementsByClassName("mask")[0];
-        var lefter = document.getElementsByClassName("lefter")[0];
+        // var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        mask.style.opacity = 1;
-        mask.style.left = 0;
-        mask.style.transition = "left .5s";
+        // mask.style.opacity = 1;
+        // mask.style.left = 0;
+        // mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
       },
       lefterBack(){
+        this.maskFlag = false;
         this.mescroll.lockDownScroll(false);
         this.mescroll.lockUpScroll(false);
-        var mask = document.getElementsByClassName("mask")[0];
+        this.filtrateFlag = false;
+        // var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        mask.style.left = "100%";
-        mask.style.opacity = 0;
-        mask.style.transition = "left .3s, opacity .3s";
+        // mask.style.left = "100%";
+        // mask.style.opacity = 0;
+        // mask.style.transition = "left .3s, opacity .3s";
         commodityList.style.overflow = "scroll";
       },
       //从筛选传值过来
       ievent(data){
+        this.maskFlag = false;
         this.mescroll.lockDownScroll(false);
         this.mescroll.lockUpScroll(false);
-        var mask = document.getElementsByClassName("mask")[0];
+        // var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
         if (data.flag1 == true) {
-          mask.style.left = "100%";
-          mask.style.opacity = 0;
-          mask.style.transition = "left .3s, opacity .3s";
+          // mask.style.left = "100%";
+          // mask.style.opacity = 0;
+          // mask.style.transition = "left .3s, opacity .3s";
           commodityList.style.overflow = "scroll";
           if (data.pickUps == "可自提") {
             this.pickUps = 1;
@@ -213,9 +220,9 @@
           this.checkFlag = true;
         }
         if (data.flag1 == false) {
-          mask.style.left = "100%";
-          mask.style.opacity = 0;
-          mask.style.transition = "left .3s, opacity .3s";
+          // mask.style.left = "100%";
+          // mask.style.opacity = 0;
+          // mask.style.transition = "left .3s, opacity .3s";
           commodityList.style.overflow = "scroll";
           if (data.pickUps == "可自提") {
             this.pickUps = 1;
@@ -260,6 +267,7 @@
         this.request();
       },
       exchange:function(){
+        this.goodsFlag = true;
         this.flags = !this.flags;
         this.style = !this.style;
         var box = document.getElementById("box");
@@ -359,11 +367,11 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
-          console.log(response.data.data);
           //self.recommendGoods = response.data.data;//成功回调
           if(response.data.data.length<=0){
             self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           } else{
+            self.goodsFlag = true;
             self.recommendGoods = response.data.data;
             for (var i = 0; i < self.recommendGoods.length; i++) {
               if(self.recommendGoods[i].carry_type == 1){
@@ -612,7 +620,8 @@
     background-color: rgba(0,0,0,0.3);
     position: fixed;
     top: 0;
-    left: 110%;
+    /*left: 110%;*/
+    left: 0;
     right: 0;
     bottom: 0;
     z-index: 105;
@@ -637,5 +646,20 @@
   }
   .scrollWarpClass{
     z-index: 103 !important;
+  }
+
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active {
+    transition: all .5s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(30px);
+    opacity: 0;
   }
 </style>

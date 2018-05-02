@@ -52,11 +52,12 @@
             .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
           .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
           .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)") {{item.btnS}}
-        .pickUpNum(v-show="pickUpNoFlag")
-          .alertFrame
-            .topDiv 提货码
-            .contDiv {{pickUpNums}}
-            .bottomDiv(@click="pickUpNoFinish()") 完成
+        transition(name="slide-fade")  
+          .pickUpNum(v-show="pickUpNoFlag")
+            .alertFrame
+              .topDiv 提货码
+              .contDiv {{pickUpNums}}
+              .bottomDiv(@click="pickUpNoFinish()") 完成
         .bottom(v-show="flag")
           p
             span.shop 提货门店:
@@ -1078,4 +1079,18 @@
     line-height: .8rem;
   }
   /*提货码弹出框--结束*/
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active {
+    transition: all .5s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    /*transform: translateY(10px);*/
+    opacity: 0;
+  }
 </style>

@@ -22,8 +22,9 @@
     .button(v-show="downList")
       .reset(@click="reset()") 重置
       .affirm(@click="hide()") 确认
-    .wrapAllBrand
-      allBrand(v-show="allBrandFlag" @searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
+    transition(name="slide-fade") 
+      .wrapAllBrand(v-show="allBrandFlag")
+        allBrand(v-show="allBrandFlag" @searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
 </template>
 
 <script>
@@ -352,4 +353,18 @@
   font-size: .4rem;
 }
 /*右边显示的字母--结束*/
+
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+  transition: all .5s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(30px);
+  opacity: 0;
+}
 </style>

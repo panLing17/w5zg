@@ -14,22 +14,25 @@
           ul.top
             li.left 历史搜索
             li.right(@click="clearHistory()")
-              img(src="../../../assets/img/searchHistory_clear.png") 
-          ul.cont(v-if="flag")
-            li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}
-          .empty(v-else="flag") 暂无搜索历史          
+              img(src="../../../assets/img/searchHistory_clear.png")
+          transition(name="slide-fade")     
+            ul.cont(v-if="flag")
+              li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}    
+            .empty(v-else="flag") 暂无搜索历史          
         .discover(v-show="searchFlag")
           ul.top
             li.left 搜索发现
             li.right(@click="toggle")
               img(src="../../../assets/img/searchHistory显示图层.png" v-if="showDiscover")
-              img(src="../../../assets/img/searchHistory隐藏图层.png" v-else="showDiscover") 
-          ul.cont(v-show="showDiscover")
-            li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
-        .result(v-show="resultFlag")
-          .words 没有搜索到
-            span.strong 此类
-            span 商品，及相关商品    
+              img(src="../../../assets/img/searchHistory隐藏图层.png" v-else="showDiscover")
+          transition(name="slide-fade")       
+            ul.cont(v-show="showDiscover")
+              li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
+        transition(name="slide-fade")            
+          .result(v-show="resultFlag")
+            .words 没有搜索到
+              span.strong 此类
+              span 商品，及相关商品    
       .title
         img(src="../../../assets/img/recommend.png")
       w-recommend#dataId(:listData="recommendGoods")
@@ -118,6 +121,11 @@
           params:{}
         }).then(function(res){
           self.record1 = res.data.data;
+          if (self.record1.length == 0) {
+            self.flag = false;
+          } else{
+            self.flag = true;
+          }
         })
       },
       //搜索发现
@@ -140,17 +148,11 @@
 
       //清除历史搜索记录
       clearHistory(){
-        //this.flag = false;
-        // let self = this;
-        // self.$ajax({
-        //   method:""
-        // })
         if (this.flag != false) {
           this.$confirm({
             title: '确认',
             message: '真的要这样做吗',
             confirm: () => {
-              //alert('确定')
               this.flag = false;
               let self = this;
               self.$ajax({
@@ -162,7 +164,7 @@
               })
             },
             noConfirm: () => {
-              //alert('取消')
+
             }
           })
         }
@@ -200,13 +202,6 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-//            axios.get("xxxxxx", {
-//          params: {
-//            num: pageNum, //页码
-//            size: pageSize //每页长度
-//          }
-//        })
-//        .then(function(response)
         let self = this
         self.$ajax({
           method: 'post',
@@ -342,5 +337,19 @@
 }
 .bottomPlaceholder {
   height: 1.5rem;
+}
+
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+  transition: all .5s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  /*transform: translateX(30px);*/
+  opacity: 0;
 }
 </style>

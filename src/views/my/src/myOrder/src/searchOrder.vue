@@ -15,10 +15,11 @@
         ul.top
           li.left 历史搜索
           li.right(@click="clearHistory()")
-            img(src="../../../../../assets/img/searchHistory_clear.png") 
-        ul.cont(v-if="flag")
-          li(v-for="(item,index) in record1" @click="change1($event,index)" :class="{active:selected1==index}") {{item.gsr_keywords}}
-        .empty(v-else="flag") 暂无搜索历史
+            img(src="../../../../../assets/img/searchHistory_clear.png")
+        transition(name="slide-fade")     
+          ul.cont(v-if="flag")
+            li(v-for="(item,index) in record1" @click="change1($event,index)" :class="{active:selected1==index}") {{item.gsr_keywords}}
+          .empty(v-else="flag") 暂无搜索历史
       .searchRel(v-show="showRel")
         img(src="../../../../../assets/img/emptyOrder.png")  
       .wrapContent(v-show="showOrder")  
@@ -55,7 +56,7 @@
       .title(v-show="recommendFlag")
         img(src="../../../../../assets/img/recommend.png")
       w-recommend#dataId(:listData="recommendGoods" v-show="recommendFlag")
-      .bottomPlaceholder(v-show="recommendFlag")        
+      .bottomPlaceholder(v-show="recommendFlag")
 </template>
 
 <script>
@@ -190,16 +191,25 @@
         },
         //清除历史搜索记录
         clearHistory(){
-          let self = this;
-          self.$ajax({
-            method:"delete",
-            url:self.$apiTransaction + "orderSearchRecord/delOrderSearch",
-            params:{},
-            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+          this.$confirm({
+            title: '确认',
+            message: '真的要这样做吗',
+            confirm: () => {
+              let self = this;
+              self.$ajax({
+                method:"delete",
+                url:self.$apiTransaction + "orderSearchRecord/delOrderSearch",
+                params:{},
+                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
 
-          }).then(function(res){
-            console.log(res);
-            self.searchHistory();
+              }).then(function(res){
+                console.log(res);
+                self.searchHistory();
+              })
+            },
+            noConfirm: () => {
+
+            }
           })
         },
         //点击每个订单下方的左边按钮
@@ -711,5 +721,19 @@
 }
 .title img{
   width: 55%;
+}
+
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  /*transform: translateY(10px);*/
+  opacity: 0;
 }
 </style>
