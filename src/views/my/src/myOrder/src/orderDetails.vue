@@ -20,7 +20,7 @@
           strong {{address}}
       .pickUpGoods(v-else="deliveryFlag")
         .consignee
-          img(src="../../../../../assets/img/citySearch@2x.png")
+          img(src="../../../../../assets/img/pick@2x.png")
           .addressee
             span.man 提货人:
               strong {{recipients}}
@@ -51,7 +51,7 @@
           .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
             .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
           .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
-          .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)") {{item.btnS}}
+          .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
         transition(name="slide-fade")  
           .pickUpNum(v-show="pickUpNoFlag")
             .alertFrame
@@ -235,7 +235,6 @@
               title: '确认',
               message: '真的要这样做吗',
               confirm: () => {
-                //alert('确定')
                 let self = this;
                 self.$ajax({
                   method:"patch",
@@ -246,7 +245,7 @@
                 })
               },
               noConfirm: () => {
-                //alert('取消')
+
               }
             })
             
@@ -309,10 +308,6 @@
             self.phone = res.data.data[0].carry_phone;
             self.deductionCard = res.data.data[0].oi_deduction_card;
             self.deductionTicket = res.data.data[0].oi_deduction_ticket;
-            // var rel = 0;
-            // for (var i = 0; i < res.data.data[0].orderInfo.length; i++) {
-            //   rel += parseInt(res.data.data[0].orderInfo[i].oi_total);
-            // }
             self.totalPrice = res.data.data[0].oi_total_price;
             self.payPrice = res.data.data[0].oi_pay_price;
             self.presentPrice = res.data.data[0].oi_present_ticket;
@@ -404,11 +399,7 @@
                   arrays[i].btnFFlag = true;
                   arrays[i].btnF = "申请退款";
                   arrays[i].btnS = "提醒发货";
-                  //提货码按钮的颜色
-                  //var btnsDiv = document.getElementsByClassName("btnS")[0];
-                  //btnsDiv.style.backgroundColor = "rgb(244,0,87)";
-                  //btnSDiv.style.color = "#fff";
-                  //btnSDiv.style.borderColor = "rgb(244,0,87)";
+
                   self.leftBtnFlag = false;
                   self.leftBtn = "批量退款";
                   self.rightBtn = "申请退款";
@@ -434,7 +425,6 @@
 
               if (arrays[i].orderInfo_status == "待收货/待提货") {
                 if (res.data.data[0].delivery_ways == "快递配送") {
-                  // arrays[i].morethenFlag = true;
                   arrays[i].moreBtnFlag =false;
                   arrays[i].btnSFlag = true;
                   arrays[i].btnFFlag = true;
@@ -472,11 +462,7 @@
                   arrays[i].btnFFlag = true;
                   arrays[i].btnF = "申请退款";
                   arrays[i].btnS = "提货码";
-                  //提货码按钮的颜色
-                  // var btnSDiv =document.getElementsByClassName("btnS")[0];
-                  // btnSDiv.style.background = "rgb(244,0,87)";
-                  // btnSDiv.style.color = "white";
-                  // btnSDiv.style.borderColor = "rgb(244,0,87)";
+
                   self.leftBtnFlag = true;
                   self.leftBtn = "批量退款";
                   self.rightBtn = "再次购买";
@@ -669,7 +655,7 @@
                 backgroundColor: "rgba(0,0,0,0.3)",
                 color: "#fff",
                 position: "absolute",
-                left: "5.5rem",
+                left: "4rem",
                 bottom: ".2rem",
                 textAlign: "center",
                 lineHeight: ".8rem",
@@ -716,6 +702,11 @@
 </script>
 
 <style scoped>
+  .btnStyle{
+    background-color: rgb(244,0,87);
+    color: #fff;
+    border-color: rgb(244,0,87) !important;
+  }
   /*顶部倒计时付款--开始*/
   .topStatus{
     padding: .4rem .3rem;
