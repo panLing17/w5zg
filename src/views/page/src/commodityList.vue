@@ -130,37 +130,6 @@
         this.onload();
         //this.exhibition();
       },
-      //商品的展示
-      // exhibition(){
-      //   let self = this;
-      //   self.$ajax({
-      //     method:"post",
-      //     url:self.$apiGoods + "goodsSearch/spus",
-      //     params:{
-      //       carryType: self.pickUps, //自提不自提
-      //       startPrice: self.minPrice, //开始价格区间
-      //       endPrice: self.maxPrice, //结束价格区间
-      //       bi_id: self.brandId, //品牌的id
-      //       sortType: self.sort, //正序倒序
-      //       keywords: self.message, //关键字
-      //       sortFieldType: self.order //字段排序
-      //     }
-      //   }).then(function(res){
-      //     self.recommendGoods = res.data.data;
-      //     if(self.recommendGoods.length<=0){
-      //       self.$router.push({path:'/home/searchHistory',query:{relNum:1}});
-      //     }else{
-      //       for (var i = 0; i < self.recommendGoods.length; i++) {
-      //         if(self.recommendGoods[i].carry_type == 1){
-      //           self.recommendGoods[i].carryFlag = true;
-      //         }
-      //         if (self.recommendGoods[i].carry_type == 2) {
-      //           self.recommendGoods[i].carryFlag = false;
-      //         }
-      //       }
-      //     }
-      //   })
-      // },
       //进入商品详情
       goGoods(goodsId){
         this.$router.push({
@@ -176,11 +145,7 @@
         this.mescroll.lockDownScroll(true);
         this.mescroll.lockUpScroll(true);
         this.filtrateFlag = true;
-        // var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        // mask.style.opacity = 1;
-        // mask.style.left = 0;
-        // mask.style.transition = "left .5s";
         commodityList.style.overflow = "hidden";
       },
       lefterBack(){
@@ -188,24 +153,17 @@
         this.mescroll.lockDownScroll(false);
         this.mescroll.lockUpScroll(false);
         this.filtrateFlag = false;
-        // var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
-        // mask.style.left = "100%";
-        // mask.style.opacity = 0;
-        // mask.style.transition = "left .3s, opacity .3s";
         commodityList.style.overflow = "scroll";
       },
       //从筛选传值过来
       ievent(data){
         this.maskFlag = false;
+        this.goodsFlag = false;
         this.mescroll.lockDownScroll(false);
         this.mescroll.lockUpScroll(false);
-        // var mask = document.getElementsByClassName("mask")[0];
         var commodityList = document.getElementsByClassName("commodityList")[0];
         if (data.flag1 == true) {
-          // mask.style.left = "100%";
-          // mask.style.opacity = 0;
-          // mask.style.transition = "left .3s, opacity .3s";
           commodityList.style.overflow = "scroll";
           if (data.pickUps == "可自提") {
             this.pickUps = 1;
@@ -220,9 +178,6 @@
           this.checkFlag = true;
         }
         if (data.flag1 == false) {
-          // mask.style.left = "100%";
-          // mask.style.opacity = 0;
-          // mask.style.transition = "left .3s, opacity .3s";
           commodityList.style.overflow = "scroll";
           if (data.pickUps == "可自提") {
             this.pickUps = 1;
@@ -245,6 +200,7 @@
         this.change = false;
         this.check = true;
         this.checked = false;
+        this.goodsFlag = false;
         if (this.change1 == true){
           this.order = 1;
         } else{
@@ -259,6 +215,7 @@
         this.change = false;
         this.check = true;
         this.checked = false;
+        this.goodsFlag = false;
         if (this.change2 == true) {
           this.order = 2;
         } else {
@@ -289,6 +246,7 @@
         this.change = true;
         this.change1 = false;
         this.change2 = false;
+        this.goodsFlag = false;
 
         this.order = 3;
         if (this.check == false) {
@@ -327,6 +285,7 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
+          self.goodsFlag = true;
           // if(response.data.data.length<=0){
           //   self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           // } else {
@@ -652,14 +611,14 @@
   /* 可以设置不同的进入和离开动画 */
   /* 设置持续时间和动画函数 */
   .slide-fade-enter-active {
-    transition: all .6s ease;
+    transition: all .3s ease;
   }
   .slide-fade-leave-active {
-    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
   }
   .slide-fade-enter, .slide-fade-leave-to
   /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(100px);
+    transform: translateX(10px);
     opacity: 0;
   }
 </style>
