@@ -554,7 +554,7 @@
         judgeBtnF(e,item,items){
           //此功能还没有
           if (e.target.innerHTML == "再次购买") {
-            alert("逗你玩！");
+
           }
           //点击查看物流信息
           if (e.target.innerHTML == "物流信息") {
@@ -599,7 +599,7 @@
           }
           //没有
           if (e.target.innerHTML == "提醒发货") {
-            alert("逗你玩！");
+
           }
           //点击弹出一个框显示提货码
           if (e.target.innerHTML == "提货码") {
@@ -610,7 +610,7 @@
           }
           //此功能未开放
           if (e.target.innerHTML == "再次购买") {
-            alert("逗你玩！");
+
           }
           //点击完了跳到订单列表
           if (e.target.innerHTML == "确认收货") {
@@ -618,7 +618,6 @@
               title: '确认',
               message: '真的要这样做吗',
               confirm: () => {
-                //alert('确定')
                 let self = this;
                 self.$ajax({
                   method:"patch",
@@ -629,7 +628,7 @@
                 })
               },
               noConfirm: () => {
-                //alert('取消')
+
               }
             })
             
