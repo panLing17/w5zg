@@ -269,18 +269,19 @@
 
           }
         },
-
         //更多展示功能按钮
         moreShow(e){
           if (e.target.children[0].style.display == "" || e.target.children[0].style.display == "none") {
-            e.target.children[0].style.display = "block";
+            e.target.children[0].style.display = "block"; 
           } else {
             e.target.children[0].style.display = "none";
           }
-          // var bodys = document.getElementsByClassName(".wrapNav")[0];
-          // bodys.onclick=function(){
-          //   e.target.children[0].style.display = "none";
-          // }
+          if (e.target.children[0].style.display = "block") {
+            var wrapNav = document.getElementsByClassName("wrapNav")[0];
+            wrapNav.addEventListener("click",function(){
+              e.target.children[0].style.display = "none";
+            },true);
+          }
         },
         //点击更多后展示的按钮
         judgeMoreBtn(e,item,items){
@@ -706,7 +707,7 @@
 <style scoped>
   .btnStyle{
     background-color: rgb(244,0,87);
-    color: #fff;
+    color: #fff !important;
     border-color: rgb(244,0,87) !important;
   }
   /*顶部倒计时付款--开始*/
@@ -1043,7 +1044,7 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,0.2);
-    z-index: 300;
+    z-index: 1000 !important;
   }
   .pickUpNum .alertFrame{
     width: 5rem;
