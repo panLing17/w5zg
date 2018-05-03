@@ -94,7 +94,13 @@
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
-      this.mescroll.destroy()
+      this.mescroll.destroy();
+      // 清除勾选信息
+      this.$store.commit('allCheckedChange', false)
+      // 清除勾选数据
+      this.$store.commit('shoppingCartSelectedChange', [])
+      // 清除总价格
+      this.$store.commit('computedPriceChange', 0)
     },
     methods: {
       upCallback: function(page) {
@@ -172,6 +178,7 @@
             spec.push(n.gspec_value)
           })
           data.push({
+            si_id: now.si_id,
             number: now.goods_num,
             spec: spec,
             price: now.now_price,

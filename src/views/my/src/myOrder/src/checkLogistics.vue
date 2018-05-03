@@ -88,7 +88,6 @@
             url:self.$apiMember + "orderLogistics/info",
             params:{orderId:self.sonOrder,orderType:self.ordertype}
           }).then(function(res){
-            console.log(res);
             self.CourierName = res.data.data.result.expName;
             self.number = res.data.data.result.number;
             self.phone = res.data.data.result.expPhone;
@@ -118,7 +117,6 @@
           }else{
             var logisticsMsg = document.getElementsByClassName("logisticsMsg")[0];
             logisticsMsg.style.height = "100%";
-            // logisticsMsg.style.overflow = "auto";
             logisticsMsg.style.transition = "all 1s";
             this.packDrops = "点击收起详情";
           }

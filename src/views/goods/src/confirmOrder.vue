@@ -102,6 +102,7 @@
     },
     components:{goodsCard,locationSelect},
     mounted () {
+      console.log(this.$store.state.shoppingCartSelected)
       this.getLocation()
       this.computedPrice()
       this.computedFreight()
@@ -113,16 +114,43 @@
     methods:{
       // 计算总邮费
       computedFreight () {
+        console.log(this.$store.state.transfer)
         let allFreight = 0
-        this.$store.state.transfer.forEach((now)=>{
-          if (now.freight>allFreight) {
-            allFreight = now.freight
+        // 若来自购物车快递订单，运费计算按照供应商计算
+        if (this.$route.query.since === 'false' && this.$route.query.type === 'shoppingCart') {
+          let newObject = {}
+          this.$store.state.transfer.forEach((now, index) => {
+            // 判断当前有无此商品所对应的供货商id
+            if (newObject.hasOwnProperty(now.si_id)) {
+              newObject[now.si_id].push(now)
+            } else {
+              newObject[now.si_id] = []
+              newObject[now.si_id].push(now)
+            }
+          })
+          // 新对象循环，得出每个门店最大运费
+          for (let i in newObject) {
+            let nowMaxFreight = 0
+            newObject[i].forEach((now)=>{
+              if (now.freight > nowMaxFreight) {
+                nowMaxFreight = now.freight
+              }
+            })
+            allFreight += nowMaxFreight
           }
-        })
-        if (this.$route.query.since === 'false') {
+          // 运费赋值
           this.allFreight = allFreight
         } else {
-          this.allFreight = 0
+          this.$store.state.transfer.forEach((now)=>{
+            if (now.freight>allFreight) {
+              allFreight = now.freight
+            }
+          })
+          if (this.$route.query.since === 'false') {
+            this.allFreight = allFreight
+          } else {
+            this.allFreight = 0
+          }
         }
       },
       submit () {
