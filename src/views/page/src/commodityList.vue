@@ -30,7 +30,7 @@
           li.filters(@click="leftScroll()") | 筛选
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
-      transition(name="slide-fade")
+      transition(name="slide")
         .content(v-show="goodsFlag")
           .bottomList
             ul.goodsList#box
@@ -611,14 +611,26 @@
   /* 可以设置不同的进入和离开动画 */
   /* 设置持续时间和动画函数 */
   .slide-fade-enter-active {
-    transition: all .3s ease;
+    transition: all .4s ease;
   }
   .slide-fade-leave-active {
-    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
   }
   .slide-fade-enter, .slide-fade-leave-to
   /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(10px);
+    transform: translateX(100px);
+    opacity: 0;
+  }
+
+  .slide-enter-active{
+    transition: all .1s linear;
+  }
+  .slide-leave-active{
+    transition: all .1s linear;
+  }
+  .slide-enter, .slide-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateY(-10px);
     opacity: 0;
   }
 </style>
