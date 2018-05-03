@@ -12,6 +12,7 @@
             .price ￥{{price}}
             .dec 支付成功
             <!--.git 获得￥200.00元现金券-->
+            .git (品牌商正在备货，请耐心等候)
             .btnWrapper
               .left(@click="$router.push('/home')") 返回首页
               <!--.right() 查看订单-->
