@@ -58,6 +58,7 @@
           now.shoppingCartVOList.forEach((sonNow)=>{
             if (sonNow.checked) {
               price = price + sonNow.goods_num*sonNow.now_price
+              sonNow.si_id = now.si_id
               checked.push(sonNow)
             }
           })

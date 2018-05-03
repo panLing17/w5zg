@@ -169,6 +169,7 @@
   /*订单的状态信息--开始*/
   .stateDiv{
     height: 2.8rem;
+    background: -webkit-gradient(linear,left top, right top,from(rgb(255,113,161)),to(rgb(249,39,114)));
     background: linear-gradient(left,rgb(255,113,161),rgb(249,39,114));
     color: #fff;
     padding: .5rem .3rem 0;

@@ -98,7 +98,11 @@
             params: form
           }).then(function (response) {
             if (response.data.code === '081') {
-              successCallback&&successCallback(response.data.data.rows);//成功回调
+              if (response.data.data && response.data.data.rows) {
+                successCallback&&successCallback(response.data.data.rows);
+              }else {
+                successCallback&&successCallback([]);
+              }
             } else {
               _this.mescroll.endErr();
             }
