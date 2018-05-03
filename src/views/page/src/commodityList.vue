@@ -46,7 +46,7 @@
       .mask(v-show="maskFlag")
         .lefter(@click="lefterBack()")
         .righter
-          filtrate(@ievent="ievent" v-show="filtrateFlag" :message="message")
+          filtrate(@ievent="ievent" :message="message")
 </template>
 
 <script>
@@ -58,7 +58,7 @@
     data(){
       return {
         message:this.$route.query.msg, //在输入框搜索的内容
-        filtrateFlag: true,
+        filtrateFlag: true, //右侧筛选的显隐
         mescroll: null,
         flags: false,
         check: true,
@@ -652,14 +652,14 @@
   /* 可以设置不同的进入和离开动画 */
   /* 设置持续时间和动画函数 */
   .slide-fade-enter-active {
-    transition: all .5s ease;
+    transition: all .6s ease;
   }
   .slide-fade-leave-active {
     transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
   }
   .slide-fade-enter, .slide-fade-leave-to
   /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(30px);
+    transform: translateX(100px);
     opacity: 0;
   }
 </style>

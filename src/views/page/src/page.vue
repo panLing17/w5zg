@@ -16,16 +16,17 @@
         .left
           ul
             li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-        .right(:class="{styles:flag}")
-          ul(v-for="(item,index) in productList").tabs
-            li.tabsList
-              .title
-                span.point(v-show="wordsShow")
-                span.letter {{item.gc_name}}
-              ul.listOfGoods
-                li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
-                  img(:src="items.gc_icon | img-filter")
-                  .words(v-show="wordsShow") {{items.gc_name}}
+        transition(name="slide-fade")    
+          .right(:class="{styles:flag}" v-if="rightShowFlag")
+            ul(v-for="(item,index) in productList").tabs
+              li.tabsList
+                .title
+                  span.point(v-show="wordsShow")
+                  span.letter {{item.gc_name}}
+                ul.listOfGoods
+                  li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
+                    img(:src="items.gc_icon | img-filter")
+                    .words(v-show="wordsShow") {{items.gc_name}}
 </template>
 
 <script>
@@ -41,7 +42,8 @@
         cityName:this.$route.query.routeParams,
         pageName:[],
         productList:[],
-        loadingFlag:0
+        loadingFlag:0,
+        rightShowFlag:"", //控制右侧内容的显隐
       }
     },
     mounted(){
@@ -91,6 +93,7 @@
           url:this.$apiGoods + "goodsClass/class/firstId",
           params:{firstId:id}
         }).then(function(res){
+          self.rightShowFlag = true;
           self.productList = res.data.data;
           self.loadingFlag += 1
         })
@@ -105,13 +108,14 @@
           this.wordsShow = true;
         // }
         this.num = index;
-
+        this.rightShowFlag = false;
         let self =this;
         self.$ajax({
           method:"post",
           url:this.$apiGoods + "goodsClass/class/firstId",
           params:{firstId:id}
         }).then(function(res){
+          self.rightShowFlag = true;
           self.productList = res.data.data;
         })
       },
@@ -239,9 +243,6 @@
   .content .left{
     width: 21%;
     height: 100vh;
-    /*position: absolute;
-    top: 1.3rem;
-    left: 0;*/
     float: left;
     background-color: rgb(242,242,242);
     overflow-y: auto;
@@ -306,4 +307,18 @@
     color: rgb(153,153,153);
   }
   /*中间内容右边--结束*/
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active {
+    transition: all .7s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
 </style>

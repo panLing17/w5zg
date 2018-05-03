@@ -12,37 +12,38 @@
         li(v-for="(item,index) in status" @click="check(item,index)" :class="{active:index == num, underLine:index == num}").status {{item}}
         .lineDiv
     .orderManage.mescroll#orderManageMescroll
-      .wrapContent
-        .content(v-for="(item,index) in orderDetail")
-          .top
-            .left
-              span.orderNum 订单编号:
-              span.num {{item.total_order_no}}
-            .right#state {{item.orderStatus}}
-          .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
-            .image
-              img(:src="items | img-filter" v-for="items in item.logoList")
-            .goodsDetails(v-show="item.logoList.length<=1")
-              .goodsExplain
-                span.words {{item.goodsName[0]}}
-              .cont
-                .property
-                  span.color(v-for="items in item.spec_json") {{items.gspec_value}}
-                  span.size
-                .quantity
-                  span.count x {{item.totalCount}}
-          .bottom
-            .left(v-if="false")
-              .goodsCode 提货码: {{item.goodsCode}}
-            .right
-              .total
-                .totalNumber
-                  span.amount 共计 {{item.totalCount}} 件商品
-                  span.price 合计 :
-                    strong.priceNum {{item.oi_total_price | price-filter}}
-          .button
-            .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
-            .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
+      transition(name="slide-fade")
+        .wrapContent(v-if="contentFlag")
+          .content(v-for="(item,index) in orderDetail")
+            .top
+              .left
+                span.orderNum 订单编号:
+                span.num {{item.total_order_no}}
+              .right#state {{item.orderStatus}}
+            .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'订单列表',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
+              .image
+                img(:src="items | img-filter" v-for="items in item.logoList")
+              .goodsDetails(v-show="item.logoList.length<=1")
+                .goodsExplain
+                  span.words {{item.goodsName[0]}}
+                .cont
+                  .property
+                    span.color(v-for="items in item.spec_json") {{items.gspec_value}}
+                    span.size
+                  .quantity
+                    span.count x {{item.totalCount}}
+            .bottom
+              .left(v-if="false")
+                .goodsCode 提货码: {{item.goodsCode}}
+              .right
+                .total
+                  .totalNumber
+                    span.amount 共计 {{item.totalCount}} 件商品
+                    span.price 合计 :
+                      strong.priceNum {{item.oi_total_price | price-filter}}
+            .button
+              .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
+              .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .noData(v-if="isEmpty")
         img(src="../../../../../assets/img/emptyOrder.png")
 </template>
@@ -62,7 +63,8 @@
           status:["全部","待付款","待发货","待收货","已完成"],
           orderDetail:[],
           buttonL:"",
-          buttonR:""
+          buttonR:"",
+          contentFlag:"", //控制所有订单内容的显隐
         }
       },
       computed: {
@@ -79,7 +81,6 @@
 
       },
       mounted(){
-        console.log(this.$route.query.id);
         //this.jump();
         this.keepStatus();
         this.$mescrollInt("orderManageMescroll",this.upCallback);
@@ -116,6 +117,7 @@
 
         //点击tab切换
         check(item,index){
+          this.contentFlag = false;
           this.num = index;
           var lineDiv = document.getElementsByClassName("lineDiv")[0];
           lineDiv.style.transition = "all .5s";
@@ -144,7 +146,6 @@
             lineDiv.style.left = "83.5%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
-
           this.request();
         },
         //保持状态判断
@@ -173,7 +174,6 @@
               lineDiv.style.left = "83.5%";
             }
           } else {
-            console.log(this.$route.query.nums);
             if (this.$route.query.nums == undefined) {
               this.num = 0;
             } else{
@@ -183,7 +183,6 @@
             this.state = this.$route.query.states;
             var lineDiv = document.getElementsByClassName("lineDiv")[0];
             lineDiv.style.left = this.$route.query.lefts;
-            console.log(this.state);
           }
 
           this.request();
@@ -260,7 +259,6 @@
               url:self.$apiTransaction + "order/confirmTakeGood/"+id,
               params:{}
             }).then(function(res){
-              console.log(res);
               self.request();
             })
           }
@@ -289,6 +287,7 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
+            self.contentFlag = true;
             var arr = response.data.data;
             for (var i=0; i<arr.length; i++) {
               if (arr[i].order_status == "（退货）售后") {
@@ -312,7 +311,6 @@
                   arr[i].buttonR = "确认收货";
                   arr[i].orderStatus = "待收货";
                 }
-
               }
               if (arr[i].order_status == "待发货/待备货") {
                 if (arr[i].delivery_ways == "自提") {
@@ -353,6 +351,7 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function(response){
+            self.contentFlag = true;
             self.orderDetail = response.data.data;
             for (var i=0; i<self.orderDetail.length; i++) {
               if (self.orderDetail[i].order_status == "（退货）售后") {
@@ -617,5 +616,19 @@
   }
   .noData img{
     width: 4rem;
+  }
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active {
+    transition: all .6s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(30px);
+    opacity: 0;
   }
 </style>

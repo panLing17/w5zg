@@ -232,7 +232,6 @@
   min-height: 100vh;
   z-index: 103;
   background-color: rgb(242,242,242);
-  /*margin-top: 1.3rem;*/
 }
 .active{
   color: #fff !important;
