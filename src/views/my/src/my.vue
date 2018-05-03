@@ -254,12 +254,13 @@
     position: fixed;
     top: 0;
     bottom: 0;
+    height: calc(100vh - 1.6rem);
   }
   .myBox {
-    min-height: 100vh;
+    /*min-height: calc(100vh - 1.6rem);*/
     width: 100%;
     background-color: rgb(242,242,242);
-    padding-bottom: 2rem;
+    /*padding-bottom: 2rem;*/
   }
   /*头部--开始*/
   .head{
@@ -426,9 +427,9 @@
     /*clear: both;*/
   /*}*/
 	.myTreasure ul.bottom{
-		padding: .4rem .8rem 0;
+		padding: .4rem 0 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 	}
   /*.myTreasure ul.bottom li:nth-child(1),*/
   /*.myTreasure ul.bottom li:nth-child(2){*/
@@ -448,11 +449,7 @@
   .bottomPlaceholder {
     /*height: 1.5rem;*/
   }
-  #myMescroll{
-    top: 0;
-    bottom: 0;
-    height: auto;
-  }
+
   .positionFixed{
     position: fixed;
   }
