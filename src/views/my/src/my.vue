@@ -64,6 +64,8 @@
           .words 银行卡
         li(@click="goNetKingCard")
           img(src="../../../assets/img/my_card@2x.png")
+          .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
+            i(v-if="orderCount.unSendOrder>99") +
           .words 现金券
         li(v-if="userData.member_type === '091'", @click="goAllCard")
           img(src="../../../assets/img/my_cashcoupon@2x.png")
@@ -89,6 +91,7 @@
         // 切换动画hack
         positionFixed: false,
         orderCount:{},
+        netcardCount: 0,
         loadingFlag:0
       }
     },
@@ -123,6 +126,20 @@
           }
         })
       },
+      // 小c获取现金券未使用数量
+      getNetcardsCount () {
+        let _this = this;
+        this.$ajax({
+          method: 'get',
+          url: this.$apiTransaction + 'netcard/netcards',
+          params: {status:1}
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            _this.netcardCount = response.data.data.length;
+          }
+
+        })
+      },
       /* 切换动画修复 */
       animateHack () {
         setTimeout(()=>{
@@ -140,6 +157,9 @@
           self.$store.commit('userDataChange',response.data.data)
           if (response.data.data.member_type === '092') {
             self.getUserInfo()
+          }
+          if (response.data.data.member_type === '091') {
+            self.getNetcardsCount()
           }
         })
       },
@@ -400,20 +420,22 @@
   }
 	/*我的订单和我的财富--结束*/
 	/*我的财富独有的样式--开始*/
-  .myTreasure ul.bottom:after{
-    content: "";
-    display: block;
-    clear: both;
-  }
+  /*.myTreasure ul.bottom:after{*/
+    /*content: "";*/
+    /*display: block;*/
+    /*clear: both;*/
+  /*}*/
 	.myTreasure ul.bottom{
 		padding: .4rem .8rem 0;
+    display: flex;
+    justify-content: space-between;
 	}
-  .myTreasure ul.bottom li:nth-child(1),
-  .myTreasure ul.bottom li:nth-child(2){
-    text-align: center;
-    float: left;
-    margin-right: 2.7rem;
-  }
+  /*.myTreasure ul.bottom li:nth-child(1),*/
+  /*.myTreasure ul.bottom li:nth-child(2){*/
+    /*text-align: center;*/
+    /*float: left;*/
+    /*margin-right: 2.7rem;*/
+  /*}*/
 	.myTreasure ul.bottom li img{
 		width: .8rem;
 	}
@@ -464,5 +486,10 @@
     top: -.1rem;
     right: .05rem;
     font-size: .29rem;
+  }
+  .myTreasure ul.bottom li {
+    position: relative;
+    flex: none;
+    text-align: center;
   }
 </style>

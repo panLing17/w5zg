@@ -80,7 +80,7 @@
         }
       },
       methods: {
-        // 1全部 0已使用 2已失效
+        // 1未使用 0已使用 2已失效
         getData (status) {
           this.data = null;
           let _this = this;
