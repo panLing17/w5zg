@@ -100,8 +100,8 @@
     created () {
       // 获取商品相关信息
       this.getData()
-      // 获取金额相关信息
-      this.getPrice()
+      // // 获取金额相关信息
+      // this.getPrice()
     },
     mounted () {
 
@@ -125,23 +125,24 @@
         this.$ajax({
           method: 'post',
           url: this.$apiTransaction + 'goodsRejected/rejectedOrderInfo',
-          // url: "http://192.168.1.171:8061/goodsRejected/rejectedOrderInfo",
           params:form
         }).then(function (response) {
           if (response.data.code === '081') {
             _this.goodsList = response.data.data[0]
+            _this.getPrice(response.data.data[0].rejectedDetail[0].gr_num)
           }else {
             _this.$message.error(response.data.msg)
           }
         })
       },
-      getPrice () {
+      getPrice (count) {
         let _this = this
         this.$ajax({
           method: 'get',
           url: this.$apiTransaction + 'order/order/detail/usedNetCardAndCommonTicket',
           params:{
-            orderDetailId:this.$route.query.detailId
+            orderDetailId:this.$route.query.detailId,
+            count: count
           }
         }).then(function (response) {
           _this.priceInfo = response.data.data;
