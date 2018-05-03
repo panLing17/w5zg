@@ -277,7 +277,10 @@
           } else {
             e.target.children[0].style.display = "none";
           }
-          
+          // var bodys = document.getElementsByClassName(".wrapNav")[0];
+          // bodys.onclick=function(){
+          //   e.target.children[0].style.display = "none";
+          // }
         },
         //点击更多后展示的按钮
         judgeMoreBtn(e,item,items){
@@ -387,8 +390,7 @@
                       } else {
                         arrays[i].btnF = "申请退款";
                       }
-                    }
-                    
+                    }  
                   }
                 }
                 if (res.data.data[0].delivery_ways == "自提"){
@@ -875,6 +877,7 @@
     line-height: .7rem;
     font-size: .35rem;
     margin-left: .3rem;
+    color: rgb(153,153,153);
   }
   .moreThen{
     width: 1rem;
@@ -884,6 +887,7 @@
     line-height: .7rem;
     font-size: .35rem;
     position: relative;
+    color: rgb(153,153,153);
   }
   .moreThen .moreBtn{
     z-index: 200;

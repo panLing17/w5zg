@@ -179,6 +179,8 @@
           this.recommendFlag = true;
           //让推荐商品加载
           this.number = 0;
+          //让历史搜索记录停留在第一个上
+          this.selected1 = 0;
         },
         //清除历史搜索记录
         clearHistory(){
