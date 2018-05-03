@@ -132,6 +132,7 @@
           return;
         }else {
           this.count--;
+          this.getPrice()
         }
       },
       add(){
@@ -139,6 +140,7 @@
           return;
         }else {
           this.count++;
+          this.getPrice()
         }
       },
       getReasonData () {
@@ -165,7 +167,8 @@
           method: 'get',
           url: this.$apiTransaction + 'order/order/detail/usedNetCardAndCommonTicket',
           params:{
-            orderDetailId:this.goodsList.order_detail_id
+            orderDetailId:this.goodsList.order_detail_id,
+            count: this.count
           }
         }).then(function (response) {
           _this.price = response.data.data.price;
