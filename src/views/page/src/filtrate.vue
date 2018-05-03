@@ -1,30 +1,32 @@
 <template lang="pug">
   .filtrate
-    .wrap(v-show="downList")
-      .brand(@click="down()")
-        span 品牌
-        img(src="../../../assets/img/right.png")
-      .brandList
-        ul(v-if="showBrand")
-          li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event,item.bi_id)") {{item.bi_name}}
-        ul(v-else="showBrand")
-          li.onlyBrand(:class="{active:true}" @click="onlyBrandCheck()") {{onlyBrandName}}
-      .price 价格区间
-      .priceContent
-        input(type="text" placeholder="最小金额" v-model="minVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
-        span ~
-        input(type="text" placeholder="最大金额" v-model="maxVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").max
-        ul
-          li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index,$event)").sections {{item}}
-      .support 支持自提
-        ul
-          li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}
-    .button(v-show="downList")
-      .reset(@click="reset()") 重置
-      .affirm(@click="hide()") 确认
+    transition(name="slide-fade")
+      .wrap(v-show="downList")
+        .brand(@click="down()")
+          span 品牌
+          img(src="../../../assets/img/right.png")
+        .brandList
+          ul(v-if="showBrand")
+            li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event,item.bi_id)") {{item.bi_name}}
+          ul(v-else="showBrand")
+            li.onlyBrand(:class="{active:true}" @click="onlyBrandCheck()") {{onlyBrandName}}
+        .price 价格区间
+        .priceContent
+          input(type="text" placeholder="最小金额" v-model="minVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
+          span ~
+          input(type="text" placeholder="最大金额" v-model="maxVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").max
+          ul
+            li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index,$event)").sections {{item}}
+        .support 支持自提
+          ul
+            li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}
+    transition(name="slide-fade")        
+      .button(v-show="downList")
+        .reset(@click="reset()") 重置
+        .affirm(@click="hide()") 确认
     transition(name="slide-fade") 
       .wrapAllBrand(v-show="allBrandFlag")
-        allBrand(v-show="allBrandFlag" @searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
+        allBrand(@searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
 </template>
 
 <script>
@@ -192,7 +194,7 @@
   height: 100%;
   background-color: #fff;
   /*float: right;*/
-  z-index: 103;
+  /*z-index: 103;*/
   overflow-y:auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -357,10 +359,10 @@
 /* 可以设置不同的进入和离开动画 */
 /* 设置持续时间和动画函数 */
 .slide-fade-enter-active {
-  transition: all .5s ease;
+  transition: all .6s ease;
 }
 .slide-fade-leave-active {
-  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
 .slide-fade-enter, .slide-fade-leave-to
 /* .slide-fade-leave-active for below version 2.1.8 */ {
