@@ -486,8 +486,8 @@
                   arrays[i].orderInfoStatus = "待提货";
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
-                    self.linkMan = mArr[j].linkman;
-                    self.linkPhone = mArr[j].phone;
+                    self.linkMan = mArr[j].bs_linkman;
+                    self.linkPhone = mArr[j].bs_phone;
                     if (mArr.length>1) {
                       if(mArr[j].refund_status == null){
                         arrays[i].btnF = "申请退款";
@@ -666,10 +666,10 @@
             var style={
                 width: "2rem",
                 height: ".8rem",
-                backgroundColor: "rgba(0,0,0,0.2)",
+                backgroundColor: "rgba(0,0,0,0.3)",
                 color: "#fff",
                 position: "absolute",
-                left: "4rem",
+                left: "5.5rem",
                 bottom: ".2rem",
                 textAlign: "center",
                 lineHeight: ".8rem",

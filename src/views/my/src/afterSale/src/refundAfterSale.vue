@@ -12,31 +12,32 @@
         li.status(v-for="(item,index) in status" @click="statusChange(index)" :class="{active:index===statusActive}") {{item}}
         li.line(:style="{left:statusActive*25+'%'}")
     .mescroll#saleMescroll
-      .contentWrapper(ref="contentWrapper")
-        .content(v-for="(item,index) in orderDetail", v-if="!isEmpty")
-          .top
-            .left
-              span.orderNum 订单号:
-              span.num {{item.reject_num}}
-            .right#state {{item.gr_status | statusFilter}}
-          div(v-for="(info, index) in item.rejectedDetail")
-            .center
-              .image
-                img(:src="info.logo | img-filter")
-              .goodsDetails
-                  .words {{info.goods_name}}
-                  .property
-                    span(v-for="i in info.spec_json") {{i.gspec_value}}
-                  .amount x
-                    span {{info.gr_num}}
-            .bottom
+      transition(name="slide-fade")
+        .contentWrapper(ref="contentWrapper" v-if="contentFlag")
+          .content(v-for="(item,index) in orderDetail", v-if="!isEmpty")
+            .top
               .left
-                .returnState {{item.gr_status | decFilter(item.reject_way)}}
-              .right
-                .button
-                  .cancel(v-if="item.gr_status ==='审核中' || item.gr_status === '待发货'", @click.stop="confirm(item.id)") 取消退款
-                  .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货'&&item.reject_way!=='门店退货'") 发货
-                  .pay( @click.stop="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
+                span.orderNum 订单号:
+                span.num {{item.reject_num}}
+              .right#state {{item.gr_status | statusFilter}}
+            div(v-for="(info, index) in item.rejectedDetail")
+              .center
+                .image
+                  img(:src="info.logo | img-filter")
+                .goodsDetails
+                    .words {{info.goods_name}}
+                    .property
+                      span(v-for="i in info.spec_json") {{i.gspec_value}}
+                    .amount x
+                      span {{info.gr_num}}
+              .bottom
+                .left
+                  .returnState {{item.gr_status | decFilter(item.reject_way)}}
+                .right
+                  .button
+                    .cancel(v-if="item.gr_status ==='审核中' || item.gr_status === '待发货'", @click.stop="confirm(item.id)") 取消退款
+                    .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货'&&item.reject_way!=='门店退货'") 发货
+                    .pay( @click.stop="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
     .noData(v-if="isEmpty")
       img(src="../../../../../assets/img/1@2x.png")
 </template>
@@ -49,7 +50,8 @@
           statusActive: 0,
           status:["全部","申请中","退款中","已完成"],
           orderDetail:[],
-          cancelId:''
+          cancelId:'',
+          contentFlag:"", //控制订单内容的显隐
         }
       },
       computed: {
@@ -123,6 +125,7 @@
             params: form,
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
+            self.contentFlag = true;
             if (response.data.code === '081') {
               successCallback&&successCallback(response.data.data);//成功回调
             }else {
@@ -132,6 +135,7 @@
           })
         },
         statusChange (index) {
+          this.contentFlag = false;
           this.statusActive = index
           this.mescroll.scrollTo( 0, 300 );
           this.mescroll.destroy();
@@ -172,7 +176,7 @@
 <style scoped>
   .mescroll {
     position: fixed;
-    top: 2.3rem;
+    top: 2.2rem;
     bottom: 0;
     height: auto;
   }
@@ -329,6 +333,7 @@
   .bottom .right .button{
     display: flex;
     justify-content: space-around;
+    padding-top: .1rem;
   }
   .bottom .right .button div{
     width: 2rem;
@@ -336,7 +341,7 @@
     border-radius: .8rem;
     text-align: center;
     line-height: .8rem;
-    font-size: .4rem;
+    font-size: .35rem;
   }
   .bottom .right .button .cancel{
     color: rgb(161,161,161);
@@ -372,5 +377,19 @@
   }
   img {
     pointer-events: none ;
+  }
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active {
+    transition: all .6s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
   }
 </style>
