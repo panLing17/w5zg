@@ -42,7 +42,7 @@
         w-checkbox(v-model="type.bankPay")
     .comfirm
       w-button(@click="payment") 确认支付
-    price-pay(:show="priceShow", @close="closePricePay", :orderId="$route.query.id")
+    price-pay(:show="priceShow", @close="closePricePay", :orderId="$route.query.id", :closeDisable="priceCloseDisable")
 </template>
 
 <script>
@@ -52,6 +52,7 @@
       data () {
         return {
           priceShow: false,
+          priceCloseDisable: false,
           type:{
             pricePay: false,
             aliPay: false,
@@ -157,6 +158,7 @@
           }).then(function (response) {
             if (response.data.data) {
               self.priceShow = true
+              self.priceCloseDisable = true
               self.havePayPwd()
             }
           })

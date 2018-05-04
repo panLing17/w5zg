@@ -53,6 +53,7 @@
     name: "price-pay",
     props: {
       show: Boolean,
+      closeDisable: Boolean,
       orderId: String
     },
     data() {
@@ -76,7 +77,9 @@
     },
     methods: {
       close() {
-        this.$emit('close')
+        if (!this.closeDisable) {
+          this.$emit('close')
+        }
         // this.show = false
       },
       //键入密码
