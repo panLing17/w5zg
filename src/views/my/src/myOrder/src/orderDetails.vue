@@ -596,6 +596,7 @@
             this.pickUpNums = item.pick_up_no;
             var orderDetails = document.getElementsByClassName("orderDetails")[0];
             orderDetails.style.overflow = "hidden";
+            this.mescroll.hideTopBtn();
           }
           //此功能未开放
           if (e.target.innerHTML == "再次购买") {
