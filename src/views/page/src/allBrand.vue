@@ -9,9 +9,9 @@
         li(v-for="(item,index) in brandList" :class="{active:num1 == index}" @click="check(index,$event,item.bi_id)") {{item.bi_name}}
     .allBrandList
       ul(v-for="(key,value,oIndex) in letterBrandList")
-        li.letters(:id="'anchorz-'+oIndex") {{value}}
-        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event,item.bi_id)") {{item.bi_name}}
-        li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
+        li.letters(:id="'anchorz-'+oIndex" v-if="key.list.length>0") {{value}}
+        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event,item.id)") {{item.name}}
+        li.viewMore(@click="viewMore(key,$event,oIndex)" v-if="key.list.length>10") {{key.words}}
     ul.letter(v-show="false")
       li #
       li(v-for="(item,index) in letter" @click="goAnchorz('#anchorz-'+index)") {{item}} 
@@ -120,45 +120,23 @@
             let self = this;
             self.$ajax({
               method:"post",
-              url:this.$apiGoods + "goods/brand/all",
+              url:self.$apiGoods + "goods/brand/all",
               params:{},
             }).then(function(res){
-              console.log(res.data.data);
-              // self.letterBrandList = {}
-              // for(let i in res.data.data) {
-              //   self.letterBrandList[i] = {}
-              //   self.letterBrandList[i].list = res.data.data[i]
-              //   self.letterBrandList[i].words = "查看更多"
-              // }
-              if (res.data.data.i == undefined) {
-                self.letterBrandList.I.list = "";
+              for (var key in res.data.data) {
+                var arrList = res.data.data[key];
+                for (var j in self.letterBrandList) {
+                  for (var i = 0; i < arrList.length; i++) {
+                    if (arrList[i].bi_initial == j) {
+                      var datas = {
+                        name: arrList[i].bi_name,
+                        id: arrList[i].bi_id
+                      };
+                      self.letterBrandList[j].list.push(datas);
+                    }
+                  } 
+                }
               }
-              self.letterBrandList.A.list = res.data.data.a;
-              self.letterBrandList.B.list = res.data.data.b;
-              self.letterBrandList.C.list = res.data.data.c;
-              self.letterBrandList.D.list = res.data.data.d;
-              self.letterBrandList.E.list = res.data.data.e;
-              self.letterBrandList.F.list = res.data.data.f;
-              self.letterBrandList.G.list = res.data.data.g;
-              self.letterBrandList.H.list = res.data.data.h;
-              //self.letterBrandList.I.list = res.data.data.i;
-              self.letterBrandList.J.list = res.data.data.j;
-              self.letterBrandList.K.list = res.data.data.k;
-              self.letterBrandList.L.list = res.data.data.l;
-              self.letterBrandList.M.list = res.data.data.m;
-              self.letterBrandList.N.list = res.data.data.n;
-              self.letterBrandList.O.list = res.data.data.o;
-              self.letterBrandList.P.list = res.data.data.p;
-              self.letterBrandList.Q.list = res.data.data.q;
-              self.letterBrandList.R.list = res.data.data.r;
-              self.letterBrandList.S.list = res.data.data.s;
-              self.letterBrandList.T.list = res.data.data.t;
-              self.letterBrandList.U.list = res.data.data.u;
-              self.letterBrandList.V.list = res.data.data.v;
-              self.letterBrandList.W.list = res.data.data.w;
-              self.letterBrandList.X.list = res.data.data.x;
-              self.letterBrandList.Y.list = res.data.data.y;
-              self.letterBrandList.Z.list = res.data.data.z;
             })
           },
 
