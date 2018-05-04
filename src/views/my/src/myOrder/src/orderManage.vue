@@ -128,22 +128,22 @@
           }
           if (item == "待付款") {
             this.state = 1;
-            lineDiv.style.left = "19%";
+            lineDiv.style.left = "20%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待发货") {
             this.state = 2;
-            lineDiv.style.left = "40.5%";
+            lineDiv.style.left = "40%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待收货") {
             this.state = 4;
-            lineDiv.style.left = "62%";
+            lineDiv.style.left = "60%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "已完成") {
             this.state = 3;
-            lineDiv.style.left = "83.5%";
+            lineDiv.style.left = "80%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           this.request();
@@ -443,7 +443,7 @@
   .orderStatus{
     background-color: #fff;
     height: 1rem;
-    padding: 0 .3rem;
+    /*padding: 0 .3rem;*/
     position: fixed;
     top: 1.29rem;
     left: 0;
@@ -459,9 +459,11 @@
     line-height: 1rem;
     font-size: .4rem;
     color: rgb(153,153,153);
+    flex: 1;
+    text-align: center;
   }
   .lineDiv{
-    width: 15%;
+    width: 20%;
     height: 2px;
     background-color: rgb(244,0,87);
     position: absolute;

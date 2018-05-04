@@ -213,10 +213,11 @@
   .orderStatus{
     background-color: #fff;
     height: 1rem;
-    padding: 0 .3rem;
+    /*padding: 0 .3rem;*/
   }
   .orderStatus ul.wrapStatus{
     display: flex;
+    justify-content: space-between;
     position: relative;
   }
   .orderStatus ul.wrapStatus li.status{

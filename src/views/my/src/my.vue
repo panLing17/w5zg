@@ -31,7 +31,7 @@
     div.myOrderForm
       ul.top(@click="$router.push('/my/orderManage')")
         li 我的订单
-        li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 >
+        li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
       ul.bottom
         li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
           .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
@@ -400,15 +400,18 @@
   }
   .myOrderForm ul.bottom li:nth-child(3) img{
     width: .7rem;
+    margin-bottom: .03rem;
   }
   .myOrderForm ul.bottom li:nth-child(4) img{
     width: .6rem;
+    margin-bottom: .04rem;
   }
   .myOrderForm ul.bottom li:nth-child(5){
     margin-left: .3rem;
   }
   .myOrderForm ul.bottom li:nth-child(5) img{
     width: .68rem;
+    margin-bottom: .03rem;
   }
 	.myOrderForm ul.bottom li img{
 		width: .68rem;
