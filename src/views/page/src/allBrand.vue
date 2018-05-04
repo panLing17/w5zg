@@ -1,6 +1,7 @@
 <template lang="pug">
   .wrapToggle
-    .brand 
+    .brand(@click="backLastPage()")
+      img(src="../../../assets/img/backBtn.png") 
       span 品牌
     p.hot 热门
     .brandList
@@ -72,6 +73,13 @@
           this.history();
         },
         methods:{
+          //返回上一页
+          backLastPage(){
+            let data = {
+              back:"yes"
+            }
+            this.$emit("backLast",data);
+          },
           //选择热门品牌
           check(index,e,id){
             this.num1 = index;
@@ -191,16 +199,14 @@
 /*品牌--开始*/
 .brand{
   height: 100%;
-  padding: 0 .3rem;
-  display: flex;
-  justify-content: space-between;
+  padding: 0 .3rem .3rem .1rem;
   font-size: .4rem;
-  overflow-y:auto;
-  -webkit-overflow-scrolling: touch;
+}
+.brand span{
+  margin-left: 2.3rem;
 }
 .brand img{ 
-  width: .5rem;
-  height: .5rem;
+  width: .7rem;
   vertical-align: middle;
 }
 .brandList ul{

@@ -26,7 +26,7 @@
         .affirm(@click="hide()") 确认
     transition(name="slide-fade") 
       .wrapAllBrand(v-show="allBrandFlag")
-        allBrand(@searchBrand="searchBrand" @searchBrandHot="searchBrandHot")
+        allBrand(@searchBrand="searchBrand" @searchBrandHot="searchBrandHot" @backLast="backLast")
 </template>
 
 <script>
@@ -179,7 +179,13 @@
               this.num1 = !null;
             }
           },
-
+          //从品牌字母列表返回筛选页
+          backLast(data){
+            if (data.back == "yes") {
+              this.allBrandFlag = false;
+              this.downList = true;
+            }
+          }
         }
     }
 </script>
