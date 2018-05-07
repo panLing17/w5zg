@@ -66,7 +66,6 @@
           }
         },
         mounted(){
-          console.log(this.message);
           //品牌名
           this.brandNames();
         },

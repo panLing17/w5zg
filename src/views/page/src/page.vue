@@ -7,7 +7,7 @@
       .topCenter(slot="center")
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
-          input(:type="type",placeholder="请输入商品名称" @focus="$router.push('/home/searchHistory')")
+          input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{jumps:'page'}})")
           img(src="../../../assets/img/home扫描@2x.png" v-show="true").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
@@ -24,7 +24,7 @@
                   span.point(v-show="wordsShow")
                   span.letter {{item.gc_name}}
                 ul.listOfGoods
-                  li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,thirdFlag:true}})").wrapImg
+                  li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,jumps:'page'}})").wrapImg
                     img(:src="items.gc_icon | img-filter")
                     .words(v-show="wordsShow") {{items.gc_name}}
 </template>

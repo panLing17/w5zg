@@ -55,7 +55,8 @@
         showDiscover:this.$store.state.searchFlag, //搜索发现的显隐
         record1:[],
         record2:[],
-        msg:this.$route.query.messages
+        msg:this.$route.query.messages,
+        jumps:this.$route.query.jumps, //判断是那个页面来的
       }
     },
     directives:{
@@ -84,7 +85,7 @@
       this.historys();
       //显示搜索结果
       this.resultShow();
-      console.log(this.$store.state.searchFlag);
+      console.log(this.$route.query.jumps);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -93,12 +94,14 @@
     methods: {
       //判断回退事件
       backRouter(){
-        // if (this.$route.query.relNum == 1) {
-        //   this.$router.push('/home');
-        // } else{
-        //   this.$router.go(-1);
-        // }
-        this.$router.push('/home');
+        if (this.$route.query.relNum == 1 && this.$route.query.jumps == 'page') {
+          this.$router.push('/page');
+        } else if (this.$route.query.relNum == 1 && this.$route.query.jumps == 'home'){
+          this.$router.push('/home');
+        } else {
+          this.$router.go(-1);
+        }
+        // this.$router.push('/home');
       },  
       //显示搜索结果
       resultShow(){
@@ -110,7 +113,7 @@
       //搜索商品去商品展示页
       searchGoods(){
         let self = this;
-        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true}});   
+        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true,jumps:self.jumps}});   
       },
       //历史搜索
       historys(){
@@ -180,14 +183,14 @@
         this.selected1 = index;
         this.selected2 = null;
         this.msg = item;
-        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true}});
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true,jumps:this.jumps}});
       },
 
       change2: function(item,index){
         this.selected2 = index;
         this.selected1 = null;
         this.msg = item;
-        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true}});
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true,jumps:this.jumps}});
       },
 
       upCallback: function(page) {

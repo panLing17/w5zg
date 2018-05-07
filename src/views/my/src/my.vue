@@ -137,7 +137,6 @@
           if (response.data.code === '081') {
             _this.netcardCount = response.data.data.length;
           }
-
         })
       },
       /* 切换动画修复 */
