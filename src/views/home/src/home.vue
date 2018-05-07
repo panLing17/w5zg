@@ -121,7 +121,7 @@
       },
       //跳到搜索历史页
       jump:function(){
-        this.$router.push('/home/searchHistory');
+        this.$router.push({path:'/home/searchHistory',query:{jumps:'home'}});
       },
       // 轮播图获取
       getBanner () {
