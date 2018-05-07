@@ -206,6 +206,10 @@
           this.$message.error('请正确填写提货信息')
           return false
         }
+        if (!/^1[3|4|5|7|8|9][0-9]{9}$/.test(this.phone)) {
+          this.$message.error('请输入正确手机号')
+          return
+        }
         let netCardFlag = this.netCardFlag ? '011' : '012'
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this

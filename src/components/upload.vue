@@ -136,6 +136,7 @@
         let self = this
         let data = new FormData()
         data.append(self.name, blobFile)
+        data.append('W5MALLTOKEN', localStorage.getItem('token'))
         this.$ajax({
           method: 'post',
           url: self.$apiTransaction + self.url,
