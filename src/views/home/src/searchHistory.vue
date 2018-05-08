@@ -101,7 +101,6 @@
         } else {
           this.$router.go(-1);
         }
-        // this.$router.push('/home');
       },  
       //显示搜索结果
       resultShow(){
@@ -314,8 +313,9 @@
 /*历史搜索--结束*/
 /*搜索结果显示--开始*/
 .result{
-  padding: .7rem .6rem 1.2rem;
+  padding: 1.2rem 0 1.5rem;
   background-color: #fff;
+  text-align: center;
 }
 .result .words{
   font-size: .4rem;
