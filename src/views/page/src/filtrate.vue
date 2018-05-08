@@ -258,8 +258,6 @@
 .priceContent input{
   width: 2.4rem;
   height: .8rem;
-  border-width: 1px;
-  border-color: rgb(204,204,204);
   font-size: .1rem;
   outline: none;
   text-indent: .1rem;

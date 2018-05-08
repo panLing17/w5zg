@@ -50,6 +50,7 @@
         .wrapBtn
           .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
             .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
+              .triangle
           .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
           .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
         transition(name="slide-fade")  
@@ -900,6 +901,15 @@
     color: #fff;
     display: none;
   }
+  .moreThen .moreBtn .triangle{
+    position: absolute;
+    top: -.1rem;
+    left: .78rem;
+    width: .2rem;
+    height: .2rem;
+    background-color: rgb(153,153,153);
+    transform: rotate(45deg);
+  }
   .bottom{
     border-top: 1px solid rgb(242,242,242);
     /*height: .8rem;*/
@@ -1017,6 +1027,7 @@
     display: flex;
     justify-content: flex-end;
     background-color: #fff;
+    box-shadow: 1px 1px 5px #ccc;
   }
   .fixedBtn div{
     width: 2.3rem;

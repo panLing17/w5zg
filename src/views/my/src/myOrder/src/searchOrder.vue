@@ -7,7 +7,7 @@
         .searchInput
           img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoodsName()")
           input(:type="type", placeholder="请输入订单商品名称" v-model="msg" @keyup.enter="searchGoodsName()")
-          .clear(@click="clearName()") x
+          .clear(@click="clearName()" v-if="msg.length>0") x
       .topRight(slot="right")
         .topRight(slot="right" @click="backTo()") 取消
     .searchOrder.mescroll#searchOrderMescroll
@@ -498,16 +498,16 @@
   position: relative;
 }
 .searchInput img{
-  width: .4rem;
+  width: .45rem;
   vertical-align: middle;
-  margin-left: .2rem;
+  margin-left: .3rem;
 }
 .searchInput input{
   width: 80%;
   border: 0;
   outline: none;
   font-size: .3rem;
-  margin-left: .1rem;
+  margin-left: .2rem;
   background-color: rgb(238,238,238);
 }
 /*搜索框样式--结束*/

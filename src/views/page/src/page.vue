@@ -8,7 +8,7 @@
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{jumps:'page'}})")
-          img(src="../../../assets/img/home扫描@2x.png" v-show="true").rightImg
+          img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
     .page(v-loading="loadingFlag<2")
@@ -85,6 +85,39 @@
            }
         });
       },
+      //扫描
+      scan(){
+        let self = this
+        let _this = this
+         wx.scanQRCode({
+          desc: 'scanQRCode desc',
+          needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: function (res) {
+            // alert(res.resultStr)
+            // let id = _this.GetQueryString(res.resultStr, 'containerId')
+            // _this.$ajax({
+            //   method: 'post',
+            //   url: 'sweep/sweepResult',
+            //   params: {
+            //     containerId: id
+            //   },
+            //   headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+            // }).then(function (response) {
+            //   response.data.code = response.data.code.toString()
+            //   if (response.data.code === '100') {
+            //     _this.$message.success('扫码成功')
+            //   }
+            // })
+          },
+          error: function(res){
+            if(res.errMsg.indexOf('function_not_exist') > 0){
+              alert('版本过低请升级')
+            }
+          }
+        })    
+      },
+
       //第一个二级分类
       one(id){
         let self =this;
@@ -178,7 +211,7 @@
   }
   /*顶部搜索--开始*/
   .topLeft{
-    width: 1.6rem;
+    width: 1.8rem;
   }
   .topLeft img{
     width: .3rem;
@@ -195,35 +228,35 @@
     word-break: break-all;
   }
   .topCenter{
-    margin-left: .2rem;
+    position: relative;
   }
   /*搜索框样式--开始*/
-.searchInput{
-  width: 6.5rem;
-  height: .9rem;
-  background-color: rgb(238,238,238);
-  border-radius: .9rem;
-  line-height: .9rem;
-}
-.searchInput img.leftImg{
-  width: .4rem;
-  vertical-align: middle;
-  margin-left: .2rem;
-}
-.searchInput img.rightImg{
-  width: .4rem;
-  vertical-align: middle;
-  margin-left: .2rem;
-}
-.searchInput input{
-  width: 70%;
-  border: 0;
-  outline: none;
-  font-size: .3rem;
-  margin-left: .4rem;
-  background-color: rgb(238,238,238);
-}
-/*搜索框样式--结束*/
+  .searchInput{
+    width: 6.5rem;
+    height: .9rem;
+    background-color: rgb(238,238,238);
+    border-radius: .9rem;
+    line-height: .9rem;
+  }
+  .searchInput img.leftImg{
+    width: .45rem;
+    vertical-align: middle;
+    margin-left: .3rem;
+  }
+  .searchInput img.rightImg{
+    width: .45rem;
+    vertical-align: middle;
+    margin-left: .2rem;
+  }
+  .searchInput input{
+    width: 70%;
+    border: 0;
+    outline: none;
+    font-size: .3rem;
+    margin-left: .2rem;
+    background-color: rgb(238,238,238);
+  }
+  /*搜索框样式--结束*/
   .topRight{
     margin-right: .1rem;
   }
