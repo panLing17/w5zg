@@ -48,6 +48,9 @@
         .refundCont
           ul
             li
+              span.left 退款类型:
+              span.right {{goodsList.type}}
+            li
               span.left 退款原因:
               span.right {{goodsList.rejected_reason}}
             li(v-if="item.desp_custom")

@@ -45,17 +45,17 @@
         ul
           li.money
             .left 现金退款:
-            .right ￥{{price.price}}
+            .right {{price.price | price-filter}}
           li.money
             .left 现金券退款:
-            .right ￥{{price.cardPrice}}
+            .right {{price.cardPrice | price-filter}}
           li.money
             .left 通用券退款:
-            .right ￥{{price.ticketPrice}}
+            .right {{price.ticketPrice | price-filter}}
           li.total
             .arrow
             .left 退款总金额:
-            .right ￥{{price.price + price.cardPrice + price.ticketPrice}}
+            .right {{price.price + price.cardPrice + price.ticketPrice | price-filter}}
           li.freight (含运费￥0)
     .refundExplain
       ul
