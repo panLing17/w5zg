@@ -71,7 +71,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 3.7rem;
+    /*height: 3.7rem;*/
     position: fixed;
     bottom: 0;
     left: 0;
@@ -100,8 +100,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-  .main ul li:first-child{
     border-bottom: solid 1px #ddd ;
+  }
+  .main ul li:last-child{
+    border: none;
   }
 </style>

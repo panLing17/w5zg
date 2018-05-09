@@ -44,7 +44,7 @@
             .property
               span(v-for="i in item.spec_json") {{i.gspec_value}}
               span.count x {{item.gr_num}}
-          .btn(v-if="goodsList.gr_status==='待发货'&&goodsList.reject_way!=='门店退货'", @click="$router.push({path: '/my/express', query:{id:$route.query.id}})") 发货
+          .btn(v-if="goodsList.gr_status==='待发货'&&goodsList.reject_way!=='门店退货' && goodsList.type==='退货退款'", @click="$router.push({path: '/my/express', query:{id:$route.query.id}})") 发货
         .refundCont
           ul
             li
