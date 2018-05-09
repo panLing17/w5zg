@@ -36,7 +36,7 @@
                 .right
                   .button
                     .cancel(v-if="item.gr_status ==='审核中' || item.gr_status === '待发货'", @click.stop="confirm(item.id)") 取消退款
-                    .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货'&&item.reject_way!=='门店退货'") 发货
+                    .cancel(@click.stop="$router.push({path: '/my/express',query: {id: item.id}})", v-if="item.gr_status==='待发货' && item.reject_way!=='门店退货' && item.type==='退货退款'") 发货
                     .pay( @click.stop="$router.push({path: '/my/returnDetails', query: {id:item.id, detailId:info.order_detail_id}})") 查看详情
     .noData(v-if="isEmpty")
       img(src="../../../../../assets/img/1@2x.png")

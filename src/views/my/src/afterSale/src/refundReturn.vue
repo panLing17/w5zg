@@ -89,7 +89,7 @@
         // 退货方式选择框 仅退款时隐藏 退货退款时出现
         returnTypeShow: false,
         statusData:['仅退款','退货退款'],
-        returnStyleData:['快递退货','门店退货'],
+        returnStyleData:[],
         reasonData:[],
         reasonTitle:'退款原因',
         reasonType:-1,
@@ -109,8 +109,18 @@
       this.getReturnGoods()
       // 获取退款金额
       this.getPrice()
+      // 获取退货方式
+      this.getReturnStyleData()
     },
     methods: {
+      getReturnStyleData () {
+        // console.log(this.goodsList)
+        if (this.goodsList.delivery_ways === '快递配送') {
+          this.returnStyleData = ['快递退货']
+        }else {
+          this.returnStyleData = ['快递退货','门店退货']
+        }
+      },
       //选择货物状态
       statusTypeChange(num){
         this.statusType = num;

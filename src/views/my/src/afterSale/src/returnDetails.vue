@@ -44,7 +44,7 @@
             .property
               span(v-for="i in item.spec_json") {{i.gspec_value}}
               span.count x {{item.gr_num}}
-          .btn(v-if="goodsList.gr_status==='待发货'&&goodsList.reject_way!=='门店退货'", @click="$router.push({path: '/my/express', query:{id:$route.query.id}})") 发货
+          .btn(v-if="goodsList.gr_status==='待发货'&&goodsList.reject_way!=='门店退货' && goodsList.type==='退货退款'", @click="$router.push({path: '/my/express', query:{id:$route.query.id}})") 发货
         .refundCont
           ul
             li
@@ -69,7 +69,16 @@
               span.left 退款凭证:
               .wrapper.right
                 img(:src="img | img-filter", v-for="img in item.desp_pic")
-
+          ul.addressInfo(v-if="goodsList.type==='退货退款'")
+            li
+              span.left 收件人:
+              span.right {{goodsList.bs_linkman}}
+            li
+              span.left 联系方式:
+              span.right {{goodsList.bs_phone}}
+            li
+              span.left 退货地址:
+              span.right {{goodsList.bs_address}}
 </template>
 <script>
   import now from '../../../../../assets/img/now@2x.png'
@@ -339,25 +348,24 @@
   .refundCont ul li{
     margin-top: .1rem;
     color: rgb(153,153,153);
+    display: flex;
+    flex-wrap: wrap;
   }
   .refundCont ul li .left {
     flex: none;
+    width: 1.6rem;
   }
   .refundCont ul li .right {
     flex: 1;
   }
-  .refundCont ul li span:nth-child(2){
-    margin-left: .2rem;
-  }
-  .refundCont ul li:last-child{
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .refundCont ul li:last-child img{
+  .refundCont ul li img{
     width: 2rem;
     height: 2rem;
     border-radius: .2rem;
     margin-left: .2rem;
+  }
+  .addressInfo {
+    margin-top: .5rem;
   }
   /*退款内容原因--结束*/
   .count {
