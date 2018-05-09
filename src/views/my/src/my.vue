@@ -1,79 +1,82 @@
 <template lang="pug">
-  div.myBox.mescroll#myMescroll(:class="{positionFixed: positionFixed}")
-    .head
-      .top
-        .lefter
-          img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
-        .righter
-          img(src="../../../assets/img/message@2x.png", v-if="false")
-          img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
-          img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
-      p.center
-          ul.headPic
-            li(@click="$router.push('/my/settings')")
-              img(:src="userData.mi_head_sculpture | img-filter")
-          ul.userName
-            li {{userData.mi_nickname}}
-          ul.balance(v-if="userData.member_type === '092'")
-            li 余额:
-            li {{accoutBalance}}
-            li 元
-    div.fav_att_foot
-      ul.left
-        li 0
-        li 收藏夹
-      ul.center
-        li 0
-        li 关注店铺
-      ul.right(@click="$router.push('/my/footMark')")
-        li {{footmarkNum}}
-        li 足迹
-    div.myOrderForm
-      ul.top(@click="$router.push('/my/orderManage')")
-        li 我的订单
-        li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
-      ul.bottom
-        li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
-          .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
-            i(v-if="orderCount.unPayOrder>99") +
-          img(src="../../../assets/img/my_obligation@2x.png")
-          .character 待付款
-        li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
-          .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center'}") {{orderCount.unSendOrder}}
-            i(v-if="orderCount.unSendOrder>99") +
-          img(src="../../../assets/img/my_readyfordelivery@2x.png")
-          .character 待发货
-        li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
-          .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center'}") {{orderCount.unRecieveOrder}}
-            i(v-if="orderCount.unRecieveOrder>99") +
-          img(src="../../../assets/img/my_waitforreceiving2@2x.png")
-          .character 待收货
-        li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
-          img(src="../../../assets/img/my_completed.png")
-          .character 已完成
-        li(@click="$router.push('/my/refundAfterSale')")
-          img(src="../../../assets/img/my_aftersale2@2x.png")
-          .character 退货/售后
-    div.myTreasure
-      ul.top
-        li 我的财富
-        li
-      ul.bottom
-        li(@click="goBankCard")
-          img(src="../../../assets/img/my_bankcard@2x.png")
-          .words 银行卡
-        li(@click="goNetKingCard")
-          img(src="../../../assets/img/my_card@2x.png")
-          .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
-            i(v-if="orderCount.unSendOrder>99") +
-          .words 现金券
-        li(v-if="userData.member_type === '091'", @click="goAllCard")
-          img(src="../../../assets/img/my_cashcoupon@2x.png")
-          .words 通用劵
-    .title
-      img(src="../../../assets/img/recommend.png")
-    w-recommend#dataId(:listData="recommendGoods")
-    .bottomPlaceholder
+  .wrapTop(ref="viewBox")
+    .toper
+      .lefter
+        img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
+      transition(name="slide-fade")  
+        .center(v-if="nameShow") 卡卡 
+      .righter
+        img(src="../../../assets/img/message@2x.png", v-if="false")
+        img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
+        img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
+    div.myBox.mescroll#myMescroll(:class="{positionFixed: positionFixed}")
+      .head#header
+        p.center
+            ul.headPic
+              li(@click="$router.push('/my/settings')")
+                img(:src="userData.mi_head_sculpture | img-filter")
+            ul.userName
+              li {{userData.mi_nickname}}
+            ul.balance(v-if="userData.member_type === '092'")
+              li 余额:
+              li {{accoutBalance}}
+              li 元
+      div.fav_att_foot
+        ul.left
+          li 0
+          li 收藏夹
+        ul.center
+          li 0
+          li 关注店铺
+        ul.right(@click="$router.push('/my/footMark')")
+          li {{footmarkNum}}
+          li 足迹
+      div.myOrderForm
+        ul.top(@click="$router.push('/my/orderManage')")
+          li 我的订单
+          li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
+        ul.bottom
+          li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
+            .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
+              i(v-if="orderCount.unPayOrder>99") +
+            img(src="../../../assets/img/my_obligation@2x.png")
+            .character 待付款
+          li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
+            .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center'}") {{orderCount.unSendOrder}}
+              i(v-if="orderCount.unSendOrder>99") +
+            img(src="../../../assets/img/my_readyfordelivery@2x.png")
+            .character 待发货
+          li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
+            .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center'}") {{orderCount.unRecieveOrder}}
+              i(v-if="orderCount.unRecieveOrder>99") +
+            img(src="../../../assets/img/my_waitforreceiving2@2x.png")
+            .character 待收货
+          li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
+            img(src="../../../assets/img/my_completed.png")
+            .character 已完成
+          li(@click="$router.push('/my/refundAfterSale')")
+            img(src="../../../assets/img/my_aftersale2@2x.png")
+            .character 退货/售后
+      div.myTreasure
+        ul.top
+          li 我的财富
+          li
+        ul.bottom
+          li(@click="goBankCard")
+            img(src="../../../assets/img/my_bankcard@2x.png")
+            .words 银行卡
+          li(@click="goNetKingCard")
+            img(src="../../../assets/img/my_card@2x.png")
+            .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
+              i(v-if="orderCount.unSendOrder>99") +
+            .words 现金券
+          li(v-if="userData.member_type === '091'", @click="goAllCard")
+            img(src="../../../assets/img/my_cashcoupon@2x.png")
+            .words 通用劵
+      .title
+        img(src="../../../assets/img/recommend.png")
+      w-recommend#dataId(:listData="recommendGoods")
+      .bottomPlaceholder
 </template>
 
 <script>
@@ -83,6 +86,7 @@
     name: "my",
     data() {
       return{
+        nameShow:"", //控制上滑时显示的用户名
         recommendGoods: [],
         footmarkNum: 0,
         accoutBalance: 0,
@@ -104,13 +108,23 @@
       this.getUserData()
       this.getFootmarkNum()
       // 切换动画HACK
-      this.animateHack()
+      this.animateHack();
+      //判断页面是否向上滚动
+      window.addEventListener('scroll',this.judgeScroll,true);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
     },
     methods: {
+      //判断页面是否向上滚动
+      judgeScroll(){
+        if (this.mescroll.getScrollTop()>0) {
+          this.nameShow = true;
+        } else {
+          this.nameShow = false;
+        }
+      },
       // 获取订单各状态数量
       getOrderCount () {
         let _this = this
@@ -269,23 +283,33 @@
     background-size: 100% 100%;
     overflow: hidden;
   }
-  .head .top{
+  .toper{
     width: 100%;
-    margin-top: .2rem;
-    padding: 0 .3rem;
+    padding: .3rem .3rem .2rem;
     display: flex;
     justify-content: space-between;
+    z-index: 200;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: url("../../../assets/img/topbackground@2x.png");
   }
-  .head .top .lefter img{
+  .toper .lefter img{
     width: .7rem;
   }
-  .head .top .righter img{
+  .toper .center{
+    color: #fff;
+    font-size: .4rem;
+  }
+  .toper .righter img{
     width: .7rem;
   }
-  .head .top .righter img:nth-child(2){
+  .toper .righter img:nth-child(2){
     margin-left: .2rem;
   }
   .head .center{
+    margin-top: 1rem;
     display: flex;
     position: relative;
   }
@@ -489,5 +513,16 @@
     position: relative;
     flex: none;
     text-align: center;
+  }
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .slide-fade-enter-active,
+  .slide-fade-leave-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active for below version 2.1.8 */ {
+    opacity: 0;
   }
 </style>
