@@ -287,7 +287,7 @@
         },
         //点击更多后展示的按钮
         judgeMoreBtn(e,item,items){
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+          if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
             if (items.length > 1) {
               items.push(this.delivery_ways);
               this.$store.commit('getReturnGoods', items);
@@ -553,7 +553,7 @@
             this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:item.orderDetail[0].logo}});
           }
           //进入到申请退货页面
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+          if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
             if (items.length > 1) {
               items.push(this.delivery_ways);
               this.$store.commit('getReturnGoods', items);
@@ -570,7 +570,7 @@
         },
         judgeBtnS(e,item,items){
           //进入到申请退货页面
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+          if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
             if (items.length > 1) {
               items.push(this.delivery_ways);
               this.$store.commit('getReturnGoods', items);
