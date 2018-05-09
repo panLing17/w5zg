@@ -1,5 +1,5 @@
 <template lang="pug">
-  .wrapTop(ref="viewBox")
+  .wrapTop
     .toper
       .lefter
         img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
