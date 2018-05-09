@@ -244,6 +244,7 @@
   color: rgb(245,0,87);
   font-size: .4rem;
   font-weight: 400;
+  margin-right: .1rem;
 }
 /*搜索框样式--开始*/
 .searchInput{
@@ -254,7 +255,7 @@
   line-height: .9rem;
 }
 .searchInput img{
-  width: .4rem;
+  width: .45rem;
   vertical-align: middle;
   margin-left: .2rem;
 }

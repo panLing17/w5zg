@@ -371,7 +371,6 @@
   }
   /*顶部搜索--开始*/
   .topCenter{
-    margin-left: .1rem;
     position: relative;
   }
   .topRight{
@@ -396,7 +395,7 @@
     line-height: .9rem;
   }
   .searchInput img{
-    width: .4rem;
+    width: .45rem;
     vertical-align: middle;
     margin-left: .2rem;
   }
@@ -417,13 +416,14 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 1.2rem;
+    height: 1.23rem;
     padding: 0 .3rem;
     background-color: #fff;
     position: fixed;
     top: 1.29rem;
     z-index: 101;
     border-top: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f0f0f0;
   }
   ul.wrap li{
     font-size: .4rem;
@@ -534,8 +534,11 @@
   }
   /*商品大图展示--结束*/
   /*切换成列表模式的样式--开始*/
+  .toggle{
+    padding-top: .2rem;
+  }
   .toggle li{
-    margin-top: .2rem;
+    margin-bottom: .2rem;
     background-color: #fff;
     padding: .2rem .3rem;
     display: flex;

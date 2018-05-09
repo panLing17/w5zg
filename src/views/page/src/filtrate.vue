@@ -12,16 +12,16 @@
             li.onlyBrand(:class="{active:true}" @click="onlyBrandCheck()") {{onlyBrandName}}
         .price 价格区间
         .priceContent
-          input(type="text" placeholder="最小金额" v-model="minVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").min
+          input(type="text" placeholder="最小金额" v-model="minVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')" @focus="isfocus=true").min
           span ~
-          input(type="text" placeholder="最大金额" v-model="maxVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')").max
+          input(type="text" placeholder="最大金额" v-model="maxVal" onkeyup="this.value=this.value.replace(/[^0-9-]/g,'')" @focus="isfocus=true").max
           ul
             li(v-for="(item,index) in price" :class="{active:num2 == index}" @click="checks(index,$event)").sections {{item}}
         .support 支持自提
           ul
             li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}
     transition(name="slide-fade")        
-      .button(v-show="downList")
+      .button(v-show="downList")#hideBtn
         .reset(@click="reset()") 重置
         .affirm(@click="hide()") 确认
     transition(name="slide-fade") 
@@ -47,6 +47,7 @@
         },
         data(){
           return{
+            focusHideFlag:true, //控制底部按钮显隐
             showBrand:true, //判断是显示一个还是多个品牌名
             onlyBrandName:"", //只显示一个品牌名
             allBrandFlag:false,
@@ -68,8 +69,27 @@
         mounted(){
           //品牌名
           this.brandNames();
+          this.focusHide();
         },
         methods:{
+          //
+          focusHide(){
+            var originalHeight=document.documentElement.clientHeight || document.body.clientHeight;
+            var hideBtn = document.getElementById("hideBtn");
+            console.log(originalHeight);
+            window.onresize=function(){
+                var resizeHeight=document.documentElement.clientHeight || document.body.clientHeight;
+                console.log(resizeHeight);
+                console.log(resizeHeight<originalHeight);
+                console.log(this.focusHideFlag);
+                //软键盘弹起与隐藏  都会引起窗口的高度发生变化
+                if(resizeHeight<originalHeight){ //resizeHeight<originalHeight证明窗口被挤压了
+                  hideBtn.style.display = "none";
+                } else{
+                  hideBtn.style.display = "flex";
+                }
+            } 
+          },
           //加载品牌名
           brandNames(){
             let self = this;
@@ -92,7 +112,7 @@
             this.brandNameId = id;
             this.showBrand = false;
             this.onlyBrandName = e.target.innerText;
-          },
+          },          
           //点击价格区间
           checks(index,e){
             this.num2 = index;
@@ -198,8 +218,6 @@
   width: 100%;
   height: 100%;
   background-color: #fff;
-  /*float: right;*/
-  /*z-index: 103;*/
   overflow-y:auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -258,11 +276,12 @@
 .priceContent input{
   width: 2.4rem;
   height: .8rem;
-  border-width: 1px;
-  border-color: rgb(204,204,204);
-  font-size: .1rem;
+  font-size: .3rem;
   outline: none;
   text-indent: .1rem;
+}
+input::-webkit-input-placeholder{
+  font-size: .3rem;
 }
 .priceContent span{
   display: inline-block;

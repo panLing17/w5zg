@@ -395,15 +395,14 @@
     margin-left: .7rem;
   }
   .myOrderForm ul.bottom li:nth-child(2) img{
-    width: .68rem;
+    width: .7rem;
   }
   .myOrderForm ul.bottom li:nth-child(3) img{
-    width: .7rem;
-    margin-bottom: .03rem;
+    width: .72rem;
   }
   .myOrderForm ul.bottom li:nth-child(4) img{
-    width: .6rem;
-    margin-bottom: .04rem;
+    width: .56rem;
+    margin-bottom: .08rem;
   }
   .myOrderForm ul.bottom li:nth-child(5){
     margin-left: .3rem;
@@ -413,7 +412,7 @@
     margin-bottom: .03rem;
   }
 	.myOrderForm ul.bottom li img{
-		width: .68rem;
+		width: .7rem;
 	}
   .myOrderForm ul.bottom li .character{
     margin-top: .2rem;
