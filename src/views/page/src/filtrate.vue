@@ -72,7 +72,7 @@
           this.focusHide();
         },
         methods:{
-          //
+          //手机软键盘弹出时触发
           focusHide(){
             var originalHeight=document.documentElement.clientHeight || document.body.clientHeight;
             var hideBtn = document.getElementById("hideBtn");

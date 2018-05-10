@@ -4,7 +4,7 @@
       .lefter
         img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
       transition(name="slide-fade")  
-        .center(v-if="nameShow") {{userData.mi_nickname}} 
+        .center(v-if="nameShow") Fernando Torres 
       .righter
         img(src="../../../assets/img/message@2x.png", v-if="false")
         img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
@@ -31,48 +31,50 @@
         ul.right(@click="$router.push('/my/footMark')")
           li {{footmarkNum}}
           li 足迹
-      div.myOrderForm
-        ul.top(@click="$router.push('/my/orderManage')")
-          li 我的订单
-          li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
-        ul.bottom
-          li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
-            .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
-              i(v-if="orderCount.unPayOrder>99") +
-            img(src="../../../assets/img/my_obligation@2x.png")
-            .character 待付款
-          li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
-            .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center'}") {{orderCount.unSendOrder}}
-              i(v-if="orderCount.unSendOrder>99") +
-            img(src="../../../assets/img/my_readyfordelivery@2x.png")
-            .character 待发货
-          li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
-            .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center'}") {{orderCount.unRecieveOrder}}
-              i(v-if="orderCount.unRecieveOrder>99") +
-            img(src="../../../assets/img/my_waitforreceiving2@2x.png")
-            .character 待收货
-          li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
-            img(src="../../../assets/img/my_completed.png")
-            .character 已完成
-          li(@click="$router.push('/my/refundAfterSale')")
-            img(src="../../../assets/img/my_aftersale2@2x.png")
-            .character 退货/售后
-      div.myTreasure
-        ul.top
-          li 我的财富
-          li
-        ul.bottom
-          li(@click="goBankCard")
-            img(src="../../../assets/img/my_bankcard@2x.png")
-            .words 银行卡
-          li(@click="goNetKingCard")
-            img(src="../../../assets/img/my_card@2x.png")
-            .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
-              i(v-if="orderCount.unSendOrder>99") +
-            .words 现金券
-          li(v-if="userData.member_type === '091'", @click="goAllCard")
-            img(src="../../../assets/img/my_cashcoupon@2x.png")
-            .words 通用劵
+      .wrapMyOrderForm.wrapDiv    
+        div.myOrderForm
+          ul.top(@click="$router.push('/my/orderManage')")
+            li 我的订单
+            li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
+          ul.bottom
+            li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
+              .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
+                i(v-if="orderCount.unPayOrder>99") +
+              img(src="../../../assets/img/my_obligation@2x.png")
+              .character 待付款
+            li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
+              .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center'}") {{orderCount.unSendOrder}}
+                i(v-if="orderCount.unSendOrder>99") +
+              img(src="../../../assets/img/my_readyfordelivery@2x.png")
+              .character 待发货
+            li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
+              .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center'}") {{orderCount.unRecieveOrder}}
+                i(v-if="orderCount.unRecieveOrder>99") +
+              img(src="../../../assets/img/my_waitforreceiving2@2x.png")
+              .character 待收货
+            li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
+              img(src="../../../assets/img/my_completed.png")
+              .character 已完成
+            li(@click="$router.push('/my/refundAfterSale')")
+              img(src="../../../assets/img/my_aftersale2@2x.png")
+              .character 退货/售后
+      .wrapMyTreasure.wrapDiv        
+        div.myTreasure
+          ul.top
+            li 我的财富
+            li
+          ul.bottom
+            li(@click="goBankCard")
+              img(src="../../../assets/img/my_bankcard@2x.png")
+              .words 银行卡
+            li(@click="goNetKingCard")
+              img(src="../../../assets/img/my_card@2x.png")
+              .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
+                i(v-if="orderCount.unSendOrder>99") +
+              .words 现金券
+            li(v-if="userData.member_type === '091'", @click="goAllCard")
+              img(src="../../../assets/img/my_cashcoupon@2x.png")
+              .words 通用劵
       .title
         img(src="../../../assets/img/recommend.png")
       w-recommend#dataId(:listData="recommendGoods")
@@ -111,12 +113,22 @@
       this.animateHack();
       //判断页面是否向上滚动
       window.addEventListener('scroll',this.judgeScroll,true);
+      //改变下拉刷新的样式
+      this.changeStyles();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
     },
     methods: {
+      //改变下拉刷新的样式
+      changeStyles(){
+        var downwarp = document.getElementsByClassName("mescroll-downwarp")[0];
+        downwarp.style.backgroundColor = "rgb(244,0,87)";
+        downwarp.children[0].children[0].style.borderColor = "#fff";
+        downwarp.children[0].children[0].style.borderBottomColor = "transparent";
+        downwarp.children[0].children[1].style.color = "#fff"; 
+      },
       //判断页面是否向上滚动
       judgeScroll(){
         if (this.mescroll.getScrollTop()>0) {
@@ -272,8 +284,6 @@
   .myBox {
     /*min-height: calc(100vh - 1.6rem);*/
     width: 100%;
-    background-color: rgb(242,242,242);
-    /*padding-bottom: 2rem;*/
   }
   /*头部--开始*/
   .head{
@@ -383,11 +393,14 @@
   }
   /*收藏夹，关注店铺，足迹--结束*/
   /*我的订单和我的财富--开始*/
+  .wrapDiv{
+    padding-top: .2rem;
+    background-color: rgb(242,242,242);
+  }
 	.myOrderForm,
 	.myTreasure{
 		background-color: #fff;
 		padding: .2rem 0 .4rem;
-		margin-top: .2rem;
 	}
 	.myOrderForm ul.top,
 	.myTreasure ul.top{
