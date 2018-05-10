@@ -443,13 +443,13 @@
   .orderStatus{
     background-color: #fff;
     height: 1rem;
-    /*padding: 0 .3rem;*/
     position: fixed;
     top: 1.29rem;
     left: 0;
     right: 0;
     z-index: 200;
     border-top: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f2f2f2;
   }
   .orderStatus ul.wrapStatus{
     display: flex;
@@ -474,6 +474,7 @@
   /*订单内容--开始*/
   .content{
     margin-bottom: .3rem;
+    box-shadow: 1px 1px 10px #e1e1e1;
   }
   .content .top{
     height: .8rem;

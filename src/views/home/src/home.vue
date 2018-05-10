@@ -120,8 +120,8 @@
         }
       },
       //跳到搜索历史页
-      jump:function(){
-        this.$router.push('/home/searchHistory');
+      jump () {
+        this.$router.push({path:'/home/searchHistory',query:{jumps:'home'}});
       },
       // 轮播图获取
       getBanner () {
@@ -337,38 +337,37 @@
     color: #fff;
     margin-left: .2rem;
     word-break: break-all;
-    font-size: .4rem;
   }
   .topCenter{
     position: relative;
   }
   /*搜索框样式--开始*/
-.searchInput{
-  width: 6.5rem;
-  height: .9rem;
-  background-color: rgb(238,238,238);
-  border-radius: .9rem;
-  line-height: .9rem;
-}
-.searchInput img.leftImg{
-  width: .4rem;
-  vertical-align: middle;
-  margin-left: .2rem;
-}
-.searchInput img.rightImg{
-  width: .4rem;
-  vertical-align: middle;
-  margin-left: .2rem;
-}
-.searchInput input{
-  width: 70%;
-  border: 0;
-  outline: none;
-  font-size: .3rem;
-  margin-left: .4rem;
-  background-color: rgb(238,238,238);
-}
-/*搜索框样式--结束*/
+  .searchInput{
+    width: 6.5rem;
+    height: .9rem;
+    background-color: rgb(238,238,238);
+    border-radius: .9rem;
+    line-height: .9rem;
+  }
+  .searchInput img.leftImg{
+    width: .45rem;
+    vertical-align: middle;
+    margin-left: .3rem;
+  }
+  .searchInput img.rightImg{
+    width: .45rem;
+    vertical-align: middle;
+    margin-left: .2rem;
+  }
+  .searchInput input{
+    width: 70%;
+    border: 0;
+    outline: none;
+    font-size: .3rem;
+    margin-left: .2rem;
+    background-color: rgb(238,238,238);
+  }
+  /*搜索框样式--结束*/
   .topRight{
     margin-right: .1rem;
   }

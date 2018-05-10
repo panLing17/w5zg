@@ -43,16 +43,17 @@
                   .property(v-for="skus in items.spec_json")
                     span.color {{skus.gspec_value}}
                     span.size(v-if="false") {{skus.gspec_value}}
-                  .amount 
+                  .amount
                     span.nums x{{items.goods_num}}
                 .right
                   .price {{items.sale_price | price-filter}}
         .wrapBtn
           .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
             .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
+              .triangle
           .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
           .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
-        transition(name="slide-fade")  
+        transition(name="slide-fade")
           .pickUpNum(v-show="pickUpNoFlag")
             .alertFrame
               .topDiv 提货码
@@ -70,7 +71,7 @@
             span {{linkMan}}
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
-            span {{linkPhone}}       
+            span {{linkPhone}}
       .total
         ul
           li.totalQuantity
@@ -167,7 +168,8 @@
           TotalOrderId:"", //总的订单id
           BOrC:"", //判断用户身份
           linkMan:"", //门店联系人
-          linkPhone:"" //门店联系人电话
+          linkPhone:"", //门店联系人电话
+          delivery_ways: ''
         }
       },
       created(){
@@ -248,7 +250,7 @@
 
               }
             })
-            
+
           }
           if (e.target.innerHTML == "批量退款") {
 
@@ -272,7 +274,7 @@
         //更多展示功能按钮
         moreShow(e){
           if (e.target.children[0].style.display == "" || e.target.children[0].style.display == "none") {
-            e.target.children[0].style.display = "block"; 
+            e.target.children[0].style.display = "block";
           } else {
             e.target.children[0].style.display = "none";
           }
@@ -285,13 +287,13 @@
         },
         //点击更多后展示的按钮
         judgeMoreBtn(e,item,items){
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+          if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
             if (items.length > 1) {
-              items.push(item.delivery_id);
+              items.push(this.delivery_ways);
               this.$store.commit('getReturnGoods', items);
               this.$router.push({path:'/my/applyAfterSale'});
             }else if(items.length === 1) {
-              items[0].delivery_id = item.delivery_id;
+              items[0].delivery_ways = this.delivery_ways;
               this.$store.commit('getReturnGoods', items[0]);
               this.$router.push({path:'/my/refundReturn'});
             }
@@ -307,6 +309,7 @@
               orderTotalId:self.orderId
             }
           }).then(function(res){
+            self.delivery_ways = res.data.data[0].delivery_ways;
             self.totalOrderNum = res.data.data[0].total_order_no;
             self.recipients = res.data.data[0].carry_person;
             self.phone = res.data.data[0].carry_phone;
@@ -391,7 +394,7 @@
                       } else {
                         arrays[i].btnF = "申请退款";
                       }
-                    }  
+                    }
                   }
                 }
                 if (res.data.data[0].delivery_ways == "自提"){
@@ -550,13 +553,13 @@
             this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:item.orderDetail[0].logo}});
           }
           //进入到申请退货页面
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+          if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
             if (items.length > 1) {
-              items.push(item.delivery_id);
+              items.push(this.delivery_ways);
               this.$store.commit('getReturnGoods', items);
               this.$router.push({path:'/my/applyAfterSale'});
             }else if(items.length === 1) {
-              items[0].delivery_id = item.delivery_id;
+              items[0].delivery_ways = this.delivery_ways;
               this.$store.commit('getReturnGoods', items[0]);
               this.$router.push({path:'/my/refundReturn'});
             }
@@ -567,16 +570,16 @@
         },
         judgeBtnS(e,item,items){
           //进入到申请退货页面
-          if (e.target.innerHTML == "申请退货" || e.target.innerHTML == "申请退款"){
+          if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
             if (items.length > 1) {
-              items.push(item.delivery_id);
+              items.push(this.delivery_ways);
               this.$store.commit('getReturnGoods', items);
               this.$router.push({path:'/my/applyAfterSale'});
             }else if(items.length === 1) {
-              items[0].delivery_id = item.delivery_id;
+              items[0].delivery_ways = this.delivery_ways;
               this.$store.commit('getReturnGoods', items[0]);
               this.$router.push({path:'/my/refundReturn'});
-            } 
+            }
           }
           //支付
           if (e.target.innerHTML == "支付") {
@@ -621,7 +624,7 @@
 
               }
             })
-            
+
           }
         },
 
@@ -900,6 +903,15 @@
     color: #fff;
     display: none;
   }
+  .moreThen .moreBtn .triangle{
+    position: absolute;
+    top: -.1rem;
+    left: .78rem;
+    width: .2rem;
+    height: .2rem;
+    background-color: rgb(153,153,153);
+    transform: rotate(45deg);
+  }
   .bottom{
     border-top: 1px solid rgb(242,242,242);
     /*height: .8rem;*/
@@ -1017,6 +1029,7 @@
     display: flex;
     justify-content: flex-end;
     background-color: #fff;
+    box-shadow: 1px 1px 5px #ccc;
   }
   .fixedBtn div{
     width: 2.3rem;

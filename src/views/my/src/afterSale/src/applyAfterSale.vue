@@ -38,7 +38,7 @@
       toNext () {
         this.goodsList.forEach((item, index) => {
           if (item.checked) {
-            item.delivery_id = this.$store.state.returnGoods.slice(this.$store.state.returnGoods.length-1,this.$store.state.returnGoods.length);
+            item.delivery_ways = this.$store.state.returnGoods.slice(this.$store.state.returnGoods.length-1,this.$store.state.returnGoods.length)[0];
             this.$store.commit('getReturnGoods', item);
             this.$router.replace({path:'/my/refundReturn'});
           }
@@ -49,7 +49,6 @@
         let _this = this
         let temp = this.$store.state.returnGoods.slice(0,this.$store.state.returnGoods.length-1)
         temp.forEach((item, index)=>{
-          console.log(item)
           if (item.refund_status == null) {
             item.checked = false
             _this.goodsList.push(item)

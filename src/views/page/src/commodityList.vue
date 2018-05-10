@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.push('/home')")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
         .searchInput
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,messages:message}})" v-model="message")
@@ -57,6 +57,7 @@
     components: {filtrate},
     data(){
       return {
+        jumps:this.$route.query.jumps, //接收上个页面的参数判断是那个页面来的
         message:this.$route.query.msg, //在输入框搜索的内容
         filtrateFlag: true, //右侧筛选的显隐
         mescroll: null,
@@ -92,6 +93,7 @@
       }
     },
     mounted(){
+      console.log(this.$route.query.jumps)
       //进入页面时加载
       this.request();
       //根据判断是哪个页面传过来的关键字
@@ -141,6 +143,7 @@
       },
       //筛选左滑
       leftScroll(){
+        this.mescroll.hideTopBtn();
         this.maskFlag = true;
         this.mescroll.lockDownScroll(true);
         this.mescroll.lockUpScroll(true);
@@ -326,9 +329,10 @@
             sortFieldType: self.order //字段排序
           }
         }).then(function(response){
+          console.log(response.data.data.length)
           //self.recommendGoods = response.data.data;//成功回调
           if(response.data.data.length<=0){
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
           } else{
             self.goodsFlag = true;
             self.recommendGoods = response.data.data;
@@ -368,7 +372,6 @@
   }
   /*顶部搜索--开始*/
   .topCenter{
-    margin-left: .1rem;
     position: relative;
   }
   .topRight{
@@ -393,7 +396,7 @@
     line-height: .9rem;
   }
   .searchInput img{
-    width: .4rem;
+    width: .45rem;
     vertical-align: middle;
     margin-left: .2rem;
   }
@@ -414,13 +417,14 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    height: 1.2rem;
+    height: 1.23rem;
     padding: 0 .3rem;
     background-color: #fff;
     position: fixed;
     top: 1.29rem;
     z-index: 101;
     border-top: 1px solid #f2f2f2;
+    border-bottom: 1px solid #f0f0f0;
   }
   ul.wrap li{
     font-size: .4rem;
@@ -484,14 +488,18 @@
   }
   .goodsList li{
     border-radius: 5px;
-    overflow: hidden;
     width: 49%;
-    float: left;
+    /*height: 7rem;*/
     margin-bottom: .2rem;
     background-color: #fff;
   }
   .goodsList li img{
     width: 100%;
+    height: 4.5rem;
+  }
+  .goodsList li .wrapWords{
+    width: 100%;
+    /*height: 30%;*/
   }
   .text{
     margin: .1rem;
@@ -531,8 +539,11 @@
   }
   /*商品大图展示--结束*/
   /*切换成列表模式的样式--开始*/
+  .toggle{
+    padding-top: .2rem;
+  }
   .toggle li{
-    margin-top: .2rem;
+    margin-bottom: .2rem;
     background-color: #fff;
     padding: .2rem .3rem;
     display: flex;

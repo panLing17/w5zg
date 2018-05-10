@@ -44,12 +44,19 @@
       .bottom
         ul
           li.money
-            span 退款金额:
-            strong ￥{{price}}
-          li.max
-            span 最多:
-            span ￥{{price}}，
-            span 不含运费
+            .left 现金退款:
+            .right {{price.price | price-filter}}
+          li.money
+            .left 现金券退款:
+            .right {{price.cardPrice | price-filter}}
+          li.money
+            .left 通用券退款:
+            .right {{price.ticketPrice | price-filter}}
+          li.total
+            .arrow
+            .left 退款总金额:
+            .right {{price.price + price.cardPrice + price.ticketPrice | price-filter}}
+          li.freight (含运费￥0)
     .refundExplain
       ul
         li 退款说明:
@@ -82,7 +89,7 @@
         // 退货方式选择框 仅退款时隐藏 退货退款时出现
         returnTypeShow: false,
         statusData:['仅退款','退货退款'],
-        returnStyleData:['快递退货','门店退货'],
+        returnStyleData:[],
         reasonData:[],
         reasonTitle:'退款原因',
         reasonType:-1,
@@ -90,7 +97,7 @@
         count: 1,
         desc: '',
         imageArr:[],
-        price: 0
+        price: {}
       }
     },
     mounted () {
@@ -102,8 +109,18 @@
       this.getReturnGoods()
       // 获取退款金额
       this.getPrice()
+      // 获取退货方式
+      this.getReturnStyleData()
     },
     methods: {
+      getReturnStyleData () {
+        // console.log(this.goodsList)
+        if (this.goodsList.delivery_ways === '快递配送') {
+          this.returnStyleData = ['快递退货']
+        }else {
+          this.returnStyleData = ['快递退货','门店退货']
+        }
+      },
       //选择货物状态
       statusTypeChange(num){
         this.statusType = num;
@@ -171,7 +188,7 @@
             count: this.count
           }
         }).then(function (response) {
-          _this.price = response.data.data.price;
+          _this.price = response.data.data;
         })
       },
       // 获取商品信息
@@ -394,21 +411,59 @@
     line-height: 1rem;
   }
   .amount .bottom{
-    padding-top: .3rem;
+    padding-top: .13rem;
   }
   .amount .bottom li.money{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     font-size: .35rem;
+    margin-top: .29rem;
+    line-height: 1;
   }
-  .amount .bottom li.money strong{
+  .amount .bottom li.money .left {
+    flex: none;
+    font-size: .29rem;
+    color: #999;
+  }
+  .amount .bottom li.money .right, .amount .bottom li.total .right{
+    flex: none;
     font-weight: 400;
+    font-size: .26rem;
     color: rgb(244,0,87);
   }
-  .amount .bottom li.max{
-    color: rgb(153,153,153);
-    margin-top: .1rem;
+
+  .amount .bottom li.total {
+    margin-top: .26rem;
+    line-height: 1;
+    padding: .26rem 0 .13rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    border-top: 1px solid #ccc;
   }
-  .amount .bottom li.max span{
-    margin-right: .1rem;
+  .arrow {
+    position: absolute;
+    top: -.15rem;
+    right: .4rem;
+    width: .2rem;
+    height: .2rem;
+    background: #fff;
+    transform: rotate(45deg);
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+  }
+
+  .amount .bottom li.total .left {
+    font-size: .34rem;
+    flex: none;
+    color: #333;
+  }
+  .amount .bottom li.freight {
+    text-align: right;
+    color: #999;
+    font-size: .26rem;
   }
   /*数量--结束*/
   /*退款说明--开始*/

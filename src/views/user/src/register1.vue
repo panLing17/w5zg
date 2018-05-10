@@ -6,8 +6,8 @@
       .topCenter(slot="center") 注册
       .topRight(slot="right")
     .form
-      w-input(label="手机号：", label-width="2.5rem", placeholder="请输入手机号", v-model="form.mobile", required, @blur="checkPhoneRepeat", :error="phoneError")
-      w-input(v-model="form.gCode", label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, required, button-cover,:error="gCodeError")
+      w-input(label="手机号：", label-width="2.5rem", placeholder="请输入手机号", v-model="form.mobile", required, @blur.stop="checkPhoneRepeat", :error="phoneError")
+      w-input(v-model="form.gCode", label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, required, button-cover,:error="gCodeError", @input.stop="checkGcode")
         img.valiImg(slot="button", @click="getPicCode", :src="url")
       w-input(v-model="form.vcode", label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", :error="checkCodeError", input-button=true, required, button-cover)
         .inputButton(slot="button", @click="getPhoneCode", v-show="sendMsg" ,:class="{inputButtonGray:sendMsgStatus}") 获取验证码
@@ -319,7 +319,8 @@
           vcode: '',
           type: '1'
         },
-        agreementShow:false
+        agreementShow:false,
+        phoneFlag: false
       }
     },
     mounted () {
@@ -362,11 +363,19 @@
           url: self.$apiMember + 'member/mobile/isExist',
           params: self.form
         }).then(function (response) {
+          self.phoneFlag = response.data.optSuc
           // 提示用户信息
-          if (response.data.optSuc) {
+          if (response.data.optSuc && self.form.gCode.trim().length === 4) {
             self.sendMsgStatus = false
           }
         })
+      },
+      checkGcode () {
+        if (this.phoneFlag && this.form.gCode.trim().length === 4) {
+          this.sendMsgStatus = false
+        }else {
+          this.sendMsgStatus = true
+        }
       },
       getPhoneCode() {
         // 发送验证码
