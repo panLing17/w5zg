@@ -311,6 +311,7 @@
   .toper .center{
     color: #fff;
     font-size: .4rem;
+    line-height: .8rem;
   }
   .toper .righter img{
     width: .7rem;

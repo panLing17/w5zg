@@ -143,6 +143,7 @@
       },
       //筛选左滑
       leftScroll(){
+        this.mescroll.hideTopBtn();
         this.maskFlag = true;
         this.mescroll.lockDownScroll(true);
         this.mescroll.lockUpScroll(true);
@@ -487,14 +488,18 @@
   }
   .goodsList li{
     border-radius: 5px;
-    overflow: hidden;
     width: 49%;
-    float: left;
+    /*height: 7rem;*/
     margin-bottom: .2rem;
     background-color: #fff;
   }
   .goodsList li img{
     width: 100%;
+    height: 4.5rem;
+  }
+  .goodsList li .wrapWords{
+    width: 100%;
+    /*height: 30%;*/
   }
   .text{
     margin: .1rem;
