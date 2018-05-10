@@ -221,11 +221,13 @@
         }
       },
       $route () {
-        this.getGoodsDetailed()
-        this.getGoodsDesc()
-        this.getBanner()
-        this.getSpec()
-        this.mescroll.scrollTo( 0, 0 );
+        window.location.reload()
+        // this.$router.go(0)
+        // this.getGoodsDetailed()
+        // this.getGoodsDesc()
+        // this.getBanner()
+        // this.getSpec()
+        // this.mescroll.scrollTo( 0, 0 );
       }
     },
     methods:{

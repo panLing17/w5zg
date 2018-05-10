@@ -79,6 +79,8 @@
       close() {
         if (!this.closeDisable) {
           this.$emit('close')
+        } else {
+          this.$message.warning('总金额为0,当前为余额支付')
         }
         // this.show = false
       },

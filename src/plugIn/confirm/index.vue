@@ -62,8 +62,8 @@
     align-items: center;
   }
   .windowBox {
-    width: 200px;
-    height: 120px;
+    width: 7rem;
+    height: 3.5rem;
     background: white;
     display: flex;
     flex-direction: column;
@@ -86,21 +86,25 @@
     display: flex;
     flex-direction: row-reverse;
   }
+  .bottom>div{
+    border-radius: .3rem;
+  }
   .ok {
-    width: 50px;
+    width: 1.5rem;
     text-align: center;
-    height: 20px;
-    line-height: 20px;
+    height: .6rem;
+    line-height: .6rem;
     background: rgb(245,0,87);
     color: white;
     font-size: .35rem;
   }
   .no {
-    width: 50px;
+    width: 1.5rem;
     text-align: center;
-    height: 20px;
-    line-height: 20px;
+    height: .6rem;
+    line-height: .6rem;
     background: #ddd;
     font-size: .35rem;
+    margin-right: .2rem;
   }
 </style>

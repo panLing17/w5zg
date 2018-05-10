@@ -6,7 +6,7 @@
       .topCenter(slot="center") 忘记密码
       .topRight(slot="right")
     .form
-      w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", required)
+      w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", @blur="checkVcode", :error="vcodeError" required)
       w-input(label="输入新密码：", label-width="2.5rem", placeholder="请输入新密码",:type="passwordType", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
       w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码",:type="passwordType", v-model="qrPassword", required, :error="qrPasswordError")
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 确定
@@ -26,17 +26,42 @@
           mobile: '',
           pwd: '',
           vcode: ''
-        }
+        },
+        vcodeError: ''
+      }
+    },
+    computed: {
+      password () {
+        return this.form.pwd
+      },
+      vcode () {
+        return this.form.vcode
       }
     },
     mounted () {
       this.form.mobile = this.$route.query.mobile
     },
+    watch:{
+      password () {
+        this.allCheck()
+      },
+      vcode () {
+        this.allCheck()
+      },
+      pwdStatus () {
+        this.allCheck()
+      }
+    },
     methods: {
+      allCheck () {
+        if (this.form.pwd === this.qrPassword && this.form.vcode.length>3 && this.qrPassword.length>5) {
+          this.pwdStatus = false
+        } else {
+          this.pwdStatus = true
+        }
+      },
       checkPwd () {
-        console.log($codeList)
-        this.pwdStatus = true
-        //校验规则 正则表达式  只允许输入 数字跟字母
+        // 校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^\S{6,20}$/;
         if(!reg.test(this.form.pwd)){
           this.passwordError = $code('268')
@@ -44,6 +69,13 @@
         }
         this.passwordError = ''
         this.pwdStatus = false
+      },
+      checkVcode () {
+        if (this.form.vcode.length<4) {
+          this.vcodeError = '请输入正确验证码'
+        } else {
+          this.vcodeError = ''
+        }
       },
       sureBtn () {
         let self = this
@@ -53,7 +85,7 @@
           return
         }
 
-        if(this.pwdStatus){
+        if (this.pwdStatus) {
           return
         }
 
