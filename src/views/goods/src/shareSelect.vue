@@ -49,7 +49,7 @@
       // 复制url
       copyUrl () {
         let oInput = document.createElement('input')
-        oInput.value = window.location.href
+        oInput.value = window.location.href.replace(/#/, "?#")
         document.body.appendChild(oInput)
         oInput.select() // 选择对象
         document.execCommand("Copy") // 执行浏览器复制命令
@@ -65,7 +65,7 @@
         wx.onMenuShareQQ({
           title: self.shareTitle, // 分享标题
           desc: '我发现了个宝贝,跟专卖店比贼便宜', // 分享描述
-          link: window.location.href, // 分享链接
+          link: window.location.href.replace(/#/, "?#"), // 分享链接
           imgUrl: self.$method.imgUrlFilter(self.sharePhoto[0].gi_img_url) , // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
@@ -81,7 +81,7 @@
         wx.onMenuShareAppMessage({
           title: self.shareTitle, // 分享标题
           desc: '我发现了个宝贝,跟专卖店比贼便宜', // 分享描述
-          link: window.location.href, // 分享链接，该链接域名必须与当前企业的可信域名一致
+          link: window.location.href.replace(/\?*#/, "?#"), // 分享链接，该链接域名必须与当前企业的可信域名一致
           imgUrl: self.$method.imgUrlFilter(self.sharePhoto[0].gi_img_url), // 分享图标
           type: 'link', // 分享类型,music、video或link，不填默认为link
           dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
