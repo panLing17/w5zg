@@ -11,17 +11,17 @@
       .payTime
     .returnTotalMoney
       ul.total
-        li 退款总金额
+        li 实退总金额
         li ￥{{priceInfo.price+priceInfo.cardPrice+priceInfo.ticketPrice | price}}
       ul.reality
         li 实退金额
         li ￥{{priceInfo.price | price}}
     .coupon
       ul.netGoldCard
-        li 现金券
+        li 实退现金券
         li ￥{{priceInfo.cardPrice | price}}
       ul.generalCard
-        li 通用券
+        li 实退通用券
         li ￥{{priceInfo.ticketPrice | price}}
     <!--.refundWay-->
       <!--ul-->
