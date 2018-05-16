@@ -156,22 +156,22 @@
             if (this.$route.query.id == 1) {
               this.num = 1;
               this.state = 1;
-              lineDiv.style.left = "19%";
+              lineDiv.style.left = "20%";
             }
             if (this.$route.query.id == 2) {
               this.num = 2;
               this.state = 2;
-              lineDiv.style.left = "40.5%";
+              lineDiv.style.left = "40%";
             }
             if (this.$route.query.id == 3) {
               this.num = 3;
               this.state = 4;
-              lineDiv.style.left = "62%";
+              lineDiv.style.left = "60%";
             }
             if (this.$route.query.id == 4) {
               this.num = 4;
               this.state = 3;
-              lineDiv.style.left = "83.5%";
+              lineDiv.style.left = "80%";
             }
           } else {
             if (this.$route.query.nums == undefined) {
