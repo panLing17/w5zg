@@ -14,6 +14,8 @@ module.exports = merge(prodEnv, {
   GOODS_PREFIEX: '""',
   TRADING_PREFIEX: '""',
   APP_PREFIEX: '""',
-  IMG_URL: '"http://w5zg-mall-test.oss-cn-hangzhou.aliyuncs.com/"'
+  // IMG_URL: '"http://w5zg-mall-test.oss-cn-hangzhou.aliyuncs.com/"'
+  IMG_URL: '"http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/"'
+
 })
 

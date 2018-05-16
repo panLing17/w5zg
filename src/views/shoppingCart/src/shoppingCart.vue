@@ -21,7 +21,7 @@
           router-view(style="min-height:calc(100vh - 6rem)")
         .title
           img(src="../../../assets/img/recommend.png")
-        w-recommend(:listData="recommendGoods", background="white")
+        w-recommend
     div
       .settlement
         .left
@@ -37,7 +37,8 @@
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
   import {mapState} from 'vuex'
-
+  // 引入bus
+  import {bus} from '../../../bus/index'
   export default {
     name: 'home',
     data () {
@@ -45,21 +46,7 @@
         flag: false,
         loading: true,
         isdefault: false,
-        nowTab: 0,
-        recommendGoods: [
-          {
-            image: ''
-          },
-          {
-            image: ''
-          },
-          {
-            image: ''
-          },
-          {
-            image: ''
-          }
-        ]
+        nowTab: 0
       }
     },
     components:{goodsCard, disableGoods, citySelect},
@@ -106,8 +93,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1) self.recommendGoods = []
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          bus.$emit('listPush',curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
