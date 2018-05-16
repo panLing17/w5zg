@@ -2,9 +2,9 @@
   .wrapTop
     .toper
       .lefter
-        img(src="../../../assets/img/my_set@2x.png" @click="routergoSet()")
-      transition(name="slide-fade")  
-        .center(v-if="nameShow") Fernando Torres 
+        img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
+      transition(name="slide-fade")
+        .center(v-if="nameShow") 我的
       .righter
         img(src="../../../assets/img/message@2x.png", v-if="false")
         img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
@@ -31,7 +31,7 @@
         ul.right(@click="$router.push('/my/footMark')")
           li {{footmarkNum}}
           li 足迹
-      .wrapMyOrderForm.wrapDiv    
+      .wrapMyOrderForm.wrapDiv
         div.myOrderForm
           ul.top(@click="$router.push('/my/orderManage')")
             li 我的订单
@@ -58,7 +58,7 @@
             li(@click="$router.push('/my/refundAfterSale')")
               img(src="../../../assets/img/my_aftersale2@2x.png")
               .character 退货/售后
-      .wrapMyTreasure.wrapDiv        
+      .wrapMyTreasure.wrapDiv
         div.myTreasure
           ul.top
             li 我的财富
@@ -77,19 +77,19 @@
               .words 通用劵
       .title
         img(src="../../../assets/img/recommend.png")
-      w-recommend#dataId(:listData="recommendGoods")
+      w-recommend#dataId(background="white")
       .bottomPlaceholder
 </template>
 
 <script>
   import {mapState} from 'vuex'
-
+  // 引入bus
+  import {bus} from '../../../bus/index'
   export default {
     name: "my",
     data() {
       return{
         nameShow:"", //控制上滑时显示的用户名
-        recommendGoods: [],
         footmarkNum: 0,
         accoutBalance: 0,
         name:this.$route.query.routeParams,
@@ -127,7 +127,7 @@
         downwarp.style.backgroundColor = "rgb(244,0,87)";
         downwarp.children[0].children[0].style.borderColor = "#fff";
         downwarp.children[0].children[0].style.borderBottomColor = "transparent";
-        downwarp.children[0].children[1].style.color = "#fff"; 
+        downwarp.children[0].children[1].style.color = "#fff";
       },
       //判断页面是否向上滚动
       judgeScroll(){
@@ -222,8 +222,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1) self.recommendGoods = []
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          bus.$emit('listPush',curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;

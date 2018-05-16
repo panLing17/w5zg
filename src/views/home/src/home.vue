@@ -6,8 +6,8 @@
         span.city {{cityName}}
       .topCenter(slot="center")
         .searchInput
-          img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()").leftImg
-          input(:type="type",placeholder="请输入商品名称" @keyup.enter="searchGoods()" @focus="jump")
+          img(src="../../../assets/img/searchInput搜索图标@2x.png", @click="searchGoods()").leftImg
+          input(:type="type",placeholder="请输入商品名称", @keyup.enter="searchGoods()", @focus="jump")
           img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")
@@ -24,14 +24,15 @@
       w-activity(:listData="activityGoods")
       <!--img.title2(src="../../../assets/img/louceng2.png")-->
       .title2
-      w-recommend(:listData="recommendGoods")
+      w-recommend
       .bottomPlaceholder
 </template>
 <script>
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
-
+  // 引入bus
+  import {bus} from '../../../bus/index'
   export default {
     name: 'home',
     data() {
@@ -43,7 +44,6 @@
         date: 1,
         cityName:this.$route.query.routeParams,
         activityGoods: [],
-        recommendGoods: [],
         hotButton: [],
         loadingMoreFlag: false,
         page: 1,
@@ -195,8 +195,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1) self.recommendGoods = []
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          bus.$emit('listPush',curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;

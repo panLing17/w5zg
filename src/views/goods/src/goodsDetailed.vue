@@ -2,7 +2,7 @@
   div
     nav-bar(background="rgba(255,255,255,.7)", height="0", border-bottom="none")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBack()")
       .topCenter(slot="center") 商品
       .topRight(slot="right")
         img(src="../../../assets/img/customerservice@3x.png", style="width:.5rem", @click="goService")
@@ -92,7 +92,7 @@
       .title
         .line
         p 推荐
-      w-recommend(:listData="recommendGoods", background="white")
+      w-recommend(background="white")
     div
       .buttons
         .left(@click="shoppingCartAdd") 加入购物车
@@ -119,7 +119,8 @@
   import saveMoneyTips from './saveMoneyTips'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
-
+  // 引入bus
+  import {bus} from '../../../bus/index'
   export default {
     name: "goods-detailed",
     data () {
@@ -163,21 +164,7 @@
         cardTipsFlag: false,
         // 省钱介绍
         saveMoneyTipsFlag: false,
-        onlySelectSpec: true,
-        recommendGoods: [
-          {
-            image: ''
-          },
-          {
-            image: ''
-          },
-          {
-            image: ''
-          },
-          {
-            image: ''
-          }
-        ]
+        onlySelectSpec: true
       }
     },
     computed:{
@@ -231,6 +218,15 @@
       }
     },
     methods:{
+      // 后退
+      goBack () {
+        console.log(this.$router)
+        if (window.history.length>1) {
+          this.$router.go(-1)
+        } else {
+          this.$router.push('/home')
+        }
+      },
       // 规格组件挂载并请求详情后或规格变化
       specLoad (data) {
         this.maxStoreNum = data.maxStoreNum
@@ -616,8 +612,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1) self.recommendGoods = []
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          bus.$emit('listPush',curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
