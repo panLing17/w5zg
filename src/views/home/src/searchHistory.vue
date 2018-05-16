@@ -9,37 +9,38 @@
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
-      .wrapTwo  
+      .wrapTwo
         .history(v-show="searchFlag")
           ul.top
             li.left 历史搜索
             li.right(@click="clearHistory()")
               img(src="../../../assets/img/searchHistory_clear.png")
-          transition(name="slide-fade")     
+          transition(name="slide-fade")
             ul.cont(v-if="flag")
-              li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}    
-            .empty(v-else="flag") 暂无搜索历史          
+              li(v-for="(item,index) in record1" @click="change1(item,index)" :class="{active:selected1==index}") {{item}}
+            .empty(v-else="flag") 暂无搜索历史
         .discover(v-show="searchFlag")
           ul.top
             li.left 搜索发现
             li.right(@click="toggle")
               img(src="../../../assets/img/searchHistory显示图层.png" v-if="showDiscover")
               img(src="../../../assets/img/searchHistory隐藏图层.png" v-else="showDiscover")
-          transition(name="slide-fade")       
+          transition(name="slide-fade")
             ul.cont(v-show="showDiscover")
               li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
-        transition(name="slide-fade")            
+        transition(name="slide-fade")
           .result(v-show="resultFlag")
             .words 没有搜索到
               span.strong 此类
-              span 商品，及相关商品    
+              span 商品，及相关商品
       .title
         img(src="../../../assets/img/recommend.png")
-      w-recommend#dataId(:listData="recommendGoods")
-      .bottomPlaceholder       
+      w-recommend#dataId
+      .bottomPlaceholder
 </template>
 <script>
- 
+  // 引入bus
+  import {bus} from '../../../bus/index'
   export default {
     name: 'searchHistory',
     data () {
@@ -101,7 +102,7 @@
         } else {
           this.$router.go(-1);
         }
-      },  
+      },
       //显示搜索结果
       resultShow(){
         if (this.$route.query.relNum == 1) {
@@ -112,7 +113,7 @@
       //搜索商品去商品展示页
       searchGoods(){
         let self = this;
-        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true,jumps:self.jumps}});   
+        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true,jumps:self.jumps}});
       },
       //历史搜索
       historys(){
@@ -170,7 +171,7 @@
             }
           })
         }
-        
+
       },
 
       toggle:function(){
@@ -195,8 +196,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1) self.recommendGoods = []
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          bus.$emit('listPush',curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
