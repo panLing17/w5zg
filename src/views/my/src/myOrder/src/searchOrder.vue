@@ -16,20 +16,20 @@
           li.left 历史搜索
           li.right(@click="clearHistory()")
             img(src="../../../../../assets/img/searchHistory_clear.png")
-        transition(name="slide-fade")     
+        transition(name="slide-fade")
           ul.cont(v-if="flag")
             li(v-for="(item,index) in record1" @click="change1($event,index)" :class="{active:selected1==index}") {{item.gsr_keywords}}
           .empty(v-else="flag") 暂无搜索历史
       .searchRel(v-show="showRel")
         img(src="../../../../../assets/img/emptyOrder.png")
-      transition(name="slide-fade")    
-        .wrapContent(v-show="showOrder")  
+      transition(name="slide-fade")
+        .wrapContent(v-show="showOrder")
           .content(v-for="(item,index) in orderDetail")
             .top
               .left
                 span.orderNum 订单编号:
                 span.num {{item.total_order_no}}
-              .right#states {{item.orderStatus}}  
+              .right#states {{item.orderStatus}}
             .center(@click="$router.push({path:'/my/orderDetails',query:{state:item.order_status,from:'搜索订单',orderId:item.total_order_id,totalNum:item.totalCount,orderNo:item.total_order_no}})" :class="{centerZ:item.logoList.length<=1}")
               .image
                 img(:src="items | img-filter" v-for="items in item.logoList")
@@ -39,9 +39,9 @@
                 .cont
                   .property
                     span.color(v-for="items in item.spec_json") {{items.gspec_value}}
-                    span.size 
-                  .quantity  
-                    span.count x {{item.totalCount}} 
+                    span.size
+                  .quantity
+                    span.count x {{item.totalCount}}
             .bottom
               .left(v-if="false")
                 .goodsCode 提货码: {{item.goodsCode}}
@@ -54,21 +54,23 @@
             .button
               .cancel(@click="buttonLeft($event,item.total_order_id)" v-show=" item.buttonL !== '提醒发货' && item.buttonL !== '物流信息' && item.buttonL !== '申请退款' && item.buttonL !== '取消申请'") {{item.buttonL}}
               .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '取消申请'") {{item.buttonR}}
-      transition(name="slide-fade")        
+      transition(name="slide-fade")
         .title(v-show="recommendFlag")
           img(src="../../../../../assets/img/recommend.png")
-      transition(name="slide-fade")    
-        w-recommend#dataId(:listData="recommendGoods" v-show="recommendFlag")
+      transition(name="slide-fade")
+        w-recommend#dataId(v-show="recommendFlag")
         .bottomPlaceholder(v-show="recommendFlag")
 </template>
 
 <script>
+  // 引入bus
+  import {bus} from '../../../../../bus/index'
     export default {
       name: "searchOrder",
       data(){
         return{
           recommendFlag:true, //判断推荐的显隐
-          recommendGoods:[], //推荐商品的数组
+
           showRel:"", //判断搜索的结果有无来让其显隐
           showOrder:false, //让搜索出来的结果订单的列表显隐
           nameShowFlag:false, //让用户搜索后的名称显示在输入框
@@ -117,7 +119,7 @@
           } else {
             this.$router.go(-1);
           }
-        },  
+        },
         //判断此时的url
         judgeUrl(){
           if (this.$route.query.name) {
@@ -143,7 +145,7 @@
         //按商品名称搜索生成订单
         searchGoodsName(){
           //让搜索到的订单列表显示
-          //this.showOrder = true; 
+          //this.showOrder = true;
           //让历史搜索记录隐藏
           //this.showHistory = false;
           //给url上拼一个搜索结果
@@ -256,8 +258,7 @@
           let self = this;
           if (self.number == 0) {
             self.getListDataFromNets(page.num, page.size, function(curPageData) {
-              if(page.num === 1) self.recommendGoods = []
-              self.recommendGoods = self.recommendGoods.concat(curPageData)
+              bus.$emit('listPush',curPageData,page.num,page.size)
               self.mescroll.endSuccess(curPageData.length)
             }, function() {
               //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -273,7 +274,7 @@
               self.mescroll.endErr();
             })
           }
-          
+
         },
         getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
           let self = this;
@@ -310,7 +311,7 @@
                   arr[i].buttonR = "确认收货";
                   arr[i].orderStatus = "待收货";
                 }
-                
+
               }
               if (arr[i].order_status == "待发货/待备货") {
                 if (arr[i].delivery_ways == "自提") {
@@ -387,7 +388,7 @@
                     self.orderDetail[i].buttonR = "确认收货";
                     self.orderDetail[i].orderStatus = "待收货";
                   }
-                  
+
                 }
                 if (self.orderDetail[i].order_status == "待发货/待备货") {
                   if (self.orderDetail[i].delivery_ways == "自提") {
@@ -413,7 +414,7 @@
                 }
               }
             }
-            
+
           })
         },
 
@@ -557,7 +558,7 @@
   background-color: rgb(210,210,210);
   z-index: 100;
   font-size: .3rem;
-  font-weight: 400; 
+  font-weight: 400;
 }
 /*搜索框中的删除按钮*/
 .clear{
@@ -607,9 +608,9 @@
   border-bottom: 1px solid rgb(242,242,242);
   white-space: normal !important;
   display: flex;
-} 
+}
 .center .image{
-  
+
 }
 .center .image img{
   width: 2.5rem;

@@ -42,7 +42,7 @@
                     span 可省{{item.economize_price}}元
                   .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
         .bottomPlaceholder
-    transition(name="slide-fade")  
+    transition(name="slide-fade")
       .mask(v-show="maskFlag")
         .lefter(@click="lefterBack()")
         .righter
@@ -51,7 +51,6 @@
 
 <script>
   import filtrate from './filtrate.vue'
-
   export default {
     name: "commodityList",
     components: {filtrate},
@@ -411,7 +410,7 @@
   /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
   .content{
-    
+
   }
   ul.wrap{
     display: flex;

@@ -113,7 +113,7 @@
         .copy(@click="copyText(totalOrderNum)") 复制
       .title
         img(src="../../../../../assets/img/recommend.png")
-      w-recommend#dataId(:listData="recommendGoods")
+      w-recommend#dataId
       .bottomPlaceholder
     .fixedBtn(v-show="whiteBarFlag")
       .leftBtn(v-show="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
@@ -121,6 +121,8 @@
 </template>
 
 <script>
+  // 引入bus
+  import {bus} from '../../../../../bus/index'
   export default {
       name: "orderDetails",
       data(){
@@ -682,8 +684,7 @@
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1) self.recommendGoods = []
-            self.recommendGoods = self.recommendGoods.concat(curPageData)
+            bus.$emit('listPush',curPageData,page.num,page.size)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
             //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
