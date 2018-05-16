@@ -11,7 +11,7 @@
           div(v-for="tag in banner", style="width:100%" )
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
         .recommendWrapper(v-if="!isEmpty")
-          w-recommend(:listData="recommendGoods")
+          w-recommend
           <!--ul.list-->
             <!--li.item(v-for="item in recommendGoods", @click="$router.push({path: '/goodsDetailed',query: {id: item.gspu_id}})")-->
               <!--img.img(:src="item.gi_image_url | img-filter")-->
@@ -27,6 +27,8 @@
 
 <script>
   import {mapState} from 'vuex'
+  // 引入bus
+  import {bus} from '../../../bus/index'
     export default {
       name: "sports",
       data () {
@@ -93,10 +95,8 @@
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1){
-              self.recommendGoods = [];
-            }
-            self.recommendGoods = self.recommendGoods.concat(curPageData)
+            self.recommendGoods.push(curPageData)
+            bus.$emit('listPush',curPageData,page.num,page.size)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
             //联网失败的回调,隐藏下拉刷新和上拉加载的状态;

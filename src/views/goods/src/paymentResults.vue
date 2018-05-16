@@ -25,10 +25,11 @@
         img.ewm(src="../../../assets/img/gzh.jpg")
         .recommendWrapper
           .recommendTitle 推荐
-          w-recommend(:listData="recommendGoods")
+          w-recommend
 </template>
 
 <script>
+  import {bus} from '../../../bus/index'
   export default {
     name: "paymentResults",
     data () {
@@ -56,10 +57,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1){
-            self.recommendGoods = [];
-          }
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
+          bus.$emit('listPush',curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
