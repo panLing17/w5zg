@@ -24,6 +24,7 @@ import Goods from '../views/goods/index.js'
 import MyAccount from '../views/my/src/myAccount/index.js'
 // 头条
 import Headlines from '../views/home/src/headlines/index'
+import Common from '../views/common/index'
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -77,7 +78,13 @@ const router = new Router ({
       path: '/payment',
       name: '支付',
       component: Goods.payment
-    }, {
+    },
+    {
+      path: '/download',
+      name: 'APP下载',
+      component: Common.download
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
