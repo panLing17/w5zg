@@ -69,6 +69,20 @@
           params: self.form
         }).then(function (response) {
           if (response.data.optSuc) {
+            localStorage.setItem('token',response.data.data)
+            self.getTicket()
+          }
+        })
+      },
+      // 注册成功送现金券
+      getTicket () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'netcardrule/reg/present',
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
             // 成功跳转页面
             self.$router.push({path: '/regOver'})
           }

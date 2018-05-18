@@ -85,6 +85,11 @@ const router = new Router ({
       component: Common.download
     },
     {
+      path: '/registerTicket',
+      name: '注册领券',
+      component: Common.registerTicket
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
