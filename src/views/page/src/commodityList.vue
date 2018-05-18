@@ -330,7 +330,8 @@
             bi_id: self.brandId, //品牌的id
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
-            sortFieldType: self.order //字段排序
+            sortFieldType: self.order, //字段排序
+            city_no: self.location.city.id //当前城市编号
           }
         }).then(function(response){
           console.log(response.data.data.length)
