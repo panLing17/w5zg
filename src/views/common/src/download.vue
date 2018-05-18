@@ -1,25 +1,31 @@
 <template lang="pug">
   .wrap
-    .imgWrapper
-      img.one(src='../../../assets/img/download1.png')
-      img.two(src='../../../assets/img/download2.png')
-      img.three(src='../../../assets/img/download3.png')
-    .decWrapper
-      .dec 更多好物尽在万物直供APP
-      .dec2 欢迎关注万物直供公众号
-    .gzhWrapper
-      img.gzh(src='../../../assets/img/gzh.jpg')
-    .btnWrapper
-      a
-        .btn.android
-          .left
-            img.logo(src='../../../assets/img/android.png')
-          .right Android Download
-      a
-        .btn.ios
-          .left
-            img.logo(src='../../../assets/img/ios.png')
-          .right IOS Download
+    nav-bar
+      .topLeft(slot="left", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem")
+      .topCenter(slot="center") APP下载
+      .topRight(slot="right")
+    .contentWrapper
+      .imgWrapper
+        img.one(src='../../../assets/img/download1.png')
+        img.two(src='../../../assets/img/download2.png')
+        img.three(src='../../../assets/img/download3.png')
+      .decWrapper
+        .dec 更多好物尽在万物直供APP
+        .dec2 欢迎关注万物直供公众号
+      .gzhWrapper
+        img.gzh(src='../../../assets/img/gzh.jpg')
+      .btnWrapper
+        a
+          .btn.android
+            .left
+              img.logo(src='../../../assets/img/android.png')
+            .right Android Download
+        a
+          .btn.ios
+            .left
+              img.logo(src='../../../assets/img/ios.png')
+            .right IOS Download
 </template>
 
 <script>
@@ -32,9 +38,12 @@
   .wrap {
     width: 100%;
     height: 100vh;
+  }
+  .contentWrapper {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: calc(100vh - 1.3rem);
   }
   .imgWrapper {
     flex: none;
@@ -47,6 +56,7 @@
     top: 0;
     width: 4.5rem;
     box-shadow: 0px 0px 5px rgba(0,0,0,.8);
+    pointer-events: none;
   }
   .one {
     left: 50%;
@@ -62,13 +72,13 @@
   .decWrapper {
     flex: none;
     text-align: center;
-    margin-top: .5rem;
+    margin-top: .3rem;
   }
   .dec {
     font-size: .4rem;
   }
   .dec2 {
-    margin-top: .5rem;
+    margin-top: .2rem;
     font-size: .3rem;
   }
   .gzhWrapper {
@@ -85,12 +95,12 @@
   .btn {
     width: 80%;
     height: 1rem;
-    margin: .5rem auto;
+    margin: .2rem auto .5rem;
     border-radius: .1rem;
     display: flex;
     align-items: center;
   }
-  .left {
+  .btn .left {
     flex: none;
     width: 1.6rem;
     text-align: center;
@@ -115,8 +125,9 @@
   }
   .logo {
     width: .8rem;
+    pointer-events: none;
   }
-  .right {
+  .btn .right {
     flex: 1;
     color: #fff;
     font-size: .4rem;

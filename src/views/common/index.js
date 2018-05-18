@@ -1,2 +1,3 @@
 import download from './src/download'
-export default { download }
+import registerTicket from './src/registerTicket'
+export default { download, registerTicket }

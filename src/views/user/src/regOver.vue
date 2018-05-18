@@ -18,21 +18,36 @@
         countDown: 5
       }
     },
+    created() {
+      this.getUserData()
+    },
     mounted: function () {
       this.jumpMyPage()
     },
     methods: {
       returnIndex () {
+        this.$store.commit('setShowTicket', true)
         this.$router.push({path: '/home'})
       },
       jumpMyPage (){
         let self = this
         let interval = window.setInterval(function () {
           if ((self.countDown--) <= 0) {
-            self.$router.push({path: '/my'})
+            this.$store.commit('setShowTicket', true)
+            self.$router.push({path: '/home'})
             window.clearInterval(interval)
           }
         }, 1000)
+      },
+      getUserData () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/currentMember',
+          params: {}
+        }).then(function (response) {
+          self.$store.commit('userDataChange' ,response.data.data)
+        })
       }
     }
   }
