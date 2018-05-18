@@ -37,6 +37,7 @@
           recommendGoods: [],
           parentId: null,
           parentType: null,
+          isEmpty: false
         }
       },
       filters: {
@@ -51,13 +52,13 @@
       computed: {
         ...mapState(['userData']),
         // 判断数据是否为空
-        isEmpty () {
-          if (this.recommendGoods == null || this.recommendGoods.length === 0) {
-            return true;
-          }else {
-            return false;
-          }
-        }
+        // isEmpty () {
+        //   if (this.recommendGoods == null || this.recommendGoods.length === 0) {
+        //     return true;
+        //   }else {
+        //     return false;
+        //   }
+        // }
       },
       created () {
         this.getParmas();
@@ -95,7 +96,9 @@
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            self.recommendGoods.push(curPageData)
+            if (page.num === 1 && curPageData.length === 0 ) {
+              self.isEmpty = true
+            }
             bus.$emit('listPush',curPageData,page.num,page.size)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
@@ -116,10 +119,15 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
+
             if (response.data.code === '081') {
-              successCallback&&successCallback(response.data.data.rows);//成功回调
+              if (response.data.data && response.data.data.rows) {
+                successCallback&&successCallback(response.data.data.rows);
+              }else {
+                successCallback&&successCallback([]);
+              }
             } else {
-              self.mescroll.endErr();
+              _this.mescroll.endErr();
             }
           })
         }
