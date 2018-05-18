@@ -8,8 +8,9 @@ Vue.prototype.$mescrollInt = function (id,upFun,downFun) {
   self.mescroll = new MeScroll(id, { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
     up: {
       callback: upFun, //上拉回调
+      offset: 300, //距离底部小于300px，则触发分页
       loadFull: {
-        use: true, //列表数据过少,是否自动加载下一页,直到满屏或者无更多数据为止;默认false
+        use: false, //列表数据过少,是否自动加载下一页,直到满屏或者无更多数据为止;默认false
         delay: 1000 //延时执行的毫秒数; 延时是为了保证列表数据或占位的图片都已初始化完成,且下拉刷新上拉加载中区域动画已执行完毕;
       },
       // 关闭自定义滚动条
@@ -24,7 +25,7 @@ Vue.prototype.$mescrollInt = function (id,upFun,downFun) {
         src : image, //默认滚动到1000px显示,可配置offset修改
         warpClass: 'scrollWarpClass',
         //html: null, //html标签内容,默认null; 如果同时设置了src,则优先取src
-        offset : 100
+        offset : 500
       },
       empty:{ //配置列表无任何数据的提示
         warpId:"dataList",
