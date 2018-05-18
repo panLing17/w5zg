@@ -1,13 +1,10 @@
 <template lang="pug">
   .citySelectBox
-    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close")
-    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
-        .title  配送方式
-        ul
-          li(@click="selected(0)") 专柜自提
-          li(@click="selected(1)") 快递配送
+    .main
+      .title 配送方式
+      ul
+        li(@click="selected(0)", :class="{checked:nowType === 0}") 专柜自提
+        li(@click="selected(1)", :class="{checked:nowType === 1}") 快递配送
 </template>
 
 <script>
@@ -15,6 +12,7 @@
     name: "city-select",
     data () {
       return {
+        nowType: 0
       }
     },
     props: {
@@ -24,10 +22,8 @@
       }
     },
     methods:{
-      close () {
-        this.$emit('close')
-      },
       selected (num) {
+        this.nowType = num
         this.$emit('selectType',num)
       }
     }
@@ -38,43 +34,48 @@
   .citySelectBox {
 
   }
-
-  .bg {
-    background-color: rgba(0, 0, 0, 0.3);
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 101;
-  }
   .main {
     background-color: white;
-    width: 100%;
-    height: 3.7rem;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 102;
-    font-size: .4rem;
-  }
-  .title {
-    height: 1rem;
     display: flex;
-    justify-content: center;
     align-items: center;
+    padding: 0 .2rem;
+  }
+  .main>.title{
+    width: 2rem;
+    font-size: .35rem;
     font-weight: 600;
   }
   .main ul{
+    width: 100%;
+    height: 1rem;
     padding: 0 .2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .main ul li{
-    height: 1.35rem;
+    height: .8rem;
+    flex-grow: 1;
+    width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: solid 1px #ddd;
+    color: #aaaaaa;
+    background-color: white;
+    transition: background-color .2s, color .2s;
   }
-  .main ul li:first-child{
-    border-bottom: solid 1px #ddd ;
+  .main ul li:last-child {
+    border-left: none;
+    border-bottom-right-radius: .2rem;
+    border-top-right-radius: .2rem;
+  }
+  .main ul li:first-child {
+    border-bottom-left-radius: .2rem;
+    border-top-left-radius: .2rem;
+  }
+  .checked {
+    background-color: rgb(244,0,87) !important;
+    color: white !important;
   }
 </style>
