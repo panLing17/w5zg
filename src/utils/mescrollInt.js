@@ -10,7 +10,7 @@ Vue.prototype.$mescrollInt = function (id,upFun,downFun) {
       callback: upFun, //上拉回调
       offset: 300, //距离底部小于300px，则触发分页
       loadFull: {
-        use: true, //列表数据过少,是否自动加载下一页,直到满屏或者无更多数据为止;默认false
+        use: false, //列表数据过少,是否自动加载下一页,直到满屏或者无更多数据为止;默认false
         delay: 1000 //延时执行的毫秒数; 延时是为了保证列表数据或占位的图片都已初始化完成,且下拉刷新上拉加载中区域动画已执行完毕;
       },
       // 关闭自定义滚动条

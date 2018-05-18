@@ -336,7 +336,7 @@
             now.valueIndex = 0
           })
           self.spec = response.data.data
-          // 渲染选择规格组件
+          // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
         })
       },
