@@ -69,7 +69,7 @@
           imgUrl: self.$method.imgUrlFilter(self.sharePhoto[0].gi_img_url) , // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
-            self.getTicketStep1()
+            self.isLogin()
           },
           cancel: function () {
             // 用户取消分享后执行的回调函数
@@ -88,7 +88,7 @@
           dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
           success: function () {
             // 用户确认分享后执行的回调函数
-            self.getTicketStep1()
+            self.isLogin()
           },
           cancel: function () {
             // 用户取消分享后执行的回调函数
@@ -104,7 +104,7 @@
           imgUrl: self.$method.imgUrlFilter(self.sharePhoto[0].gi_img_url), // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
-            self.getTicketStep1()
+            self.isLogin()
           },
           cancel: function () {
             // 用户取消分享后执行的回调函数
@@ -136,6 +136,13 @@
             _this.friendShare()
           })
         })
+      },
+      isLogin () {
+        if (localStorage.hasOwnProperty('token')) {
+          if (this.userData && this.userData.member_type === '091') {
+            this.getTicketStep1()
+          }
+        }
       },
       // 分享成功后领券
       getTicketStep1 () {
