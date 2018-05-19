@@ -1,5 +1,5 @@
 <template lang="pug">
-  .wrapper
+  .wrapper(v-loading="loadingFlag")
     nav-bar
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
@@ -16,8 +16,14 @@
 <script>
   export default {
     name: "registerTicket",
+    data () {
+      return {
+        loadingFlag: false
+      }
+    },
     methods: {
       goNext () {
+        this.loadingFlag = true
         if (localStorage.hasOwnProperty('token')) {
           let self = this
           self.$ajax({
