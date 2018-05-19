@@ -23,18 +23,20 @@
     },
     methods: {
       goNext () {
-        this.loadingFlag = true
         if (localStorage.hasOwnProperty('token')) {
-          let self = this
-          self.$ajax({
-            method: 'get',
-            url: self.$apiTransaction + 'netcardrule/reg/present',
-            params: {}
-          }).then(function (response) {
-            if (response.data.optSuc) {
-              self.getTicket (response.data.data)
-            }
-          })
+          if (!this.loadingFlag) {
+            this.loadingFlag = true
+            let self = this
+            self.$ajax({
+              method: 'get',
+              url: self.$apiTransaction + 'netcardrule/reg/present',
+              params: {}
+            }).then(function (response) {
+              if (response.data.optSuc) {
+                self.getTicket (response.data.data)
+              }
+            })
+          }
         } else {
           this.$router.push('/register1')
         }
