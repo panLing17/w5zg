@@ -123,10 +123,14 @@
     methods: {
       isLogin () {
         if (localStorage.hasOwnProperty('token')) {
-          if (this.userData && this.userData.reg_present === '11') {
-            this.showRegisterTicket = false
+          if (this.userData && this.userData.member_type === '091') {
+            if (this.userData && this.userData.reg_present === '11') {
+              this.showRegisterTicket = false
+            } else {
+              this.showRegisterTicket =  true
+            }
           } else {
-            this.showRegisterTicket =  true
+            this.showRegisterTicket = false
           }
         } else {
           this.showRegisterTicket =  true
@@ -140,7 +144,6 @@
       //判断显示城市的字数
       judgeCityNum(){
         var citys = document.getElementsByClassName("city")[0];
-        console.log(citys.innerText);
         if (citys.innerText.length == 2) {
           citys.style.fontSize = .4 + "rem";
         }
@@ -291,12 +294,12 @@
           method: 'get',
           url: _this.$apiTransaction + 'thirdPay/sao',
           params: {
-            url: window.location.href
+            url: window.location.href.split('#')[0]
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           wx.config({
-            debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
             timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
             nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
