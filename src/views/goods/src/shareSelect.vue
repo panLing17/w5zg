@@ -37,10 +37,10 @@
       shareTitle: String
     },
     mounted () {
-      // this.wxConfig()
-      this.wxShare()
-      this.friendShare()
-      this.qqShare()
+      this.wxConfig()
+      // this.wxShare()
+      // this.friendShare()
+      // this.qqShare()
     },
     methods:{
       notScroll (e) {
@@ -133,6 +133,9 @@
             signature: response.data.data.signature,// 必填，签名，见附录1
             jsApiList: [ 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
           })
+          _this.wxShare()
+          _this.friendShare()
+          _this.qqShare()
           wx.ready(()=>{
             _this.wxShare()
             _this.friendShare()
