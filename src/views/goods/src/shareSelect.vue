@@ -37,7 +37,10 @@
       shareTitle: String
     },
     mounted () {
-      this.wxConfig()
+      // this.wxConfig()
+      this.wxShare()
+      this.friendShare()
+      this.qqShare()
     },
     methods:{
       notScroll (e) {
@@ -139,7 +142,6 @@
         })
       },
       isLogin () {
-        alert(999+localStorage.getItem('member_type'))
         if (localStorage.hasOwnProperty('token') && localStorage.getItem('member_type') === '091') {
           this.getTicketStep1()
         }
