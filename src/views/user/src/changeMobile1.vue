@@ -6,7 +6,7 @@
       .topCenter(slot="center") 更换手机号
       .topRight(slot="right")
     .form
-      w-input(label="原手机号：", label-width="1.8rem", placeholder="请输入原手机号", v-model="form.mobile", @blur="resetBtn",:error="mobileError")
+      w-input(label="原手机号：", label-width="1.8rem", placeholder="请输入原手机号", v-model="form.mobile", @w-blur="resetBtn",:error="mobileError")
       w-input(label="登录密码：", label-width="1.8rem", placeholder="请输入登录密码", :type="passwordType", v-model="form.loginPwd",:error="loginPwdError")
       button.regButton(@click="nextStep",:class="{regButtonGray:nextStepStatus}") 下一步
 

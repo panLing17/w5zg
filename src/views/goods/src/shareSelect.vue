@@ -69,6 +69,7 @@
           imgUrl: self.$method.imgUrlFilter(self.sharePhoto[0].gi_img_url) , // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
+            self.getTicketStep1()
           },
           cancel: function () {
             // 用户取消分享后执行的回调函数
@@ -87,6 +88,7 @@
           dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
           success: function () {
             // 用户确认分享后执行的回调函数
+            self.getTicketStep1()
           },
           cancel: function () {
             // 用户取消分享后执行的回调函数
@@ -102,6 +104,7 @@
           imgUrl: self.$method.imgUrlFilter(self.sharePhoto[0].gi_img_url), // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
+            self.getTicketStep1()
           },
           cancel: function () {
             // 用户取消分享后执行的回调函数
@@ -134,6 +137,31 @@
           })
         })
       },
+      // 分享成功后领券
+      getTicketStep1 () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + '/netcardrule/share/present',
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.getTicketStep2 (response.data.data)
+          }
+        })
+      },
+      getTicketStep2 (url) {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: url,
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.$shareSuccess({ticketMoney: response.data.data})
+          }
+        })
+      }
     }
   }
 </script>

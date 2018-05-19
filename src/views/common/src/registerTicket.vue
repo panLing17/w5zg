@@ -26,13 +26,27 @@
             params: {}
           }).then(function (response) {
             if (response.data.optSuc) {
-              self.$store.commit('setShowTicket', true)
-              self.getUserData()
+              self.getTicket (response.data.data)
             }
           })
         } else {
           this.$router.push('/register1')
         }
+      },
+      getTicket (url) {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: url,
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.$store.commit('setShowTicket', true)
+            self.$store.commit('setTicketMoney', response.data.data)
+            self.getUserData()
+          }
+
+        })
       },
       getUserData () {
         let self = this
@@ -41,9 +55,11 @@
           url: self.$apiMember + 'member/currentMember',
           params: {}
         }).then(function (response) {
-          self.$store.commit('userDataChange' ,response.data.data)
-          // 成功跳转页面
-          self.$router.push({path: '/home'})
+          if (response.data.optSuc) {
+            self.$store.commit('userDataChange', response.data.data)
+            // 成功跳转页面
+            self.$router.push({path: '/home'})
+          }
         })
       }
     }

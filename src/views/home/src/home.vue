@@ -19,8 +19,6 @@
         .shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="isLogin()")
-        img(src="../../../assets/img/ad1.png")
       <!--img.title1(src="../../../assets/img/louceng1.png")-->
       .title1
       w-activity(:listData="activityGoods")
@@ -28,6 +26,8 @@
       .title2
       w-recommend
       .bottomPlaceholder
+    .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
+      img(src="../../../assets/img/ad1.png")
     .mask(@click.stop="closeTicket", v-if="showTicket")
     .adWrapper2(v-if="showTicket")
       .adWrap
@@ -38,7 +38,7 @@
             .ticket
               .left
                 span.small ￥
-                span 1000
+                span {{ticketMoney}}
               .right
                 .dec1 现金券
                 .dec2 领取后3个月内有效
@@ -81,11 +81,12 @@
           }
         ],
         banner: [
-        ]
+        ],
+        showRegisterTicket: false
       }
     },
     computed: {
-      ...mapState(['showTicket', 'userData'])
+      ...mapState(['showTicket', 'userData', 'ticketMoney'])
     },
     watch: {
       /*loadingFlag () {
@@ -112,6 +113,8 @@
       this.judgeCity()
       //判断显示城市的字数
       this.judgeCityNum()
+      // 判断是否显示注册送券成功弹框
+      this.isLogin()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -119,16 +122,16 @@
     },
     methods: {
       isLogin () {
-        console.log(1)
         if (localStorage.hasOwnProperty('token')) {
           if (this.userData && this.userData.reg_present === '11') {
-            return false
+            this.showRegisterTicket = false
           } else {
-            return true
+            this.showRegisterTicket =  true
           }
         } else {
-          return true
+          this.showRegisterTicket =  true
         }
+
       },
       closeTicket () {
         this.$store.commit('setShowTicket', false)

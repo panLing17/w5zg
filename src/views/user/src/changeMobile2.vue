@@ -6,7 +6,7 @@
       .topCenter(slot="center") 更换手机号
       .topRight(slot="right")
     .form
-      w-input(label="新手机号：", label-width="2.5rem", placeholder="请输入新手机号", v-model="form.mobile",  required, @blur="checkPhoneRepeat", :error="phoneError")
+      w-input(label="新手机号：", label-width="2.5rem", placeholder="请输入新手机号", v-model="form.mobile",  required, @w-blur="checkPhoneRepeat", :error="phoneError")
       w-input(v-model="form.gCode", label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, required, button-cover,:error="gCodeError")
         img.valiImg(slot="button", @click="getPicCode", :src="url")
       w-input(v-model="form.vcode", label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", :error="checkCodeError", input-button=true, required, button-cover)

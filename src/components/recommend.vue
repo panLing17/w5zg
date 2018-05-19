@@ -56,7 +56,7 @@
         box.style.width = '100%'
         box.style.height = 0
         box.style.overflow = 'hidden'
-        console.log(this.$refs.left)
+
         this.$refs.left.appendChild(box)
         let leftH = this.$refs.left.clientHeight
         let rightH  = this.$refs.right.clientHeight

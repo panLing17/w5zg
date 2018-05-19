@@ -66,7 +66,7 @@
         this.$emit('focus', this.msg)
       },
       handBlur () {
-        this.$emit('blur', this.msg)
+        this.$emit('w-blur', this.msg)
       }
     }
   }
