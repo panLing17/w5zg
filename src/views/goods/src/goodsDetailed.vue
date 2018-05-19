@@ -101,7 +101,7 @@
       select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
-      share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
+      <!--share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")-->
       onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
       card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
       saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -164,7 +164,11 @@
         cardTipsFlag: false,
         // 省钱介绍
         saveMoneyTipsFlag: false,
-        onlySelectSpec: true
+        onlySelectSpec: true,
+        shareFlag: {
+          banner: false,
+          title: false
+        }
       }
     },
     computed:{
@@ -195,6 +199,7 @@
       // this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback)
+
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
@@ -218,6 +223,14 @@
       }
     },
     methods:{
+      isShare () {
+        if (this.shareFlag.banner && this.shareFlag.title) {
+          this.$share({
+            sharePhoto: this.banner,
+            shareTitle: this.goodsData.gi_name
+          })
+        }
+      },
       // 后退
       goBack () {
         console.log(this.$router)
@@ -294,6 +307,8 @@
           }
         }).then(function (response) {
           self.goodsData = response.data.data
+          self.shareFlag.title = true
+          self.isShare()
         })
       },
       // 获取商品描述
@@ -320,6 +335,8 @@
           }
         }).then(function (response) {
           self.banner = response.data.data
+          self.shareFlag.banner = true
+          self.isShare()
         })
       },
       // 获取规格
