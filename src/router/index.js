@@ -80,6 +80,11 @@ const router = new Router ({
       component: Goods.payment
     },
     {
+      path: '/download/labourunion',
+      name: '工会APP下载',
+      component: Common.downloadGh
+    },
+    {
       path: '/download',
       name: 'APP下载',
       component: Common.download

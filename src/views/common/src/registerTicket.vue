@@ -38,7 +38,7 @@
             })
           }
         } else {
-          this.$router.push('/register1')
+          this.$router.push('/login')
         }
       },
       getTicket (url) {
@@ -93,7 +93,7 @@
     pointer-events: none;
   }
   .top {
-    margin-top: -.8rem;
+    margin-top: -.5rem;
   }
   .bottom {
     padding-bottom: .5rem;
