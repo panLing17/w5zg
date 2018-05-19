@@ -27,6 +27,7 @@
     height: 100vh;
     background: url("../../../assets/img/backgroundpic@2x.png") no-repeat top left;
     background-size: 100% 100%;
+    overflow: hidden;
   }
   img {
     pointer-events: none;
@@ -36,16 +37,16 @@
   }
   .img1 {
     width: 6.6rem;
-    margin: 2rem auto 0;
+    margin: .5rem auto 0;
   }
   .img2 {
     width: 2.13rem;
-    margin: 1.28rem auto 0;
+    margin: .5rem auto 0;
   }
   .link {
     display: block;
     text-align: center;
-    margin-top: .76rem;
+    margin-top: .5rem;
   }
   .img3, .img4 {
     width: 6.13rem;

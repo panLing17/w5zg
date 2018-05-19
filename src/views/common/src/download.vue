@@ -21,7 +21,8 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-image:linear-gradient(135deg, #85ccf8 141.4213562373095px, #3db1f8 282.842712474619px)
+    background-image:linear-gradient(135deg, #85ccf8 141.4213562373095px, #3db1f8 282.842712474619px);
+    overflow: hidden;
   }
   img {
     pointer-events: none;
@@ -31,18 +32,18 @@
   }
   .img1 {
     width: 2.13rem;
-    margin: .8rem auto 0;
+    margin: .5rem auto 0;
   }
   .link {
     display: block;
     text-align: center;
-    margin-top: .76rem;
+    margin-top: .2rem;
   }
   .img3, .img4 {
     width: 6.13rem;
   }
   .img2 {
-    width: 9.2rem;
+    width: 9rem;
     margin: .2rem auto 0;
   }
   .img5 {
