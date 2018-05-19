@@ -113,6 +113,7 @@ export default {
         params: {}
       }).then(function (response) {
         self.$store.commit('userDataChange' ,response.data.data)
+        localStorage.setItem('member_type', response.data.data.member_type)
       })
     }
   }

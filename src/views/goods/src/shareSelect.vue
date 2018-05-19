@@ -138,14 +138,8 @@
         })
       },
       isLogin () {
-        alert(localStorage.hasOwnProperty('token'))
-        alert(this.userData.member_type)
-        alert(this.userData)
-
-        if (localStorage.hasOwnProperty('token')) {
-          if (this.userData && this.userData.member_type === '091') {
-            this.getTicketStep1()
-          }
+        if (localStorage.hasOwnProperty('token') && localStorage.getItem('member_type') === '091') {
+          this.getTicketStep1()
         }
       },
       // 分享成功后领券
