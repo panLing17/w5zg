@@ -138,6 +138,7 @@
         })
       },
       isLogin () {
+        alert(999+localStorage.getItem('member_type'))
         if (localStorage.hasOwnProperty('token') && localStorage.getItem('member_type') === '091') {
           this.getTicketStep1()
         }
