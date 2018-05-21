@@ -11,7 +11,7 @@
         li 当前定位
         li.icon
           img(src="../../../assets/img/citySearch.png") 
-        li.cityShow(@click="goToHome($event)") 南京市
+        li.cityShow(@click="goToWhere($event)") 南京市
     .hotCity 热门城市
     .hotCityList
       ul
@@ -19,7 +19,8 @@
     .allCityList
       ul(v-for="(key,value,oIndex) in letterCityList")
         li.letters(:id="'anchor-'+oIndex") {{value}}
-        li.letterCities(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event)") {{item}}
+        li.provinces(v-for="(keys,values) in key.list"  @click="selects($event)") {{values}}
+          .cities(v-for="items in keys") {{items}} 
         li.viewMore(@click="viewMore(key,$event,oIndex)") {{key.words}}
     ul.letter
       li #
@@ -38,8 +39,8 @@
         selected:0,
         hotCityList:["上海","北京","广州","深圳","杭州","武汉","南京","成都","重庆","西安","苏州","郑州","啥的黄金卡的空间","卡时间段看见"],
         letterCityList:{
-          "A":{list:["阿坝","阿拉善","阿里","安康","安庆","鞍山","安顺","安阳","澳门"],words:"查看更多"},
-          "B":{list:["北京","白银","保定","宝鸡","保山","包头","巴中","北海","蚌埠","本溪","毕节","滨州","百色","亳州"],words:"查看更多"},
+          "A":{list:{"安徽":["合肥市","黄山市","铜陵市","芜湖市"]},words:"查看更多"},
+          "B":{list:{"北京":["东城区","西城区","海淀区","朝阳区"]},words:"查看更多"},
           "C":{list:["重庆","成都","长沙","长春","沧州","常德","昌都","长治","常州","巢湖","潮州","承德","郴州","赤峰","池州","崇左","楚雄","滁州","朝阳"],words:"查看更多"},
           "D":{list:["大连","东莞","大理","丹东","大庆","大同","大兴安岭","德宏","德阳","德州","定西","迪庆","东营"],words:"查看更多"},
           "E":{list:["鄂尔多斯","恩施","鄂州"],words:"查看更多"},
@@ -51,7 +52,7 @@
       }
     },
     mounted () {
-      window.onscroll = function() {};
+      console.log(this.letterCityList)
     },
     methods: {
       change: function(item,index){
@@ -75,7 +76,6 @@
       },
 
       goAnchor:function(selector) {
-        console.log("1");
         var anchor = this.$el.querySelector(selector);
         document.documentElement.scrollTop = anchor.offsetTop - 60; 
       },
@@ -102,7 +102,7 @@
         }     
       },
 
-      goToHome:function(e){
+      goToWhere:function(e){
         console.log(e.target.innerText);
         var str = e.target.innerText.substr(0,e.target.innerText.length-1);
         if (this.statusNum == 1) {
@@ -209,7 +209,6 @@
   /*按英文字母表排序的城市--开始*/
   .allCityList{
     background-color: #fff;
-    margin-top: .2rem;
   }
   .allCityList ul{
     background-color: rgb(242,242,242);
@@ -221,14 +220,19 @@
     font-size: .4rem;
     color: rgb(51,51,51);
   }
-  .allCityList ul li.letterCities{
+  .allCityList ul li.provinces,
+  .allCityList ul li.provinces .cities{
     width: 100%;
-    height: 1.2rem;
+    /*height: 1.2rem;*/
     line-height: 1.2rem;
     text-indent: .3rem;
-    border-bottom: 1px solid rgb(229,229,229);
     background-color: #fff;
     font-size: .4rem;
+  }
+  .allCityList ul li.provinces .cities{
+    height: 1.2rem;
+    font-size: .35rem;
+    border-bottom: 1px solid rgb(229,229,229);
   }
   .allCityList ul li.viewMore{
     height: 1.4rem;
