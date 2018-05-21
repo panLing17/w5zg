@@ -95,9 +95,9 @@
     methods: {
       //判断回退事件
       backRouter(){
-        if (this.$route.query.relNum == 1 && this.$route.query.jumps == 'page') {
+        if (this.$route.query.jumps == 'page') {
           this.$router.push('/page');
-        } else if (this.$route.query.relNum == 1 && this.$route.query.jumps == 'home'){
+        } else if (this.$route.query.jumps == 'home'){
           this.$router.push('/home');
         } else {
           this.$router.go(-1);
@@ -230,7 +230,6 @@
 }
 .searchHistory{
   width: 100%;
-  position: absolute;
   min-height: 100vh;
   z-index: 103;
   background-color: rgb(242,242,242);
