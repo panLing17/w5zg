@@ -1,7 +1,7 @@
 <template lang="pug">
-  .citySelectBox
+  .citySelectBox(@touchmove.prevent="")
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close")
+      .bg(v-if="show", @click.stop="close", @touchstart.stop="", @touchend.stop="", @touchmove.stop.prevent ="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
@@ -13,12 +13,12 @@
             li(v-if="selectType > 1 || selectType === 1 ", :class="{selected:selectType === 1}", key="1", @click="tab(1)") {{cityName}}
             li(v-if="selectType > 2 || selectType === 2 ", :class="{selected:selectType === 2}", key="2", @click="tab(2)") {{areaName}}
           .slider(:style="{marginLeft:3 * selectType + 'rem'}")
-        ul.list
-          li(v-for="item in provinceList", @click="getCity(item.pro_no,item.pro_name)") {{item.pro_name}}
-        ul.list
-          li(v-for="item in cityList", @click="getArea(item.city_no,item.city_name)") {{item.city_name}}
-        ul.list
-          li(v-for="item in areaList", @click="selectOver(item.district_no,item.district_name)") {{item.district_name}}
+        ul.list(@touchmove.prevent="")
+          li(v-for="item in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", @touchstart.stop="", @touchend.stop="", @touchmove.stop="") {{item.pro_name}}
+        ul.list(@touchmove.prevent="")
+          li(v-for="item in cityList", @click.stop="getArea(item.city_no,item.city_name)", @touchstart.stop="", @touchend.stop="", @touchmove.stop="") {{item.city_name}}
+        ul.list(@touchmove.prevent="")
+          li(v-for="item in areaList", @click.stop="selectOver(item.district_no,item.district_name)", @touchstart.stop="", @touchend.stop="", @touchmove.stop="") {{item.district_name}}
 </template>
 
 <script>
@@ -166,6 +166,7 @@
     bottom: 0;
     left: 0;
     z-index: 102;
+
   }
   .title {
     display: flex;
@@ -203,6 +204,7 @@
     width: 3rem;
     height: 10rem;
     overflow-y: auto;
+    -webkit-overflow-scrolling : touch;
   }
   .slider {
     height: 1px;

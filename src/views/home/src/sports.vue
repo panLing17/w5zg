@@ -69,6 +69,10 @@
       mounted () {
         this.$mescrollInt("sportsMescroll",this.upCallback);
       },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy()
+      },
       methods: {
         getParmas () {
           this.parentId = this.$route.query.actId;

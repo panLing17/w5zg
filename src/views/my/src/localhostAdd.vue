@@ -112,6 +112,7 @@
     background: rgb(242,242,242);
     position: relative;
     z-index: 100;
+    overflow-y: hidden;
   }
   .topLeft{
     width: .2rem;

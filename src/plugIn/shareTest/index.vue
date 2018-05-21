@@ -2,7 +2,7 @@
 
 <script>
   export default {
-    name: "share",
+    name: "share-select",
     data () {
       return {
       }
@@ -18,6 +18,7 @@
       // this.wxShare()
       // this.friendShare()
       // this.qqShare
+
     },
     methods:{
       notScroll (e) {

@@ -114,7 +114,11 @@
       //判断显示城市的字数
       this.judgeCityNum()
       // 判断是否显示注册送券成功弹框
-      this.isLogin()
+      let _this = this
+      setTimeout(() => {
+        _this.isLogin()
+      }, 1000)
+
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();

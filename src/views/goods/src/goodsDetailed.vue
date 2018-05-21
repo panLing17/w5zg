@@ -226,8 +226,31 @@
       isShare () {
         if (this.shareFlag.banner && this.shareFlag.title) {
           this.$share({
-            sharePhoto: this.banner,
-            shareTitle: this.goodsData.gi_name
+            sharePhoto: this.$method.imgUrlFilter(this.banner[0].gi_img_url),
+            shareTitle: this.goodsData.gi_name,
+            shareDesc: '我发现了个宝贝,跟专卖店比贼便宜',
+            handleSuccess: () => {
+              let self = this
+              if (localStorage.hasOwnProperty('token') && localStorage.getItem('member_type') === '091') {
+                self.$ajax({
+                  method: 'get',
+                  url: self.$apiTransaction + '/netcardrule/share/present',
+                  params: {}
+                }).then(function (response) {
+                  if (response.data.optSuc) {
+                    self.$ajax({
+                      method: 'get',
+                      url: response.data.data,
+                      params: {}
+                    }).then(function (res) {
+                      if (res.data.optSuc) {
+                        self.$shareSuccess({ticketMoney: res.data.data})
+                      }
+                    })
+                  }
+                })
+              }
+            }
           })
         }
       },
