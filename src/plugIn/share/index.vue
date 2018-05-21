@@ -1,25 +1,4 @@
-<template lang="pug">
-  .selectSizeBox
-    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close", @touchmove="notScroll")
-    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show", @touchmove="notScroll")
-        .title 分享到
-        ul.shareList
-          li(@click="wxShare")
-            img(src="../../../assets/img/wechat2@2x.png")
-            p 微信
-          li(@click="friendShare")
-            img(src="../../../assets/img/friendster2@2x.png")
-            p 朋友圈
-          li(@click="qqShare")
-            img(src="../../../assets/img/QQ@3x.png")
-            p QQ
-          li(@click="copyUrl")
-            img(src="../../../assets/img/copyUrl@3x.png")
-            p 复制链接
-        .bottom(@click="close") 取消
-</template>
+
 
 <script>
   export default {
@@ -29,15 +8,10 @@
       }
     },
     props: {
-      show: {
-        type: Boolean,
-        default: false
-      },
       sharePhoto: Array,
       shareTitle: String
     },
     mounted () {
-      alert('进入到分享啦啦啦啦')
       this.wxConfig()
       // this.wxShare()
       // this.friendShare()
@@ -83,7 +57,6 @@
       // 分享给朋友
       wxShare () {
         let self = this
-        alert(self.shareTitle + self.sharePhoto[0])
         wx.onMenuShareAppMessage({
           title: self.shareTitle, // 分享标题
           desc: '我发现了个宝贝,跟专卖店比贼便宜', // 分享描述
@@ -128,7 +101,6 @@
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          alert('配置成功')
           wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
@@ -180,66 +152,4 @@
   }
 </script>
 
-<style scoped>
-  .selectSizeBox {
-  }
 
-  .bg {
-    background-color: rgba(0, 0, 0, 0.3);
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 101;
-  }
-
-  .main {
-    background-color: white;
-    width: 100%;
-    height: 40%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 102;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-  }
-  .main .title{
-    font-size: .35rem;
-    height: .8rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .main .shareList {
-    flex-grow: 1;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-  }
-  .shareList li {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: .5rem;
-  }
-  .shareList li img{
-    height: 1.2rem;
-    margin-bottom: .15rem;
-  }
-  .shareList li:last-child img{
-    height: 1rem;
-    margin-bottom: .15rem;
-  }
-  .main .bottom{
-    font-size: .35rem;
-    height: 1.2rem;
-    border-top: 1px solid #ddd;
-    color: rgb(247,0,88);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-</style>

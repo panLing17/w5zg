@@ -26,6 +26,23 @@
       .title2
       w-recommend
       .bottomPlaceholder
+    .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
+      img(src="../../../assets/img/ad1.png")
+    .mask(@click.stop="closeTicket", v-if="showTicket")
+    .adWrapper2(v-if="showTicket")
+      .adWrap
+        .cancelBtn(@click.stop="closeTicket")
+        .adContent
+          .adTitle APP新人福利
+          .ticketWrapper
+            .ticket
+              .left
+                span.small ￥
+                span {{ticketMoney}}
+              .right
+                .dec1 现金券
+                .dec2 领取后3个月内有效
+          .rightBtn(@click.stop="closeTicket") 立即使用
 </template>
 <script>
   import hotButton from './hotButton'
@@ -33,6 +50,7 @@
   import wActivity from './activities'
   // 引入bus
   import {bus} from '../../../bus/index'
+  import { mapState } from 'vuex'
   export default {
     name: 'home',
     data() {
@@ -63,8 +81,12 @@
           }
         ],
         banner: [
-        ]
+        ],
+        showRegisterTicket: false
       }
+    },
+    computed: {
+      ...mapState(['showTicket', 'userData', 'ticketMoney'])
     },
     watch: {
       /*loadingFlag () {
@@ -91,16 +113,37 @@
       this.judgeCity()
       //判断显示城市的字数
       this.judgeCityNum()
+      // 判断是否显示注册送券成功弹框
+      this.isLogin()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      isLogin () {
+        if (localStorage.hasOwnProperty('token')) {
+          if (this.userData && this.userData.member_type === '091') {
+            if (this.userData && this.userData.reg_present === '11') {
+              this.showRegisterTicket = false
+            } else {
+              this.showRegisterTicket =  true
+            }
+          } else {
+            this.showRegisterTicket = false
+          }
+        } else {
+          this.showRegisterTicket =  true
+        }
+
+      },
+      closeTicket () {
+        this.$store.commit('setShowTicket', false)
+        this.isLogin ()
+      },
       //判断显示城市的字数
       judgeCityNum(){
         var citys = document.getElementsByClassName("city")[0];
-        console.log(citys.innerText);
         if (citys.innerText.length == 2) {
           citys.style.fontSize = .4 + "rem";
         }
@@ -251,7 +294,7 @@
           method: 'get',
           url: _this.$apiTransaction + 'thirdPay/sao',
           params: {
-            url: window.location.href
+            url: window.location.href.split('#')[0]
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
@@ -261,7 +304,7 @@
             timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
             nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
             signature: response.data.data.signature,// 必填，签名，见附录1
-            jsApiList: ['scanQRCode', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            jsApiList: ['scanQRCode','onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
           })
         })
       },
@@ -458,5 +501,120 @@
     transform: scale(4,2);
     position: relative;
     top: calc(100% + 15px);
+  }
+  .adWrapper {
+    position: fixed;
+    top: 9.5rem;
+    right: -0.2rem;
+    z-index: 888;
+  }
+  .adWrapper img{
+    width: 2rem;
+    pointer-events: none;
+  }
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,.5);
+    z-index: 888;
+  }
+  .adWrapper2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+  }
+  .adWrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8rem;
+    z-index: 889;
+  }
+  .cancelBtn {
+    height: 1.12rem;
+    background: url("../../../assets/img/ad5.png") no-repeat top right;
+    background-size: .67rem 100%;
+  }
+  .adContent {
+    background: #ffa619;
+    color: #964b00;
+    padding-bottom: .5rem;
+  }
+  .adTitle {
+    font-size: .8rem;
+    font-weight: bold;
+    text-align: center;
+    padding-top: .2rem;
+  }
+  .ticketWrapper {
+    padding: 0 .6rem;
+    position: relative;
+  }
+  .ticket {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    height: 2.4rem;
+    border-radius: .3rem;
+    margin-top: .6rem;
+    position: relative;
+    box-shadow: 1px 1px 5px rgba(150,75,0,.5);
+  }
+  .ticket:before, .ticket:after {
+    content: '';
+    width: .53rem;
+    height: .53rem;
+    display: block;
+    background: #ffa619;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .ticket:before {
+    top: -.26rem;
+  }
+  .ticket:after {
+    bottom: -.26rem;
+  }
+  .ticket .left {
+    flex: 1;
+    font-weight: bold;
+    font-size: .88rem;
+    margin-left: .4rem;
+  }
+  .left .small {
+    font-size: .58rem;
+  }
+  .ticket .right {
+    flex: 1;
+    text-align: right;
+    margin-right: .26rem;
+  }
+  .right .dec1 {
+    font-size: .48rem;
+    font-weight: 400;
+  }
+  .right .dec2 {
+    font-size: .29rem;
+    margin-top: .1rem;
+  }
+  .rightBtn {
+    color: #fff;
+    background: linear-gradient(#ff6985, #ff2b7d);
+    width: 3.25rem;
+    height: 1rem;
+    margin: .8rem auto 0;
+    text-align: center;
+    line-height: 1rem;
+    font-size: .4rem;
+    border-radius: .5rem;
   }
 </style>

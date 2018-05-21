@@ -47,6 +47,10 @@ const state = {
   headlinesDetail: "",
   // 退货商品信息
   returnGoods: {},
+  // 首页领券成功显示标志
+  showTicket: false,
+  // 领券金额
+  ticketMoney: 0,
   // 当前商品信息（客服处使用）
   nowGoodsData: {}
 }
@@ -102,6 +106,12 @@ const mutations = {
   // 记录搜索发现的显隐
   getSearchDiscover(state, data) {
     state.searchFlag = data
+  },
+  setShowTicket (state, data) {
+    state.showTicket = data
+  },
+  setTicketMoney (state, data) {
+    state.ticketMoney = data
   }
 }
 const actions = {

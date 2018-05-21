@@ -1,11 +1,11 @@
 <template lang="pug">
   div
-    nav-bar(background="rgba(255,255,255,.7)", height="0", border-bottom="none")
+    nav-bar(background="rgba(0,0,0,.1)", height="0", border-bottom="none")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBack()")
-      .topCenter(slot="center") 商品
+        img(src="../../../assets/img/back@3x.png", style="width:.8rem", @click="goBack()")
+      .topCenter(slot="center")
       .topRight(slot="right")
-        img(src="../../../assets/img/customerservice@3x.png", style="width:.5rem", @click="goService")
+        img(src="../../../assets/img/toshoppingcart@3x.png", style="width:.8rem", @click="$router.push('/shoppingCart')")
         // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
     .goodsBox.mescroll#goodsDetailMescroll
       .banner
@@ -67,17 +67,17 @@
         .left 规格
           span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
         img(src="../../../assets/img/right.png").right
-      .distribution(@click="distribution")
+      dis-type(@selectType="selectDis", style="margin-top:.2rem")
+      .distribution(@click="selectCity = true")
         .top
-          .left 配送方式
+          .left 配送地址
           .right
-            span {{disTypeName}}
+            span
+              img(src="../../../assets/img/citySearch.png" style="height:.4rem;width:.3rem")
+              span(style="margin-left:.2rem") {{location.province.name}}
+              span(style="margin-left:.2rem") {{location.city.name}}
             span(style="color: rgb(246,0,88);") {{maxStoreNum>0 ? '有货' : '无货'}}<img src="../../../assets/img/right.png">
         .bottom
-          .location
-            img(src="../../../assets/img/citySearch.png")
-            span {{location.province.name}}
-            span {{location.city.name}}
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
@@ -95,13 +95,13 @@
       w-recommend(background="white")
     div
       .buttons
+        img(src="../../../assets/img/customerservice@3x.png", @click="goService")
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
       select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
-      dis-type(:show="disTypeFlag", @selectType="selectDis", @close="disTypeClose")
       store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
-      share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
+      <!--share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")-->
       onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
       card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
       saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -164,7 +164,11 @@
         cardTipsFlag: false,
         // 省钱介绍
         saveMoneyTipsFlag: false,
-        onlySelectSpec: true
+        onlySelectSpec: true,
+        shareFlag: {
+          banner: false,
+          title: false
+        }
       }
     },
     computed:{
@@ -195,6 +199,7 @@
       // this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback)
+
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
@@ -218,6 +223,14 @@
       }
     },
     methods:{
+      isShare () {
+        if (this.shareFlag.banner && this.shareFlag.title) {
+          this.$share({
+            sharePhoto: this.banner,
+            shareTitle: this.goodsData.gi_name
+          })
+        }
+      },
       // 后退
       goBack () {
         console.log(this.$router)
@@ -294,6 +307,8 @@
           }
         }).then(function (response) {
           self.goodsData = response.data.data
+          self.shareFlag.title = true
+          self.isShare()
         })
       },
       // 获取商品描述
@@ -320,6 +335,8 @@
           }
         }).then(function (response) {
           self.banner = response.data.data
+          self.shareFlag.banner = true
+          self.isShare()
         })
       },
       // 获取规格
@@ -336,7 +353,7 @@
             now.valueIndex = 0
           })
           self.spec = response.data.data
-          // 渲染选择规格组件
+          // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
         })
       },
@@ -557,11 +574,6 @@
         this.selectedSpec = data.spec
         this.selectFlag = false
       },
-      distribution () {
-        // 此生明，这次选择地址等一系列操作《《不不不不》》来自购买按钮
-        this.ofBuy = false
-        this.disTypeFlag = true
-      },
       onlySelectSpecFun () {
         // 并且，告诉组件，此操作仅仅为了选择规格
         this.onlySelectSpec = true
@@ -594,18 +606,13 @@
       closeSelectCity () {
         this.selectCity = false
       },
-      // 关闭配送类型选择
-      disTypeClose () {
-        this.disTypeFlag = false
-      },
       // 选择配送类型
       selectDis (data) {
-        this.disTypeClose()
         if (data === 1) {
-          this.selectCity = true
+          // this.selectCity = true
           this.disTypeName = '快递配送'
         } else {
-          this.selectStoreFlag = true
+          // this.selectStoreFlag = true
           this.disTypeName = '专柜自提'
         }
       },
@@ -864,7 +871,7 @@
   }
   .distribution{
     margin-top: .2rem;
-    height: 2.2rem;
+    height: 1.7rem;
     background: white;
   }
   .distribution .top{
@@ -935,6 +942,7 @@
     padding: 0 .2rem;
   }
   .buttons {
+    padding: 0 .2rem;
     position: fixed;
     z-index: 1;
     bottom: 0;
@@ -942,23 +950,32 @@
     width: 100%;
     height: 1.2rem;
     display: flex;
-    border: solid 1px rgb(244,0,87);
+    align-items: center;
+    border-top: solid 1px #ddd;
+    background: white;
   }
   .buttons div{
     display: flex;
     justify-content: center;
     align-items: center;
+    height: .8rem;
+    border-radius: .2rem;
+  }
+  .buttons>img{
+    height: .8rem;
+    margin: 0 .4rem;
   }
   .buttons .left{
     flex-grow: 1;
-    height: 100%;
-    background: white;
+    width: 0;
+    background: rgb(255,128,171);
     font-size: .4rem;
-    color: rgb(244,0,87);
+    color: white;
+    margin: 0 .2rem;
   }
   .buttons .right{
     flex-grow: 1;
-    height: 100%;
+    width: 0;
     background: rgb(244,0,87);
     font-size: .4rem;
     color: white;

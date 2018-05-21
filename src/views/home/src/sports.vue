@@ -11,7 +11,7 @@
           div(v-for="tag in banner", style="width:100%" )
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
         .recommendWrapper(v-if="!isEmpty")
-          w-recommend
+          w-recommend(ref="recommend")
           <!--ul.list-->
             <!--li.item(v-for="item in recommendGoods", @click="$router.push({path: '/goodsDetailed',query: {id: item.gspu_id}})")-->
               <!--img.img(:src="item.gi_image_url | img-filter")-->
@@ -37,6 +37,7 @@
           recommendGoods: [],
           parentId: null,
           parentType: null,
+          isEmpty: false
         }
       },
       filters: {
@@ -51,13 +52,13 @@
       computed: {
         ...mapState(['userData']),
         // 判断数据是否为空
-        isEmpty () {
-          if (this.recommendGoods == null || this.recommendGoods.length === 0) {
-            return true;
-          }else {
-            return false;
-          }
-        }
+        // isEmpty () {
+        //   if (this.recommendGoods == null || this.recommendGoods.length === 0) {
+        //     return true;
+        //   }else {
+        //     return false;
+        //   }
+        // }
       },
       created () {
         this.getParmas();
@@ -95,8 +96,11 @@
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            self.recommendGoods.push(curPageData)
-            bus.$emit('listPush',curPageData,page.num,page.size)
+            if (page.num === 1 && curPageData.length === 0 ) {
+              self.isEmpty = true
+            }
+            self.$refs.recommend.more(curPageData,page.num,page.size)
+            // bus.$emit('listPush',curPageData,page.num,page.size)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
             //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -116,10 +120,15 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
+
             if (response.data.code === '081') {
-              successCallback&&successCallback(response.data.data.rows);//成功回调
+              if (response.data.data && response.data.data.rows) {
+                successCallback&&successCallback(response.data.data.rows);
+              }else {
+                successCallback&&successCallback([]);
+              }
             } else {
-              self.mescroll.endErr();
+              _this.mescroll.endErr();
             }
           })
         }

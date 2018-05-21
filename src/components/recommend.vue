@@ -56,7 +56,8 @@
         box.style.width = '100%'
         box.style.height = 0
         box.style.overflow = 'hidden'
-        this.$refs.left.append(box)
+
+        this.$refs.left.appendChild(box)
         let leftH = this.$refs.left.clientHeight
         let rightH  = this.$refs.right.clientHeight
         newList.forEach((now)=>{
@@ -64,7 +65,7 @@
           imgaDom.style.opacity = 0
           imgaDom.style.width = '100%'
           imgaDom.src = process.env.IMG_URL + now.gi_image_url + '?x-oss-process=style/compress'
-          box.append(imgaDom)
+          box.appendChild(imgaDom)
           imgaDom.onload = ()=>{
             num += 1
             if (num >= pageSize) {

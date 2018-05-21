@@ -303,7 +303,7 @@
         let self = this
         this.$ajax({
           method: 'get',
-          url: self.$apiMember + 'receivingAddress/address/city',
+          url: self.$apiMember + 'receivingAddress/addresses',
           params: {
             cityNo: self.$store.state.location.city.id
           }

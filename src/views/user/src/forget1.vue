@@ -6,7 +6,7 @@
       .topCenter(slot="center") 忘记密码
       .topRight(slot="right")
     .form
-      w-input(label="手机号：", label-width="1.8rem", placeholder="请输入手机号", @blur="checkPhone", v-model="form.mobile", :error="phoneError")
+      w-input(label="手机号：", label-width="1.8rem", placeholder="请输入手机号", @w-blur="checkPhone", v-model="form.mobile", :error="phoneError")
       w-input(label="验证码：", label-width="1.8rem", placeholder="请输入验证码", v-model="form.gCode", input-button="true", button-cover)
         img.aplaceholder(slot="button", @click="getPicCode", :src="url")
       button.regButton(@click="nextStep", :class="{regButtonGray:nextStepStatus}") 下一步

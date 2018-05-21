@@ -75,7 +75,7 @@
         pickUps: "", //自提不自提
         checkFlag: false,
         noKey: true,
-        order: 1, //字段排序
+        order: 0, //字段排序
         keyWord: "", //关键字
         sort: "", //正序倒序
         maskFlag:false, //蒙板的显隐

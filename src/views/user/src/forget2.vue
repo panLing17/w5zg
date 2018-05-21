@@ -6,8 +6,8 @@
       .topCenter(slot="center") 忘记密码
       .topRight(slot="right")
     .form
-      w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", @blur="checkVcode", :error="vcodeError" required)
-      w-input(label="输入新密码：", label-width="2.5rem", placeholder="请输入新密码",:type="passwordType", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
+      w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", @w-blur="checkVcode", :error="vcodeError" required)
+      w-input(label="输入新密码：", label-width="2.5rem", placeholder="请输入新密码",:type="passwordType", v-model="form.pwd", required,:error="passwordError",@w-blur="checkPwd")
       w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码",:type="passwordType", v-model="qrPassword", required, :error="qrPasswordError")
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 确定
 </template>

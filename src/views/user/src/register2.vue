@@ -6,7 +6,7 @@
       .topCenter(slot="center") 注册
       .topRight(slot="right")
     .form
-      w-input(label="新密码：", label-width="2rem", placeholder="必须是6-20个英文字母、数字或符号", :type="passwordType", v-model="form.pwd", required,:error="passwordError",@blur="checkPwd")
+      w-input(label="新密码：", label-width="2rem", placeholder="必须是6-20个英文字母、数字或符号", :type="passwordType", v-model="form.pwd", required,:error="passwordError",@w-blur="checkPwd")
       w-input(label="确认密码：", label-width="2rem", placeholder="请再次输入密码", :type="passwordType", v-model="qrPassword", required,:error="qrPasswordError")
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 提交
 </template>
@@ -69,9 +69,37 @@
           params: self.form
         }).then(function (response) {
           if (response.data.optSuc) {
+            localStorage.setItem('token',response.data.data)
+            self.getTicket()
+          }
+        })
+      },
+      // 注册成功送现金券
+      getTicket () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'netcardrule/reg/present',
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.getTicket2(response.data.data)
+          }
+        })
+      },
+      getTicket2 (url) {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: url,
+          params: {}
+        }).then(function (response) {
+          if (response.data.optSuc) {
+            self.$store.commit('setTicketMoney', response.data.data)
             // 成功跳转页面
             self.$router.push({path: '/regOver'})
           }
+
         })
       }
     }

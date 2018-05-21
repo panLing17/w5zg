@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") {{titleName}}
     .form
-      w-input(v-model="form.pwd", label="新密码：", label-width="2.5rem",placeholder="请输入密码", :type="passwordType", input-button=true, :error="passwordError", required,@blur="checkPwd")
+      w-input(v-model="form.pwd", label="新密码：", label-width="2.5rem",placeholder="请输入密码", :type="passwordType", input-button=true, :error="passwordError", required,@w-blur="checkPwd")
       w-input(v-model="qrPassword",label="确认新密码：", label-width="2.5rem", placeholder="请再次输入密码", :type="passwordType", input-button=true, :error="qrPasswordError", required)
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 提交
 </template>
