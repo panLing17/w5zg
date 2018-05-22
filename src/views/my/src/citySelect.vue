@@ -108,33 +108,38 @@
 
       },
       touchMove (e, flag) {
-        let startY = 0
-        let index = ''
-        switch (flag) {
-          case 1: startY =this.move.first.startY; index = 'first'; break;
-          case 2: startY = this.move.second.startY; index = 'second';  break;
-          case 3: startY = this.move.third.startY; index = 'third';  break;
-        }
-        let moveY = e.touches[0].clientY
-        e.preventDefault()
-        let range = Math.abs(moveY - startY)
-        if (moveY < startY) {
-          range = -range
-        }
-        this.move[index].top += range
-        if (this.move[index].top > 0) {
-          this.move[index].top = 0
+        if(e.touches.length == 1) {
+          let startY = 0
+          let index = ''
+          switch (flag) {
+            case 1: startY =this.move.first.startY; index = 'first'; break;
+            case 2: startY = this.move.second.startY; index = 'second';  break;
+            case 3: startY = this.move.third.startY; index = 'third';  break;
+          }
+          let moveY = e.touches[0].clientY
+          e.preventDefault()
+          let range = Math.abs(moveY - startY)
+          if (moveY < startY) {
+            range = -range
+          }
+          this.move[index].top += range
+          if (this.move[index].top > 0) {
+            this.move[index].top = 0
+          }
+
+          if (this.move[index].top < this.move[index].topMin) {
+            this.move[index].top = this.move[index].topMin
+          }
         }
 
-        if (this.move[index].top < this.move[index].topMin) {
-          this.move[index].top = this.move[index].topMin
-        }
       },
       touchStart (e, flag) {
-        switch (flag) {
-          case 1: this.move.first.startY = e.touches[0].clientY; break;
-          case 2: this.move.second.startY = e.touches[0].clientY; break;
-          case 3: this.move.third.startY = e.touches[0].clientY; break;
+        if(e.touches.length == 1) {
+          switch (flag) {
+            case 1: this.move.first.startY = e.touches[0].clientY; break;
+            case 2: this.move.second.startY = e.touches[0].clientY; break;
+            case 3: this.move.third.startY = e.touches[0].clientY; break;
+          }
         }
 
       },
@@ -187,6 +192,7 @@
         }).then(function (response) {
           self.cityList = response.data.data
           self.selectType = 1
+          self.getMinTop(2)
         })
       },
       getArea (number, cityName) {
@@ -204,6 +210,7 @@
         }).then(function (response) {
           self.areaList = response.data.data
           self.selectType = 2
+          self.getMinTop(3)
         })
       },
       selectOver (number, areaName) {
@@ -300,6 +307,11 @@
   .list li {
     position: absolute;
     left: 0;
+    width: 100%;
+    transition: top 0.5s;
+  }
+  .item {
+    text-align: center;
   }
   .slider {
     height: 1px;
