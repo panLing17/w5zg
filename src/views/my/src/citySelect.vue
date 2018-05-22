@@ -1,9 +1,9 @@
 <template lang="pug">
   .citySelectBox(@touchmove.prevent="")
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click.stop="close", @touchstart.stop="", @touchend.stop="", @touchmove.stop.prevent ="")
+      .bg(v-show="show", @click.stop="close", @touchstart.stop="", @touchend.stop="", @touchmove.stop.prevent ="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show", @touchmove.prevent="")
+      .main(v-show="show", @touchmove.prevent="")
         .title
           span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
@@ -13,12 +13,15 @@
             li(v-if="selectType > 1 || selectType === 1 ", :class="{selected:selectType === 1}", key="1", @click="tab(1)") {{cityName}}
             li(v-if="selectType > 2 || selectType === 2 ", :class="{selected:selectType === 2}", key="2", @click="tab(2)") {{areaName}}
           .slider(:style="{marginLeft:3 * selectType + 'rem'}")
+        ul.list(@touchmove.prevent="", ref="list")
+          li(@touchstart.stop="touchStart($event, 1)", @touchend.stop="touchEnd", @touchmove.stop="touchMove($event, 1)", :style="{top: move.first.top + 'px'}")
+            .item(v-for="item in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", key="item", ref="item") {{item.pro_name}}
         ul.list(@touchmove.prevent="")
-          li(v-for="item in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", @touchstart.stop="", @touchend.stop="", @touchmove.stop="") {{item.pro_name}}
+          li(@touchstart.stop="touchStart($event, 2)", @touchend.stop="touchEnd", @touchmove.stop="touchMove($event, 2)", :style="{top: move.second.top + 'px'}")
+            .item(v-for="item in cityList", @click.stop="getArea(item.city_no,item.city_name)", key="item") {{item.city_name}}
         ul.list(@touchmove.prevent="")
-          li(v-for="item in cityList", @click.stop="getArea(item.city_no,item.city_name)", @touchstart.stop="", @touchend.stop="", @touchmove.stop="") {{item.city_name}}
-        ul.list(@touchmove.prevent="")
-          li(v-for="item in areaList", @click.stop="selectOver(item.district_no,item.district_name)", @touchstart.stop="", @touchend.stop="", @touchmove.stop="") {{item.district_name}}
+          li(@touchstart.stop="touchStart($event, 3)", @touchend.stop="touchEnd", @touchmove.stop="touchMove($event, 3)", :style="{top: move.third.top + 'px'}")
+            .item(v-for="item in areaList", @click.stop="selectOver(item.district_no,item.district_name)", key="item") {{item.district_name}}
 </template>
 
 <script>
@@ -39,7 +42,27 @@
         areaNumber: '',
         provinceList: [],
         cityList: [],
-        areaList: []
+        areaList: [],
+        move: {
+          first: {
+            top: 0,
+            startY: 0,
+            moveY: 0,
+            topMin: 0
+          },
+          second: {
+            top: 0,
+            startY: 0,
+            moveY: 0,
+            topMin: 0
+          },
+          third: {
+            top: 0,
+            startY: 0,
+            moveY: 0,
+            topMin: 0
+          }
+        }
       }
     },
     props: {
@@ -50,8 +73,74 @@
     },
     mounted () {
       this.getProvince()
+
+    },
+    watch: {
+      show (val) {
+        if (val) {
+          this.getMinTop(1)
+        }
+      }
     },
     methods:{
+      getMinTop (flag) {
+        let length = 0
+        let index = ''
+        switch (flag) {
+          case 1: length = this.provinceList.length; index = 'first'; break;
+          case 2: length = this.cityList.length; index = 'second';  break;
+          case 3: length = this.areaList.length; index = 'third';  break;
+        }
+        let _this = this
+        this.$nextTick(() => {
+          let itemHeight = _this.$refs.item[0].offsetHeight
+          let listHeight = _this.$refs.list.offsetHeight
+          let firstHeight = itemHeight * length
+          if (firstHeight <= listHeight) {
+            _this.move[index].topMin = 0
+          } else {
+            let temp = firstHeight / listHeight
+            let temp1 = (parseInt(temp) - 1) * listHeight
+            let temp2 = firstHeight % listHeight
+            _this.move[index].topMin = -(temp1 + temp2)
+          }
+        })
+
+      },
+      touchMove (e, flag) {
+        let startY = 0
+        let index = ''
+        switch (flag) {
+          case 1: startY =this.move.first.startY; index = 'first'; break;
+          case 2: startY = this.move.second.startY; index = 'second';  break;
+          case 3: startY = this.move.third.startY; index = 'third';  break;
+        }
+        let moveY = e.touches[0].clientY
+        e.preventDefault()
+        let range = Math.abs(moveY - startY)
+        if (moveY < startY) {
+          range = -range
+        }
+        this.move[index].top += range
+        if (this.move[index].top > 0) {
+          this.move[index].top = 0
+        }
+
+        if (this.move[index].top < this.move[index].topMin) {
+          this.move[index].top = this.move[index].topMin
+        }
+      },
+      touchStart (e, flag) {
+        switch (flag) {
+          case 1: this.move.first.startY = e.touches[0].clientY; break;
+          case 2: this.move.second.startY = e.touches[0].clientY; break;
+          case 3: this.move.third.startY = e.touches[0].clientY; break;
+        }
+
+      },
+      touchEnd (e) {
+
+      },
       close () {
         this.$emit('close')
       },
@@ -205,6 +294,12 @@
     height: 10rem;
     overflow-y: auto;
     -webkit-overflow-scrolling : touch;
+    /*overflow: hidden;*/
+    position: relative;
+  }
+  .list li {
+    position: absolute;
+    left: 0;
   }
   .slider {
     height: 1px;
