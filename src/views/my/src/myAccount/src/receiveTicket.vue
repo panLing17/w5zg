@@ -55,7 +55,7 @@
         }
 
         if (!this.showSuccess){
-          this.loadingFlag = true
+
           if (this.isLoginFlag && this.phone.length!==11) {
             this.getUserData(function () {
               _this.getTicket();
@@ -87,22 +87,23 @@
         })
       },
       getTicket () {
-        let _this = this;
-        this.$ajax({
-          method: 'get',
-          url: this.url,
-          params:{
-            mobile: this.phone
-          }
-        }).then(function (response) {
-          _this.loadingFlag = false
-          if (response.data.code === '081') {
-            _this.price = response.data.data
-            _this.showSuccess = true;
-          }else {
-            _this.$message.error(response.data.msg);
-          }
-        })
+        if (this.loadingFlag === false) {
+          this.loadingFlag = true
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.url,
+            params:{
+              mobile: this.phone
+            }
+          }).then(function (response) {
+            _this.loadingFlag = false
+            if (response.data.code === '081') {
+              _this.price = response.data.data
+              _this.showSuccess = true;
+            }
+          })
+        }
       }
     }
   }

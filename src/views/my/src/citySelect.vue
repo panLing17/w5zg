@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click.stop="close", @touchstart.stop="", @touchend.stop="", @touchmove.stop.prevent ="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
+      .main(v-if="show", @touchmove.prevent="")
         .title
           span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
