@@ -24,7 +24,7 @@
       w-activity(:listData="activityGoods")
       <!--img.title2(src="../../../assets/img/louceng2.png")-->
       .title2
-      w-recommend
+      recommend
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
@@ -48,8 +48,9 @@
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
+  import recommend from './recommend'
   // 引入bus
-  import {bus} from '../../../bus/index'
+  import {bus} from '../bus/index'
   import { mapState } from 'vuex'
   export default {
     name: 'home',
@@ -86,17 +87,35 @@
       }
     },
     computed: {
-      ...mapState(['showTicket', 'userData', 'ticketMoney'])
+      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position'])
     },
     watch: {
-      /*loadingFlag () {
-        if (this.loadingFlag === 4) {
-          this.animateHack()
-        }
-      }*/
+      $route(to,from){
+        this.$store.commit('setPosition',{
+          path: from.path,
+          y: this.mescroll.getScrollTop()
+        })
+        this.position.forEach((now)=>{
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo( now.y, 0 );
+          }
+        })
+      }
     },
     mounted() {
-      this.$mescrollInt("homeMescroll",this.upCallback);
+      this.$mescrollInt("homeMescroll",this.upCallback,()=>{
+        this.position.forEach((now)=>{
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo( now.y, 0 );
+          }
+        })
+      },(obj)=>{
+        this.$store.commit('setPosition',{
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
+
       // 获取banner
       this.getBanner()
       // 获取新闻
@@ -357,7 +376,7 @@
         }
       }
     },
-    components: {hotButton, lNews, wActivity}
+    components: {hotButton, lNews, wActivity, recommend}
   }
 </script>
 

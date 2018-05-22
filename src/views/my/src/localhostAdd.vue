@@ -87,6 +87,14 @@
         this.show = false
       },
       locationSave () {
+        if (!this.locationName) {
+          this.$message.error('请选择省市区')
+          return
+        }
+        if (!this.detailedAddr) {
+          this.$message.error('请输入详细地址')
+          return
+        }
         let self = this
         let method = this.$route.query.id ? 'put' : 'post'
         if (this.isdefault) {

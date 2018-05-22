@@ -8,7 +8,7 @@
     .form
       w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", @w-blur="checkVcode", :error="vcodeError" required)
       w-input(label="输入新密码：", label-width="2.5rem", placeholder="请输入新密码",:type="passwordType", v-model="form.pwd", required,:error="passwordError",@w-blur="checkPwd")
-      w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码",:type="passwordType", v-model="qrPassword", required, :error="qrPasswordError")
+      w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码",:type="passwordType", v-model="qrPassword", required, :error="qrPasswordError",@w-blur="checkQrPwd")
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 确定
 </template>
 
@@ -54,7 +54,7 @@
     },
     methods: {
       allCheck () {
-        if (this.form.pwd === this.qrPassword && this.form.vcode.length>3 && this.qrPassword.length>5) {
+        if ( this.form.vcode.length>3 && this.form.pwd.length>5) {
           this.pwdStatus = false
         } else {
           this.pwdStatus = true
@@ -69,6 +69,16 @@
         }
         this.passwordError = ''
         this.pwdStatus = false
+
+      },
+      checkQrPwd () {
+        if(self.form.pwd != self.qrPassword){
+          self.qrPasswordError = $code('269')
+          return
+        }
+        this.passwordError = ''
+        this.pwdStatus = false
+
       },
       checkVcode () {
         if (this.form.vcode.length<4) {
@@ -100,6 +110,7 @@
         }).then(function (response) {
           if (response.data.optSuc) {
             // 成功跳转页面
+            self.$message.success(response.data.msg);
             self.$router.push({path: '/my'})
           }
         })

@@ -1,7 +1,8 @@
 <template lang="pug">
   div.mainBox
     transition( :name="reversedMessage", mode="in-out")
-      router-view.child-view
+      keep-alive
+       router-view.child-view
     transition(name="fade" , mode="out-in")
       ul.bottomNav(v-if="$store.state.footerShow")
         li

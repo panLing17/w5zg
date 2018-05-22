@@ -11,4 +11,13 @@ function transformDate(date) {
 function imgUrlFilter(data) {
   return process.env.IMG_URL + data
 }
-export default {transformDate, imgUrlFilter}
+function getClientHeight(){
+  let clientHeight=0;
+  if(document.body.clientHeight&&document.documentElement.clientHeight){
+    let clientHeight=(document.body.clientHeight<document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;
+  }else{
+    let clientHeight=(document.body.clientHeight>document.documentElement.clientHeight)?document.body.clientHeight:document.documentElement.clientHeight;
+  }
+  return clientHeight;
+}
+export default {transformDate, imgUrlFilter, getClientHeight}

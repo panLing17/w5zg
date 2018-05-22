@@ -7,15 +7,21 @@
       .topRight(slot="right")
     .flexBox
       img(src="../../../assets/img/logo@2x.png")
-      p.one 分享二维码给好友
-      qrcode(value="Hello, World!", :options="{ size: 200 }")
-      p.two 当前版本号：v1.0.0
+      p.one 关注我们，以了解更多优惠资讯
+      <!--qrcode(value="http://weixin.qq.com/r/Dy5AWELEmB-nrQY793sd", :options="{ size: 200 }")-->
+      img(src="../../../assets/img/qrcode_w5zg_wechat.jpg")
+      p.two 当前版本号：v1.0.2
       p.three 名品新款<span>3</span>折起, 专柜提货保正品
 </template>
 
 <script>
     export default {
-        name: "about-us"
+        name: "about-us",
+        methods: {
+          aboutUs(){
+            window.location.href = "http://weixin.qq.com/r/Dy5AWELEmB-nrQY793sd";
+          }
+        }
     }
 </script>
 

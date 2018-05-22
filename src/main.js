@@ -33,7 +33,7 @@ Vue.prototype.$method=method
 // 取消全部警告与错误提示
 Vue.config.silent = true
 /* eslint-disable no-new */
-new Vue({
+export let vue = new Vue({
   el: '#app',
   router,
   store,
