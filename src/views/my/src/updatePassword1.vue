@@ -72,6 +72,15 @@
       getPhoneCode() {
         // 发送验证码
         let self = this
+        // 读秒倒计时
+        self.sendMsg = false
+        let interval = window.setInterval(function () {
+          if ((self.countDown--) <= 0) {
+            self.countDown = 60
+            self.sendMsg = true
+            window.clearInterval(interval)
+          }
+        }, 1000)
         if (self.form.gCode == '') {
           self.gCodeError = ''
           return
@@ -88,15 +97,6 @@
         }).then(function (response) {
           if (response.data.optSuc) {
             self.nextStepStatus = false
-            // 成功则开始读秒
-            self.sendMsg = false
-            let interval = window.setInterval(function () {
-              if ((self.countDown--) <= 0) {
-                self.countDown = 60
-                self.sendMsg = true
-                window.clearInterval(interval)
-              }
-            }, 1000)
           } else {
             self.getPicCode()
           }

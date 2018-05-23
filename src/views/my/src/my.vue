@@ -101,12 +101,30 @@
         loadingFlag:0
       }
     },
-    computed: mapState(['userData']),
+    computed: mapState(['userData','position']),
     created () {
       this.getOrderCount()
     },
+    activated () {
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
+    },
     mounted(){
-      this.$mescrollInt("myMescroll",this.upCallback);
+      this.$mescrollInt("myMescroll", this.upCallback, () => {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      }, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
       this.getUserData()
       this.getFootmarkNum()
       // 切换动画HACK

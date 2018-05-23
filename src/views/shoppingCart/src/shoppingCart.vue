@@ -6,7 +6,7 @@
         span {{location.city.name}}
       .topCenter(slot="center") 购物车
       .topRight(slot="right")
-    .shoppingCartBox.mescroll#shoppingCartMescroll
+    .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
       .cartTypeTab
         ul
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
@@ -21,7 +21,7 @@
           router-view(style="min-height:calc(100vh - 6rem)")
         .title
           img(src="../../../assets/img/recommend.png")
-        recommend(ref="recommend")
+        w-recommend(ref="recommend")
     div
       .settlement
         .left
@@ -36,22 +36,21 @@
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
-  import recommend from './recommend'
   import {mapState} from 'vuex'
-  // 引入bus
-  import {bus} from '../bus/index'
 
   export default {
     name: 'home',
     data() {
       return {
+        // 整页的固定定位，如果一直有的话会影响页面切换效果
+        positionFixed: false,
         flag: false,
         loading: true,
         isdefault: false,
         nowTab: 0
       }
     },
-    components: {goodsCard, disableGoods, citySelect, recommend},
+    components: {goodsCard, disableGoods, citySelect},
     computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
     mounted() {
       // mescroll初始化
@@ -62,11 +61,10 @@
           }
         })
       }, (obj) => {
-        this.$store.commit('setPosition', {
-          path: this.$route.path,
-          y: obj.preScrollY
-        })
+
       })
+      // 动画hack
+      this.animateHack()
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0
       } else {
@@ -90,19 +88,21 @@
         setTimeout(() => {
           this.loading = false
         }, s + math)
-        // 监听路由，进行当前页面位置保存及跳转
-        if (from.path === '/shoppingCart') {
-          this.$store.commit('setPosition', {
-            path: from.path,
-            y: this.mescroll.getScrollTop()
-          })
-        }
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
       }
+    },
+    beforeRouteLeave(to, from, next) {
+      this.$store.commit('setPosition', {
+        path: from.path,
+        y: this.mescroll.getScrollTop()
+      })
+      next()
+    },
+    activated () {
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
@@ -228,6 +228,13 @@
         } else {
           this.$message.error('请勾选商品')
         }
+      },
+      // 切换动画hack
+      animateHack() {
+        let self = this
+        setTimeout(function () {
+          self.positionFixed = true
+        }, 0)
       }
     }
   }
@@ -247,11 +254,15 @@
     align-items: center;
     font-weight: 500;
   }
-
+  /* 动画hack */
+  .positionFixed {
+    position: fixed !important;
+  }
   /*  */
   .shoppingCartBox {
     background-color: rgb(242, 242, 242);
     padding-bottom: 3rem;
+    min-height: 100%;
   }
 
   .slider {
@@ -372,6 +383,5 @@
     top: 0;
     bottom: 0;
     height: auto;
-    position: fixed;
   }
 </style>

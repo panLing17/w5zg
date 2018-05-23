@@ -20,6 +20,7 @@
         showPassword: false,
         passwordType: 'password',
         nextStepStatus: true,
+        nextButton: true,
         phoneError: '',
         passwordError: '',
         version: 1,
@@ -79,6 +80,10 @@
 
       },
       nextStep() {
+        if (!this.nextButton) {
+          return
+        }
+        this.nextButton = false
         let self = this
         if (self.form.mobile == '' || self.form.gCode == '' || self.nextStepStatus) {
           self.phoneError = ''

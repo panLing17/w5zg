@@ -22,6 +22,8 @@
         passwordError: '',
         qrPasswordError: '',
         pwdStatus: true,
+        // 提交成功flag，true可以下一步，false不可以
+        submitButtonFlag: false,
         form: {
           mobile: '',
           pwd: '',
@@ -47,6 +49,12 @@
         this.pwdStatus = false
       },
       sureBtn () {
+        if (!this.submitButtonFlag) {
+          this.$message.warning('网络请求中，请稍后')
+          return
+        } else {
+          this.submitButtonFlag = true
+        }
         let self = this
         if (self.form.mobile == '' || self.form.pwd == '') {
           self.phoneError = ''

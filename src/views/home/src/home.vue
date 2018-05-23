@@ -24,7 +24,7 @@
       w-activity(:listData="activityGoods")
       <!--img.title2(src="../../../assets/img/louceng2.png")-->
       .title2
-      recommend(ref="recommend")
+      w-recommend(ref="recommend")
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
@@ -48,7 +48,6 @@
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
-  import recommend from './recommend'
   import {mapState} from 'vuex'
 
   export default {
@@ -87,21 +86,12 @@
     computed: {
       ...mapState(['showTicket', 'userData', 'ticketMoney', 'position'])
     },
-    watch: {
-      $route(to, from) {
-        if (from.path === '/home') {
-          this.$store.commit('setPosition', {
-            path: from.path,
-            y: this.mescroll.getScrollTop()
-          })
+    activated () {
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
         }
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-
-      }
+      })
     },
     mounted() {
       this.$mescrollInt("homeMescroll", this.upCallback, () => {
@@ -397,7 +387,7 @@
         }
       }
     },
-    components: {hotButton, lNews, wActivity, recommend}
+    components: {hotButton, lNews, wActivity}
   }
 </script>
 

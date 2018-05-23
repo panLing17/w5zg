@@ -380,6 +380,15 @@
       getPhoneCode() {
         // 发送验证码
         let self = this
+        // 点击则开始读秒
+        self.sendMsg = false
+        let interval = window.setInterval(function () {
+          if ((self.countDown--) <= 0) {
+            self.countDown = 60
+            self.sendMsg = true
+            window.clearInterval(interval)
+          }
+        }, 1000)
         if (self.form.mobile == '' || self.form.gCode == '') {
           self.phoneError = ''
           self.gCodeError = ''
@@ -398,15 +407,6 @@
           if (response.data.optSuc) {
             self.nextStepStatus = false
             self.$message.success($code('2612'))
-            // 成功则开始读秒
-            self.sendMsg = false
-            let interval = window.setInterval(function () {
-              if ((self.countDown--) <= 0) {
-                self.countDown = 60
-                self.sendMsg = true
-                window.clearInterval(interval)
-              }
-            }, 1000)
           }else{
             self.getPicCode()
           }
