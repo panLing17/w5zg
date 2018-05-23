@@ -92,6 +92,7 @@
       }
     },
     beforeRouteLeave(to, from, next) {
+      this.mescroll.hideTopBtn();
       this.$store.commit('setPosition', {
         path: from.path,
         y: this.mescroll.getScrollTop()
