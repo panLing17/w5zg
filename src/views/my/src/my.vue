@@ -77,14 +77,13 @@
               .words 通用劵
       .title
         img(src="../../../assets/img/recommend.png")
-      w-recommend#dataId(background="white")
+      recommend#dataId(background="white", ref="recommend")
       .bottomPlaceholder
 </template>
 
 <script>
   import {mapState} from 'vuex'
-  // 引入bus
-  import {bus} from '../../../bus/index'
+  import recommend from './recommend'
   export default {
     name: "my",
     data() {
@@ -101,6 +100,7 @@
         loadingFlag:0
       }
     },
+    components:{recommend},
     computed: mapState(['userData','position']),
     created () {
       this.getOrderCount()
@@ -240,7 +240,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          bus.$emit('listPush',curPageData,page.num,page.size)
+          self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;

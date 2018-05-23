@@ -48,10 +48,8 @@
         box.style.width = '100%'
         box.style.height = 0
         box.style.overflow = 'hidden'
-        // 若成功获取到节点
-        if (this.$refs.left) {
-          this.$refs.left.appendChild(box)
-        }
+
+        this.$refs.left.appendChild(box)
         let leftH = this.$refs.left.clientHeight
         let rightH = this.$refs.right.clientHeight
         newList.forEach((now) => {
@@ -62,7 +60,7 @@
           box.appendChild(imgaDom)
           imgaDom.onload = () => {
             num += 1
-            if (num >= pageSize && this.$refs.left) {
+            if (num >= pageSize) {
               this.$refs.left.removeChild(box)
             }
             if (leftH > rightH) {

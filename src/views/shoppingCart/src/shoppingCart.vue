@@ -21,7 +21,7 @@
           router-view(style="min-height:calc(100vh - 6rem)")
         .title
           img(src="../../../assets/img/recommend.png")
-        w-recommend(ref="recommend")
+        recommend(ref="recommend")
     div
       .settlement
         .left
@@ -36,6 +36,7 @@
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
+  import recommend from './recommend'
   import {mapState} from 'vuex'
 
   export default {
@@ -50,7 +51,7 @@
         nowTab: 0
       }
     },
-    components: {goodsCard, disableGoods, citySelect},
+    components: {goodsCard, disableGoods, citySelect, recommend},
     computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
     mounted() {
       // mescroll初始化

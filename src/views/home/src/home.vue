@@ -24,7 +24,7 @@
       w-activity(:listData="activityGoods")
       <!--img.title2(src="../../../assets/img/louceng2.png")-->
       .title2
-      w-recommend(ref="recommend")
+      recommend(ref="recommend")
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
@@ -48,6 +48,7 @@
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
+  import recommend from './recommend'
   import {mapState} from 'vuex'
 
   export default {
@@ -387,7 +388,7 @@
         }
       }
     },
-    components: {hotButton, lNews, wActivity}
+    components: {hotButton, lNews, wActivity, recommend}
   }
 </script>
 
