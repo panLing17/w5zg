@@ -38,8 +38,7 @@
   import citySelect from './citySelect'
   import recommend from './recommend'
   import {mapState} from 'vuex'
-  // 引入bus
-  import {bus} from '../bus/index'
+
 
   export default {
     name: 'home',

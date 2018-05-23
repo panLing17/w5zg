@@ -25,11 +25,11 @@
         img.ewm(src="../../../assets/img/gzh.jpg")
         .recommendWrapper
           .recommendTitle 推荐
-          w-recommend
+          w-recommend(ref="recommend")
 </template>
 
 <script>
-  import {bus} from '../../../bus/index'
+
   export default {
     name: "paymentResults",
     data () {
@@ -43,7 +43,21 @@
       this.getData()
    },
     mounted () {
-      this.$mescrollInt("mescroll",this.upCallback);
+      this.$mescrollInt("mescroll",this.upCallback,() => {}, () => {});
+    },
+    deactivated () {
+      this.$store.commit('setPosition', {
+        path: '/paymentResult',
+        y: this.mescroll.getScrollTop()
+      })
+    },
+    activated () {
+      let _this = this
+      this.$store.state.position.forEach((now) => {
+        if (now.path === '/paymentResult') {
+          _this.mescroll.scrollTo(now.y, 0);
+        }
+      })
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -57,7 +71,8 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          bus.$emit('listPush',curPageData,page.num,page.size)
+          self.$refs.recommend.more(curPageData,page.num,page.size)
+
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
