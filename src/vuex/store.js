@@ -5,6 +5,10 @@ import axios from 'axios';
 Vue.use(Vuex)
 const state = {
   userData: '',
+  // 记录上页定位及路径
+  position:[
+    {path: '/home', y: 0}
+  ],
   shoppingCount: 0,
   viewDirection: 'slide-fade',
   footerShow:false,
@@ -57,6 +61,19 @@ const state = {
 const mutations = {
   transferGive (state, data) {
     state.transfer = data
+  },
+  setPosition(state, data){
+    let flag = 0
+    for (let i in state.position) {
+      if (state.position[i].path === data.path) {
+        state.position[i] = data
+      } else {
+        flag += 1
+      }
+    }
+    if(flag>=state.position.length){
+      state.position.push(data)
+    }
   },
   getLocation (state, data) {
     state.location = data

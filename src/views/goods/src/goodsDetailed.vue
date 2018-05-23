@@ -92,7 +92,7 @@
       .title
         .line
         p 推荐
-      w-recommend(background="white")
+      recommend(background="white")
     div
       .buttons
         img(src="../../../assets/img/customerservice@3x.png", @click="goService")
@@ -117,10 +117,11 @@
   import onlyStoreSelect from './onlyStoreSelect'
   import cardTips from './cardTips'
   import saveMoneyTips from './saveMoneyTips'
+  import recommend from './recommend'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
   // 引入bus
-  import {bus} from '../../../bus/index'
+  import {bus} from '../bus/index'
   export default {
     name: "goods-detailed",
     data () {
@@ -186,7 +187,7 @@
       },*/
       ...mapState(['location', 'userData','skuId'])
     },
-    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips},
+    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips, recommend},
     mounted () {
       this.getGoodsDetailed()
       this.getGoodsDesc()
@@ -213,7 +214,7 @@
         }
       },
       $route () {
-        window.location.reload()
+        // window.location.reload()
         // this.$router.go(0)
         // this.getGoodsDetailed()
         // this.getGoodsDesc()
@@ -286,7 +287,7 @@
           desc : '',
           picture : this.$method.imgUrlFilter(this.goodsData.gi_image_url),
           note : '备注',
-          url : window.location.href
+          url : window.location.href.replace(/#/, "?#")
         }
         this.$store.commit('getNowGoodsData',  goodsData)
         this.$router.push('/service')

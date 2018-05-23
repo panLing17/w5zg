@@ -25,6 +25,7 @@ import MyAccount from '../views/my/src/myAccount/index.js'
 // 头条
 import Headlines from '../views/home/src/headlines/index'
 import Common from '../views/common/index'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -65,6 +66,9 @@ const router = new Router ({
     }, {
       path: '/goodsDetailed',
       name: '商品详情',
+      meta: {
+        keepAlive: true
+      },
       component: Goods.goodsDetailed
     }, {
       path: '/service',
@@ -471,7 +475,6 @@ const router = new Router ({
 })
 // 全局前置守卫
 router.beforeEach ((to, from, next) => {
-  window.scrollTo (0, 0)  // 页面回到顶部
   const list = ['首页', '分类', '购物车', '我的']  // 将需要切换效果的路由名称组成一个数组
   const toName = to.name  // 即将进入的路由名字
   const fromName = from.name  // 即将离开的路由名字
@@ -527,7 +530,5 @@ router.beforeEach ((to, from, next) => {
     store.state.footerShow = false
   }
   next()
-
-
 })
 export default router
