@@ -264,7 +264,7 @@
           desc : '',
           picture : this.$method.imgUrlFilter(this.goodsData.gi_image_url),
           note : '备注',
-          url : window.location.href
+          url : window.location.href.replace(/#/, "?#")
         }
         this.$store.commit('getNowGoodsData',  goodsData)
         this.$router.push('/service')
