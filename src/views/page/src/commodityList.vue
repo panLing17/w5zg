@@ -95,6 +95,11 @@
         default: 'placeholder'
       }
     },
+    activated (){
+      this.message = this.$route.query.msg;
+      this.request();
+      this.$mescrollInt("pageMescroll",this.upCallback);
+    },
     mounted(){
       console.log(this.$route.query.jumps)
       //进入页面时加载

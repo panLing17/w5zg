@@ -35,14 +35,15 @@
               span 商品，及相关商品
       .title
         img(src="../../../assets/img/recommend.png")
-      w-recommend#dataId
+      recommend#dataId(background="white", ref="recommend")
       .bottomPlaceholder
 </template>
 <script>
-  // 引入bus
-  import {bus} from '../../../bus/index'
+  import {mapState} from 'vuex'
+  import recommend from './recommend'
   export default {
     name: 'searchHistory',
+    components:{recommend},
     data () {
       return {
         searchFlag:true, //历史搜索,搜索发现显隐
@@ -60,6 +61,7 @@
         jumps:this.$route.query.jumps, //判断是那个页面来的
       }
     },
+    computed: mapState(['position']),
     directives:{
       focus:{
         inserted:function(el){
@@ -77,11 +79,32 @@
         default: 'placeholder'
       }
     },
+    activated () {
+      this.msg = this.$route.query.messages;
+      //显示搜索结果
+      this.resultShow();
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
+    },
     mounted(){
       //搜索发现
       this.searchDiscover();
       //商品推荐
-      this.$mescrollInt("historyMescroll",this.upCallback);
+      this.$mescrollInt("historyMescroll",this.upCallback,()=>{
+         this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }, (obj) => {
+          this.$store.commit('setPosition', {
+            path: this.$route.path,
+            y: obj.preScrollY
+          })
+      });
       //历史搜索
       this.historys();
       //显示搜索结果
@@ -108,6 +131,9 @@
         if (this.$route.query.relNum == 1) {
           this.searchFlag = false;
           this.resultFlag = true;
+        } else{
+          this.searchFlag = true;
+          this.resultFlag = false;
         }
       },
       //搜索商品去商品展示页
@@ -196,7 +222,7 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          bus.$emit('listPush',curPageData,page.num,page.size)
+          self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;

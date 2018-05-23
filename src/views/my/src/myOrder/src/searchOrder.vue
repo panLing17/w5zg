@@ -58,15 +58,16 @@
         .title(v-show="recommendFlag")
           img(src="../../../../../assets/img/recommend.png")
       transition(name="slide-fade")
-        w-recommend#dataId(v-show="recommendFlag")
+        recommend#dataId(v-show="recommendFlag" ref="recommend")
         .bottomPlaceholder(v-show="recommendFlag")
 </template>
 
 <script>
-  // 引入bus
-  import {bus} from '../../../../../bus/index'
+  import {mapState} from 'vuex'
+  import recommend from './recommend'
     export default {
       name: "searchOrder",
+      components:{recommend},
       data(){
         return{
           recommendFlag:true, //判断推荐的显隐
@@ -94,14 +95,33 @@
           default: 'placeholder'
         }
       },
+      computed: mapState(['position']),
       created(){
 
+      },
+      activated () {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
       },
       mounted(){
         //加载历史搜索
         this.searchHistory();
         //加载上拉加载的订单列表
-        this.$mescrollInt("searchOrderMescroll",this.upCallback);
+        this.$mescrollInt("searchOrderMescroll",this.upCallback, ()=>{
+            this.position.forEach((now) => {
+              if (now.path === this.$route.path) {
+                this.mescroll.scrollTo(now.y, 0);
+              }
+            })
+          }, (obj) => {
+            this.$store.commit('setPosition', {
+              path: this.$route.path,
+              y: obj.preScrollY
+            })
+        });
         //加载搜索到的订单列表
         //this.request();
         //从详情返回时的执行
@@ -258,7 +278,7 @@
           let self = this;
           if (self.number == 0) {
             self.getListDataFromNets(page.num, page.size, function(curPageData) {
-              bus.$emit('listPush',curPageData,page.num,page.size)
+              self.$refs.recommend.more(curPageData,page.num,page.size)
               self.mescroll.endSuccess(curPageData.length)
             }, function() {
               //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
