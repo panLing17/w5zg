@@ -94,6 +94,10 @@
         }
       })
     },
+    beforeRouteLeave (to, from, next) {
+      this.mescroll.hideTopBtn();
+      next()
+    },
     mounted() {
       this.$mescrollInt("homeMescroll", this.upCallback, () => {
         this.position.forEach((now) => {

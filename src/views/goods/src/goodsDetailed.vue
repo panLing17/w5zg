@@ -1018,6 +1018,7 @@
     width: 100%;
   }
   .content img{
+    float: left;
     max-width: 100%;
   }
 </style>

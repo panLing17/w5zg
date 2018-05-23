@@ -112,6 +112,10 @@
         }
       })
     },
+    beforeRouteLeave (to, from, next) {
+      this.mescroll.hideTopBtn();
+      next()
+    },
     mounted(){
       this.$mescrollInt("myMescroll", this.upCallback, () => {
         this.position.forEach((now) => {
