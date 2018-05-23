@@ -16,7 +16,6 @@ Vue.prototype.$share = function (object) {
   if (object.shareDesc) {
     $vm.shareDesc = object.shareDesc
   }
-  console.log(object.handleSuccess)
   if (object.handleSuccess) {
     $vm.handleSuccess = object.handleSuccess
   }
