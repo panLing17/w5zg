@@ -5,6 +5,7 @@
     name: "share-select",
     data () {
       return {
+
       }
     },
     props: {
