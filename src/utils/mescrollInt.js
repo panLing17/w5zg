@@ -44,7 +44,9 @@ Vue.prototype.$mescrollInt = function (id,upFun,init,scrollWatch,downFun) {
       // 上拉初始化完毕
       inited(){
         setTimeout(()=>{
-          init()
+          if (init) {
+            init()
+          }
         },200)
       },
       onScroll: scrollWatch

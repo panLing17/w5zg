@@ -21,7 +21,7 @@
           router-view(style="min-height:calc(100vh - 6rem)")
         .title
           img(src="../../../assets/img/recommend.png")
-        w-recommend
+        recommend(ref="recommend")
     div
       .settlement
         .left
@@ -36,12 +36,14 @@
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
+  import recommend from './recommend'
   import {mapState} from 'vuex'
   // 引入bus
-  import {bus} from '../../../bus/index'
+  import {bus} from '../bus/index'
+
   export default {
     name: 'home',
-    data () {
+    data() {
       return {
         flag: false,
         loading: true,
@@ -49,11 +51,22 @@
         nowTab: 0
       }
     },
-    components:{goodsCard, disableGoods, citySelect},
-    computed: mapState(['shoppingCartGoodsNum','computedPrice','shoppingCartAllChecked','shoppingCartSelected', 'location']),
-    mounted () {
+    components: {goodsCard, disableGoods, citySelect, recommend},
+    computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
+    mounted() {
       // mescroll初始化
-      this.$mescrollInt("shoppingCartMescroll",this.upCallback);
+      this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      }, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0
       } else {
@@ -64,22 +77,34 @@
       // loading加载
       let s = 300  // 基础秒数
       let math = Math.random() * 500 // 随机秒数
-      setTimeout(()=>{
+      setTimeout(() => {
         this.loading = false
-      },s+math)
+      }, s + math)
     },
-    watch:{
-      $route () {
+    watch: {
+      $route(to, from) {
         this.loading = true
         // loading加载
         let s = 300  // 基础秒数
         let math = Math.random() * 500 // 随机秒数
-        setTimeout(()=>{
+        setTimeout(() => {
           this.loading = false
-        },s+math)
+        }, s + math)
+        // 监听路由，进行当前页面位置保存及跳转
+        if (from.path === '/shoppingCart') {
+          this.$store.commit('setPosition', {
+            path: from.path,
+            y: this.mescroll.getScrollTop()
+          })
+        }
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
       }
     },
-    beforeDestroy () {
+    beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
       // 清除勾选信息
@@ -90,17 +115,17 @@
       this.$store.commit('computedPriceChange', 0)
     },
     methods: {
-      upCallback: function(page) {
+      upCallback: function (page) {
         let self = this;
-        this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          bus.$emit('listPush',curPageData,page.num,page.size)
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          self.$refs.recommend.more(curPageData, page.num, page.size)
           self.mescroll.endSuccess(curPageData.length)
-        }, function() {
+        }, function () {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
         })
       },
-      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+      getListDataFromNet(pageNum, pageSize, successCallback, errorCallback) {
 //          	axios.get("xxxxxx", {
 //					params: {
 //						num: pageNum, //页码
@@ -111,27 +136,27 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          url: self.$apiGoods + 'goodsSearch/goodsRecommendationList',
           params: {
             page: pageNum,
             rows: pageSize
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          successCallback&&successCallback(response.data.data);//成功回调
+          successCallback && successCallback(response.data.data);//成功回调
         })
       },
-      getGoodsNum () {
+      getGoodsNum() {
         let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiApp + 'shoppingCart/countCartNum',
           params: {},
         }).then(function (response) {
-          self.$store.commit('shoppingCartGoodsNumChange',response.data.data)
+          self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
         })
       },
-      tabChange (num) {
+      tabChange(num) {
         this.nowTab = num
         this.$store.commit('computedPriceChange', 0)
         this.$store.commit('shoppingCartSelectedChange', [])
@@ -142,25 +167,25 @@
           this.$router.push('/shoppingCart')
         }
       },
-      changeType () {
+      changeType() {
         this.flag = true
-        setTimeout(()=>{
+        setTimeout(() => {
           this.flag = false
-        },1000)
+        }, 1000)
       },
-      allChecked (e) {
-        this.$store.commit('allCheckedChange',e)
+      allChecked(e) {
+        this.$store.commit('allCheckedChange', e)
       },
       // 前往确认订单
-      goConfirmOrder () {
+      goConfirmOrder() {
         let flag = false
-        let data= []
-        this.$store.state.shoppingCartSelected.forEach((now)=>{
-          if (now.goods_num>now.storage_num) {
+        let data = []
+        this.$store.state.shoppingCartSelected.forEach((now) => {
+          if (now.goods_num > now.storage_num) {
             flag = true
           }
           let spec = []
-          now.specVOList.forEach((n)=>{
+          now.specVOList.forEach((n) => {
             spec.push(n.gspec_value)
           })
           data.push({
@@ -172,7 +197,7 @@
             storeName: now.store_name,
             photo: now.logo,
             cartId: now.sc_id,
-            freight:now.sku_freight,
+            freight: now.sku_freight,
             storeLocation: {
               province: {
                 name: now.pro_Name,
@@ -194,11 +219,11 @@
           this.$message.error('存在库存不足商品')
           return
         }
-        this.$store.commit('transferGive',data)
+        this.$store.commit('transferGive', data)
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
         console.log(this.$store.state.transfer)
-        if (this.$store.state.transfer.length>0) {
+        if (this.$store.state.transfer.length > 0) {
           this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
         } else {
           this.$message.error('请勾选商品')
@@ -216,22 +241,26 @@
     border-style: solid;
     border-color: transparent transparent transparent #aaaaaa;
   }
+
   .topLeft {
     display: flex;
     align-items: center;
     font-weight: 500;
   }
+
   /*  */
   .shoppingCartBox {
-    background-color: rgb(242,242,242);
+    background-color: rgb(242, 242, 242);
     padding-bottom: 3rem;
   }
+
   .slider {
     margin-left: 30%;
     width: 100px;
     height: 100px;
     background: #aaaaaa;
   }
+
   /* 类型切换 */
   .cartTypeTab {
     position: relative;
@@ -239,47 +268,55 @@
     padding: 0 .2rem;
     background-color: white;
   }
-  .cartTypeTab ul{
+
+  .cartTypeTab ul {
     display: flex;
     height: 1rem;
     justify-content: space-between;
   }
-  .cartTypeTab li{
+
+  .cartTypeTab li {
     flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: color .4s;
   }
-  .cartTypeTab li span{
+
+  .cartTypeTab li span {
     margin-left: .1rem;
     padding: 0 .15rem;
     border-radius: .2rem;
     color: white;
-    background-color: rgb(51,51,51);
+    background-color: rgb(51, 51, 51);
     transition: background-color .4s;
   }
-  .cartTypeTab>p{
+
+  .cartTypeTab > p {
     width: 50%;
     height: 2px;
-    background-color: rgb(244,0,84);
+    background-color: rgb(244, 0, 84);
     position: absolute;
     bottom: 0;
     transition: left .5s;
   }
+
   .tabChecked {
-    color: rgb(244,0,84);
+    color: rgb(244, 0, 84);
   }
-  .tabChecked span{
-    background-color: rgb(244,0,84) !important;
+
+  .tabChecked span {
+    background-color: rgb(244, 0, 84) !important;
   }
+
   /* 内容区域 */
   .content {
     min-height: calc(100vh - 4rem);
     position: relative;
   }
+
   /* 华丽的分割线 */
-  .title{
+  .title {
     height: .8rem;
     width: 100%;
     position: relative;
@@ -288,9 +325,11 @@
     justify-content: center;
     align-items: center;
   }
-  .title img{
+
+  .title img {
     width: 55%;
   }
+
   /* 提交部分 */
   .settlement {
     display: flex;
@@ -301,28 +340,32 @@
     position: fixed;
     bottom: 1.5rem;
   }
-  .settlement .left{
+
+  .settlement .left {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding-left: .2rem;
   }
+
   .settlement .right {
     display: flex;
     justify-content: flex-end;
     align-items: center;
   }
+
   .settlement .right .button {
     width: 3rem;
     height: 100%;
     font-size: .3rem;
     margin-left: .2rem;
     color: white;
-    background: rgb(244,0,84);
+    background: rgb(244, 0, 84);
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
   /* 上拉刷新下俩加载 */
   #shoppingCartMescroll {
     padding-top: 1.3rem;

@@ -48,7 +48,6 @@
         box.style.width = '100%'
         box.style.height = 0
         box.style.overflow = 'hidden'
-
         // 若成功获取到节点
         if (this.$refs.left) {
           this.$refs.left.appendChild(box)
