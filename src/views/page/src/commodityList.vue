@@ -31,7 +31,7 @@
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
       transition(name="slide")
-        .content(v-show="goodsFlag")
+        .contenter(v-show="goodsFlag")
           .bottomList
             ul.goodsList#box
               li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
@@ -435,7 +435,7 @@
   }
   /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
-  .content{
+  .contenter{
 
   }
   ul.wrap{

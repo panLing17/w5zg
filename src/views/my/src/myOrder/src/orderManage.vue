@@ -98,6 +98,17 @@
         }
       },
       methods:{
+        //当无订单时，将end去掉
+        emptys(){
+          var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
+           // if (this.orderDetail == null || this.orderDetail.length === 0) {
+              mescrollUpwarp.style.visibility = "hidden";
+            // }else {
+              // mescrollUpwarp.style.visibility = "visible";
+            // }
+          
+          
+        },
         //回退判断
         backJump(){
           if (this.$route.query.nums != 0 || this.$route.query.states != "" || this.$route.query.lefts != 0 ) {
@@ -184,7 +195,6 @@
             var lineDiv = document.getElementsByClassName("lineDiv")[0];
             lineDiv.style.left = this.$route.query.lefts;
           }
-
           this.request();
         },
         //判断两个按钮上的文字
@@ -353,6 +363,9 @@
           }).then(function(response){
             self.contentFlag = true;
             self.orderDetail = response.data.data;
+            if (self.orderDetail.length === 0) {
+              self.emptys();
+            }
             for (var i=0; i<self.orderDetail.length; i++) {
               if (self.orderDetail[i].order_status == "（退货）售后") {
                 self.orderDetail[i].buttonL = "取消申请";
