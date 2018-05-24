@@ -98,10 +98,15 @@
       }
     },
     activated (){
-      this.message = this.$route.query.msg;
-      if (this.$store.keywordsL != this.message) {
+      this.$store.commit('setKeyWords',this.$route.query.msg);
+      console.log(this.$store.state.keywordsL == this.message)
+      if (this.$store.state.keywordsL == this.message) {
         this.pages = 1;
-        this.pageRows = (this.$store.state.pageNums-0)*8; 
+        this.pageRows = (this.$store.state.pageNums-0)*8;
+        this.message = this.$store.state.keywordsL; 
+        this.request();
+      } else {
+        //this.message = this.message;
         this.request();
       }
       
