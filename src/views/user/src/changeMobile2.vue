@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .form
       w-input(label="新手机号：", label-width="2.5rem", placeholder="请输入新手机号", v-model="form.mobile",  required, @w-blur="checkPhoneRepeat", :error="phoneError")
-      w-input(v-model="form.gCode", label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, required, button-cover,:error="gCodeError")
+      w-input(v-model="form.gCode", label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, required, button-cover,:error="gCodeError", @input="checkCode")
         img.valiImg(slot="button", @click="getPicCode", :src="url")
       w-input(v-model="form.vcode", label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", :error="checkCodeError", input-button=true, required, button-cover)
         .inputButton(slot="button", @click="getPhoneCode", v-show="sendMsg" ,:class="{inputButtonGray:sendMsgStatus}") 获取验证码
@@ -35,7 +35,8 @@
           gCode: '',
           vcode: '',
           type: '1'
-        }
+        },
+        phoneFlag: false
       }
     },
     methods: {
@@ -65,30 +66,42 @@
           params: self.form
         }).then(function (response) {
           // 提示用户信息
-          if (response.data.optSuc) {
-            self.sendMsgStatus = false
+          if (response && response.data.optSuc) {
+            self.phoneFlag = true
+            if (self.phoneFlag && self.form.gCode.trim().length === 4) {
+              self.sendMsgStatus = false
+            } else {
+              self.sendMsgStatus = true
+            }
           }
         })
+      },
+      checkCode () {
+        if (this.phoneFlag && this.form.gCode.trim().length === 4) {
+          this.sendMsgStatus = false
+        } else {
+          this.sendMsgStatus = true
+        }
       },
       getPhoneCode() {
         // 发送验证码
         let self = this
-        if (self.form.mobile == '' || self.form.gCode == '') {
-          self.phoneError = ''
-          self.gCodeError = ''
-          return
-        }
+        // if (self.form.mobile == '' || self.form.gCode == '') {
+        //   self.phoneError = ''
+        //   self.gCodeError = ''
+        //   return
+        // }
 
         if(self.sendMsgStatus){
           return
         }
-
+        this.sendMsgStatus = true
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'sms/sendCode',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             self.nextStepStatus = false
             // 成功则开始读秒
             self.sendMsg = false
@@ -101,6 +114,7 @@
             }, 1000)
           }else{
             self.getPicCode()
+            self.sendMsgStatus = false
           }
         })
       },
@@ -125,17 +139,19 @@
           self.checkCodeError = ''
           return
         }
-
+        self.nextStepStatus = true
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'asec/changeMobile',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             self.$message.success('修改成功')
             self.getUserData()
             // 成功跳转页面
             self.$router.push({path: '/my/accountSafety'})
+          } else {
+            self.nextStepStatus = false
           }
         })
       }

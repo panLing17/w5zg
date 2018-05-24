@@ -32,37 +32,61 @@ const router = new Router ({
     {
       path: '/login',
       name: '登录',
-      component: User.login
+      component: User.login,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/login2',
       name: '验证码登录',
-      component: User.login2
+      component: User.login2,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/register1',
       name: '注册1',
-      component: User.register1
+      component: User.register1,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/register2',
       name: '注册2',
-      component: User.register2
+      component: User.register2,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/regOver',
       name: '注册完成',
-      component: User.regOver
+      component: User.regOver,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/forget1',
       name: '忘记密码1',
-      component: User.forget1
+      component: User.forget1,
+      meta: {
+        keepAlive: true
+      }
     },{
       path: '/forget2',
       name: '忘记密码2',
-      component: User.forget2
+      component: User.forget2,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/firstPayPassword',
       name: '首次设置支付密码',
-      component: User.firstPayPassword
+      component: User.firstPayPassword,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/goodsDetailed',
       name: '商品详情',
@@ -73,30 +97,48 @@ const router = new Router ({
     }, {
       path: '/service',
       name: '在线客服',
-      component: Goods.service
+      component: Goods.service,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/confirmOrder',
       name: '确认订单',
-      component: Goods.confirmOrder
+      component: Goods.confirmOrder,
+      meta: {
+        keepAlive: true
+      }
     }, {
       path: '/payment',
       name: '支付',
-      component: Goods.payment
+      component: Goods.payment,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/download/labourunion',
       name: '工会APP下载',
-      component: Common.downloadGh
+      component: Common.downloadGh,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/download',
       name: 'APP下载',
-      component: Common.download
+      component: Common.download,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/registerTicket',
       name: '注册领券',
-      component: Common.registerTicket
+      component: Common.registerTicket,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/',
@@ -168,12 +210,18 @@ const router = new Router ({
             {
               path: '/home/headlinesDetail',
               name: '头条详情',
-              component: Headlines.detail
+              component: Headlines.detail,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/home/largeCollection',
               name: '二级活动',
-              component: Home.largeCollection
+              component: Home.largeCollection,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/home/sports',
@@ -185,11 +233,17 @@ const router = new Router ({
           path: '/page',
           name: '分类',
           component: Page.index,
+          meta: {
+            keepAlive: true
+          },
           children: [
             {
               path: '/',
               name: '分类',
-              component: Page.page
+              component: Page.page,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/page/commodityList',
@@ -233,67 +287,106 @@ const router = new Router ({
             {
               path: '/my/settings',
               name: '我的设置',
-              component: My.settings
+              component: My.settings,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/userinfo',
               name: '我的用户资料',
-              component: My.userinfo
+              component: My.userinfo,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/nickname',
               name: '我的昵称',
-              component: My.nickname
+              component: My.nickname,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountBind',
               name: '我的账户绑定',
-              component: My.accountBind
+              component: My.accountBind,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountSafety',
               name: '我的账户安全',
-              component: My.accountSafety
+              component: My.accountSafety,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/updatePassword1',
               name: '修改登录密码与支付密码',
-              component: My.updatePassword1
+              component: My.updatePassword1,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/updatePassword2',
               name: '修改登录登录密码与支付密码验证码验证',
-              component: My.updatePassword2
+              component: My.updatePassword2,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/changeMobile1',
               name: '更换手机号1',
-              component: User.changeMobile1
+              component: User.changeMobile1,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/changeMobile2',
               name: '更换手机号2',
-              component: User.changeMobile2
+              component: User.changeMobile2,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/localAdmin',
               name: '收货地址管理',
-              component: My.localAdmin
+              component: My.localAdmin,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/localAdd',
               name: '新增收货地址',
-              component: My.localAdd
+              component: My.localAdd,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/feedback',
               name: '意见反馈',
-              component: My.feedback
+              component: My.feedback,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/aboutUs',
               name: '关于我们',
-              component: My.aboutUs
+              component: My.aboutUs,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/orderManage',
@@ -318,22 +411,34 @@ const router = new Router ({
             {
               path: '/my/applyAfterSale',
               name: '申请售后',
-              component: AfterSale.applyAfterSale
+              component: AfterSale.applyAfterSale,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/returnDetails',
               name: '退货详情',
-              component: AfterSale.returnDetails
+              component: AfterSale.returnDetails,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/selectService',
               name: '选择服务方式',
-              component: AfterSale.selectService
+              component: AfterSale.selectService,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/refundReturn',
               name: '申请退款退货',
-              component: AfterSale.refundReturn
+              component: AfterSale.refundReturn,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/refundAfterSale',
@@ -343,124 +448,196 @@ const router = new Router ({
             {
               path: '/my/express',
               name: '填写快递',
-              component: AfterSale.express
+              component: AfterSale.express,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/checkAddressee',
               name: '填写收件人',
-              component: AfterSale.checkAddressee
+              component: AfterSale.checkAddressee,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/grantCard',
               name: '发放现金券',
-              component: MyAccount.grantCard
+              component: MyAccount.grantCard,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountCashB',
               name: '我的现金券B',
-              component: MyAccount.accountCashB
+              component: MyAccount.accountCashB,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/cashDetailB',
               name: '现金券明细B',
-              component: MyAccount.cashDetailB
+              component: MyAccount.cashDetailB,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/grantCardRandom',
               name: '随机发放现金券',
-              component: MyAccount.grantCardRandom
+              component: MyAccount.grantCardRandom,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountCardC',
               name: '我的现金券C',
               component: MyAccount.accountCardC,
+              meta: {
+                keepAlive: true
+              },
               children:[
                 {
                   path: '',
-                  component: MyAccount.useDetail
+                  component: MyAccount.useDetail,
+                  meta: {
+                    keepAlive: true
+                  }
                 },
                 {
                   path: '/my/useDetail/:id',
                   name: '现金券使用详情C',
-                  component: MyAccount.useDetail
+                  component: MyAccount.useDetail,
+                  meta: {
+                    keepAlive: true
+                  }
                 }
               ]
             },
             {
               path: '/my/cashDetailC',
               name: '现金券明细C',
-              component:MyAccount.cashDetailC
+              component:MyAccount.cashDetailC,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountUniversalC',
               name: '通用券C',
-              component:MyAccount.accountUniversalC
+              component:MyAccount.accountUniversalC,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountB',
               name: '我的账户B',
-              component:MyAccount.accountB
+              component:MyAccount.accountB,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountDetail/:id',
               name: '账户明细',
               component:MyAccount.accountDetail,
+              meta: {
+                keepAlive: true
+              },
               children: [
                 {
                   path: '',
-                  component:MyAccount.accountDetailContent
+                  component:MyAccount.accountDetailContent,
+                  meta: {
+                    keepAlive: true
+                  }
                 },
                 {
                   path: '/my/accountDetailContent/:id/:type',
                   name: '账户明细内容',
-                  component:MyAccount.accountDetailContent
+                  component:MyAccount.accountDetailContent,
+                  meta: {
+                    keepAlive: true
+                  }
                 }
               ]
             },
             {
               path: '/my/withdrawals',
               name: '提现',
-              component:MyAccount.withdrawals
+              component:MyAccount.withdrawals,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/chooseBankCard',
               name: '选择银行卡',
-              component:MyAccount.chooseBankCard
+              component:MyAccount.chooseBankCard,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/addBankCard',
               name: '添加银行卡',
-              component: MyAccount.addBankCard
+              component: MyAccount.addBankCard,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/addBankConfirm',
               name: '添加银行卡验证页',
-              component: MyAccount.addBankConfirm
+              component: MyAccount.addBankConfirm,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/revenue',
               name: '预计收入明细',
-              component:MyAccount.revenue
+              component:MyAccount.revenue,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/accountC',
               name: '账户明细C',
-              component:MyAccount.accountC
+              component:MyAccount.accountC,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/receiveTicket',
               name: '领取现金券',
-              component: MyAccount.receiveTicket
+              component: MyAccount.receiveTicket,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/footMark',
               name: '足迹',
-              component:My.footMark
+              component:My.footMark,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/promote',
               name: '申请商户资质',
-              component: MyAccount.promote
+              component: MyAccount.promote,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/goods/paymentResults',

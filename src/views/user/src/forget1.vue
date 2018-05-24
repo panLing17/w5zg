@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .form
       w-input(label="手机号：", label-width="1.8rem", placeholder="请输入手机号", @w-blur="checkPhone", v-model="form.mobile", :error="phoneError")
-      w-input(label="验证码：", label-width="1.8rem", placeholder="请输入验证码", v-model="form.gCode", input-button="true", button-cover)
+      w-input(label="验证码：", label-width="1.8rem", placeholder="请输入验证码", v-model="form.gCode", input-button="true", button-cover, @input="checkCode")
         img.aplaceholder(slot="button", @click="getPicCode", :src="url")
       button.regButton(@click="nextStep", :class="{regButtonGray:nextStepStatus}") 下一步
 </template>
@@ -22,6 +22,7 @@
         nextStepStatus: true,
         nextButton: true,
         phoneError: '',
+        phoneFlag: false,
         passwordError: '',
         version: 1,
         url: this.$apiMember + 'member/picCode/150/75/60',
@@ -73,11 +74,19 @@
           params: self.form
         }).then(function (response) {
           // 提示用户信息
-          if (response.data.optSuc) {
-            self.nextStepStatus = false
+          if (response && response.data.optSuc) {
+            self.phoneFlag = true
+            self.checkCode()
           }
         })
 
+      },
+      checkCode () {
+        if (this.form.gCode.trim().length === 4 && this.phoneFlag) {
+          this.nextStepStatus = false
+        } else {
+          this.nextStepStatus = true
+        }
       },
       nextStep() {
         if (!this.nextButton) {
@@ -96,11 +105,12 @@
           url: self.$apiMember + 'sms/sendCode',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             // 成功跳转页面
             self.$router.push({path: '/forget2', query: {mobile: self.form.mobile}})
           } else {
             self.getPicCode()
+            self.nextButton = true
           }
         })
       }

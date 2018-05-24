@@ -66,16 +66,18 @@
           self.qrPasswordError = $code('269')
           return
         }
-
+        this.pwdStatus = true
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/resetPwdLoginIn',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             self.$message.success('修改成功')
             // 成功跳转页面
             self.$router.push({path: '/my/accountSafety'})
+          } else {
+            self.pwdStatus = false
           }
         })
       }
