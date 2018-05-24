@@ -98,7 +98,6 @@
     activated (){
       this.message = this.$route.query.msg;
       this.request();
-      this.$mescrollInt("pageMescroll",this.upCallback);
     },
     mounted(){
       console.log(this.$route.query.jumps)
@@ -107,7 +106,18 @@
       //根据判断是哪个页面传过来的关键字
       //this.keywordsSearch();
       //上拉加载
-      this.$mescrollInt("pageMescroll",this.upCallback);
+      this.$mescrollInt("pageMescroll", this.upCallback, () => {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      }, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
       //商品展示
       //this.exhibition();
       //让页面加载时将搜索的文字拼到url上

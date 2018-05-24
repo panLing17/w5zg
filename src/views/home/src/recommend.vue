@@ -1,26 +1,42 @@
 <template lang="pug">
   .bottomList(:style="{background:background}")
     ul.goodsList.left(:style="{background:background}", ref="left")
-      li(v-for="item in listData.left" , @click.prevent="goGoods(item.gspu_id)")
-        img(:src="item.gi_image_url | img-filter")
-        .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-        .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-          span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
-        .price(v-else) {{item.price | price-filter}}
+      li(v-for="item in listData.left")
+        // 正常商品布局
+        .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
+          img(:src="item.gi_image_url | img-filter")
+          .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
+          .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
+            span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
+          .price(v-else) {{item.price | price-filter}}
+        // 广告图布局
+        .advertType(v-if="item.type === '333'")
+          img(:src="item.image | img-filter")
+        // 标签布局
+        ul.tagType(v-if="item.type === '334'")
+          li(v-for="(i,p) in item.data", :key="p") {{i}}
     ul.goodsList.right(:style="{background:background}", ref="right")
-      li(v-for="item in listData.right" , @click.prevent="goGoods(item.gspu_id)")
-        img(:src="item.gi_image_url | img-filter")
-        .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-        .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-          span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
-        .price(v-else) {{item.price | price-filter}}
+      li(v-for="item in listData.right")
+        // 正常商品布局
+        .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
+          img(:src="item.gi_image_url | img-filter")
+          .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
+          .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
+            span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
+          .price(v-else) {{item.price | price-filter}}
+        // 广告图布局
+        .advertType(v-if="item.type === '333'")
+          img(:src="item.image | img-filter")
+        // 标签布局
+        ul.tagType(v-if="item.type === '334'")
+          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
     div(style="clear:both")
 </template>
 
 <script>
   import {mapState} from 'vuex'
   export default {
-    name: "bottom-list",
+    name: 'bottom-list',
     props: ['background'],
     data() {
       return {
@@ -30,12 +46,16 @@
         }
       }
     },
-    computed: mapState(['userData']),
+    computed: mapState(['userData', 'recommendAdvert']),
     methods: {
       goGoods(id) {
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
       },
       more(newList, pageNum, pageSize) {
+        // 将原始数据的每条加入type
+        newList.forEach((now)=>{
+          now.type = '0'
+        })
         // 页数为1可能为下拉刷新，置空数据
         if (pageNum === 1) {
           this.listData.left = []
@@ -59,10 +79,6 @@
           imgaDom.src = process.env.IMG_URL + now.gi_image_url + '?x-oss-process=style/compress'
           box.appendChild(imgaDom)
           imgaDom.onload = () => {
-            num += 1
-            if (num >= pageSize) {
-              this.$refs.left.removeChild(box)
-            }
             if (leftH > rightH) {
               this.listData.right.push(now)
               rightH += imgaDom.clientHeight
@@ -70,8 +86,44 @@
               this.listData.left.push(now)
               leftH += imgaDom.clientHeight
             }
+            num += 1
+            // 若大于page，则证明已经成功加载完一页，移除盒子以及执行插入广告
+            if (num >= pageSize) {
+              this.$refs.left.removeChild(box)
+              this.advertInsert(pageNum, leftH, rightH)
+            }
           }
         })
+      },
+      advertInsert (pageNum, leftH, rightH) {
+        let tagsIndex = -1 // 标签被插了几次(上次被插索引)
+        let advertIndex = -1 // 广告图被插了几次(上次被插索引)
+        let fun = (data) => {
+          if (leftH > rightH) {
+            this.listData.right.push(data)
+          } else {
+            this.listData.left.push(data)
+          }
+        }
+        if (pageNum%2===0) {
+          if (tagsIndex >= this.recommendAdvert.tags.length) {
+            tagsIndex = -1
+          } else {
+            tagsIndex += 1
+          }
+          fun(this.recommendAdvert.tags[tagsIndex])
+        } else {  // 若为奇数
+          if (advertIndex >= this.recommendAdvert.advert.length) {
+            advertIndex = -1
+          } else {
+            advertIndex += 1
+          }
+          fun(this.recommendAdvert.advert[advertIndex])
+        }
+      },
+      // 搜索关键字
+      searchKeyword (keyWord) {
+        this.$router.push({path:'/page/commodityList', query:{msg:keyWord,flag:'true'}})
       }
     }
   }
@@ -91,7 +143,7 @@
     background: rgb(242, 242, 242);
   }
 
-  .goodsList li {
+  .goodsList>li {
     border: solid 1px #f2f2f2;
     background: #fff;
     border-radius: 5px;
@@ -153,5 +205,28 @@
     display: flex;
     justify-content: space-between;
     color: #aaaaaa;
+  }
+  /* 广告图布局 */
+  .advertType {
+    height: 4rem;
+  }
+  .advertType> img{
+    width: 100% !important;
+    height: 100% !important;
+  }
+  /* 推荐标签布局 */
+  .tagType {
+    height: 4rem;
+    background-color:  rgb(242, 242, 242);
+    padding: .2rem;
+  }
+  .tagType>li{
+    padding: .1rem .2rem;
+    background-color: white;
+    color: #aaaaaa;
+    float: left;
+    margin-right: .2rem;
+    margin-bottom: .2rem;
+    border-radius: .2rem;
   }
 </style>

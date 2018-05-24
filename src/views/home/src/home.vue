@@ -81,7 +81,8 @@
           }
         ],
         banner: [],
-        showRegisterTicket: false
+        showRegisterTicket: false,
+        type: ''
       }
     },
     computed: {

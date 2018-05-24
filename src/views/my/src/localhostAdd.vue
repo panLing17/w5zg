@@ -91,7 +91,7 @@
           this.$message.error('请选择省市区')
           return
         }
-        if (!this.detailedAddr) {
+        if (!this.form.detailedAddr) {
           this.$message.error('请输入详细地址')
           return
         }

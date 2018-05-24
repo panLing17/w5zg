@@ -283,6 +283,9 @@ const router = new Router ({
             {
               path: '/my/localAdd',
               name: '新增收货地址',
+              meta: {
+                keepAlive: true
+              },
               component: My.localAdd
             },
             {

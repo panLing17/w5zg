@@ -46,7 +46,6 @@ const state = {
   nowLocation: [116.397428, 39.90923],
   // 数据中转（修改数据、查看详情等。用来带数据）
   transfer:[],
-
   // 头条详情内容
   headlinesDetail: "",
   // 退货商品信息
@@ -56,7 +55,18 @@ const state = {
   // 领券金额
   ticketMoney: 0,
   // 当前商品信息（客服处使用）
-  nowGoodsData: {}
+  nowGoodsData: {},
+  // 推荐商品的额外插入广告，获取方法在main.vue的路由拦截
+  recommendAdvert:{
+    advert: [{
+      type:''
+    }],
+    tags: [
+      {
+        type:''
+      }
+    ]
+  }
 }
 const mutations = {
   transferGive (state, data) {
@@ -129,6 +139,16 @@ const mutations = {
   },
   setTicketMoney (state, data) {
     state.ticketMoney = data
+  },
+  // 获取推荐商品广告
+  getRecommendAdvert (state, data) {
+    if (data.type === 'tags') {
+      state.recommendAdvert.tags = data.data
+    }
+    if (data.type === 'advert') {
+      state.recommendAdvert.advert = data.data
+    }
+
   }
 }
 const actions = {
