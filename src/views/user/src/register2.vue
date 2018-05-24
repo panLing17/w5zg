@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .form
       w-input(label="新密码：", label-width="2rem", placeholder="必须是6-20个英文字母、数字或符号", :type="passwordType", v-model="form.pwd", required,:error="passwordError",@w-blur="checkPwd")
-      w-input(label="确认密码：", label-width="2rem", placeholder="请再次输入密码", :type="passwordType", v-model="qrPassword", required,:error="qrPasswordError")
+      w-input(label="确认密码：", label-width="2rem", placeholder="请再次输入密码", :type="passwordType", v-model="qrPassword", required,:error="qrPasswordError", @input="checkPwd2")
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 提交
 </template>
 
@@ -38,7 +38,6 @@
     },
     methods: {
       checkPwd () {
-        this.pwdStatus = true
         //校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^\S{6,20}$/;
         if(!reg.test(this.form.pwd)){
@@ -46,39 +45,47 @@
           return
         }
         this.passwordError = ''
-        this.pwdStatus = false
+        this.checkPwd2()
+      },
+      checkPwd2 () {
+        if (this.qrPassword == this.form.pwd ) {
+          this.pwdStatus = false
+        } else {
+          this.pwdStatus = true
+        }
       },
       sureBtn () {
-        if (!this.submitButtonFlag) {
-          this.$message.warning('网络请求中，请稍后')
-          return
-        } else {
-          this.submitButtonFlag = true
-        }
+        // if (!this.submitButtonFlag) {
+        //   this.$message.warning('网络请求中，请稍后')
+        //   return
+        // } else {
+        //   this.submitButtonFlag = true
+        // }
         let self = this
-        if (self.form.mobile == '' || self.form.pwd == '') {
-          self.phoneError = ''
-          self.checkCodeError = ''
-          return
-        }
-
+        // if (self.form.mobile == '' || self.form.pwd == '') {
+        //   self.phoneError = ''
+        //   self.checkCodeError = ''
+        //   return
+        // }
+        // if(self.form.pwd != self.qrPassword){
+        //   self.qrPasswordError = $code('269')
+        //   return
+        // }
         if(this.pwdStatus){
           return
         }
 
-        if(self.form.pwd != self.qrPassword){
-          self.qrPasswordError = $code('269')
-          return
-        }
-
+        this.pwdStatus = true
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/register',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             localStorage.setItem('token',response.data.data)
             self.getTicket()
+          } else {
+            self.pwdStatus = false
           }
         })
       },

@@ -31,7 +31,7 @@ Vue.prototype.$ajax = axios
 //全局方法
 Vue.prototype.$method=method
 // 取消全部警告与错误提示
-Vue.config.silent = true
+Vue.config.silent = false
 /* eslint-disable no-new */
 export let vue = new Vue({
   el: '#app',

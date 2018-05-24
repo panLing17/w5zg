@@ -2,7 +2,7 @@
   div.mainBox
     transition( :name="reversedMessage", mode="in-out")
       keep-alive
-       router-view.child-view
+        router-view.child-view
     transition(name="fade" , mode="out-in")
       ul.bottomNav(v-if="$store.state.footerShow")
         li
@@ -30,10 +30,11 @@
 
 <script>
   import store from '../vuex/store.js'
+  import {bus} from '../bus'
 
   export default {
     name: 'mainView',
-    data () {
+    data() {
       return {}
     },
     store,
@@ -43,12 +44,56 @@
         return this.$store.state.viewDirection
       }
     },
-    mounted () {
+    // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
+    beforeRouteEnter(to, from, next) {
+      let getAdvert = function () {
+        let self = bus
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'acActivity/acActivityList',
+          params: {
+            type: '333'
+          },
+        }).then(function (response) {
+          let data = {
+            type: 'advert',
+            data: response.data.data
+          }
+          store.commit('getRecommendAdvert', data)
+        })
+      }
+      let getTags = function () {
+        let self = bus
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'acActivity/acActivityList',
+          params: {
+            type: '334'
+          },
+        }).then(function (response) {
+          let oldData = []
+          response.data.data.forEach((now) => {
+            oldData.push({
+              type: '334',
+              data: now
+            })
+          })
+          let data = {
+            type: 'tags',
+            data: oldData
+          }
+          store.commit('getRecommendAdvert', data)
+        })
+      }
+      bus.$ajax.all([getAdvert(), getTags()]).then(() => {
+        next()
+      })
+    },
+    mounted() {
       this.$data.transitionName = ''
     },
-    methods: {
-    },
-    created () {
+    methods: {},
+    created() {
 
     }
   }
@@ -107,9 +152,10 @@
     text-align: center;
     color: #999;
   }
+
   /*选中颜色*/
   .checked {
-    color: rgb(245,0,87);
+    color: rgb(245, 0, 87);
   }
 
 </style>

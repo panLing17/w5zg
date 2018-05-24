@@ -47,7 +47,8 @@
           county: '',
           detailedAddr: '',
           isDefault: ''
-        }
+        },
+        requestFlag: true
       }
     },
     components: {citySelect},
@@ -87,15 +88,28 @@
         this.show = false
       },
       locationSave () {
+        if (!this.form.name) {
+          this.$message.error('请输入收货人姓名')
+          return
+        }
+        if (!/^1[0-9]{10}$/.test(this.form.phone)) {
+          this.$message.error('请输入正确手机号')
+          return
+        }
         if (!this.locationName) {
           this.$message.error('请选择省市区')
           return
         }
-        if (!this.detailedAddr) {
+        if (!this.form.detailedAddr) {
           this.$message.error('请输入详细地址')
           return
         }
+
         let self = this
+        if (!this.requestFlag) {
+          return
+        }
+        this.requestFlag = false
         let method = this.$route.query.id ? 'put' : 'post'
         if (this.isdefault) {
           this.form.isDefault = '1'
@@ -107,7 +121,12 @@
           url: self.$apiMember + 'receivingAddress/address',
           params: self.form,
         }).then(function (response) {
-          self.$router.go(-1)
+          if (response) {
+            self.$router.go(-1)
+          } else {
+            self.requestFlag = true
+          }
+
         })
       }
     }

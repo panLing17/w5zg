@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
+      .main(v-if="show", @touchmove.prevent="")
         .title
           span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
@@ -13,10 +13,16 @@
             li(v-if="selectType > 1 || selectType === 1 ", :class="{selected:selectType === 1}", key="1", @click="tab(1)") {{cityName}}
             li(v-if="selectType > 2 || selectType === 2 ", :class="{selected:selectType === 2}", key="2", @click="tab(2)") {{areaName}}
           .slider(:style="{marginLeft:3 * selectType + 'rem'}")
-        ul.list
-          li(v-for="item in provinceList", @click="getCity(item.pro_no,item.pro_name)") {{item.pro_name}}
-        ul.list
-          li(v-for="item in cityList", @click="selectOver(item.city_no,item.city_name)") {{item.city_name}}
+        <!--ul.list-->
+          <!--li(v-for="item in provinceList", @click="getCity(item.pro_no,item.pro_name)") {{item.pro_name}}-->
+        <!--ul.list-->
+          <!--li(v-for="item in cityList", @click="selectOver(item.city_no,item.city_name)") {{item.city_name}}-->
+        ul.list(@touchmove.prevent="", ref="list")
+          li(@touchstart.stop="touchStart($event, 1)", @touchmove.stop="touchMove($event, 1)", :style="{top: move.first.top + 'px'}")
+            .item(v-for="item in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", key="item", ref="item") {{item.pro_name}}
+        ul.list(@touchmove.prevent="")
+          li(@touchstart.stop="touchStart($event, 2)", @touchmove.stop="touchMove($event, 2)", :style="{top: move.second.top + 'px'}")
+            .item(v-for="item in cityList", @click.stop="selectOver(item.city_no,item.city_name)", key="item") {{item.city_name}}
 
 </template>
 
@@ -38,7 +44,21 @@
         areaNumber: '',
         provinceList: [],
         cityList: [],
-        areaList: []
+        areaList: [],
+        move: {
+          first: {
+            top: 0,
+            startY: 0,
+            moveY: 0,
+            topMin: 0
+          },
+          second: {
+            top: 0,
+            startY: 0,
+            moveY: 0,
+            topMin: 0
+          }
+        }
       }
     },
     props: {
@@ -47,10 +67,76 @@
         default: false
       }
     },
+    watch: {
+      show (val) {
+        if (val && this.move.first.topMin===0) {
+          this.getMinTop(1)
+        }
+      }
+    },
     mounted () {
       this.getProvince()
     },
     methods:{
+      getMinTop (flag) {
+        let length = 0
+        let index = ''
+        switch (flag) {
+          case 1: length = this.provinceList.length; index = 'first'; break;
+          case 2: length = this.cityList.length; index = 'second';  break;
+        }
+        let _this = this
+        this.$nextTick(() => {
+          let itemHeight = _this.$refs.item[0].offsetHeight
+          let listHeight = _this.$refs.list.offsetHeight
+          let firstHeight = itemHeight * length
+          if (firstHeight <= listHeight) {
+            _this.move[index].topMin = 0
+          } else {
+            let temp = firstHeight / listHeight
+            let temp1 = (parseInt(temp) - 1) * listHeight
+            let temp2 = firstHeight % listHeight
+            _this.move[index].topMin = -(temp1 + temp2)
+          }
+        })
+
+      },
+      touchMove (e, flag) {
+        if(e.touches.length == 1) {
+          let startY = 0
+          let index = ''
+          switch (flag) {
+            case 1: startY =this.move.first.startY; index = 'first'; break;
+            case 2: startY = this.move.second.startY; index = 'second';  break;
+            case 3: startY = this.move.third.startY; index = 'third';  break;
+          }
+          let moveY = e.touches[0].clientY
+          e.preventDefault()
+          let range = Math.abs(moveY - startY)
+          if (moveY < startY) {
+            range = -range
+          }
+          this.move[index].top += range
+          if (this.move[index].top > 0) {
+            this.move[index].top = 0
+          }
+
+          if (this.move[index].top < this.move[index].topMin) {
+            this.move[index].top = this.move[index].topMin
+          }
+        }
+
+      },
+      touchStart (e, flag) {
+        if(e.touches.length == 1) {
+          switch (flag) {
+            case 1: this.move.first.startY = e.touches[0].clientY; break;
+            case 2: this.move.second.startY = e.touches[0].clientY; break;
+            case 3: this.move.third.startY = e.touches[0].clientY; break;
+          }
+        }
+
+      },
       close () {
         this.$emit('close')
       },
@@ -97,6 +183,7 @@
         }).then(function (response) {
           self.cityList = response.data.data
           self.selectType = 1
+          self.getMinTop(2)
         })
       },
       getArea (number, cityName) {
@@ -199,11 +286,19 @@
     height: 10rem;
     overflow-y: scroll;
     /* 兼容safari滑动 */
-    -webkit-overflow-scrolling: touch
+    -webkit-overflow-scrolling: touch;
+    position: relative;
   }
   .list li{
     /* 兼容safari滑动 */
     min-height: 1px;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    transition: top 0.5s;
+  }
+  .item {
+    text-align: center;
   }
   .slider {
     height: 1px;

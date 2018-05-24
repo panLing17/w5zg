@@ -88,7 +88,7 @@
       .title
         .line
         p 详情
-      .content(v-html="desc")
+      .goodsDetailContent(v-html="desc")
       .title
         .line
         p 推荐
@@ -1014,10 +1014,10 @@
 </style>
 <style>
   /* 商品描述 */
-  .content {
+  .goodsDetailContent {
     width: 100%;
   }
-  .content img{
+  .goodsDetailContent img{
     float: left;
     max-width: 100%;
   }
