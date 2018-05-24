@@ -113,7 +113,7 @@
         .copy(@click="copyText(totalOrderNum)") 复制
       .title
         img(src="../../../../../assets/img/recommend.png")
-      w-recommend#dataId
+      recommend#dataId(ref="recommend")
       .bottomPlaceholder
     .fixedBtn(v-show="whiteBarFlag")
       .leftBtn(v-show="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
@@ -121,10 +121,11 @@
 </template>
 
 <script>
-  // 引入bus
-  import {bus} from '../../../../../bus/index'
+  import {mapState} from 'vuex'
+  import recommend from './recommend'
   export default {
       name: "orderDetails",
+      components:{recommend},
       data(){
         return{
           shopFlag:"", //门店联系人，联系方式显隐
@@ -174,13 +175,32 @@
           delivery_ways: ''
         }
       },
+      computed: mapState(['position']),
       created(){
 
+      },
+      activated () {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
       },
       mounted(){
         //判断用户身份
         this.judgeBOrC();
-        this.$mescrollInt("orderMescroll",this.upCallback);
+        this.$mescrollInt("orderMescroll",this.upCallback,()=>{
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }, (obj) => {
+          this.$store.commit('setPosition', {
+            path: this.$route.path,
+            y: obj.preScrollY
+          })
+        });
         //this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示
         //this.countDown(1800);
@@ -684,7 +704,7 @@
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            bus.$emit('listPush',curPageData,page.num,page.size)
+            self.$refs.recommend.more(curPageData,page.num,page.size)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
             //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
