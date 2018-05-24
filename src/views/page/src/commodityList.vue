@@ -80,6 +80,8 @@
         sort: "", //正序倒序
         maskFlag:false, //蒙板的显隐
         goodsFlag:"", //商品列表展示的显隐
+        pages: 1, //商品展示页码
+        pageRows: 8, //商品展示每页的长度
       }
     },
     computed:{
@@ -97,7 +99,12 @@
     },
     activated (){
       this.message = this.$route.query.msg;
-      this.request();
+      if (this.$store.keywordsL != this.message) {
+        this.pages = 1;
+        this.pageRows = (this.$store.state.pageNums-0)*8; 
+        this.request();
+      }
+      
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -105,7 +112,7 @@
       })
     },
     mounted(){
-      console.log(this.$route.query.jumps)
+      this.$store.commit('setKeyWords',this.$route.query.msg);
       //进入页面时加载
       this.request();
       //根据判断是哪个页面传过来的关键字
@@ -295,6 +302,7 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        this.$store.commit('setPage', pageNum);
         let self = this;
         self.$ajax({
           method:"post",
@@ -313,6 +321,7 @@
           }
         }).then(function(response){
           self.goodsFlag = true;
+          console.log(response.data.data);
           // if(response.data.data.length<=0){
           //   self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           // } else {
@@ -342,8 +351,8 @@
           method:"post",
           url:self.$apiGoods + "goodsSearch/spus",
           params:{
-            page: 1, //页码
-            rows: 8, //每页长度
+            page: self.pages, //页码
+            rows: self.pageRows, //每页长度
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
             endPrice: self.maxPrice, //结束价格区间

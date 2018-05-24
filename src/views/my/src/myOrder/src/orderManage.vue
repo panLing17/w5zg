@@ -49,6 +49,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
       name: "orderManage",
       data(){
@@ -75,15 +76,35 @@
           }else {
             return false;
           }
-        }
+        },
+        ...mapState(['position']),
       },
       created(){
 
       },
+      activated () {
+        this.keepStatus();
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      },
       mounted(){
         //this.jump();
         this.keepStatus();
-        this.$mescrollInt("orderManageMescroll",this.upCallback);
+        this.$mescrollInt("orderManageMescroll",this.upCallback,()=>{
+          this.position.forEach((now) => {
+              if (now.path === this.$route.path) {
+                this.mescroll.scrollTo(now.y, 0);
+              }
+            })
+          }, (obj) => {
+            this.$store.commit('setPosition', {
+              path: this.$route.path,
+              y: obj.preScrollY
+            })
+        });
         //this.request();
 
       },
@@ -101,13 +122,7 @@
         //当无订单时，将end去掉
         emptys(){
           var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
-           // if (this.orderDetail == null || this.orderDetail.length === 0) {
-              mescrollUpwarp.style.visibility = "hidden";
-            // }else {
-              // mescrollUpwarp.style.visibility = "visible";
-            // }
-          
-          
+           mescrollUpwarp.style.visibility = "hidden";   
         },
         //回退判断
         backJump(){
