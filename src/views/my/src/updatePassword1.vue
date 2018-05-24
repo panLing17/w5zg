@@ -6,7 +6,7 @@
       .topCenter(slot="center") {{titleName}}
     .form
       w-input(v-model="userData.mi_phone", label="手机号码：", label-width="2.5rem")
-      w-input(v-model="form.gCode",label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, :error="gCodeError", required, button-cover)
+      w-input(v-model="form.gCode",label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, :error="gCodeError", required, button-cover, @input="checkCode")
         img.aplaceholder(slot="button", @click="getPicCode", :src="url")
       w-input(v-model="form.vcode", label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", :error="checkCodeError", input-button=true, required, button-cover)
         .inputButton(slot="button", @click="getPhoneCode", v-show="sendMsg" ,:class="{inputButtonGray:sendMsgStatus}") 获取验证码
@@ -30,7 +30,7 @@
         version: 1,
         url: this.$apiMember + 'member/picCode/150/75/60',
         title: this.$route.query.routeParams,
-        sendMsgStatus: false,
+        sendMsgStatus: true,
         nextStepStatus: true,
         countDown: 60,
         gCodeError: '',
@@ -65,40 +65,49 @@
           self.getPicCode()
         })
       },
+      checkCode () {
+        if (this.form.gCode.trim().length === 4) {
+          this.sendMsgStatus = false
+        } else {
+          this.sendMsgStatus = true
+        }
+      },
       getPicCode() {
         this.version += 1
         this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version + '&W5MALLTOKEN=' +  this.form.W5MALLTOKEN
       },
       getPhoneCode() {
+        if (this.sendMsgStatus) {
+          return
+        }
         // 发送验证码
         let self = this
-        // 读秒倒计时
-        self.sendMsg = false
-        let interval = window.setInterval(function () {
-          if ((self.countDown--) <= 0) {
-            self.countDown = 60
-            self.sendMsg = true
-            window.clearInterval(interval)
-          }
-        }, 1000)
+
         if (self.form.gCode == '') {
           self.gCodeError = ''
           return
         }
 
-        if (self.sendMsgStatus) {
-          return
-        }
-
+        this.sendMsgStatus = true
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'sms/sendCodeLoginIn',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             self.nextStepStatus = false
+            // 读秒倒计时
+            self.sendMsg = false
+            let interval = window.setInterval(function () {
+              if ((self.countDown--) <= 0) {
+                self.countDown = 60
+                self.sendMsg = true
+                window.clearInterval(interval)
+              }
+            }, 1000)
           } else {
             self.getPicCode()
+            self.sendMsgStatus = false
           }
         })
       },

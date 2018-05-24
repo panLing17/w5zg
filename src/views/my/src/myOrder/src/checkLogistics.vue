@@ -35,7 +35,7 @@
     .title
       .line
       p 推荐
-    w-recommend#dataId(:listData="recommendGoods")
+    w-recommend#dataId(ref="recommend")
     .bottomPlaceholder
 </template>
 
@@ -125,8 +125,9 @@
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1) self.recommendGoods = []
-            self.recommendGoods = self.recommendGoods.concat(curPageData)
+            // if(page.num === 1) self.recommendGoods = []
+            // self.recommendGoods = self.recommendGoods.concat(curPageData)
+            self.$refs.recommend.more(curPageData,page.num,page.size)
             self.mescroll.endSuccess(curPageData.length)
           }, function() {
             //联网失败的回调,隐藏下拉刷新和上拉加载的状态;

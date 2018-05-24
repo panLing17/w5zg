@@ -149,6 +149,14 @@ const mutations = {
       state.recommendAdvert.advert = data.data
     }
 
+  },
+  // 记录搜索商品的第几分页
+  setPage (state, data) {
+    state.pageNums = data
+  },
+  // 记录搜索商品的关键字
+  setKeyWords (state, data) {
+    state.keywordsL = data
   }
 }
 const actions = {

@@ -49,6 +49,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
       name: "orderManage",
       data(){
@@ -75,15 +76,35 @@
           }else {
             return false;
           }
-        }
+        },
+        ...mapState(['position']),
       },
       created(){
 
       },
+      activated () {
+        this.keepStatus();
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      },
       mounted(){
         //this.jump();
         this.keepStatus();
-        this.$mescrollInt("orderManageMescroll",this.upCallback);
+        this.$mescrollInt("orderManageMescroll",this.upCallback,()=>{
+          this.position.forEach((now) => {
+              if (now.path === this.$route.path) {
+                this.mescroll.scrollTo(now.y, 0);
+              }
+            })
+          }, (obj) => {
+            this.$store.commit('setPosition', {
+              path: this.$route.path,
+              y: obj.preScrollY
+            })
+        });
         //this.request();
 
       },
@@ -98,6 +119,11 @@
         }
       },
       methods:{
+        //当无订单时，将end去掉
+        emptys(){
+          var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
+           mescrollUpwarp.style.visibility = "hidden";   
+        },
         //回退判断
         backJump(){
           if (this.$route.query.nums != 0 || this.$route.query.states != "" || this.$route.query.lefts != 0 ) {
@@ -184,7 +210,6 @@
             var lineDiv = document.getElementsByClassName("lineDiv")[0];
             lineDiv.style.left = this.$route.query.lefts;
           }
-
           this.request();
         },
         //判断两个按钮上的文字
@@ -353,6 +378,9 @@
           }).then(function(response){
             self.contentFlag = true;
             self.orderDetail = response.data.data;
+            if (self.orderDetail.length === 0) {
+              self.emptys();
+            }
             for (var i=0; i<self.orderDetail.length; i++) {
               if (self.orderDetail[i].order_status == "（退货）售后") {
                 self.orderDetail[i].buttonL = "取消申请";

@@ -31,7 +31,7 @@
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
       transition(name="slide")
-        .content(v-show="goodsFlag")
+        .contenter(v-show="goodsFlag")
           .bottomList
             ul.goodsList#box
               li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
@@ -80,10 +80,12 @@
         sort: "", //正序倒序
         maskFlag:false, //蒙板的显隐
         goodsFlag:"", //商品列表展示的显隐
+        pages: 1, //商品展示页码
+        pageRows: 8, //商品展示每页的长度
       }
     },
     computed:{
-      ...mapState(['location'])
+      ...mapState(['location','position'])
     },
     props: {
       type: {
@@ -97,27 +99,37 @@
     },
     activated (){
       this.message = this.$route.query.msg;
-      this.request();
+      if (this.$store.keywordsL != this.message) {
+        this.pages = 1;
+        this.pageRows = (this.$store.state.pageNums-0)*8;
+        this.request();
+      }
+
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
     },
     mounted(){
-      console.log(this.$route.query.jumps)
+      this.$store.commit('setKeyWords',this.$route.query.msg);
       //进入页面时加载
       this.request();
       //根据判断是哪个页面传过来的关键字
       //this.keywordsSearch();
       //上拉加载
-      this.$mescrollInt("pageMescroll", this.upCallback, () => {
+      this.$mescrollInt("pageMescroll",this.upCallback,()=>{
         this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      }, (obj) => {
-        this.$store.commit('setPosition', {
-          path: this.$route.path,
-          y: obj.preScrollY
-        })
-      })
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }, (obj) => {
+          this.$store.commit('setPosition', {
+            path: this.$route.path,
+            y: obj.preScrollY
+          })
+      });
       //商品展示
       //this.exhibition();
       //让页面加载时将搜索的文字拼到url上
@@ -290,6 +302,7 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        this.$store.commit('setPage', pageNum);
         let self = this;
         self.$ajax({
           method:"post",
@@ -308,6 +321,7 @@
           }
         }).then(function(response){
           self.goodsFlag = true;
+          console.log(response.data.data);
           // if(response.data.data.length<=0){
           //   self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           // } else {
@@ -337,8 +351,8 @@
           method:"post",
           url:self.$apiGoods + "goodsSearch/spus",
           params:{
-            page: 1, //页码
-            rows: 6, //每页长度
+            page: self.pages, //页码
+            rows: self.pageRows, //每页长度
             carryType: self.pickUps, //自提不自提
             startPrice: self.minPrice, //开始价格区间
             endPrice: self.maxPrice, //结束价格区间
@@ -430,7 +444,7 @@
   }
   /*搜索框样式--结束*/
   /*中间内容部分顶部左边--开始*/
-  .content{
+  .contenter{
 
   }
   ul.wrap{

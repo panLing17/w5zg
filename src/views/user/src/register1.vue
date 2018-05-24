@@ -346,7 +346,7 @@
         let self = this
         let reg = /^1[0-9]{10}$/;
         if (self.form.mobile == '') {
-          self.phoneError = ''
+          self.phoneError = '手机号为空'
           return
         }
 
@@ -363,11 +363,14 @@
           url: self.$apiMember + 'member/mobile/isExist',
           params: self.form
         }).then(function (response) {
-          self.phoneFlag = response.data.optSuc
-          // 提示用户信息
-          if (response.data.optSuc && self.form.gCode.trim().length === 4) {
-            self.sendMsgStatus = false
+          if (response) {
+            self.phoneFlag = response.data.optSuc
+            // 提示用户信息
+            if (response.data.optSuc && self.form.gCode.trim().length === 4) {
+              self.sendMsgStatus = false
+            }
           }
+
         })
       },
       checkGcode () {
@@ -378,37 +381,41 @@
         }
       },
       getPhoneCode() {
+        // if (this.form.mobile.trim().length === 0) {
+        //   this.phoneError = '手机号为空'
+        //   return
+        // }
+        // if (this.form.gCode.trim().length === 0) {
+        //   this.gCodeError = '图形验证码为空'
+        //   return
+        // }
+        if(this.sendMsgStatus){
+          return
+        }
+        this.sendMsgStatus = true
         // 发送验证码
         let self = this
-        // 点击则开始读秒
-        self.sendMsg = false
-        let interval = window.setInterval(function () {
-          if ((self.countDown--) <= 0) {
-            self.countDown = 60
-            self.sendMsg = true
-            window.clearInterval(interval)
-          }
-        }, 1000)
-        if (self.form.mobile == '' || self.form.gCode == '') {
-          self.phoneError = ''
-          self.gCodeError = ''
-          return
-        }
-
-        if(self.sendMsgStatus){
-          return
-        }
 
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'sms/sendCode',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             self.nextStepStatus = false
             self.$message.success($code('2612'))
+            self.sendMsg = false
+            let interval = window.setInterval(function () {
+              if ((self.countDown--) <= 0) {
+                self.countDown = 60
+                self.sendMsg = true
+                self.sendMsgStatus = false
+                window.clearInterval(interval)
+              }
+            }, 1000)
           }else{
             self.getPicCode()
+            self.sendMsgStatus = false
           }
         })
       },

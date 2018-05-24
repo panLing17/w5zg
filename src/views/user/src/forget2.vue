@@ -8,7 +8,7 @@
     .form
       w-input(label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", v-model="form.vcode", @w-blur="checkVcode", :error="vcodeError" required)
       w-input(label="输入新密码：", label-width="2.5rem", placeholder="请输入新密码",:type="passwordType", v-model="form.pwd", required,:error="passwordError",@w-blur="checkPwd")
-      w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码",:type="passwordType", v-model="qrPassword", required, :error="qrPasswordError",@w-blur="checkQrPwd")
+      w-input(label="确认新密码：", label-width="2.5rem", placeholder="请再次输入新密码",:type="passwordType", v-model="qrPassword", required, :error="qrPasswordError",@input="checkQrPwd")
       button.regButton(@click="sureBtn",:class="{regButtonGray:pwdStatus}") 确定
 </template>
 
@@ -30,36 +30,36 @@
         vcodeError: ''
       }
     },
-    computed: {
-      password () {
-        return this.form.pwd
-      },
-      vcode () {
-        return this.form.vcode
-      }
-    },
-    mounted () {
-      this.form.mobile = this.$route.query.mobile
-    },
-    watch:{
-      password () {
-        this.allCheck()
-      },
-      vcode () {
-        this.allCheck()
-      },
-      pwdStatus () {
-        this.allCheck()
-      }
-    },
+    // computed: {
+    //   password () {
+    //     return this.form.pwd
+    //   },
+    //   vcode () {
+    //     return this.form.vcode
+    //   }
+    // },
+    // mounted () {
+    //   this.form.mobile = this.$route.query.mobile
+    // },
+    // watch:{
+    //   password () {
+    //     this.allCheck()
+    //   },
+    //   vcode () {
+    //     this.allCheck()
+    //   },
+    //   pwdStatus () {
+    //     this.allCheck()
+    //   }
+    // },
     methods: {
-      allCheck () {
-        if ( this.form.vcode.length>3 && this.form.pwd.length>5) {
-          this.pwdStatus = false
-        } else {
-          this.pwdStatus = true
-        }
-      },
+      // allCheck () {
+      //   if ( this.form.vcode.length>3 && this.form.pwd.length>5) {
+      //     this.pwdStatus = false
+      //   } else {
+      //     this.pwdStatus = true
+      //   }
+      // },
       checkPwd () {
         // 校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^\S{6,20}$/;
@@ -68,16 +68,17 @@
           return
         }
         this.passwordError = ''
-        this.pwdStatus = false
+        this.checkAll()
 
       },
       checkQrPwd () {
-        if(self.form.pwd != self.qrPassword){
-          self.qrPasswordError = $code('269')
+        if(this.form.pwd != this.qrPassword){
+          this.qrPasswordError = $code('269')
+          this.pwdStatus = true
           return
         }
-        this.passwordError = ''
-        this.pwdStatus = false
+        this.qrPasswordError = ''
+        this.checkAll()
 
       },
       checkVcode () {
@@ -85,33 +86,44 @@
           this.vcodeError = '请输入正确验证码'
         } else {
           this.vcodeError = ''
+          this.checkAll()
+        }
+      },
+      checkAll () {
+        if (this.form.pwd === this.qrPassword && /^\S{6,20}$/.test(this.form.pwd.trim()) && this.form.vcode.length >= 4) {
+          this.pwdStatus = false
+        } else {
+          this.pwdStatus = true
         }
       },
       sureBtn () {
         let self = this
-        if (self.form.mobile == '' || self.form.pwd == '' || self.form.vcode == '') {
-          self.phoneError = ''
-          self.checkCodeError = ''
-          return
-        }
+        // if (self.form.mobile == '' || self.form.pwd == '' || self.form.vcode == '') {
+        //   self.phoneError = ''
+        //   self.checkCodeError = ''
+        //   return
+        // }
 
         if (this.pwdStatus) {
           return
         }
 
-        if(self.form.pwd != self.qrPassword){
-          self.qrPasswordError = $code('269')
-          return
-        }
+        // if(self.form.pwd != self.qrPassword){
+        //   self.qrPasswordError = $code('269')
+        //   return
+        // }
+        this.pwdStatus = true
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/resetPassword',
           params: self.form
         }).then(function (response) {
-          if (response.data.optSuc) {
+          if (response && response.data.optSuc) {
             // 成功跳转页面
             self.$message.success(response.data.msg);
             self.$router.push({path: '/my'})
+          }else {
+            self.pwdStatus = false
           }
         })
       }
