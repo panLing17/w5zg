@@ -240,10 +240,7 @@ const router = new Router ({
             {
               path: '/',
               name: '分类',
-              component: Page.page,
-              meta: {
-                keepAlive: true
-              }
+              component: Page.page
             },
             {
               path: '/page/commodityList',
