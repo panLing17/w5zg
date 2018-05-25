@@ -7,7 +7,7 @@
       .topCenter(slot="center")
         .searchInput(:class="{opaque:navBarBg === 'rgba(245,0,87,1)'}")
           img(src="../../../assets/img/searchInput搜索图标@2x.png", @click="searchGoods()").leftImg
-          input(:type="type",placeholder="请输入商品名称", @keyup.enter="searchGoods()", @focus="jump")
+          input(type="text",placeholder="请输入商品名称", @keyup.enter="searchGoods()", @focus="jump")
           img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg.png")

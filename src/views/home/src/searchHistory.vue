@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus" v-focus)
+          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus")
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
@@ -139,7 +139,7 @@
       //搜索商品去商品展示页
       searchGoods(){
         let self = this;
-        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flag:true,jumps:self.jumps}});
+        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flags:1,jumps:self.jumps}});
       },
       //历史搜索
       historys(){
@@ -209,14 +209,14 @@
         this.selected1 = index;
         this.selected2 = null;
         this.msg = item;
-        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true,jumps:this.jumps}});
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}});
       },
 
       change2: function(item,index){
         this.selected2 = index;
         this.selected1 = null;
         this.msg = item;
-        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flag:true,jumps:this.jumps}});
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}});
       },
 
       upCallback: function(page) {
