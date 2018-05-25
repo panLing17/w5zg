@@ -1,11 +1,11 @@
 <template lang="pug">
   div
-    nav-bar(background="rgb(245,0,87)", border-bottom="none")
+    nav-bar.navBar(:background="navBarBg", border-bottom="none", height="0")
       .topLeft(slot="left")
         img(src="../../../assets/img/定位图标@2x.png", style="width: .3rem;")
         span.city {{cityName}}
       .topCenter(slot="center")
-        .searchInput
+        .searchInput(:class="{opaque:navBarBg === 'rgba(245,0,87,1)'}")
           img(src="../../../assets/img/searchInput搜索图标@2x.png", @click="searchGoods()").leftImg
           input(:type="type",placeholder="请输入商品名称", @keyup.enter="searchGoods()", @focus="jump")
           img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
@@ -50,6 +50,7 @@
   import wActivity from './activities'
   import recommend from './recommend'
   import {mapState} from 'vuex'
+  import store from '../../../vuex/store'
 
   export default {
     name: 'home',
@@ -58,6 +59,8 @@
         // 整页的固定定位，如果一直有的话会影响页面切换效果
         positionFixed: false,
         // mescroll: null,
+        // 顶部背景色
+        navBarBg: 'rgba(0,0,0,0)',
         loadingFlag: 0,
         date: 1,
         cityName: this.$route.query.routeParams,
@@ -107,6 +110,12 @@
           }
         })
       }, (obj) => {
+        if (obj.preScrollY>100) {
+          this.navBarBg = 'rgba(245,0,87,1)'
+        } else {
+          this.navBarBg = 'rgba(0,0,0,0)'
+        }
+
         this.$store.commit('setPosition', {
           path: this.$route.path,
           y: obj.preScrollY
@@ -426,12 +435,15 @@
   /*搜索框样式--开始*/
   .searchInput {
     width: 6.5rem;
-    height: .9rem;
-    background-color: rgb(238, 238, 238);
+    height: .7rem;
+    background-color: rgba(238, 238, 238,0.7);
     border-radius: .9rem;
-    line-height: .9rem;
+    line-height: .7rem;
+    transition: background-color .5s;
   }
-
+  .opaque {
+    background-color: rgba(238, 238, 238, 1);
+  }
   .searchInput img.leftImg {
     width: .45rem;
     vertical-align: middle;
@@ -450,7 +462,7 @@
     outline: none;
     font-size: .3rem;
     margin-left: .2rem;
-    background-color: rgb(238, 238, 238);
+    background: none;
   }
 
   /*搜索框样式--结束*/
@@ -466,7 +478,6 @@
   /*顶部搜索--结束*/
 
   #homeMescroll {
-    padding-top: 1.3rem;
     top: 0;
     bottom: 0;
     height: auto;

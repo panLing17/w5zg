@@ -287,7 +287,10 @@ const router = new Router ({
             {
               path: '/my/settings',
               name: '我的设置',
-              component: My.settings
+              component: My.settings,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/userinfo',
