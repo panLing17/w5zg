@@ -30,18 +30,17 @@
           li.filters(@click="leftScroll()") | 筛选
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
-      transition(name="slide")
-        .contenter(v-show="goodsFlag")
-          .bottomList
-            ul.goodsList#box
-              li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
-                img(:src="item.gi_image_url | img-filter" @click.prevent="")
-                .wrapWords
-                  .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
-                  .price {{item.price | price-filter}}
-                    span 可省{{item.economize_price}}元
-                  .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
-        .bottomPlaceholder
+      .contenter(v-show="goodsFlag")
+        .bottomList
+          ul.goodsList#box
+            li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
+              img(:src="item.gi_image_url | img-filter" @click.prevent="")
+              .wrapWords
+                .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
+                .price {{item.price | price-filter}}
+                  span 可省{{item.economize_price}}元
+                .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
+      .bottomPlaceholder
     transition(name="slide-fade")
       .mask(v-show="maskFlag")
         .lefter(@click="lefterBack()")
@@ -59,6 +58,7 @@
       return {
         jumps:this.$route.query.jumps, //接收上个页面的参数判断是那个页面来的
         message:this.$route.query.msg, //在输入框搜索的内容
+        saveMsg: "", //把每次搜索的关键字存储
         filtrateFlag: true, //右侧筛选的显隐
         mescroll: null,
         flags: false,
@@ -98,6 +98,18 @@
         default: 'placeholder'
       }
     },
+    watch :{
+      '$route' (to, from) {
+        console.log(from.path);
+        if (from.path == '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }
+      }
+    },
     activated (){
       // console.log(this.flagNum)
       // if (this.flagNum == 2) {
@@ -110,18 +122,20 @@
       } else{
         this.message = this.$route.query.msg;
       }
-      this.pages = 1;
-      this.pageRows = (this.$store.state.pageNums-0)*8;  
+      if (this.saveMsg == this.message) {
+        this.pages = 1;
+        this.pageRows = (this.$store.state.pageNums-0)*8;
+      }
+      // this.position.forEach((now) => {
+      //   if (now.path === this.$route.path) {
+      //     this.mescroll.scrollTo(now.y, 0);
+      //   }
+      // }) 
       this.request();
-
-      this.position.forEach((now) => {
-        console.log(now)
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
-        }
-      })
+      
     },
     mounted(){
+      this.saveMsg = this.$route.query.msg;
       this.flagNum = this.$route.query.flags;
       //进入页面时加载
       this.request();
@@ -203,6 +217,7 @@
       ievent(data){
         this.flagNum = 2;
         this.$store.commit('setKeyWords',data.brandName);
+        this.saveMsg = data.brandName;
         this.maskFlag = false;
         this.goodsFlag = false;
         this.mescroll.lockDownScroll(false);
@@ -221,6 +236,7 @@
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
+
         }
         if (data.flag1 == false) {
           commodityList.style.overflow = "scroll";
@@ -235,7 +251,8 @@
           this.minPrice = data.minPrice;
           this.checkFlag = true;
         }
-        this.$router.replace({path:'/page/commodityList',query:{id:data.brandId,jumps:this.$route.query.jumps}})
+        this.$router.replace({path:'/page/commodityList',query:{id:data.brandId,jumps:this.$route.query.jumps}});
+        this.mescroll.scrollTo(0,0);
         this.request();
       },
 
