@@ -422,7 +422,8 @@
             url: self.$apiMember + 'sms/sendCode',
             params: {
               mobile: this.form.phone,
-              gCode: this.code
+              gCode: this.code,
+              W5MALLTOKEN: this.W5MALLTOKEN
             }
           }).then(function (response) {
             if (response && response.data.optSuc) {
