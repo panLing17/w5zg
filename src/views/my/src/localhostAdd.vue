@@ -121,10 +121,9 @@
           url: self.$apiMember + 'receivingAddress/address',
           params: self.form,
         }).then(function (response) {
+          self.requestFlag = true
           if (response) {
             self.$router.go(-1)
-          } else {
-            self.requestFlag = true
           }
 
         })

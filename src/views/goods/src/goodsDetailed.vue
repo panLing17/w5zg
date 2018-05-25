@@ -92,7 +92,7 @@
       .title
         .line
         p 推荐
-      recommend(background="white")
+      recommend(background="white", ref="recommend")
     div
       .buttons
         img(src="../../../assets/img/customerservice@3x.png", @click="goService")
@@ -214,6 +214,20 @@
         }
       },
       $route () {
+        // 重新初始化data数据
+        Object.assign(this.$data, this.$options.data())
+        // 重新调用mounted里的方法
+        this.mescroll.scrollTo( 0, 0 );
+        this.mescroll.destroy()
+        this.getGoodsDetailed()
+        this.getGoodsDesc()
+        this.getBanner()
+        this.getSpec()
+        // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
+        if(this.skuId){
+          this.$store.commit('getSkuId','')
+        }
+        this.$mescrollInt("goodsDetailMescroll",this.upCallback)
         // window.location.reload()
         // this.$router.go(0)
         // this.getGoodsDetailed()
@@ -643,7 +657,8 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          bus.$emit('listPush',curPageData,page.num,page.size)
+          // bus.$emit('listPush',curPageData,page.num,page.size)
+          self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
