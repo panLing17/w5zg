@@ -1,4 +1,5 @@
 import login from './src/login'
+import login1 from './src/login1'
 import register1 from './src/register1'
 import register2 from './src/register2'
 import regOver from './src/regOver'
@@ -8,4 +9,4 @@ import changeMobile1 from './src/changeMobile1'
 import changeMobile2 from './src/changeMobile2'
 import login2 from './src/login2'
 import firstPayPassword from './src/firstPayPassword'
-export default { login, register1, register2, regOver, forget1, forget2, changeMobile1, changeMobile2, login2, firstPayPassword}
+export default { login1, register1, register2, regOver, forget1, forget2, changeMobile1, changeMobile2, login2, firstPayPassword, login}
