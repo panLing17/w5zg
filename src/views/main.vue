@@ -35,7 +35,8 @@
   export default {
     name: 'mainView',
     data() {
-      return {}
+      return {
+      }
     },
     store,
     computed: {
@@ -46,6 +47,7 @@
     },
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
+      let count = 0
       let getAdvert = function () {
         let self = bus
         self.$ajax({
@@ -59,7 +61,11 @@
             type: 'advert',
             data: response.data.data
           }
+          count+=1
           store.commit('getRecommendAdvert', data)
+          if (count>=2) {
+            next()
+          }
         })
       }
       let getTags = function () {
@@ -82,12 +88,18 @@
             type: 'tags',
             data: oldData
           }
+          count+=1
           store.commit('getRecommendAdvert', data)
+          if (count>=2) {
+            next()
+          }
         })
       }
-      bus.$ajax.all([getAdvert(), getTags()]).then(() => {
+      getAdvert()
+      getTags()
+      /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
         next()
-      })
+      })*/
     },
     mounted() {
       this.$data.transitionName = ''

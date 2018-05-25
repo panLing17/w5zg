@@ -102,6 +102,7 @@
               if ((self.countDown--) <= 0) {
                 self.countDown = 60
                 self.sendMsg = true
+                self.sendMsgStatus = false
                 window.clearInterval(interval)
               }
             }, 1000)

@@ -54,6 +54,7 @@
     font-size: .4rem;
     font-weight: 600;
     color: #333333;
+    transition: background-color .5s;
   }
   .placeholder{
     height: 1.3rem;

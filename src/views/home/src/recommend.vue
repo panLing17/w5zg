@@ -10,11 +10,11 @@
             span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) {{item.price | price-filter}}
         // 广告图布局
-        .advertType(v-if="item.type === '333'")
+        .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
-          li(v-for="(i,p) in item.data", :key="p") {{i}}
+          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
     ul.goodsList.right(:style="{background:background}", ref="right")
       li(v-for="item in listData.right")
         // 正常商品布局
@@ -25,7 +25,7 @@
             span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) {{item.price | price-filter}}
         // 广告图布局
-        .advertType(v-if="item.type === '333'")
+        .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
@@ -119,11 +119,28 @@
             advertIndex += 1
           }
           fun(this.recommendAdvert.advert[advertIndex])
+          console.log(this.recommendAdvert.advert[advertIndex])
         }
       },
       // 搜索关键字
       searchKeyword (keyWord) {
-        this.$router.push({path:'/page/commodityList', query:{msg:keyWord,flag:'true'}})
+        this.$router.push({path:'/page/commodityList', query:{msg:keyWord,flags:1}})
+      },
+      // 前往活动
+      goActivity (data) {
+        let {
+          type: parentType,
+          id: actId,
+          type_name: title
+        } = data
+        this.$router.push({
+          path:'/home/sports?parentType',
+          query:{
+            parentType:parentType,
+            actId:actId,
+            title:title
+          }
+        })
       }
     }
   }
@@ -209,6 +226,7 @@
   /* 广告图布局 */
   .advertType {
     height: 4rem;
+    background-color: rgb(242, 242, 242);
   }
   .advertType> img{
     width: 100% !important;

@@ -81,11 +81,10 @@
           url: self.$apiMember + 'member/register',
           params: self.form
         }).then(function (response) {
+          self.pwdStatus = false
           if (response && response.data.optSuc) {
             localStorage.setItem('token',response.data.data)
             self.getTicket()
-          } else {
-            self.pwdStatus = false
           }
         })
       },
