@@ -240,10 +240,7 @@ const router = new Router ({
             {
               path: '/',
               name: '分类',
-              component: Page.page,
-              meta: {
-                keepAlive: true
-              }
+              component: Page.page
             },
             {
               path: '/page/commodityList',
@@ -287,7 +284,10 @@ const router = new Router ({
             {
               path: '/my/settings',
               name: '我的设置',
-              component: My.settings
+              component: My.settings,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/userinfo',

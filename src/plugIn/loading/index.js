@@ -31,7 +31,10 @@ Vue.directive('loading', function (el, binding) {
     // el.style.position = 'relative'
   } else {
     setTimeout(function () {
-      el.removeChild($vm.$el)
+      if (el.hasOwnProperty($vm.$el)) {
+        el.removeChild($vm.$el)
+      }
+
       // onTouchMove(false)
       // document.body.style.overflow='auto'
       // el.style.position = oldPosition

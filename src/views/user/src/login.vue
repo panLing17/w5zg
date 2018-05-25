@@ -48,6 +48,7 @@
           this.passwordType = 'password'
         }
       },
+
       login () {
         let self = this
         self.$ajax({
@@ -61,9 +62,12 @@
           localStorage.setItem('token',response.data.data)
           // 跳转至首页
           self.$router.push('/my')
+
+
         })
         // this.$store.dispatch('login',this.form)
       }
+
     }
   }
 </script>
