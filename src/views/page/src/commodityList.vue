@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,messages:message,jumps:jumps}})" v-model="message")
+          input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,messages:message,jumps:jumps}})" v-model="message" ref="oInput")
           img(src="../../../assets/img/searchInput搜索图标@2x.png")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
@@ -82,6 +82,7 @@
         goodsFlag:"", //商品列表展示的显隐
         pages: 1, //商品展示页码
         pageRows: 8, //商品展示每页的长度
+        flagNum: this.$route.query.flags, //判断是筛选还是url传来的
       }
     },
     computed:{
@@ -98,26 +99,30 @@
       }
     },
     activated (){
-      this.$store.commit('setKeyWords',this.$route.query.msg);
-      console.log(this.$store.state.keywordsL == this.message)
-      if (this.$store.state.keywordsL == this.message) {
-        this.pages = 1;
-        this.pageRows = (this.$store.state.pageNums-0)*8;
+      // console.log(this.flagNum)
+      // if (this.flagNum == 2) {
+      //   this.message = this.$store.state.keywordsL;
+      // } else if (this.flagNum == 1) {
+      //   this.message = this.$route.query.msg;
+      // }
+      if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL;
-        this.request();
-      } else {
-        //this.message = this.message;
-        this.request();
+      } else{
+        this.message = this.$route.query.msg;
       }
+      this.pages = 1;
+      this.pageRows = (this.$store.state.pageNums-0)*8;  
+      this.request();
 
       this.position.forEach((now) => {
+        console.log(now)
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
         }
       })
     },
     mounted(){
-      this.$store.commit('setKeyWords',this.$route.query.msg);
+      this.flagNum = this.$route.query.flags;
       //进入页面时加载
       this.request();
       //根据判断是哪个页面传过来的关键字
@@ -196,6 +201,8 @@
       },
       //从筛选传值过来
       ievent(data){
+        this.flagNum = 2;
+        this.$store.commit('setKeyWords',data.brandName);
         this.maskFlag = false;
         this.goodsFlag = false;
         this.mescroll.lockDownScroll(false);
@@ -228,6 +235,7 @@
           this.minPrice = data.minPrice;
           this.checkFlag = true;
         }
+        this.$router.replace({path:'/page/commodityList',query:{id:data.brandId,jumps:this.$route.query.jumps}})
         this.request();
       },
 
