@@ -48,7 +48,9 @@
     height: 100vh;
   }
   .nav {
-    width: 6rem;
+    width: 100%;
+    border-bottom: 1px solid #f2f2f2;
+    /*width: 6rem;*/
     margin: 0 auto;
     height: 1.3rem;
     display: flex;
@@ -62,6 +64,7 @@
     text-align: center;
     color: #333;
   }
+
   .navItem.active {
     color:  rgb(245,0,87);
   }
