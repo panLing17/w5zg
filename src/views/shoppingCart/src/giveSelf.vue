@@ -29,6 +29,11 @@
     mounted () {
       this.getData()
     },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.getData()
+      })
+    },
     methods: {
       tabChange (num) {
         this.nowTab = num

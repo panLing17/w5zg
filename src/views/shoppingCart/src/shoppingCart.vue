@@ -100,6 +100,13 @@
       next()
     },
     activated () {
+      // 获取商品数量
+      this.getGoodsNum()
+      if (this.$route.path === '/shoppingCart') {
+        this.nowTab = 0
+      } else {
+        this.nowTab = 1
+      }
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
