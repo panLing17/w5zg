@@ -46,6 +46,9 @@
         rightShowFlag:"", //控制右侧内容的显隐
       }
     },
+    activated () {
+      
+    },
     mounted(){
       //判断显示城市的字数
       this.judgeCityNum();

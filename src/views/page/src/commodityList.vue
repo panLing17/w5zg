@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backgo()")
       .topCenter(slot="center")
         .searchInput
           input(:type="type",placeholder="请输入商品名称" @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,messages:message,jumps:jumps}})" v-model="message" ref="oInput")
@@ -100,11 +100,16 @@
     },
     watch :{
       '$route' (to, from) {
-        console.log(from.path);
+        console.log(to);
         if (from.path == '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
+              this.mescroll.scrollTo(now.y, 0); 
+              if (this.saveMsg == this.message) {
+                this.pages = 1;
+                this.pageRows = (this.$store.state.pageNums-0)*8;
+              }
+              this.request();
             }
           })
         }
@@ -122,21 +127,12 @@
       } else if (this.$route.query.flags == 1){
         this.message = this.$route.query.msg;
       }
-      if (this.saveMsg == this.message) {
-        this.pages = 1;
-        this.pageRows = (this.$store.state.pageNums-0)*8;
-      }
-      // this.position.forEach((now) => {
-      //   if (now.path === this.$route.path) {
-      //     this.mescroll.scrollTo(now.y, 0);
-      //   }
-      // }) 
       this.request();
-      
     },
     mounted(){
       this.saveMsg = this.$route.query.msg;
       this.flagNum = this.$route.query.flags;
+
       //进入页面时加载
       this.request();
       //根据判断是哪个页面传过来的关键字
@@ -164,6 +160,14 @@
       this.mescroll.destroy();
     },
     methods:{
+      //回退事件
+      backgo(){
+        this.$router.go(-1);
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: 0
+        })
+      },
       //遮罩层出现后不让页面滑动
       notScroll (e) {
         e.preventDefault();

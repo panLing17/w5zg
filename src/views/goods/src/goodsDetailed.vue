@@ -269,7 +269,7 @@
       },
       // 后退
       goBack () {
-        console.log(this.$router)
+        // console.log(this.$router)
         if (window.history.length>1) {
           this.$router.go(-1)
         } else {

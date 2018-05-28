@@ -52,6 +52,8 @@ const state = {
   returnGoods: {},
   // 首页领券成功显示标志
   showTicket: false,
+  // 首页领券按钮是否显示标志
+  showRegisterTicket: false,
   // 领券金额
   ticketMoney: 0,
   // 当前商品信息（客服处使用）
@@ -130,6 +132,9 @@ const mutations = {
   },
   setShowTicket (state, data) {
     state.showTicket = data
+  },
+  setShowRegisterTicket (state, data) {
+    state.showRegisterTicket = data
   },
   setTicketMoney (state, data) {
     state.ticketMoney = data

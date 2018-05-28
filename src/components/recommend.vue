@@ -45,10 +45,14 @@
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
       },
       more(newList, pageNum, pageSize) {
-        // 页数为1可能为下拉刷新，置空数据
+        let leftH = this.$refs.left.clientHeight
+        let rightH = this.$refs.right.clientHeight
+        // 页数为1可能为下拉刷新，置空数据,将左右高度置位0，否则如果当前左边比右边高，刷新后会出现位置错位
         if (pageNum === 1) {
           this.listData.left = []
           this.listData.right = []
+          leftH = 0
+          rightH = 0
         }
         // 计数，onload全部完毕后删除节点(数值超过size删除)
         let num = 0
@@ -59,9 +63,8 @@
         box.style.overflow = 'hidden'
 
         this.$refs.left.appendChild(box)
-        let leftH = this.$refs.left.clientHeight
-        let rightH = this.$refs.right.clientHeight
-        newList.forEach((now) => {
+
+        newList.forEach((now, index) => {
           let imgaDom = document.createElement('img')
           imgaDom.style.opacity = 0
           imgaDom.style.width = '100%'

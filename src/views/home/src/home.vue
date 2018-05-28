@@ -84,12 +84,11 @@
           }
         ],
         banner: [],
-        showRegisterTicket: false,
         type: ''
       }
     },
     computed: {
-      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position'])
+      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket'])
     },
     activated () {
       this.position.forEach((now) => {
@@ -138,34 +137,12 @@
       this.judgeCity()
       //判断显示城市的字数
       this.judgeCityNum()
-      // 判断是否显示注册送券成功弹框
-      let _this = this
-      setTimeout(() => {
-        _this.isLogin()
-      }, 1000)
-
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
-      isLogin() {
-        if (localStorage.hasOwnProperty('token')) {
-          if (this.userData && this.userData.member_type === '091') {
-            if (this.userData && this.userData.reg_present === '11') {
-              this.showRegisterTicket = false
-            } else {
-              this.showRegisterTicket = true
-            }
-          } else {
-            this.showRegisterTicket = false
-          }
-        } else {
-          this.showRegisterTicket = true
-        }
-
-      },
       closeTicket() {
         this.$store.commit('setShowTicket', false)
         this.isLogin()
