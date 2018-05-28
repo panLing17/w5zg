@@ -402,22 +402,34 @@ const router = new Router ({
             {
               path: '/my/orderManage',
               name: '订单管理',
-              component: MyOrder.orderManage
+              component: MyOrder.orderManage,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/orderDetails',
               name: '订单详情',
-              component: MyOrder.orderDetails
+              component: MyOrder.orderDetails,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/checkLogistics',
               name: '查看物流',
-              component: MyOrder.checkLogistics
+              component: MyOrder.checkLogistics,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/searchOrder',
               name: '查看物流',
-              component: MyOrder.searchOrder
+              component: MyOrder.searchOrder,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/applyAfterSale',
@@ -454,7 +466,10 @@ const router = new Router ({
             {
               path: '/my/refundAfterSale',
               name: '申请退款退货',
-              component: AfterSale.refundAfterSale
+              component: AfterSale.refundAfterSale,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/express',

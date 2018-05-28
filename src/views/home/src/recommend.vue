@@ -9,7 +9,7 @@
           .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) {{item.price | price-filter}}
-          .cabinetPrice 专柜价{{item.price | price-filter}}
+          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -25,7 +25,7 @@
           .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) {{item.price | price-filter}}
-          .cabinetPrice 专柜价{{item.price | price-filter}}
+          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -187,8 +187,9 @@
     position: relative;
   }
 
-  .goodsList li img {
+  .goodsType>img {
     width: 100%;
+    height: 4.8rem;
     /*position: absolute;*/
     /*top: 0;*/
     /*left: 0;*/
