@@ -385,9 +385,9 @@
           self.loginFlag = true
           if (response && response.data.optSuc) {
             localStorage.setItem('token',response.data.data)
-            self.$message.success('登录成功，3s后跳往首页')
+            self.$message.success('登录成功，3s后跳往我的页面')
             setTimeout(()=>{
-              self.$router.push('/home')
+              self.$router.push('/my')
             },3000)
           }
         })

@@ -119,7 +119,6 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-
             if (response.data.code === '081') {
               if (response.data.data && response.data.data.rows) {
                 successCallback&&successCallback(response.data.data.rows);
