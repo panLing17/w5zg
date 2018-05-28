@@ -106,6 +106,8 @@
       this.getOrderCount()
     },
     activated () {
+      this.getOrderCount()
+      this.getNetcardsCount()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -176,16 +178,18 @@
       },
       // 小c获取现金券未使用数量
       getNetcardsCount () {
-        let _this = this;
-        this.$ajax({
-          method: 'get',
-          url: this.$apiTransaction + 'netcard/netcards',
-          params: {status:1}
-        }).then(function (response) {
-          if (response.data.code === '081') {
-            _this.netcardCount = response.data.data.length;
-          }
-        })
+        if (localStorage.getItem('member_type') === '091') {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'netcard/netcards',
+            params: {status:1}
+          }).then(function (response) {
+            if (response.data.code === '081') {
+              _this.netcardCount = response.data.data.length;
+            }
+          })
+        }
       },
       /* 切换动画修复 */
       animateHack () {
