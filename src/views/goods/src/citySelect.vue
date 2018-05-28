@@ -19,10 +19,10 @@
           <!--li(v-for="item in cityList", @click="selectOver(item.city_no,item.city_name)") {{item.city_name}}-->
         ul.list(@touchmove.prevent="", ref="list")
           li(@touchstart.stop="touchStart($event, 1)", @touchmove.stop="touchMove($event, 1)", :style="{top: move.first.top + 'px'}")
-            .item(v-for="item in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", key="item", ref="item") {{item.pro_name}}
+            .item(v-for="(item, index) in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", key="index", ref="item") {{item.pro_name}}
         ul.list(@touchmove.prevent="")
           li(@touchstart.stop="touchStart($event, 2)", @touchmove.stop="touchMove($event, 2)", :style="{top: move.second.top + 'px'}")
-            .item(v-for="item in cityList", @click.stop="selectOver(item.city_no,item.city_name)", key="item") {{item.city_name}}
+            .item(v-for="(item, index) in cityList", @click.stop="selectOver(item.city_no,item.city_name)", key="index") {{item.city_name}}
 
 </template>
 
@@ -243,7 +243,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 70%;
+    height: 12.5rem;
     position: fixed;
     bottom: 0;
     left: 0;

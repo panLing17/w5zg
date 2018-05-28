@@ -35,15 +35,29 @@ const router = new Router ({
       component: User.login,
       meta: {
         keepAlive: true
-      }
-    },
-    {
-      path: '/login2',
-      name: '验证码登录',
-      component: User.login2,
-      meta: {
-        keepAlive: true
-      }
+      },
+      children: [
+        {
+          path: '',
+          redirect: '/login/login2'
+        },
+        {
+          path: '/login/login1',
+          name: '账号登录',
+          component: User.login1,
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: '/login/login2',
+          name: '验证码登录',
+          component: User.login2,
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
     },
     {
       path: '/register1',

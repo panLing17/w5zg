@@ -106,6 +106,8 @@
       this.getOrderCount()
     },
     activated () {
+      this.getOrderCount()
+      this.getNetcardsCount()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -177,16 +179,18 @@
       },
       // 小c获取现金券未使用数量
       getNetcardsCount () {
-        let _this = this;
-        this.$ajax({
-          method: 'get',
-          url: this.$apiTransaction + 'netcard/netcards',
-          params: {status:1}
-        }).then(function (response) {
-          if (response.data.code === '081') {
-            _this.netcardCount = response.data.data.length;
-          }
-        })
+        if (localStorage.getItem('member_type') === '091') {
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'netcard/netcards',
+            params: {status:1}
+          }).then(function (response) {
+            if (response.data.code === '081') {
+              _this.netcardCount = response.data.data.length;
+            }
+          })
+        }
       },
       /* 切换动画修复 */
       animateHack () {
@@ -203,11 +207,19 @@
           params: {}
         }).then(function (response) {
           self.$store.commit('userDataChange',response.data.data)
+          localStorage.setItem('member_type', response.data.data.member_type)
           if (response.data.data.member_type === '092') {
             self.getUserInfo()
           }
           if (response.data.data.member_type === '091') {
             self.getNetcardsCount()
+            if (response.data.data.reg_present === '11') {
+              self.$store.commit('setShowRegisterTicket', false)
+            } else {
+              self.$store.commit('setShowRegisterTicket', true)
+            }
+          }else {
+            self.$store.commit('setShowRegisterTicket', false)
           }
         })
       },

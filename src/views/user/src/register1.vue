@@ -340,7 +340,7 @@
       },
       getPicCode() {
         this.version += 1
-        this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version
+        this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version+'&W5MALLTOKEN='+ this.form.W5MALLTOKEN
       },
       checkPhoneRepeat() {
         let self = this

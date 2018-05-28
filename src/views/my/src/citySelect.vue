@@ -257,7 +257,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 70%;
+    height: 12.5rem;
     position: fixed;
     bottom: 0;
     left: 0;
