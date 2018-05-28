@@ -240,7 +240,10 @@ const router = new Router ({
             {
               path: '/home/sports',
               name: '三级活动',
-              component: Home.sports
+              component: Home.sports,
+              meta: {
+                keepAlive: true
+              }
             }
           ]
         }, {
@@ -293,7 +296,10 @@ const router = new Router ({
             {
               path: '/',
               name: '我的',
-              component: My.my
+              component: My.my,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/settings',

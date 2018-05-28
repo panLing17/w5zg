@@ -10,7 +10,7 @@
           input(type="text",placeholder="请输入商品名称", @keyup.enter="searchGoods()", @focus="jump")
           img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
       .topRight(slot="right")
-        img(src="../../../assets/img/msg.png")
+        img(src="../../../assets/img/msg.png", @click="$router.push('/service')")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
       .banner
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")

@@ -30,36 +30,36 @@
         vcodeError: ''
       }
     },
-    // computed: {
-    //   password () {
-    //     return this.form.pwd
-    //   },
-    //   vcode () {
-    //     return this.form.vcode
-    //   }
-    // },
-    // mounted () {
-    //   this.form.mobile = this.$route.query.mobile
-    // },
-    // watch:{
-    //   password () {
-    //     this.allCheck()
-    //   },
-    //   vcode () {
-    //     this.allCheck()
-    //   },
-    //   pwdStatus () {
-    //     this.allCheck()
-    //   }
-    // },
+    computed: {
+      password () {
+        return this.form.pwd
+      },
+      vcode () {
+        return this.form.vcode
+      }
+    },
+    mounted () {
+      this.form.mobile = this.$route.query.mobile
+    },
+    watch:{
+      password () {
+        this.allCheck()
+      },
+      vcode () {
+        this.allCheck()
+      },
+      pwdStatus () {
+        this.allCheck()
+      }
+    },
     methods: {
-      // allCheck () {
-      //   if ( this.form.vcode.length>3 && this.form.pwd.length>5) {
-      //     this.pwdStatus = false
-      //   } else {
-      //     this.pwdStatus = true
-      //   }
-      // },
+      allCheck () {
+        if ( this.form.vcode.length>3 && this.form.pwd.length>5) {
+          this.pwdStatus = false
+        } else {
+          this.pwdStatus = true
+        }
+      },
       checkPwd () {
         // 校验规则 正则表达式  只允许输入 数字跟字母
         var reg = /^\S{6,20}$/;
@@ -98,20 +98,20 @@
       },
       sureBtn () {
         let self = this
-        // if (self.form.mobile == '' || self.form.pwd == '' || self.form.vcode == '') {
-        //   self.phoneError = ''
-        //   self.checkCodeError = ''
-        //   return
-        // }
+        if (self.form.mobile == '' || self.form.pwd == '' || self.form.vcode == '') {
+          self.phoneError = ''
+          self.checkCodeError = ''
+          return
+        }
 
         if (this.pwdStatus) {
           return
         }
 
-        // if(self.form.pwd != self.qrPassword){
-        //   self.qrPasswordError = $code('269')
-        //   return
-        // }
+        if(self.form.pwd != self.qrPassword){
+          self.qrPasswordError = $code('269')
+          return
+        }
         this.pwdStatus = true
         self.$ajax({
           method: 'post',

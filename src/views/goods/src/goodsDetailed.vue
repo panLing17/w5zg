@@ -9,7 +9,6 @@
         // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
     .goodsBox.mescroll#goodsDetailMescroll
       .banner
-
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:10rem")
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
@@ -17,7 +16,7 @@
         .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
         <!--a(href="tel:4008-947-999")-->
           .stateChuiNiu(@click="saveMoneyTipsFlag = true")
-            span 先比价,够省钱,再下单!未省钱,赔1万元,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
+            span 先比价,够省钱,再下单!未省钱,白送,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
             img(src="../../../assets/img/pinkNext.png")
         .price(v-if="userData.member_type === '092'")
           span 直供价
@@ -120,8 +119,6 @@
   import recommend from './recommend'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
-  // 引入bus
-  import {bus} from '../bus/index'
   export default {
     name: "goods-detailed",
     data () {
@@ -199,7 +196,7 @@
       }
       // this.getMakeMoney(sku)
       // mescroll初始化
-      this.$mescrollInt("goodsDetailMescroll",this.upCallback)
+      this.$mescrollInt("goodsDetailMescroll",this.upCallback, ()=>{}, ()=>{})
 
     },
     beforeDestroy () {
@@ -215,6 +212,7 @@
       },
       $route () {
         // 重新初始化data数据
+        // this.$forceUpdate()
         Object.assign(this.$data, this.$options.data())
         // 重新调用mounted里的方法
         this.mescroll.scrollTo( 0, 0 );

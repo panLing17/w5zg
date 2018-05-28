@@ -19,8 +19,6 @@
 
 <script>
   import {mapState} from 'vuex'
-  // 引入bus
-  import {bus} from '../bus/index'
 
   export default {
     name: "bottom-list",
@@ -34,12 +32,6 @@
       }
     },
     computed: mapState(['userData']),
-    mounted() {
-      // 获取传入的方法，进行瀑布流式添加数据
-      bus.$on('listPush', (newData, pageNum, pageSize) => {
-        this.more(newData, pageNum, pageSize)
-      })
-    },
     methods: {
       goGoods(id) {
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
