@@ -37,7 +37,7 @@
               li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
                 img(:src="item.gi_image_url | img-filter" @click.prevent="")
                 .wrapWords
-                  .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
+                  .text <span v-show="item.carryFlag">专柜提货</span> {{item.gi_name}}
                   .price {{item.price | price-filter}}
                     span 可省{{item.economize_price}}元
                   .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
@@ -575,28 +575,30 @@
   }
   .goodsList li .wrapWords{
     width: 100%;
-    padding: 0 .2rem;
+    padding: .1rem .25rem 0;
     /*height: 30%;*/
   }
   .text{
-    margin: .1rem;
+    line-height: 18px;
     text-overflow: ellipsis;
     display: -webkit-box;
     overflow: hidden;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     word-break: break-all;
+
   }
   .text span{
     font-size: .3rem;
-    padding: 1px .2rem 0 .2rem;
-    background-color: rgb(246, 0, 87);
-    color: white;
-    border-radius: .2rem;
-    margin-right: .1rem;
+    padding: 1px 2px;
+    background-color: rgb(255, 232, 240);
+    border: solid 1px #f70057;
+    color: #f70057;
+    border-radius: 4px;
+    margin-right: .08rem;
   }
   .goodsList .price{
-    margin: .2rem .1rem;
+    margin: .2rem 0;
     color: rgb(246,0,87);
     font-weight: 600;
     font-size: .4rem;
