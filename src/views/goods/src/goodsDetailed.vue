@@ -99,11 +99,11 @@
         .right(@click="buy") 立即购买
       select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
-      city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
+    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
       <!--share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")-->
-      onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
-      card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
-      saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
+    onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
+    card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
+    saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
 
@@ -1021,7 +1021,7 @@
   #goodsDetailMescroll {
     top: 0;
     bottom: 0;
-    height: auto;
+
     position: fixed;
   }
 </style>

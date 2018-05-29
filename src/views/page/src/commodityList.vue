@@ -466,13 +466,13 @@
   /*搜索框样式--开始*/
   .searchInput{
     width: 6.5rem;
-    height: .9rem;
+    height: .7rem;
     background-color: rgb(238,238,238);
     border-radius: .9rem;
-    line-height: .9rem;
+    line-height: .7rem;
   }
   .searchInput img{
-    width: .45rem;
+    width: .4rem;
     vertical-align: middle;
     margin-left: .2rem;
   }
@@ -586,13 +586,13 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     word-break: break-all;
-
+    font-size: .3rem;
   }
   .text span{
-    font-size: .3rem;
+    margin-top: 10px;
     padding: 1px 2px;
     background-color: rgb(255, 232, 240);
-    border: solid 1px #f70057;
+    border: solid .5px #f70057;
     color: #f70057;
     border-radius: 4px;
     margin-right: .08rem;

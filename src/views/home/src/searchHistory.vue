@@ -274,13 +274,13 @@
 /*搜索框样式--开始*/
 .searchInput{
   width: 6.5rem;
-  height: .9rem;
+  height: .7rem;
   background-color: rgb(238,238,238);
   border-radius: .9rem;
-  line-height: .9rem;
+  line-height: .7rem;
 }
 .searchInput img{
-  width: .45rem;
+  width: .4rem;
   vertical-align: middle;
   margin-left: .2rem;
 }
@@ -291,6 +291,7 @@
   font-size: .3rem;
   margin-left: .4rem;
   background-color: rgb(238,238,238);
+  vertical-align: middle;
 }
 /*搜索框样式--结束*/
 /*历史搜索--开始*/

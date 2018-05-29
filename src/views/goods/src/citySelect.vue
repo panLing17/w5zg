@@ -42,6 +42,8 @@
         cityNumber: '',
         // 选中的区编码
         areaNumber: '',
+        // 时间戳
+        time: 0,
         provinceList: [],
         cityList: [],
         areaList: [],
@@ -102,20 +104,21 @@
 
       },
       touchMove (e, flag) {
+        let time = new Date().getTime() - this.time
+        this.time = new Date().getTime()
         if(e.touches.length == 1) {
-          let startY = 0
+          let startY = this.move.first.startY
           let index = ''
-          switch (flag) {
-            case 1: startY =this.move.first.startY; index = 'first'; break;
-            case 2: startY = this.move.second.startY; index = 'second';  break;
-            case 3: startY = this.move.third.startY; index = 'third';  break;
-          }
           let moveY = e.touches[0].clientY
-          e.preventDefault()
-          let range = Math.abs(moveY - startY)
-          if (moveY < startY) {
-            range = -range
+          let speed = 30
+          let range = ((startY - moveY) / time) * speed
+          switch (flag) {
+            case 1: this.move.first.startY = e.touches[0].clientY; index = 'first'; break;
+            case 2: this.move.second.startY = e.touches[0].clientY; index = 'second';  break;
+            case 3: this.move.third.startY = e.touches[0].clientY; index = 'third';  break;
           }
+          e.preventDefault()
+          range = -range
           this.move[index].top += range
           if (this.move[index].top > 0) {
             this.move[index].top = 0

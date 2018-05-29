@@ -184,7 +184,7 @@
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);
           }
-        })
+        })    
       },
       mounted(){
         //判断用户身份
@@ -371,12 +371,28 @@
                   arrays[i].morethenFlag = false;
                   arrays[i].moreBtnFlag =false;
                   arrays[i].btnSFlag = false;
-                  arrays[i].btnFFlag = false;
+                  arrays[i].btnFFlag = true;
                   arrays[i].btnS = "取消申请";
-                  arrays[i].btnF = "取消申请";
                   self.leftBtn = "取消申请";
                   self.rightBtn = "取消申请";
                   arrays[i].orderInfoStatus = arrays[i].orderInfo_status;
+                  var mArr = arrays[i].orderDetail;
+                  for (var j = 0; j < mArr.length; j++) {
+                    if (mArr.length>1) {
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
+                        arrays[i].btnF = "申请退款";
+                        break;
+                      } else {
+                        arrays[i].btnF = "取消申请";
+                      }
+                    } else if(mArr.length == 1){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
+                        arrays[i].btnF = "取消申请";
+                      } else {
+                        arrays[i].btnF = "申请退款";
+                      }
+                    }
+                  }
               }
               if(arrays[i].orderInfo_status == "待付款"){
                 arrays[i].morethenFlag = false;
@@ -405,13 +421,14 @@
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
                     if (mArr.length>1) {
-                      if(mArr[j].refund_status == null){
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
                         arrays[i].btnF = "申请退款";
+                        break;
                       } else {
                         arrays[i].btnF = "取消申请";
                       }
                     } else if(mArr.length == 1){
-                      if(mArr[j].refund_status != null){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
                         arrays[i].btnF = "取消申请";
                       } else {
                         arrays[i].btnF = "申请退款";
@@ -435,13 +452,14 @@
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
                     if (mArr.length>1) {
-                      if(mArr[j].refund_status == null){
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
                         arrays[i].btnF = "申请退款";
+                        break;
                       } else {
                         arrays[i].btnF = "取消申请";
                       }
                     } else if(mArr.length == 1){
-                      if(mArr[j].refund_status != null){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
                         arrays[i].btnF = "取消申请";
                       } else {
                         arrays[i].btnF = "申请退款";
@@ -503,13 +521,14 @@
                     self.linkMan = mArr[j].bs_linkman;
                     self.linkPhone = mArr[j].bs_phone;
                     if (mArr.length>1) {
-                      if(mArr[j].refund_status == null){
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
                         arrays[i].btnF = "申请退款";
+                        break;
                       } else {
                         arrays[i].btnF = "取消申请";
                       }
                     } else if(mArr.length == 1){
-                      if(mArr[j].refund_status != null){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
                         arrays[i].btnF = "取消申请";
                       } else {
                         arrays[i].btnF = "申请退款";
@@ -535,6 +554,7 @@
                   if (mArr.length>1) {
                     if(mArr[j].refund_status == null || mArr[j].refund_status == "审核取消" || mArr[j].refund_status == "退货退款已取消"){
                       arrays[i].btnF = "申请退货";
+                      break;
                     } else {
                       arrays[i].btnF = "取消申请";
                     }
