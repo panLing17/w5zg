@@ -175,7 +175,7 @@
 </script>
 
 <style scoped>
-
+  
   /*品牌名的页面--开始*/
   .styles .title{
     background-color: rgb(242,242,242);
@@ -204,13 +204,19 @@
     background-color: #fff !important;
     color: rgb(244,0,87) !important;
   }
+  .wrapPage{
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+    /*position: fixed;*/
+  }
   .page{
     width: 100%;
     height: 100vh;
     background: rgb(242,242,242);
-    padding-bottom: 2rem;
     overflow: hidden;
-    position: fixed;
+    /*position: fixed;*/
   }
   /*顶部搜索--开始*/
   .topLeft{
@@ -236,10 +242,10 @@
   /*搜索框样式--开始*/
   .searchInput{
     width: 6.5rem;
-    height: .9rem;
+    height: .7rem;
     background-color: rgb(238,238,238);
     border-radius: .9rem;
-    line-height: .9rem;
+    line-height: .7rem;
   }
   .searchInput img.leftImg{
     width: .45rem;
@@ -271,17 +277,18 @@
   /*中间内容部分左边--开始*/
   .content{
     width: 100%;
-    height: 100vh;
-    padding-bottom: 2rem;
+    /*height: 85vh;*/
     background-color: #fff;
-    /*position: absolute;*/
+    position: fixed;
+    top: 1.2rem;
+    bottom: 1.6rem;
   }
   .content .left{
     width: 21%;
-    height: 100vh;
+    height: 85vh;
     float: left;
     background-color: rgb(242,242,242);
-    overflow-y: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 3rem;
   }
@@ -300,13 +307,10 @@
   /*中间内容右边--开始*/
   .content .right{
     width: 79%;
-    height: 100vh;
+    height: 100%;
     background-color: #fff;
-    /*position: absolute;
-    top: 1.3rem;
-    right: 0;*/
     float: left;
-    overflow-y: auto;
+    overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 3rem;
   }

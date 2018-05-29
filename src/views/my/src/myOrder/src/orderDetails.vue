@@ -184,7 +184,7 @@
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);
           }
-        })
+        })    
       },
       mounted(){
         //判断用户身份
@@ -435,13 +435,13 @@
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
                     if (mArr.length>1) {
-                      if(mArr[j].refund_status == null){
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核取消" || mArr[j].refund_status == "退货退款已取消"){
                         arrays[i].btnF = "申请退款";
                       } else {
                         arrays[i].btnF = "取消申请";
                       }
                     } else if(mArr.length == 1){
-                      if(mArr[j].refund_status != null){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核取消" && mArr[j].refund_status != "退货退款已取消"){
                         arrays[i].btnF = "取消申请";
                       } else {
                         arrays[i].btnF = "申请退款";
@@ -503,13 +503,13 @@
                     self.linkMan = mArr[j].bs_linkman;
                     self.linkPhone = mArr[j].bs_phone;
                     if (mArr.length>1) {
-                      if(mArr[j].refund_status == null){
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核取消" || mArr[j].refund_status == "退货退款已取消"){
                         arrays[i].btnF = "申请退款";
                       } else {
                         arrays[i].btnF = "取消申请";
                       }
                     } else if(mArr.length == 1){
-                      if(mArr[j].refund_status != null){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核取消" && mArr[j].refund_status != "退货退款已取消"){
                         arrays[i].btnF = "取消申请";
                       } else {
                         arrays[i].btnF = "申请退款";
