@@ -240,10 +240,7 @@ const router = new Router ({
             {
               path: '/home/sports',
               name: '三级活动',
-              component: Home.sports,
-              meta: {
-                keepAlive: true
-              }
+              component: Home.sports
             }
           ]
         }, {

@@ -28,7 +28,7 @@
     },
     methods: {
       loadShare () {
-        this.$share({
+        this.$initShare({
           sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
           shareTitle: '万物直供注册送1000元现金券',
           shareDesc: '万物直供送礼啦，新注册用户即送1000元现金券'
