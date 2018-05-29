@@ -7,7 +7,7 @@
       a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.vungu.gonghui")
         img.img4(src="../../../assets/img/androidmarket@2x.png")
       img.img5(src="../../../assets/img/slogon2@2x.png")
-      img.img6(src="../../../assets/img/gzh.jpg")
+      img.img6(src="../../../assets/img/gzhred.png")
       .text 万物直供微信公众号
       img.img7(src="../../../assets/img/union@2x.png")
 </template>

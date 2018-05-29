@@ -25,6 +25,8 @@ import MyAccount from '../views/my/src/myAccount/index.js'
 // 头条
 import Headlines from '../views/home/src/headlines/index'
 import Common from '../views/common/index'
+//搜商圈
+import TradingArea from '../views/home/src/tradingArea/index'
 
 Vue.use(Router)
 const router = new Router ({
@@ -160,6 +162,14 @@ const router = new Router ({
       component: Main,
       redirect: '/home',
       children: [
+        {
+          path: '/searchTradingArea',
+          name: '搜商圈',
+          component: TradingArea.tradingArea,
+          meta: {
+            keepAlive: true
+          }
+        },
         {
           path: '/home',
           name: '首页',
@@ -724,7 +734,7 @@ router.beforeEach ((to, from, next) => {
     },10)
   }
   // 路由切换时隐藏页脚
-  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车') {
+  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车' || to.name === '搜商圈') {
     store.state.footerShow = true
   }else {
     store.state.footerShow = false

@@ -1,12 +1,13 @@
 <template lang="pug">
   .wrap
     img.img1(src="../../../assets/img/applogo@2x.png")
-    a.link(href="https://itunes.apple.com/cn/app/nan-jing-gong-hui/id1133445988?mt=8")
+    <!--a.link(href="https://itunes.apple.com/cn/app/nan-jing-gong-hui/id1133445988?mt=8")-->
+    a.link(@click="$message.success('敬请期待')")
       img.img3(src="../../../assets/img/appstore@2x.png")
     a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
       img.img4(src="../../../assets/img/androidmarket@2x.png")
     img.img2(src="../../../assets/img/pic@2x.png")
-    img.img5(src="../../../assets/img/gzh.jpg")
+    img.img5(src="../../../assets/img/gzhblue.png")
     .text 万物直供微信公众号
 </template>
 

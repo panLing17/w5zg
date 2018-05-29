@@ -58,10 +58,14 @@
         newList.forEach((now)=>{
           now.type = '0'
         })
+        let leftH = this.$refs.left.clientHeight
+        let rightH = this.$refs.right.clientHeight
         // 页数为1可能为下拉刷新，置空数据
         if (pageNum === 1) {
           this.listData.left = []
           this.listData.right = []
+          leftH = 0
+          rightH = 0
         }
         // 计数，onload全部完毕后删除节点(数值超过size删除)
         let num = 0
@@ -72,8 +76,7 @@
         box.style.overflow = 'hidden'
 
         this.$refs.left.appendChild(box)
-        let leftH = this.$refs.left.clientHeight
-        let rightH = this.$refs.right.clientHeight
+
         newList.forEach((now) => {
           let imgaDom = document.createElement('img')
           imgaDom.style.opacity = 0
