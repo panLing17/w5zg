@@ -49,7 +49,7 @@
         let _this = this
         let temp = this.$store.state.returnGoods.slice(0,this.$store.state.returnGoods.length-1)
         temp.forEach((item, index)=>{
-          if (item.refund_status == null) {
+          if (item.refund_status == null || item.refund_status == '退货退款已取消' || item.refund_status == '审核拒绝') {
             item.checked = false
             _this.goodsList.push(item)
           }
