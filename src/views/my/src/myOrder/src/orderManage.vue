@@ -112,12 +112,6 @@
         this.mescroll.hideTopBtn();
         this.mescroll.destroy();
       },
-      watch: {
-        '$route' (to, from) {
-          this.mescroll.destroy();
-          this.$mescrollInt("orderManageMescroll",this.upCallback);
-        }
-      },
       methods:{
         //当无订单时，将end去掉
         emptys(){
@@ -143,6 +137,7 @@
 
         //点击tab切换
         check(item,index){
+          this.mescroll.scrollTo(0,0);
           this.contentFlag = false;
           this.num = index;
           var lineDiv = document.getElementsByClassName("lineDiv")[0];
@@ -374,7 +369,7 @@
             params:{
               status: self.state,
               page: 1,
-              rows: 10
+              rows: 8
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function(response){

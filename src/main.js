@@ -24,10 +24,16 @@ import './api/index.js'
 import './api/apiType'
 //message插件
 import Message from 'vue-multiple-message'
+// 分享插件
+import share from './plugIn/share/index'
+
+
+
 Vue.prototype.$message = Message
 Vue.config.productionTip = false
 // axios加到原型链上
 Vue.prototype.$ajax = axios
+Vue.use(share)
 //全局方法
 Vue.prototype.$method=method
 // 取消全部警告与错误提示

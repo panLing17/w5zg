@@ -51,6 +51,7 @@
   import recommend from './recommend'
   import {mapState} from 'vuex'
   import store from '../../../vuex/store'
+  import shareImg from '../../../assets/img/applogo@2x.png'
 
   export default {
     name: 'home',
@@ -91,6 +92,8 @@
       ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket'])
     },
     activated () {
+      // 首页分享
+      this.loadShare()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -129,20 +132,27 @@
       this.getCtivity()
       // 获取分类
       this.getHotButton()
-      // 微信sdk
-      this.wxConfig()
       // 动画hack
       this.animateHack()
       //判断显示当前的城市
       this.judgeCity()
       //判断显示城市的字数
       this.judgeCityNum()
+      // 首页分享
+      this.loadShare()
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      loadShare () {
+        this.$initShare({
+          sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
+          shareTitle: '万物直供商城正品保障',
+          shareDesc: '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买'
+        })
+      },
       closeTicket() {
         this.$store.commit('setShowTicket', false)
         this.isLogin()
@@ -292,26 +302,6 @@
           noConfirm: () => {
             alert('取消')
           }
-        })
-      },
-      wxConfig() {
-        let _this = this
-        _this.$ajax({
-          method: 'get',
-          url: _this.$apiTransaction + 'thirdPay/sao',
-          params: {
-            url: window.location.href.split('#')[0]
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function (response) {
-          wx.config({
-            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-            appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
-            timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
-            nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
-            signature: response.data.data.signature,// 必填，签名，见附录1
-            jsApiList: ['scanQRCode', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-          })
         })
       },
       searchCode() {

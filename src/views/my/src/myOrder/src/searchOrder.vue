@@ -508,14 +508,14 @@
 /*搜索框样式--开始*/
 .searchInput{
   width: 6.5rem;
-  height: .9rem;
+  height: .7rem;
   background-color: rgb(238,238,238);
   border-radius: .9rem;
-  line-height: .9rem;
+  line-height: .7rem;
   position: relative;
 }
 .searchInput img{
-  width: .45rem;
+  width: .4rem;
   vertical-align: middle;
   margin-left: .3rem;
 }

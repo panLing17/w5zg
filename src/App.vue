@@ -142,7 +142,7 @@
   li {
     list-style: none;
   }
-
+  
   .clearBoth {
     clear: both;
   }

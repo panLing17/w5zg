@@ -238,7 +238,7 @@
     methods:{
       isShare () {
         if (this.shareFlag.banner && this.shareFlag.title) {
-          this.$share({
+          this.$initShare({
             sharePhoto: this.$method.imgUrlFilter(this.banner[0].gi_img_url),
             shareTitle: this.goodsData.gi_name,
             shareDesc: '我发现了个宝贝,跟专卖店比贼便宜',
