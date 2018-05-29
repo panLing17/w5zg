@@ -30,16 +30,17 @@
           li.filters(@click="leftScroll()") | 筛选
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
-      .contenter(v-show="goodsFlag")
-        .bottomList
-          ul.goodsList#box
-            li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
-              img(:src="item.gi_image_url | img-filter" @click.prevent="")
-              .wrapWords
-                .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
-                .price {{item.price | price-filter}}
-                  span 可省{{item.economize_price}}元
-                .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
+      transition(name="slide")
+        .contenter(v-show="goodsFlag")
+          .bottomList
+            ul.goodsList#box
+              li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
+                img(:src="item.gi_image_url | img-filter" @click.prevent="")
+                .wrapWords
+                  .text <span v-show="item.carryFlag">可自提</span> {{item.gi_name}}
+                  .price {{item.price | price-filter}}
+                    span 可省{{item.economize_price}}元
+                  .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
       .bottomPlaceholder
     transition(name="slide-fade")
       .mask(v-show="maskFlag")
@@ -114,6 +115,9 @@
           })
         }
       }
+    },
+    destroyed (){
+      
     },
     activated (){
       // console.log(this.flagNum)
@@ -400,6 +404,10 @@
           console.log(response.data.data.length)
           //self.recommendGoods = response.data.data;//成功回调
           if(response.data.data.length<=0){
+            self.brandId = ""; //品牌的id
+            self.minPrice = ""; //开始价格区间
+            self.maxPrice = ""; //结束价格区间
+            self.pickUps = ""; //自提不自提
             self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
           } else{
             self.goodsFlag = true;
@@ -556,9 +564,9 @@
   }
   .goodsList li{
     border-radius: 5px;
-    width: 49%;
+    width: 48.7%;
     /*height: 7rem;*/
-    margin-bottom: .2rem;
+    margin-bottom: .25rem;
     background-color: #fff;
   }
   .goodsList li img{
@@ -567,6 +575,7 @@
   }
   .goodsList li .wrapWords{
     width: 100%;
+    padding: 0 .2rem;
     /*height: 30%;*/
   }
   .text{
@@ -628,7 +637,8 @@
   }
   .toggle .wrapWords .text{
     width: 100%;
-    margin-top: .1rem;
+    /*margin-top: .1rem;*/
+    padding-top: .2rem;
     text-overflow: ellipsis;
     display: -webkit-box;
     overflow: hidden;
@@ -638,7 +648,8 @@
   }
   .toggle .wrapWords .price{
     width: 100%;
-    margin: .2rem 0;
+    /*margin: .2rem 0;*/
+    padding-top: .4rem;
     color: rgb(246,0,87);
     font-weight: 600;
     font-size: .4rem;

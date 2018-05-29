@@ -71,6 +71,11 @@
           this.brandNames();
           this.focusHide();
         },
+        destroyed (){
+          this.num1 = '';
+          this.num2 = '';
+          this.num3 = '';
+        },
         methods:{
           //手机软键盘弹出时触发
           focusHide(){
