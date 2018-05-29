@@ -6,9 +6,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-            span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
+          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
+            //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) {{item.price | price-filter}}
+          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -21,9 +22,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") {{item.price | price-filter}}
-            span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
+          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
+            //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) {{item.price | price-filter}}
+          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -128,10 +130,21 @@
       },
       // 前往活动
       goActivity (data) {
-        let {
+        switch (data.url_type) {
+          // 跳外链
+          case '143': window.location.href = data.url; break;
+          // 跳3级页面 361代表从1级跳3级
+          case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: data.id, title: data.title}}); break;
+          // 跳商品详情页 取relate_id
+          case '141': this.$router.push({ path: '/goodsDetailed', query: { id: data.relate_id }}); break;
+          // 跳2级页面
+          case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: data.id, title: data.title}}); break;
+        }
+
+        /*let {
           type: parentType,
           id: actId,
-          type_name: title
+          title: title
         } = data
         this.$router.push({
           path:'/home/sports?parentType',
@@ -140,7 +153,7 @@
             actId:actId,
             title:title
           }
-        })
+        })*/
       }
     }
   }
@@ -153,6 +166,7 @@
 
   .bottomList > .right {
     float: right;
+    min-height: 1px; /*保證左部是最短的，初次加載為左邊開始*/
   }
 
   .goodsList {
@@ -173,8 +187,9 @@
     position: relative;
   }
 
-  .goodsList li img {
+  .goodsType>img {
     width: 100%;
+    height: 4.8rem;
     /*position: absolute;*/
     /*top: 0;*/
     /*left: 0;*/
@@ -195,28 +210,34 @@
 
   .text span {
     font-size: .3rem;
-    padding: 1px .2rem 0 .2rem;
-    background-color: rgb(246, 0, 87);
-    color: white;
-    border-radius: .2rem;
+    padding: 0 .1rem 0 .1rem;
+    background-color: rgb(255, 232, 240);
+    border: solid 1px #f70057;
+    color: #f70057;
+    border-radius: 4px;
     margin-right: .1rem;
   }
 
   .price {
-    margin: .2rem .1rem;
+    margin: .2rem .1rem 0 .1rem;
     color: rgb(246, 0, 87);
-    font-weight: 600;
-    font-size: .4rem;
+    font-size: .5rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
   }
 
   .price span {
     font-weight: 500;
-    font-size: .3rem;
+    font-size: .25rem !important;
+    border: solid 1px rgb(246, 0, 87);
+    padding: 0 .15rem;
+    border-radius: .5rem;
   }
-
+  .cabinetPrice {
+    margin-bottom: .2rem;
+    padding: 0 .2rem;
+    color: rgb(119,119,119);
+  }
   .bottom {
     margin: .1rem;
     display: flex;
@@ -225,7 +246,7 @@
   }
   /* 广告图布局 */
   .advertType {
-    height: 4rem;
+    height: 2.4rem;
     background-color: rgb(242, 242, 242);
   }
   .advertType> img{
@@ -234,9 +255,9 @@
   }
   /* 推荐标签布局 */
   .tagType {
-    height: 4rem;
+    height: 3.4rem;
     background-color:  rgb(242, 242, 242);
-    padding: .2rem;
+    padding: .5rem .25rem;
   }
   .tagType>li{
     padding: .1rem .2rem;

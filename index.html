@@ -7,6 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
     <meta name="description" content="万物直供商城" />
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- uc全屏 -->
+    <meta name="full-screen" content="yes">
+    <meta name="browsermode" content="application">
+    <!-- qq全屏 -->
+    <meta name="x5-fullscreen" content="true">
+    <meta name="x5-page-mode" content="app">
     <link rel="stylesheet" type="text/css" href="static/mescroll/mescroll.min.css" />
     <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" />
     <link rel="stylesheet" href="static/mescroll/mescroll.min.css">
@@ -25,6 +31,20 @@
     <!-- 七鱼云客服 -->
     <script src="https://qiyukf.com/script/6654954e4d94953d8596b1c500b54b78.js"></script>
     <script>
+      /**/
+      function launchFullScreen(element) {
+        if(element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if(element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if(element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen();
+        } else if(element.msRequestFullscreen) {
+          element.msRequestFullscreen();
+        }
+      }
+      launchFullScreen(document.documentElement);
+      /**/
       document.addEventListener('plusready', function() {
         var webview = plus.webview.currentWebview();
         plus.key.addEventListener('backbutton', function() {

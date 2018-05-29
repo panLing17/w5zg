@@ -16,7 +16,7 @@
               img(:src="routerPath=='/page'?'static/img/classification4@3x.png':'static/img/classification3@3x.png'")
             p(:class="{checked:routerPath=='/page'}") 分类
         li
-          router-link(to='/shoppingCart')
+          router-link(:to="$route.matched[1].path !== '/shoppingCart' ? '/shoppingCart' : ''")
             span.count(v-if="$store.state.shoppingCount>0") {{$store.state.shoppingCount}}
             p
               img(:src="routerPath=='/shoppingCart'?'static/img/shoppingcart4@3x.png':'static/img/shoppingcart3@3x.png'")
@@ -55,56 +55,60 @@
     },
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
-      let count = 0
-      let getAdvert = function () {
-        let self = bus
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'acActivity/acActivityList',
-          params: {
-            type: '333'
-          },
-        }).then(function (response) {
-          let data = {
-            type: 'advert',
-            data: response.data.data
-          }
-          count+=1
-          store.commit('getRecommendAdvert', data)
-          if (count>=2) {
-            next()
-          }
-        })
-      }
-      let getTags = function () {
-        let self = bus
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'acActivity/acActivityList',
-          params: {
-            type: '334'
-          },
-        }).then(function (response) {
-          let oldData = []
-          response.data.data.forEach((now) => {
-            oldData.push({
-              type: '334',
-              data: now
-            })
+      if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
+        next()
+      } else {
+        let count = 0
+        let getAdvert = function () {
+          let self = bus
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'acActivity/acActivityList',
+            params: {
+              type: '333'
+            },
+          }).then(function (response) {
+            let data = {
+              type: 'advert',
+              data: response.data.data
+            }
+            count+=1
+            store.commit('getRecommendAdvert', data)
+            if (count>=2) {
+              next()
+            }
           })
-          let data = {
-            type: 'tags',
-            data: oldData
-          }
-          count+=1
-          store.commit('getRecommendAdvert', data)
-          if (count>=2) {
-            next()
-          }
-        })
+        }
+        let getTags = function () {
+          let self = bus
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'acActivity/acActivityList',
+            params: {
+              type: '334'
+            },
+          }).then(function (response) {
+            let oldData = []
+            response.data.data.forEach((now) => {
+              oldData.push({
+                type: '334',
+                data: now
+              })
+            })
+            let data = {
+              type: 'tags',
+              data: oldData
+            }
+            count+=1
+            store.commit('getRecommendAdvert', data)
+            if (count>=2) {
+              next()
+            }
+          })
+        }
+        getAdvert()
+        getTags()
       }
-      getAdvert()
-      getTags()
       /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
         next()
       })*/
@@ -112,7 +116,11 @@
     mounted() {
       this.$data.transitionName = ''
     },
-    methods: {},
+    methods: {
+      alt(){
+        alert(1)
+      }
+    },
     created() {
 
     }
