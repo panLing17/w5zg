@@ -6,10 +6,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
-          .price(v-else) {{item.price | price-filter}}
-          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
+          .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
+          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -22,10 +22,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
-          .price(v-else) {{item.price | price-filter}}
-          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
+          .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
+          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -246,7 +246,8 @@
   }
   /* 广告图布局 */
   .advertType {
-    height: 2.4rem;
+    height: 4.8rem;
+
     background-color: rgb(242, 242, 242);
   }
   .advertType> img{
