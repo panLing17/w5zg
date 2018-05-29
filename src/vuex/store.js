@@ -60,7 +60,7 @@ const state = {
   nowGoodsData: {},
   // 推荐商品的额外插入广告，获取方法在main.vue的路由拦截
   recommendAdvert:{
-    advert: [ ],
+    advert: [],
     tags: []
   }
 }

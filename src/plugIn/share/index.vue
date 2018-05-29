@@ -45,7 +45,7 @@
         wx.onMenuShareQQ({
           title: self.shareTitle, // 分享标题
           desc: self.shareDesc, // 分享描述
-          link: window.location.href.replace(/#/, "?#"), // 分享链接
+          link: window.location.href.replace(/\?*#/, "?#"), // 分享链接
           imgUrl: self.sharePhoto , // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
@@ -81,7 +81,7 @@
 
         wx.onMenuShareTimeline({
           title: self.shareTitle, // 分享标题
-          link: window.location.href, // 分享链接，该链接域名必须与当前企业的可信域名一致
+          link: window.location.href.replace(/\?*#/, "?#"), // 分享链接，该链接域名必须与当前企业的可信域名一致
           imgUrl: self.sharePhoto, // 分享图标
           success: function () {
             // 用户确认分享后执行的回调函数
