@@ -230,6 +230,7 @@
                   params:{}
                 }).then(function(res){
                   self.request();
+                  self.$message.success('取消成功！');
                 })
               },
               noConfirm: () => {
@@ -252,6 +253,7 @@
                   }
                 }).then(function(res){
                   self.request();
+                  self.$message.success('删除成功！');
                 })
               },
               noConfirm: () => {
