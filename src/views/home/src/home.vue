@@ -155,7 +155,6 @@
       },
       closeTicket() {
         this.$store.commit('setShowTicket', false)
-        this.isLogin()
       },
       //判断显示城市的字数
       judgeCityNum() {
