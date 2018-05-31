@@ -46,8 +46,8 @@
     components:{recommend},
     data () {
       return {
-        searchFlag:true, //历史搜索,搜索发现显隐
-        resultFlag:false, //搜索结果的显隐
+        searchFlag:'', //历史搜索,搜索发现显隐
+        resultFlag:'', //搜索结果的显隐
         recommendGoods:[], //推荐的数组
         selected1:null,
         selected2:null,
