@@ -303,10 +303,7 @@ const router = new Router ({
             {
               path: '/',
               name: '我的',
-              component: My.my,
-              meta: {
-                keepAlive: true
-              }
+              component: My.my
             },
             {
               path: '/my/settings',
@@ -399,12 +396,18 @@ const router = new Router ({
             {
               path: '/my/feedback',
               name: '意见反馈',
-              component: My.feedback
+              component: My.feedback,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/aboutUs',
               name: '关于我们',
-              component: My.aboutUs
+              component: My.aboutUs,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/my/orderManage',

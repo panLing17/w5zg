@@ -139,7 +139,7 @@
     background: white;
     width: 100%;
     height: 1.6rem;
-    border-top: solid 1px #eee;
+    border-top: solid 1px #d7d7d7;
     position: fixed;
     z-index: 99;
     bottom: 0;
@@ -178,7 +178,7 @@
 
   .bottomNav > li a {
     text-align: center;
-    color: #999;
+    color: #777;
   }
 
   /*选中颜色*/

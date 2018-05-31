@@ -13,35 +13,41 @@
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
-        .goodsName <span class="tag" @click="tips(0)">专柜提货</span><span class="tag" @click="tips(1)">专柜比价</span><span class="tag" @click="tips(2)">专柜体验</span> {{goodsData.gi_name}}
+        .tags <span class="tag" @click="tips(0)">专柜提货(体验)</span><span class="tag" @click="tips(1)">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
+        .goodsName  {{goodsData.gi_name}}
         <!--a(href="tel:4008-947-999")-->
-          .stateChuiNiu(@click="saveMoneyTipsFlag = true")
+          //.stateChuiNiu(@click="saveMoneyTipsFlag = true")
             span 先比价,够省钱,再下单!未省钱,白送,赔付<img src="../../../assets/img/pinkPhone.png"/>4008-947-999
             img(src="../../../assets/img/pinkNext.png")
         .price(v-if="userData.member_type === '092'")
           span 直供价
           p {{goodsData.direct_supply_interval | price-filter}}
-          .salePrice 统一零售价：{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}
+          .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
-          span 专柜价
+          span 实付价
           p {{goodsData.counter_interval | price-filter}}
-          .salePrice 统一零售价：{{goodsData.retail_interval}}
-        ul.saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag = true")
+          .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
+      ul.saveMoney(v-if="userData.member_type !== '092'")
+        .saveMoneyTop
           li.red
-            .label 现金券
-            .text 省{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}元
+            .label 专柜折后价
+            .text <span>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
-            .label 直 购
-            .text 省{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}元
+            .label 专柜价购买
+            .text 返现<span>{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}</span>元
+        .saveMoneyBottom
           li.gray
-            .label 通用券
-            .text 省{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}元
+            .label 现金券购买
+            .text 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
+          li.gray
+            .label 通用券购买
+            .text 返现<span>{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}</span>元
       .numberBox(v-if="false")
         ul.number
           li 邮费{{goodsData.goi_freight}}
           li 库存{{goodsData.storage_num}}
           li 已售{{goodsData.gi_salenum}}
-      .cardBox(style="position:relative", v-if="userData !== '' && userData.member_type !== '092'")
+      //.cardBox(style="position:relative", v-if="userData !== '' && userData.member_type !== '092'")
         ul.card
           li(@click="$router.push('/my/accountCardC')")
             .cartType
@@ -62,6 +68,10 @@
             .leftRadio
             .righttRadio
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
+      .myPrice(@click="cardTipsFlag = true")
+        .left 余额
+          span 现金券 / 通用券 / 使用说明
+        img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left 规格
           span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
@@ -69,7 +79,7 @@
       dis-type(@selectType="selectDis", style="margin-top:.2rem")
       .distribution(@click="selectCity = true")
         .top
-          .left 配送地址
+          .left 地址
           .right
             span
               img(src="../../../assets/img/citySearch.png" style="height:.4rem;width:.3rem")
@@ -80,7 +90,7 @@
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
-      .numberBox
+      // .numberBox
         ul.number
           //li 邮费 包邮
           li 邮费 {{freight}}元
@@ -119,6 +129,8 @@
   import recommend from './recommend'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
+  import store from '../../../vuex/store.js'
+  import {bus} from '../../../bus'
   export default {
     name: "goods-detailed",
     data () {
@@ -185,6 +197,66 @@
       ...mapState(['location', 'userData','skuId'])
     },
     components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips, recommend},
+    // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
+    beforeRouteEnter(to, from, next) {
+      if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
+        next()
+      } else {
+        let count = 0
+        let getAdvert = function () {
+          let self = bus
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'acActivity/acActivityList',
+            params: {
+              type: '333'
+            },
+          }).then(function (response) {
+            let data = {
+              type: 'advert',
+              data: response.data.data
+            }
+            count+=1
+            store.commit('getRecommendAdvert', data)
+            if (count>=2) {
+              next()
+            }
+          })
+        }
+        let getTags = function () {
+          let self = bus
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'acActivity/acActivityList',
+            params: {
+              type: '334'
+            },
+          }).then(function (response) {
+            let oldData = []
+            response.data.data.forEach((now) => {
+              oldData.push({
+                type: '334',
+                data: now
+              })
+            })
+            let data = {
+              type: 'tags',
+              data: oldData
+            }
+            count+=1
+            store.commit('getRecommendAdvert', data)
+            if (count>=2) {
+              next()
+            }
+          })
+        }
+        getAdvert()
+        getTags()
+      }
+      /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
+        next()
+      })*/
+    },
     mounted () {
       this.getGoodsDetailed()
       this.getGoodsDesc()
@@ -711,7 +783,7 @@
     position: relative;
   }
   .goodsInfo{
-    height: 4rem;
+    height: 3rem;
     padding: .2rem;
     background: white;
     display: flex;
@@ -736,25 +808,42 @@
   .stateChuiNiu img{
     height: .4rem ;
   }
-  .goodsName .tag{
-    margin-right: .1rem;
-    padding: 0 .1rem;
+  .tags {
+    white-space: nowrap;
+    padding-left: .2rem;
+  }
+  .tags>.tag{
+    display: inline-block;
+    padding: .05rem .2rem;
     font-size: .3rem;
     font-weight: 500;
-    color: white;
-    background: rgb(246,0,87);
+    border-radius: 1rem;
+    color: rgb(230,13,92);
+    background: rgb(254,233,239);
+    transform: scale(.8,.8);
+    margin-left: -.5rem;
+  }
+  .tags>.tag:last-child {
+    border: none;
+    background: none;
+    text-decoration: underline;
   }
   .price {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
-    font-size: .6rem;
-    color: rgb(245,0,87);
-  }
-  .price span{
-    font-size: .3rem;
     font-weight: 600;
-    color: #000;
+    font-size: .6rem;
+    color: rgb(255,0,88);
+  }
+  .price>span{
+    font-size: .3rem;
+    padding: 0 .1rem;
+    font-weight: 500;
+    color: white;
+    background-color: black;
+    position: relative;
+    bottom: .1rem;
   }
   .price p{
     margin-right: .5rem;
@@ -764,42 +853,68 @@
     font-size: .3rem;
     color: #999;
   }
+  .price>.salePrice>span{
+    text-decoration: line-through;
+  }
   /* 省钱部分 */
   .saveMoney {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .saveMoney>.saveMoneyTop{
+    padding-left: .2rem;
+    width: 100%;
+    display: flex;
+    margin-top: .2rem;
+    margin-bottom: .2rem;
+  }
+  .saveMoney> .saveMoneyBottom{
+    padding-left: .2rem;
+    width: 100%;
+    display: flex;
   }
   .saveMoney li{
     display: flex;
+    width: 4rem;
+    align-items: center;
   }
   .saveMoney li .label{
-    width: 1.2rem;
     text-align: center;
+    border: solid 1px rgb(247,0,87);
+    color: rgb(247,0,87);
+    padding: 0 .1rem;
+    border-radius: 3px;
+    background-color: rgb(255,232,240);
   }
   .saveMoney li .text{
     width: 1.7rem;
     text-align: center;
   }
   .red{
-    border: solid 1px  rgb(245,0,87);
+
   }
   .red .label{
-    color: rgb(245,0,87);
+    color: black !important;
+    border: none !important;
+    background: none !important;
   }
   .red .text{
-    color: white;
-    background-color: rgb(245,0,87);
+    color: black;
+    font-weight: 600;
+    text-align: left !important;
   }
   .gray{
-    border: solid 1px  #999;
+
   }
   .gray .label{
     color: #999;
   }
   .gray .text{
-    color: white;
-    background-color: #999
+
+  }
+  .gray .text>span{
+    color: rgb(247,0,87);
   }
   /* 省钱部分end */
   .numberBox {
@@ -885,9 +1000,31 @@
     border-radius: 1rem;
   }
   /* 卡片结束 */
+  /* 余额 */
+  .myPrice {
+    margin-top: .2rem;
+    height: 1rem;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 .2rem;
+  }
+  .myPrice .left{
+    font-size: .35rem;
+    color: #aaa;
+  }
+  .myPrice .left span{
+    margin-left: .2rem;
+    font-weight: 500;
+    color: black;
+  }
+  .myPrice .right{
+    width: .6rem;
+  }
   .size {
     margin-top: .2rem;
-    height: 1.5rem;
+    height: 1rem;
     background: white;
     display: flex;
     justify-content: space-between;
@@ -896,7 +1033,7 @@
   }
   .size .left{
     font-size: .35rem;
-    font-weight: 600;
+    color: #aaa;
   }
   .size .left span{
     margin-left: .2rem;
@@ -907,7 +1044,7 @@
     width: .6rem;
   }
   .distribution{
-    margin-top: .2rem;
+    border-top: solid 1px #eee;
     height: 1.7rem;
     background: white;
   }
@@ -920,7 +1057,7 @@
     height: 100%;
     width: 2rem;
     font-size: .35rem;
-    font-weight: 600;
+    color: #aaa;
     display: flex;
     align-items: center;
   }
