@@ -190,6 +190,11 @@ const router = new Router ({
       ]
     },
     {
+      path: '/scavengingPayment',
+      name: '扫码支付',
+      component: Common.paySao
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
