@@ -385,10 +385,7 @@
           self.loginFlag = true
           if (response && response.data.optSuc) {
             localStorage.setItem('token',response.data.data)
-            self.$message.success('登录成功，3s后跳往我的页面')
-            setTimeout(()=>{
-              self.$router.push('/my')
-            },3000)
+            self.$router.push('/my')
           }
         })
       },
@@ -426,9 +423,11 @@
               W5MALLTOKEN: this.W5MALLTOKEN
             }
           }).then(function (response) {
+            self.code = ''
+            self.codeItem = []
             if (response && response.data.optSuc) {
               self.$message.success($code('2612'))
-              self.popShow = false
+              self.popShow.code = false
               self.codeBtn.bg = '#999'
               let count = 60;
               self.codeBtn.text = count+'s'
@@ -443,8 +442,6 @@
                 }
               },1000)
             }else{
-              self.code = ''
-              self.codeItem = []
               self.getImgCode()
               self.codeFlag = true
             }

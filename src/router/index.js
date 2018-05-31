@@ -157,19 +157,44 @@ const router = new Router ({
       }
     },
     {
+      path: '/searchTradingArea',
+      name: '搜商圈',
+      component: TradingArea.tradingArea,
+      meta: {
+        keepAlive: true
+      },
+      children: [
+        {
+          path: '',
+          name: '搜商圈',
+          component: TradingArea.tradingAreaBottom,
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
+    },
+    {
+      path: '/market',
+      name: '商场详情',
+      component: TradingArea.market,
+      meta: {
+        keepAlive: true
+      },
+      children: [
+        {
+          path: '',
+          name: '商场详情',
+          component: TradingArea.marketBottom
+        }
+      ]
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
       redirect: '/home',
       children: [
-        {
-          path: '/searchTradingArea',
-          name: '搜商圈',
-          component: TradingArea.tradingArea,
-          meta: {
-            keepAlive: true
-          }
-        },
         {
           path: '/home',
           name: '首页',
@@ -734,7 +759,7 @@ router.beforeEach ((to, from, next) => {
     },10)
   }
   // 路由切换时隐藏页脚
-  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车' || to.name === '搜商圈') {
+  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车') {
     store.state.footerShow = true
   }else {
     store.state.footerShow = false
