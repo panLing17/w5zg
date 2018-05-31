@@ -26,6 +26,8 @@ import './api/apiType'
 import Message from 'vue-multiple-message'
 // 分享插件
 import share from './plugIn/share/index'
+import scroll from './plugIn/scroll/index'
+Vue.use(scroll)
 
 
 

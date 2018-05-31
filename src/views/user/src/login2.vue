@@ -423,6 +423,8 @@
               W5MALLTOKEN: this.W5MALLTOKEN
             }
           }).then(function (response) {
+            self.code = ''
+            self.codeItem = []
             if (response && response.data.optSuc) {
               self.$message.success($code('2612'))
               self.popShow.code = false
@@ -440,8 +442,6 @@
                 }
               },1000)
             }else{
-              self.code = ''
-              self.codeItem = []
               self.getImgCode()
               self.codeFlag = true
             }

@@ -11,12 +11,13 @@
           div(v-for="tag in banner", style="width:100%" )
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
         .recommendWrapper(v-if="!isEmpty")
-          w-recommend(ref="recommend")
+          recommend(ref="recommend")
         .noData(v-if="isEmpty") 暂无推荐商品
 </template>
 
 <script>
   import {mapState} from 'vuex'
+  import recommend from './recommend'
   // 引入bus
 
     export default {
@@ -29,6 +30,9 @@
           parentType: null,
           isEmpty: false
         }
+      },
+      components: {
+        recommend
       },
       filters: {
         round (value) {

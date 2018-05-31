@@ -11,22 +11,21 @@
           img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
-    .page(v-loading="loadingFlag<2")
-      .content
-        .left
+    .page
+      .content(v-loading="loadingFlag<2")
+        .left(ref='lefters').mescroll#pagesLMescroll
           ul
-            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-        transition(name="slide-fade")    
-          .right(:class="{styles:flag}" v-if="rightShowFlag")
-            ul(v-for="(item,index) in productList").tabs
-              li.tabsList
-                .title
-                  span.point(v-show="wordsShow")
-                  span.letter {{item.gc_name}}
-                ul.listOfGoods
-                  li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
-                    img(:src="items.gc_icon | img-filter")
-                    .words(v-show="wordsShow") {{items.gc_name}}
+            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}       
+        .right(:class="{styles:flag}" ref='righters').mescroll#pagesRMescroll
+          ul.tabs(v-for="(item,index) in productList" v-if="rightShowFlag")
+            li.tabsList
+              .title
+                span.point(v-show="wordsShow")
+                span.letter {{item.gc_name}}
+              ul.listOfGoods
+                li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+                  img(:src="items.gc_icon | img-filter")
+                  .words(v-show="wordsShow") {{items.gc_name}}
 </template>
 
 <script>
@@ -49,6 +48,10 @@
     activated () {
       
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
+    },
     mounted(){
       //判断显示城市的字数
       this.judgeCityNum();
@@ -56,8 +59,17 @@
       this.request();
       //判断显示当前城市
       this.judgeCity();
+      
+
+      this.$mescrollInt('pagesLMescroll', this.upCallbackL)
+      this.$mescrollInt('pagesRMescroll', this.upCallbackR)
+      this.hideStyles();
     },
     methods:{
+      hideStyles(){
+        this.$refs.lefters.children[2].style.display = 'none';
+        this.$refs.righters.children[1].style.display = 'none';
+      },
       //判断显示城市的字数
       judgeCityNum(){
         var citys = document.getElementsByClassName("city")[0];
@@ -169,13 +181,54 @@
           self.one(res.data.data[0].gc_id);
           self.loadingFlag += 1
         });
+      },
+
+      upCallbackR: function (page) {
+        let self = this
+        this.getListDataFromNetR(page.num, page.size, function (curPageData) {
+          //if (page.num === 1) self.productList = []
+          //self.productList = self.productList.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
+        })
+      },
+      upCallbackL: function (page) {
+        let self = this
+        this.getListDataFromNetL(page.num, page.size, function (curPageData) {
+          //if (page.num === 1) self.pageName = []
+          //self.pageName = self.pageName.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
+        })
+      },
+      getListDataFromNetR (pageNum, pageSize, successCallback, errorCallback) {
+        successCallback && successCallback({}) // 成功回调
+      },
+      getListDataFromNetL (pageNum, pageSize, successCallback, errorCallback) {
+        successCallback && successCallback({}) // 成功回调
       }
     }
   }
 </script>
 
 <style scoped>
-  
+  /*#pagesRMescroll,
+  #pagesLMescroll{
+    position: fixed;
+    top: 1.28rem;
+    bottom: 1.6rem;
+    padding-bottom: 3rem;
+  }
+  #pagesLMescroll{
+    left: 0;
+  }
+  #pagesRMescroll{
+    right: 0;
+  }*/
   /*品牌名的页面--开始*/
   .styles .title{
     background-color: rgb(242,242,242);
@@ -205,17 +258,21 @@
     color: rgb(244,0,87) !important;
   }
   .wrapPage{
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-    -webkit-overflow-scrolling: touch;
-    /*position: fixed;*/
+    /*width: 100%;
+    height: 100vh;*/
+    /*overflow: hidden;*/
+    /*-webkit-overflow-scrolling: touch;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;*/
   }
   .page{
-    width: 100%;
+    /*width: 100%;
     height: 100vh;
     background: rgb(242,242,242);
-    overflow: hidden;
+    overflow: hidden;*/
     /*position: fixed;*/
   }
   /*顶部搜索--开始*/
@@ -275,17 +332,23 @@
   }
   /*顶部搜索--结束*/
   /*中间内容部分左边--开始*/
+  .content:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
   .content{
     width: 100%;
-    /*height: 85vh;*/
+    height: 100vh;
     background-color: #fff;
     position: fixed;
-    top: 1.2rem;
-    bottom: 1.6rem;
+    top: 0;
+    bottom: 0;
+    padding: 1.28rem 0 1.6rem;
   }
   .content .left{
     width: 21%;
-    height: 85vh;
+    height: 100%;
     float: left;
     background-color: rgb(242,242,242);
     overflow-y: scroll;

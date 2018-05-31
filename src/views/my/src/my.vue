@@ -145,7 +145,7 @@
     beforeDestroy () {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
-      window.removeEventListener('scroll', this.judgeScroll);
+      //window.removeEventListener('scroll', this.judgeScroll);
     },
     methods: {
       //改变下拉刷新的样式
