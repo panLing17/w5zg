@@ -1,8 +1,7 @@
 <template lang="pug">
   .wrap
     img.img1(src="../../../assets/img/applogo@2x.png")
-    <!--a.link(href="https://itunes.apple.com/cn/app/nan-jing-gong-hui/id1133445988?mt=8")-->
-    a.link(@click="$message.success('敬请期待')")
+    a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8")
       img.img3(src="../../../assets/img/appstore@2x.png")
     a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
       img.img4(src="../../../assets/img/androidmarket@2x.png")
