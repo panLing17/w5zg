@@ -124,7 +124,6 @@
             advertIndex += 1
           }
           fun(this.recommendAdvert.advert[advertIndex])
-          console.log(this.recommendAdvert.advert[advertIndex])
         }
       },
       // 搜索关键字

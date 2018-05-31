@@ -310,7 +310,12 @@
         }).then(function (response) {
           if (response.data.data.length>0) {
             self.locationList = response.data.data
-            self.$store.commit('giveGoodsAddressChange',response.data.data[0])
+            self.locationList.forEach((now)=>{
+              if(now.ra_default === '011'){
+                self.$store.commit('giveGoodsAddressChange',now)
+              }
+            })
+
           }
         })
       },

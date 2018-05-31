@@ -106,6 +106,8 @@
       this.getOrderCount()
     },
     activated () {
+      this.getUserData()
+      this.getFootmarkNum()
       this.getOrderCount()
       this.getNetcardsCount()
       this.position.forEach((now) => {
