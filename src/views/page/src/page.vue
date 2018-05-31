@@ -13,11 +13,11 @@
         img(src="../../../assets/img/msg_0.png" v-show="false")
     .page
       .content(v-loading="loadingFlag<2")
-        .left.mescroll#pagesLMescroll
+        .left(ref='lefters').mescroll#pagesLMescroll
           ul
-            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}    
-        .right(:class="{styles:flag}" v-if="rightShowFlag").mescroll#pagesRMescroll
-          ul(v-for="(item,index) in productList").tabs
+            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}       
+        .right(:class="{styles:flag}" ref='righters').mescroll#pagesRMescroll
+          ul.tabs(v-for="(item,index) in productList" v-if="rightShowFlag")
             li.tabsList
               .title
                 span.point(v-show="wordsShow")
@@ -60,10 +60,16 @@
       //判断显示当前城市
       this.judgeCity();
       
+
       this.$mescrollInt('pagesLMescroll', this.upCallbackL)
       this.$mescrollInt('pagesRMescroll', this.upCallbackR)
+      this.hideStyles();
     },
     methods:{
+      hideStyles(){
+        this.$refs.lefters.children[2].style.display = 'none';
+        this.$refs.righters.children[1].style.display = 'none';
+      },
       //判断显示城市的字数
       judgeCityNum(){
         var citys = document.getElementsByClassName("city")[0];
@@ -179,9 +185,9 @@
 
       upCallbackR: function (page) {
         let self = this
-        this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          if (page.num === 1) self.productList = []
-          self.productList = self.productList.concat(curPageData)
+        this.getListDataFromNetR(page.num, page.size, function (curPageData) {
+          //if (page.num === 1) self.productList = []
+          //self.productList = self.productList.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function () {
           // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -190,19 +196,19 @@
       },
       upCallbackL: function (page) {
         let self = this
-        this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          if (page.num === 1) self.pageName = []
-          self.pageName = self.pageName.concat(curPageData)
+        this.getListDataFromNetL(page.num, page.size, function (curPageData) {
+          //if (page.num === 1) self.pageName = []
+          //self.pageName = self.pageName.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function () {
           // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr()
         })
       },
-      getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
+      getListDataFromNetR (pageNum, pageSize, successCallback, errorCallback) {
         successCallback && successCallback({}) // 成功回调
       },
-      getListDataFromNet2 (pageNum, pageSize, successCallback, errorCallback) {
+      getListDataFromNetL (pageNum, pageSize, successCallback, errorCallback) {
         successCallback && successCallback({}) // 成功回调
       }
     }
@@ -210,7 +216,19 @@
 </script>
 
 <style scoped>
-  
+  /*#pagesRMescroll,
+  #pagesLMescroll{
+    position: fixed;
+    top: 1.28rem;
+    bottom: 1.6rem;
+    padding-bottom: 3rem;
+  }
+  #pagesLMescroll{
+    left: 0;
+  }
+  #pagesRMescroll{
+    right: 0;
+  }*/
   /*品牌名的页面--开始*/
   .styles .title{
     background-color: rgb(242,242,242);
@@ -314,6 +332,11 @@
   }
   /*顶部搜索--结束*/
   /*中间内容部分左边--开始*/
+  .content:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
   .content{
     width: 100%;
     height: 100vh;
@@ -329,7 +352,7 @@
     float: left;
     background-color: rgb(242,242,242);
     overflow-y: scroll;
-    /*-webkit-overflow-scrolling: touch;*/
+    -webkit-overflow-scrolling: touch;
     padding-bottom: 3rem;
   }
   .content .left ul li{
@@ -351,7 +374,7 @@
     background-color: #fff;
     float: left;
     overflow-y: scroll;
-    /*-webkit-overflow-scrolling: touch;*/
+    -webkit-overflow-scrolling: touch;
     padding-bottom: 3rem;
   }
   .right ul.tabs{
