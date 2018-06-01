@@ -42,6 +42,8 @@
     props: ['background'],
     data() {
       return {
+        tagsIndex: -1,
+        advertIndex: -1,
         listData: {
           left: [],
           right: []
@@ -101,8 +103,8 @@
         })
       },
       advertInsert (pageNum, leftH, rightH) {
-        let tagsIndex = -1 // 标签被插了几次(上次被插索引)
-        let advertIndex = -1 // 广告图被插了几次(上次被插索引)
+        let tagsIndex = this.tagsIndex // 标签被插了几次(上次被插索引)
+        let advertIndex = this.advertIndex // 广告图被插了几次(上次被插索引)
         let fun = (data) => {
           if (leftH > rightH) {
             this.listData.right.push(data)
@@ -111,19 +113,24 @@
           }
         }
         if (pageNum%2===0) {
-          if (tagsIndex >= this.recommendAdvert.tags.length) {
-            tagsIndex = -1
+          if (this.tagsIndex+1 >= this.recommendAdvert.tags.length) {
+            this.tagsIndex = 0
           } else {
-            tagsIndex += 1
+            this.tagsIndex += 1
           }
-          fun(this.recommendAdvert.tags[tagsIndex])
+          if (this.recommendAdvert.tags.length>0) {
+            fun(this.recommendAdvert.tags[this.tagsIndex])
+          }
+
         } else {  // 若为奇数
-          if (advertIndex >= this.recommendAdvert.advert.length) {
-            advertIndex = -1
+          if (this.advertIndex+1 >= this.recommendAdvert.advert.length) {
+            this.advertIndex = 0
           } else {
-            advertIndex += 1
+            this.advertIndex += 1
           }
-          fun(this.recommendAdvert.advert[advertIndex])
+          if (this.recommendAdvert.advert.length>0) {
+            fun(this.recommendAdvert.advert[this.advertIndex])
+          }
         }
       },
       // 搜索关键字
