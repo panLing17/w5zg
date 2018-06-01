@@ -44,27 +44,7 @@
         areaNumber: '',
         provinceList: [],
         cityList: [],
-        areaList: [],
-        move: {
-          first: {
-            top: 0,
-            startY: 0,
-            moveY: 0,
-            topMin: 0
-          },
-          second: {
-            top: 0,
-            startY: 0,
-            moveY: 0,
-            topMin: 0
-          },
-          third: {
-            top: 0,
-            startY: 0,
-            moveY: 0,
-            topMin: 0
-          }
-        }
+        areaList: []
       }
     },
     props: {

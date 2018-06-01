@@ -49,6 +49,9 @@
     mounted () {
       this.getData()
     },
+    activated () {
+      this.getData()
+    },
     methods: {
       // 勾选变化后
       selectChange () {
@@ -158,6 +161,7 @@
             scIdArray: list
           },
         }).then(function (response) {
+          self.$emit('clear')
           self.disableGoods = []
           self.$message.success('清除成功')
         })
