@@ -5,11 +5,11 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="color: rgb(245,0,87);width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
-    .content(v-if="!isEmpty")
+    .content(ref="largeConllection")
       ul.list
         li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id, item.title)")
           img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
-    .noData(v-if="isEmpty") 暂无更多活动
+    <!--.noData(v-if="isEmpty") 暂无更多活动-->
 </template>
 
 <script>
@@ -53,7 +53,10 @@
               parentType: this.$route.query.parentType
             }
           }).then((response) => {
-            this.bankList = response.data.data;
+            _this.bankList = response.data.data;
+            _this.$nextTick(()=>{
+              _this.$initScroll(_this.$refs.largeConllection)
+            })
           })
         },
         toNext (type, url, id, relateId, title) {
