@@ -690,6 +690,14 @@ const router = new Router ({
               }
             },
             {
+              path: '/my/receiveTicketGH',
+              name: '领取现金券工会',
+              component: MyAccount.receiveTicketGH,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
               path: '/my/footMark',
               name: '足迹',
               component:My.footMark,

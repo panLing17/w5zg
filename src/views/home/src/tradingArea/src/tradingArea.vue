@@ -10,8 +10,8 @@
         .heading 热门商圈
         ul.topListWrapper
           li.topItem(v-for="(item, index) in topList", :class="{active:topItemActive===index}", :key="index", @click="checkItem(index)")
-            img.topItemBg(:src="item.img")
-            .topItemName {{item.title}}
+            img.topItemBg(:src="item.image | img-filter")
+            .topItemName {{item.name}}
             .topItemBtn 选择商场
         .topMore 更多商圈陆续开放，敬请期待吧~
       .contentBottom
@@ -25,34 +25,31 @@
     data () {
       return {
         topItemActive: 0,
-        topList: [
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=2927770857,3038999772&fm=27&gp=0.jpg',
-            title: '新街口'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=2927770857,3038999772&fm=27&gp=0.jpg',
-            title: '新街口'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=2927770857,3038999772&fm=27&gp=0.jpg',
-            title: '新街口'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=2927770857,3038999772&fm=27&gp=0.jpg',
-            title: '新街口'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=2927770857,3038999772&fm=27&gp=0.jpg',
-            title: '新街口'
-          }
-        ]
+        topList: []
       }
     },
+    created () {
+      this.getTradingArea()
+    },
     methods: {
+      getTradingArea () {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'businessdistrict/queryBusinessDistrict',
+          params: {
+            cityNo : '100100'
+          },
+        }).then(function (response) {
+          if (response) {
+            self.topList = response.data.data
+            self.$router.push({path: '',query: {id: response.data.data[0].id}})
+          }
+        })
+      },
       checkItem (index) {
         this.topItemActive = index
-        this.$router.push({path: '',query: {id: index}})
+        this.$router.push({path: '',query: {id: this.topList[index].id}})
       }
     }
   }
@@ -88,6 +85,7 @@
     border: 1px solid #fff;
     box-sizing: border-box;
     border-radius: 0.13rem;
+    /*background: black;*/
   }
   .topItem.active {
     border: 1px solid #f70057;

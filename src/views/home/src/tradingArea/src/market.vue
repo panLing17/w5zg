@@ -4,7 +4,7 @@
       .header
         .back(@click="$router.go(-1)")
           img(src="../../../../../assets/img/back@2x.png")
-        .title 金鹰天地（江宁店）
+        .title {{$route.query.name}}
     .brandWrapper
       .heading 全部品牌
       ul.brandList
@@ -69,7 +69,25 @@
         ]
       }
     },
+    created (){
+      this.getBrands()
+    },
     methods: {
+      getBrands () {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'market/queryMarketBrands',
+          params: {
+            marketId  : this.$route.query.id
+          },
+        }).then(function (response) {
+          if (response) {
+            self.brandList = response.data.data
+          }
+
+        })
+      },
       brandCheck (index) {
         this.brandItemActive = index
       }

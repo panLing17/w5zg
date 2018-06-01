@@ -1,6 +1,6 @@
 <template lang="pug">
   ul.bottomListWrapper
-    li.bottomItem(v-for="(item, index) in bottomList", :key="index", @click="$router.push({path: 'market'})")
+    li.bottomItem(v-for="(item, index) in bottomList", :key="index", @click="$router.push({path: 'market',query:{id:item.id, name:item.name}})")
       .bottomItemLeft
         .bottomItemName {{item.name}}
         .bottomItemAddress {{item.address}}
@@ -12,33 +12,37 @@
     name: "tradingAreaBottom",
     data () {
       return {
-        bottomList: [
-          {
-            name: '金鹰天地（江宁店）',
-            address: '江苏省南京市江宁区双龙大道1888号'
-          },
-          {
-            name: '金鹰天地（江宁店）',
-            address: '江苏省南京市江宁区双龙大道1888号'
-          },
-          {
-            name: '金鹰天地（江宁店）',
-            address: '江苏省南京市江宁区双龙大道1888号'
-          },
-          {
-            name: '金鹰天地（江宁店）',
-            address: '江苏省南京市江宁区双龙大道1888号'
-          },
-          {
-            name: '金鹰天地（江宁店）',
-            address: '江苏省南京市江宁区双龙大道1888号'
-          }
-        ]
+        bottomList: [],
+        businessDistrictId: ''
       }
     },
     beforeRouteUpdate (to, from, next) {
-      console.log(to.query.id)
+      this.businessDistrictId = to.query.id
+      this.getMarket()
       next()
+    },
+    created () {
+      this.businessDistrictId = this.$route.query.id
+      this.getMarket()
+    },
+    methods: {
+      getMarket () {
+        if (!this.businessDistrictId) {
+          return
+        }
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'market/queryMarket',
+          params: {
+            businessDistrictId: this.businessDistrictId
+          },
+        }).then(function (response) {
+          if (response) {
+            self.bottomList = response.data.data
+          }
+        })
+      }
     }
   }
 </script>
