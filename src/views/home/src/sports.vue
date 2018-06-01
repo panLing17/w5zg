@@ -72,6 +72,10 @@
           }
         })
       },
+      beforeRouteLeave (to, from, next) {
+        from.meta.keepAlive = false
+        next()
+      },
       methods: {
         getParmas () {
           this.parentId = this.$route.query.actId;

@@ -36,6 +36,12 @@
       mounted () {
         // this.$mescrollInt("largeMescroll",this.upCallback);
       },
+      beforeRouteLeave (to, from, next) {
+        if (to.path === '/home/sports') {
+          to.meta.keepAlive = true
+        }
+        next()
+      },
       methods: {
         getList () {
           let _this = this;
