@@ -6,10 +6,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
-          .price(v-else) {{item.price | price-filter}}
-          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
+          .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
+          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -22,10 +22,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
-          .price(v-else) {{item.price | price-filter}}
-          .cabinetPrice 专柜价{{item.counter_price | price-filter}}
+          .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
+          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -42,6 +42,8 @@
     props: ['background'],
     data() {
       return {
+        tagsIndex: -1,
+        advertIndex: -1,
         listData: {
           left: [],
           right: []
@@ -58,10 +60,14 @@
         newList.forEach((now)=>{
           now.type = '0'
         })
+        let leftH = this.$refs.left.clientHeight
+        let rightH = this.$refs.right.clientHeight
         // 页数为1可能为下拉刷新，置空数据
         if (pageNum === 1) {
           this.listData.left = []
           this.listData.right = []
+          leftH = 0
+          rightH = 0
         }
         // 计数，onload全部完毕后删除节点(数值超过size删除)
         let num = 0
@@ -72,8 +78,7 @@
         box.style.overflow = 'hidden'
 
         this.$refs.left.appendChild(box)
-        let leftH = this.$refs.left.clientHeight
-        let rightH = this.$refs.right.clientHeight
+
         newList.forEach((now) => {
           let imgaDom = document.createElement('img')
           imgaDom.style.opacity = 0
@@ -98,8 +103,8 @@
         })
       },
       advertInsert (pageNum, leftH, rightH) {
-        let tagsIndex = -1 // 标签被插了几次(上次被插索引)
-        let advertIndex = -1 // 广告图被插了几次(上次被插索引)
+        let tagsIndex = this.tagsIndex // 标签被插了几次(上次被插索引)
+        let advertIndex = this.advertIndex // 广告图被插了几次(上次被插索引)
         let fun = (data) => {
           if (leftH > rightH) {
             this.listData.right.push(data)
@@ -108,20 +113,24 @@
           }
         }
         if (pageNum%2===0) {
-          if (tagsIndex >= this.recommendAdvert.tags.length) {
-            tagsIndex = -1
+          if (this.tagsIndex+1 >= this.recommendAdvert.tags.length) {
+            this.tagsIndex = 0
           } else {
-            tagsIndex += 1
+            this.tagsIndex += 1
           }
-          fun(this.recommendAdvert.tags[tagsIndex])
+          if (this.recommendAdvert.tags.length>0) {
+            fun(this.recommendAdvert.tags[this.tagsIndex])
+          }
+
         } else {  // 若为奇数
-          if (advertIndex >= this.recommendAdvert.advert.length) {
-            advertIndex = -1
+          if (this.advertIndex+1 >= this.recommendAdvert.advert.length) {
+            this.advertIndex = 0
           } else {
-            advertIndex += 1
+            this.advertIndex += 1
           }
-          fun(this.recommendAdvert.advert[advertIndex])
-          console.log(this.recommendAdvert.advert[advertIndex])
+          if (this.recommendAdvert.advert.length>0) {
+            fun(this.recommendAdvert.advert[this.advertIndex])
+          }
         }
       },
       // 搜索关键字
@@ -246,7 +255,8 @@
   }
   /* 广告图布局 */
   .advertType {
-    height: 2.4rem;
+    height: 4.8rem;
+
     background-color: rgb(242, 242, 242);
   }
   .advertType> img{

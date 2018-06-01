@@ -486,13 +486,13 @@
                   var mArr = arrays[i].orderDetail;
                   for (var j = 0; j < mArr.length; j++) {
                     if (mArr.length>1) {
-                      if(mArr[j].refund_status == null){
+                      if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
                         arrays[i].morethenFlag = true;
                       } else {
                         arrays[i].morethenFlag = false;
                       }
                     } else if(mArr.length == 1){
-                      if(mArr[j].refund_status != null){
+                      if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
                         arrays[i].morethenFlag = false;
                       } else {
                         arrays[i].morethenFlag = true;
