@@ -18,7 +18,7 @@
         p(:style="{left:nowTab*50+'%'}")
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(style="min-height:calc(100vh - 6rem)")
+          router-view(style="min-height:calc(100vh - 6rem)", @clear="getGoodsNum")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")

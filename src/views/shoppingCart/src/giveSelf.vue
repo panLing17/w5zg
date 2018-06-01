@@ -29,11 +29,14 @@
     mounted () {
       this.getData()
     },
-    beforeRouteEnter (to, from, next) {
-      next(vm => {
-        vm.getData()
-      })
+    activated () {
+      this.getData()
     },
+    // beforeRouteEnter (to, from, next) {
+    //   next(vm => {
+    //     vm.getData()
+    //   })
+    // },
     methods: {
       tabChange (num) {
         this.nowTab = num
@@ -104,6 +107,7 @@
             scIdArray: list
           },
         }).then(function (response) {
+          self.$emit('clear')
           self.disableGoodsList = []
           self.$message.success('清除成功')
         })
