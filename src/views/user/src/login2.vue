@@ -385,63 +385,63 @@
           self.loginFlag = true
           if (response && response.data.optSuc) {
             localStorage.setItem('token',response.data.data)
-            self.getUserData()
+            self.$router.push('/my')
           }
         })
       },
-      getUserData() {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'member/currentMember',
-          params: {}
-        }).then(function (response) {
-          if (response) {
-            self.$store.commit('userDataChange', response.data.data)
-            localStorage.setItem('member_type', response.data.data.member_type)
-            if (response.data.data.member_type === '091') {
-              if (response.data.data.reg_present === '11') {
-                self.$store.commit('setShowRegisterTicket', false)
-                self.$router.push('/my')
-              } else {
-                self.getTicket()
-              }
-            } else {
-              self.$store.commit('setShowRegisterTicket', false)
-              self.$router.push('/my')
-            }
-          }
-        })
-      },
-      // 注册成功送现金券
-      getTicket () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiTransaction + 'netcardrule/reg/present',
-          params: {}
-        }).then(function (response) {
-          if (response.data.optSuc) {
-            self.getTicket2(response.data.data)
-          }
-        })
-      },
-      getTicket2 (url) {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: url,
-          params: {}
-        }).then(function (response) {
-          if (response.data.optSuc) {
-            self.$store.commit('setShowTicket', true)
-            self.$store.commit('setTicketMoney', response.data.data)
-            // 成功跳转页面
-            self.$router.push({path: '/home'})
-          }
-
-        })
-      },
+      // getUserData() {
+      //   let self = this
+      //   self.$ajax({
+      //     method: 'get',
+      //     url: self.$apiMember + 'member/currentMember',
+      //     params: {}
+      //   }).then(function (response) {
+      //     if (response) {
+      //       self.$store.commit('userDataChange', response.data.data)
+      //       localStorage.setItem('member_type', response.data.data.member_type)
+      //       if (response.data.data.member_type === '091') {
+      //         if (response.data.data.reg_present === '11') {
+      //           self.$store.commit('setShowRegisterTicket', false)
+      //           self.$router.push('/my')
+      //         } else {
+      //           self.getTicket()
+      //         }
+      //       } else {
+      //         self.$store.commit('setShowRegisterTicket', false)
+      //         self.$router.push('/my')
+      //       }
+      //     }
+      //   })
+      // },
+      // // 注册成功送现金券
+      // getTicket () {
+      //   let self = this
+      //   self.$ajax({
+      //     method: 'get',
+      //     url: self.$apiTransaction + 'netcardrule/reg/present',
+      //     params: {}
+      //   }).then(function (response) {
+      //     if (response.data.optSuc) {
+      //       self.getTicket2(response.data.data)
+      //     }
+      //   })
+      // },
+      // getTicket2 (url) {
+      //   let self = this
+      //   self.$ajax({
+      //     method: 'get',
+      //     url: url,
+      //     params: {}
+      //   }).then(function (response) {
+      //     if (response.data.optSuc) {
+      //       self.$store.commit('setShowTicket', true)
+      //       self.$store.commit('setTicketMoney', response.data.data)
+      //       // 成功跳转页面
+      //       self.$router.push({path: '/home'})
+      //     }
+      //
+      //   })
+      // },
       getToken () {
         let self = this
         self.$ajax({
