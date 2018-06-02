@@ -91,7 +91,7 @@
     },
     mounted(){
       //搜索发现
-      this.searchDiscover();
+      //this.searchDiscover();
       //商品推荐
       this.$mescrollInt("historyMescroll",this.upCallback,()=>{
          this.position.forEach((now) => {
@@ -203,6 +203,9 @@
       toggle:function(){
         this.showDiscover = !this.showDiscover;
         this.$store.commit('getSearchDiscover', this.showDiscover);
+        if (this.showDiscover == true) {
+          this.searchDiscover();
+        }
       },
 
       change1: function(item,index){
