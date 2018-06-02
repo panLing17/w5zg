@@ -32,18 +32,21 @@
     .packDrop(@click="packDrop()" v-show="false")
       span {{packDrops}}
       img(src="../../../../../assets/img/pack.png")
-    .title
-      .line
-      p 推荐
-    w-recommend#dataId(ref="recommend")
+    .title(v-show="recommendFlag")
+      img(src="../../../../../assets/img/recommend.png")
+    recommend#dataId(ref="recommend")
     .bottomPlaceholder
 </template>
 
 <script>
+  import {mapState} from 'vuex'
+  import recommend from './recommend'
   export default {
       name: "checkLogistics",
+      components:{recommend},
       data(){
         return{
+          recommendFlag:true, //判断推荐的显隐
           goodsPics:this.$route.query.goodsPic, //商品的图片
           address:this.$route.query.address, //接收订单详情页面的地址
           ordertype:321, //订单类型
@@ -57,11 +60,30 @@
           states:[]
         }
       },
+      computed: mapState(['position']),
       created(){
 
       },
+      activated () {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      },
       mounted(){
-        this.$mescrollInt("logisticsMescroll",this.upCallback);
+        this.$mescrollInt("logisticsMescroll",this.upCallback,()=>{
+          this.position.forEach((now) => {
+              if (now.path === this.$route.path) {
+                this.mescroll.scrollTo(now.y, 0);
+              }
+            })
+          }, (obj) => {
+            this.$store.commit('setPosition', {
+              path: this.$route.path,
+              y: obj.preScrollY
+            })
+        });
         //加载执行
         this.execute();
         //判断是商品订单还是退货订单
@@ -281,7 +303,7 @@
   }
   .logisticsMsg li .messages span.state{
     position: absolute;
-    top: -.5em;
+    top: -.15em;
     font-size: .3rem;
   }
   /*物流信息--结束*/
@@ -309,15 +331,8 @@
     justify-content: center;
     align-items: center;
   }
-  .line{
-    height: 1px;
-    width: 3rem;
-    background: #999;
-  }
-  .title p{
-    position: absolute;
-    background: #f2f2f2 ;
-    padding: 0 .2rem;
+  .title img{
+    width: 55%;
   }
   /*我的推荐--结束*/
 

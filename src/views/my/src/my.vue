@@ -4,7 +4,7 @@
       .lefter
         img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
       transition(name="slide-fade")
-        .center(v-if="nameShow") 我的
+        .center(v-if="nameShow") {{userData.mi_nickname}}
       .righter
         img(src="../../../assets/img/message@2x.png", v-if="false")
         img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
