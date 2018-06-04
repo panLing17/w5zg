@@ -1,7 +1,7 @@
 <template lang="pug">
   .sports
     nav-bar(background="white")
-      .topLeft(slot="left", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="back")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
@@ -77,6 +77,13 @@
         next()
       },
       methods: {
+        back () {
+          if (window.history.length<=2) {
+            this.$router.push('/home')
+          } else {
+            this.$router.go(-1)
+          }
+        },
         getParmas () {
           this.parentId = this.$route.query.actId;
           this.parentType = this.$route.query.parentType;
@@ -134,7 +141,7 @@
                 successCallback&&successCallback([]);
               }
             } else {
-              _this.mescroll.endErr();
+              self.mescroll.endErr();
             }
           })
         }
