@@ -2,15 +2,14 @@
   div
     nav-bar.navBar(:background="navBarBg", border-bottom="none", height="0")
       .topLeft(slot="left")
-        img(src="../../../assets/img/定位图标@2x.png", style="width: .3rem;")
-        span.city {{cityName}}
+        img(src="../../../assets/img/home扫描@2x.png", @click="searchCode", style="width:.5rem" )
+
       .topCenter(slot="center")
-        .searchInput(:class="{opaque:navBarBg === 'rgba(245,0,87,1)'}")
-          img(src="../../../assets/img/searchInput搜索图标@2x.png", @click="searchGoods()").leftImg
-          input(type="text",placeholder="请输入商品名称", @keyup.enter="searchGoods()", @focus="jump")
-          img(src="../../../assets/img/home扫描@2x.png", @click="searchCode").rightImg
+        img(src="../../../assets/img/W5ZG.png", style="height:.5rem" )
+        span.city {{cityName}}
       .topRight(slot="right")
-        img(src="../../../assets/img/msg.png", @click="$router.push('/service')")
+        img(src="../../../assets/img/searchInput搜索图标@2x.png", @click="jump", style="width:.5rem;margin-right:.2rem")
+        img(src="../../../assets/img/msg.png", @click="$router.push('/service')", style="width:.5rem")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
       .banner
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
@@ -61,7 +60,7 @@
         positionFixed: false,
         // mescroll: null,
         // 顶部背景色
-        navBarBg: 'rgba(0,0,0,0)',
+        navBarBg: 'rgba(255,255,255,1)',
         loadingFlag: 0,
         date: 1,
         cityName: this.$route.query.routeParams,
@@ -113,9 +112,9 @@
         })
       }, (obj) => {
         if (obj.preScrollY>100) {
-          this.navBarBg = 'rgba(245,0,87,1)'
+          this.navBarBg = 'rgba(255,255,255,1)'
         } else {
-          this.navBarBg = 'rgba(0,0,0,0)'
+          this.navBarBg = 'rgba(255,255,255,1)'
         }
 
         this.$store.commit('setPosition', {
@@ -396,8 +395,15 @@
 
   .topCenter {
     position: relative;
+    display: flex;
+    align-items: center;
   }
-
+  .topCenter .city{
+    font-size: .3rem;
+    font-weight: 500;
+    margin-left: .2rem;
+    color: #999;
+  }
   /*搜索框样式--开始*/
   .searchInput {
     width: 6.5rem;
@@ -455,6 +461,7 @@
 
   .homeBox {
     background: #f2f2f2;
+    padding-top: 1.3rem;
     padding-bottom: 2rem;
     min-height: 100vh;
   }

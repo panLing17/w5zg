@@ -90,7 +90,7 @@
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
-      // .numberBox
+      .numberBox
         ul.number
           //li 邮费 包邮
           li 邮费 {{freight}}元
@@ -113,6 +113,7 @@
       <!--share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")-->
     onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
+    tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
@@ -125,6 +126,7 @@
   import shareSelect from './shareSelect'
   import onlyStoreSelect from './onlyStoreSelect'
   import cardTips from './cardTips'
+  import tagTips from './tagTips'
   import saveMoneyTips from './saveMoneyTips'
   import recommend from './recommend'
   // import onlyCitySelect from './onlyCitySelect'
@@ -172,6 +174,8 @@
         ofBuy: false,
         // 卡券介绍
         cardTipsFlag: false,
+        // 标签介绍
+        tagTipsFlag: true,
         // 省钱介绍
         saveMoneyTipsFlag: false,
         onlySelectSpec: true,
@@ -196,7 +200,7 @@
       },*/
       ...mapState(['location', 'userData','skuId'])
     },
-    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips, recommend},
+    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips, tagTips, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
       if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
@@ -280,7 +284,12 @@
         if (val) {
           this.getMakeMoney (val)
           this.getDate(val)
+          // 计算运费
+          this.getFreight()
         }
+      },
+      location () {
+        this.getFreight()
       },
       $route () {
         // 重新初始化data数据
@@ -308,6 +317,26 @@
       }
     },
     methods:{
+      getFreight () {
+        if (!this.skuId) {
+          return
+        }
+        let jsonStr = [{
+          gsku_id: this.skuId,
+          goods_num: this.content
+        }]
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/querySkuFreightList',
+          params: {
+            skuNumArrayStr: JSON.stringify(jsonStr),
+            cityNo: self.location.city.id
+          }
+        }).then(function (response) {
+          self.freight = response.data.data[self.skuId]
+        })
+      },
       isShare () {
         if (this.shareFlag.banner && this.shareFlag.title) {
           this.$initShare({
@@ -355,7 +384,9 @@
         this.goodsData.direct_supply_interval = data.direct_supply_price
         this.goodsData.counter_interval = data.counter_price
         this.goodsData.retail_interval = data.retail_price
-        this.freight = data.goi_freight
+        // 计算运费
+        this.getFreight()
+        // this.freight = data.goi_freight
         // 根据用户类型为确认订单页价格赋值
         if (this.userData.member_type === '092') {
           this.price = data.direct_supply_price
@@ -569,6 +600,7 @@
           })
           // 订单页需要展示及用到的数据
           let orderData = [{
+            skuId: this.$store.state.skuId,
             storeName: this.$store.state.location.store.name,
             storeLocation: this.$store.state.location,
             photo: this.banner[0].gi_img_url,
@@ -614,6 +646,7 @@
           })
           // 订单页需要展示及用到的数据
           let orderData = [{
+            skuId: this.$store.state.skuId,
             storeName: 'xx旗舰店',
             storeLocation: this.$store.state.location,
             photo: this.banner[0].gi_img_url,

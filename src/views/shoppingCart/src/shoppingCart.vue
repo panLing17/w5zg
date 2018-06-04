@@ -199,6 +199,7 @@
           })
           data.push({
             si_id: now.si_id,
+            skuId: now.gsku_id,
             number: now.goods_num,
             spec: spec,
             price: now.now_price,
@@ -231,7 +232,6 @@
         this.$store.commit('transferGive', data)
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-        console.log(this.$store.state.transfer)
         if (this.$store.state.transfer.length > 0) {
           this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
         } else {

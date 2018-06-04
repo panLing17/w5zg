@@ -47,14 +47,14 @@
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
-    location-select(:show="flag", :location="locationList", @close="locationSelectClose")
+    location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="computedFreight")
 </template>
 
 <script>
   import goodsCard from './goodsCard'
   import locationSelect from './locationSelect'
   import {mapState} from 'vuex'
-
+  import {mapGetters} from 'vuex'
   export default {
     name: 'confirm-order',
     data () {
@@ -98,23 +98,58 @@
           return this.price + this.allFreight
         }
       },
-      ...mapState(['transfer','giveGoodsAddress'])
+      ...mapState(['giveGoodsAddress']),
+      ...mapGetters(['transfer'])
     },
     components:{goodsCard,locationSelect},
     mounted () {
-      console.log(this.$store.state.shoppingCartSelected)
       this.getLocation()
       this.computedPrice()
-      this.computedFreight()
+      // this.computedFreight()
       // 如果用户不是b请求计算通用券与抵用金额
       if (this.$store.state.userData.member_type !== '092') {
         this.getVoucher()
       }
     },
     methods:{
+      // 获取每个商品运费
+      getGoodsFreight () {
+        let fun = new Promise((resolve,reject)=>{
+          let self = this
+          let jsonStr = []
+          this.transfer.forEach((now)=>{
+            jsonStr.push({
+              gsku_id: now.skuId,
+              goods_num: now.number
+            })
+          })
+          jsonStr = JSON.stringify(jsonStr)
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/querySkuFreightList',
+            params: {
+              skuNumArrayStr: jsonStr,
+              cityNo: self.giveGoodsAddress.ra_city
+            }
+          }).then(function (response) {
+            let json = Object.assign(self.transfer)
+            // 遍历每个商品，并加入运费
+            for(let i in response.data.data){
+              json.forEach((now)=>{
+                if (now.skuId.toString() === i.toString()) {
+                  now.freight = response.data.data[i]
+                }
+              })
+            }
+            // 重新赋值到vuex
+            self.$store.commit('transferGive',json)
+            resolve()
+          })
+        })
+        return fun
+      },
       // 计算总邮费
       computedFreight () {
-        console.log(this.$store.state.transfer)
         let allFreight = 0
         // 若来自购物车快递订单，运费计算按照供应商计算
         if (this.$route.query.since === 'false' && this.$route.query.type === 'shoppingCart') {
@@ -195,7 +230,6 @@
             buyNum: self.content
           }
         }).then(function (response) {
-          console.log(response.data.data)
           // self.$message.success('成功生成订单')
           self.$router.push({path: '/payment',query:{id:response.data.data.totalOrderId,price:response.data.data.payPrice}})
         })
@@ -313,9 +347,10 @@
             self.locationList.forEach((now)=>{
               if(now.ra_default === '011'){
                 self.$store.commit('giveGoodsAddressChange',now)
+                // 为商品赋值运费
+                self.getGoodsFreight().then(self.computedFreight())
               }
             })
-
           }
         })
       },
