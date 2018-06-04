@@ -36,7 +36,7 @@
       return {
         phone: '',
         isLoginFlag: false,
-        showSuccess:true,
+        showSuccess:false,
         url: '',
         price: 0,
         loadingFlag: false,
