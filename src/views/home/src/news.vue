@@ -24,7 +24,7 @@
             if(parseFloat(e.style.bottom)>=1.2*(n/2-1)){
               e.style.bottom='0';
             }else {
-              e.style.bottom=parseFloat(e.style.bottom)+1.2+'rem'
+              e.style.bottom=parseFloat(e.style.bottom)+.6+'rem'
             }
           };
           setInterval(fun,4000)
@@ -38,7 +38,7 @@
 
 <style scoped>
   .box{
-    height: 1.4rem;
+    height: 1rem;
     padding: 0 5px;
     width: 100%;
     background: white;
@@ -47,14 +47,14 @@
   }
   .box>img{
     width: 1.6rem;
-    height: 1rem;
+    height: .4rem;
     color: #fc8b6d;
     font-size: .4rem;
     text-align: center;
   }
   .box>div{
     flex-grow: 1;
-    height: 1.2rem;
+    height: .6rem;
     overflow: hidden;
     padding-left: 8px;
   }
