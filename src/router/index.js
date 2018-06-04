@@ -185,7 +185,10 @@ const router = new Router ({
         {
           path: '',
           name: '商场详情',
-          component: TradingArea.marketBottom
+          component: TradingArea.marketBottom,
+          meta: {
+            keepAlive: true
+          }
         }
       ]
     },
