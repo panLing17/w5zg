@@ -45,6 +45,7 @@
       locationSelected (item) {
         this.close()
         this.$store.commit('giveGoodsAddressChange',item)
+        this.$emit('selected')
       }
     }
   }

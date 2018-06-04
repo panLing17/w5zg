@@ -31,7 +31,6 @@
       since: String
     },
     mounted () {
-      console.log(this.data)
     }
   }
 </script>

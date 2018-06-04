@@ -90,7 +90,7 @@
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
-      // .numberBox
+      .numberBox
         ul.number
           //li 邮费 包邮
           li 邮费 {{freight}}元
@@ -282,6 +282,9 @@
           this.getDate(val)
         }
       },
+      location () {
+
+      },
       $route () {
         // 重新初始化data数据
         // this.$forceUpdate()
@@ -308,6 +311,23 @@
       }
     },
     methods:{
+      getFreight () {
+        let jsonStr = [{
+          gsku_id: this.skuId,
+          goods_num: this.content
+        }]
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/querySkuFreightList',
+          params: {
+            skuNumArrayStr: jsonStr,
+            cityNo: self.giveGoodsAddress.ra_city
+          }
+        }).then(function (response) {
+
+        })
+      },
       isShare () {
         if (this.shareFlag.banner && this.shareFlag.title) {
           this.$initShare({
@@ -569,6 +589,7 @@
           })
           // 订单页需要展示及用到的数据
           let orderData = [{
+            skuId: this.$store.state.skuId,
             storeName: this.$store.state.location.store.name,
             storeLocation: this.$store.state.location,
             photo: this.banner[0].gi_img_url,
@@ -614,6 +635,7 @@
           })
           // 订单页需要展示及用到的数据
           let orderData = [{
+            skuId: this.$store.state.skuId,
             storeName: 'xx旗舰店',
             storeLocation: this.$store.state.location,
             photo: this.banner[0].gi_img_url,
