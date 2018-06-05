@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 搜商圈
       .topRight(slot="right")
-    .content(ref="content")
+    .content.mescroll#Mescroll
       .wrapper
         .contentTop
           .heading 热门商圈
@@ -17,7 +17,7 @@
           .topMore 更多商圈陆续开放，敬请期待吧~
         .contentBottom
           .heading.border 热门商场
-          router-view(@scroll-init="scrollInit")
+          router-view
 </template>
 
 <script>
@@ -29,12 +29,19 @@
         topList: []
       }
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
+    },
     created () {
       this.getTradingArea()
     },
+    mounted () {
+      this.$mescrollInt('Mescroll', this.upCallback)
+    },
     methods: {
-      scrollInit () {
-        this.$initScroll(this.$refs.content)
+      upCallback: function (page) {
+        this.mescroll.endErr()
       },
       getTradingArea () {
         let self = this

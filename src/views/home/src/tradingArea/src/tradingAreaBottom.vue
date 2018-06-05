@@ -47,9 +47,6 @@
               self.showEmpty = true
             } else {
               self.showEmpty = false
-              self.$nextTick(()=>{
-                self.$emit('scroll-init')
-              })
             }
           }
         })
