@@ -366,7 +366,7 @@
     height: 4.5rem;
     background: url("../../../assets/img/my_bg.png") no-repeat;
     background-size: 100% 100%;
-    overflow: hidden;
+    /*overflow: hidden;*/
     position: relative;
   }
   .toper{
@@ -455,6 +455,7 @@
   }
   .upgradeMembers img{
     width: 3.5rem;
+    vertical-align: top;
   }
   /*头部--结束*/
   /*收藏夹，关注店铺，足迹--开始*/
