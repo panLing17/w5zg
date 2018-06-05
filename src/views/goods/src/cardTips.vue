@@ -6,17 +6,35 @@
       .main(v-if="show")
         .content
           .contentTitle 用券说明
+          .cancel(@click="close")
           ul.text
             li
-              p <span>专柜价:</span>全国此商品正品官方专柜日常销售平均价格（非促销清仓等特殊情况下的价格）。
+              p 实付价：使用足额现金券或现金券不足返还通用券后的实际支付价格。
             li
-              p <span>统一零售价:</span>商品吊牌价。
+              p 统一零售价:本商品全国统一零售价。
             li
-              p <span>现金券购买:</span>节省金额为该产品可使用现金券的最高额度。
+              p 打折后专柜价：本商品在南京地区专柜打折后的促销价（非商场店庆等特殊活动价）。
             li
-              p <span>直购:</span>节省金额为此产品以专柜价现金购买时，可返还顾客的通用券金额。
+              p 专柜价：本商品在南京地区专柜实际售价（非商场店庆等特殊活动价）。
+          ul.text.second
             li
-              p <span>通用券购买:</span>节省金额为该产品可使用通用券的所有额度。
+              .btn
+                span.dec 现金券购买
+                span.price 省XX元
+              .info 现金券购买，抵用XX元，实付XX元(或支付通用券XX元)
+            li
+              .btn
+                span.dec 专柜价购买
+                span.price 返现XXX元
+              .info 专柜价购买XXX元，返XX元通用券
+              .info 通用券180天后提现，因此，等同现金！
+            li
+              .btn
+                span.dec 通用券购买
+                span.price 返现XXX元
+              .info 通用券购买XXX元，返XX元通用券；
+          .bottom 顾客凭通用券购买本商城所有商品，无需贴现！！！而且，确认收货后再返30-60%通用券，通用券180天后提现，因此，等同现金！
+
 </template>
 
 <script>
@@ -52,6 +70,7 @@
     bottom: 0;
     left: 0;
     z-index: 102;
+    overflow: auto;
   }
   .title {
     display: flex;
@@ -107,6 +126,7 @@
   /* 描述部分 */
   .content {
     padding: 0 .4rem;
+    position: relative;
   }
   .content .contentTitle {
     font-size: .4rem;
@@ -117,18 +137,44 @@
   }
   .text {
     margin-top: .2rem;
+    /*padding-bottom: .5rem;*/
+    border-bottom: solid 1px #eee;
+    color: #333;
+  }
+  .text.second {
+    padding-top: .3rem;
   }
   .text li{
     margin-bottom: .5rem;
   }
-  .text li span{
-    margin-right: .2rem;
-    color: #555;
-    font-size: .3rem;
-  }
   .text li p{
-    color: #999;
+    color: #333;
     font-size: .3rem;
     line-height: .5rem;
+  }
+  .cancel {
+    width: .8rem;
+    height: .8rem;
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: url("../../../assets/img/cancle@3x.png") no-repeat center center;
+    background-size: .4rem .4rem;
+  }
+  .btn {
+    width: 3.5rem;
+    height: .53rem;
+    line-height: .53rem;
+    border: 1px solid rgb(247,0,87);
+    background: #ffe9f0;
+    text-align: center;
+    margin-bottom: .2rem;
+  }
+  .dec {
+    color: rgb(247,0,87);
+    margin-right: .2rem;
+  }
+  .bottom {
+    padding:.2rem 0 .5rem;
   }
 </style>
