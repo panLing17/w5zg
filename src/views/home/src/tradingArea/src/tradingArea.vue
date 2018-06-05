@@ -17,7 +17,7 @@
           .topMore 更多商圈陆续开放，敬请期待吧~
         .contentBottom
           .heading.border 热门商场
-          router-view
+          router-view(@scroll-init="scrollInit")
 </template>
 
 <script>
@@ -33,6 +33,9 @@
       this.getTradingArea()
     },
     methods: {
+      scrollInit () {
+        this.$initScroll(this.$refs.content)
+      },
       getTradingArea () {
         let self = this
         this.$ajax({
@@ -45,7 +48,6 @@
           if (response) {
             self.topList = response.data.data
             self.$router.replace({path: '',query: {id: response.data.data[0].id}})
-            self.$initScroll(self.$refs.content)
           }
         })
       },
