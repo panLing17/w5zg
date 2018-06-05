@@ -134,9 +134,9 @@
         }
       })
       //判断页面是否向上滚动
-      window.addEventListener('scroll',this.judgeScroll,true);
+      //window.addEventListener('scroll',this.judgeScroll,true);
       //改变下拉刷新的样式
-      this.changeStyles();
+      //this.changeStyles();
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn();
@@ -162,7 +162,7 @@
       //判断页面是否向上滚动
       window.addEventListener('scroll',this.judgeScroll,true);
       //改变下拉刷新的样式
-      this.changeStyles();
+      //this.changeStyles();
       //控制升级会员图片的切换
       this.picShow();
     },
@@ -366,7 +366,7 @@
     height: 4.5rem;
     background: url("../../../assets/img/my_bg.png") no-repeat;
     background-size: 100% 100%;
-    overflow: hidden;
+    /*overflow: hidden;*/
     position: relative;
   }
   .toper{
@@ -455,6 +455,7 @@
   }
   .upgradeMembers img{
     width: 3.5rem;
+    vertical-align: top;
   }
   /*头部--结束*/
   /*收藏夹，关注店铺，足迹--开始*/
