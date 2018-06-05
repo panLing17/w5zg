@@ -101,6 +101,8 @@
             if (response.data.code === '081') {
               _this.price = response.data.data
               _this.showSuccess = true;
+            } else {
+              _this.$message.error(response.data.msg)
             }
           })
         }
