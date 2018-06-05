@@ -134,9 +134,9 @@
         }
       })
       //判断页面是否向上滚动
-      window.addEventListener('scroll',this.judgeScroll,true);
+      //window.addEventListener('scroll',this.judgeScroll,true);
       //改变下拉刷新的样式
-      this.changeStyles();
+      //this.changeStyles();
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn();
@@ -162,7 +162,7 @@
       //判断页面是否向上滚动
       window.addEventListener('scroll',this.judgeScroll,true);
       //改变下拉刷新的样式
-      this.changeStyles();
+      //this.changeStyles();
       //控制升级会员图片的切换
       this.picShow();
     },
