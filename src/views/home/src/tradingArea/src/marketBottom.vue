@@ -154,6 +154,9 @@
     box-sizing: border-box;
     font-size: .34rem;
     color: #333;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .tagItem:nth-child(4n) {
     margin-right: 0;
