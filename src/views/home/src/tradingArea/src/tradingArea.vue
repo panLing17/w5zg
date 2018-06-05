@@ -5,18 +5,19 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 搜商圈
       .topRight(slot="right")
-    .content
-      .contentTop
-        .heading 热门商圈
-        ul.topListWrapper
-          li.topItem(v-for="(item, index) in topList", :class="{active:topItemActive===index}", :key="index", @click="checkItem(index)")
-            img.topItemBg(:src="item.image | img-filter")
-            .topItemName {{item.name}}
-            .topItemBtn 选择商场
-        .topMore 更多商圈陆续开放，敬请期待吧~
-      .contentBottom
-        .heading.border 热门商场
-        router-view
+    .content(ref="content")
+      .wrapper
+        .contentTop
+          .heading 热门商圈
+          ul.topListWrapper
+            li.topItem(v-for="(item, index) in topList", :class="{active:topItemActive===index}", :key="index", @click="checkItem(index)")
+              img.topItemBg(:src="item.image | img-filter")
+              .topItemName {{item.name}}
+              .topItemBtn 选择商场
+          .topMore 更多商圈陆续开放，敬请期待吧~
+        .contentBottom
+          .heading.border 热门商场
+          router-view
 </template>
 
 <script>
@@ -44,6 +45,7 @@
           if (response) {
             self.topList = response.data.data
             self.$router.replace({path: '',query: {id: response.data.data[0].id}})
+            self.$initScroll(self.$refs.content)
           }
         })
       },
