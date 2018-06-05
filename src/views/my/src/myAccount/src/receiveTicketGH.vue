@@ -107,7 +107,7 @@
             _this.loadingFlag = false
             if (response) {
               _this.showSuccess = true;
-              if (response.data.code === '081') {
+              if (response.data.msg != '您已经超过领取上限') {
                 _this.price = response.data.data
                 _this.getSuccess = true;
               }
