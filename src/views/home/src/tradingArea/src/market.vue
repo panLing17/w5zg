@@ -5,16 +5,17 @@
         .back(@click="$router.go(-1)")
           img(src="../../../../../assets/img/back@2x.png")
         .title {{$route.query.name}}
-    .brandWrapper
-      .heading 全部品牌
-      ul.brandList
-        li.brandItem(v-for="(item, index) in brandList", :class="{active: brandItemActive===index}", :key="index", @click="brandCheck(index)")
-          img.brandImg(:src="item.img")
-          .brandName {{item.name}}
-          .statusWrapper
-            .status1(v-if="item.zhuangui") 专柜提货
-            .status2(v-if="item.tiyan") 预约体验
-    router-view
+    .mescroll#marketMescroll
+      .brandWrapper
+        .heading 全部品牌
+        ul.brandList
+          li.brandItem(v-for="(item, index) in brandList", :class="{active: brandItemActive===index}", :key="index", @click="brandCheck(index)")
+            <!--img.brandImg(src="")-->
+            .brandName {{item.bi_name}}
+            .statusWrapper
+              .status1(v-if="item.zhuangui") 专柜提货
+              .status2(v-if="item.tiyan") 预约体验
+      router-view
 </template>
 
 <script>
@@ -23,53 +24,10 @@
     data () {
       return {
         brandItemActive: 0,
-        brandList: [
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: 'NIKE',
-            zhuangui: true,
-            tiyan: true
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: '阿迪达斯',
-            zhuangui: false,
-            tiyan: true
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: '娇韵诗',
-            zhuangui: true,
-            tiyan: false
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: 'newbalence',
-            zhuangui: true,
-            tiyan: false
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: '彪马',
-            zhuangui: false,
-            tiyan: true
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: '雅诗兰黛',
-            zhuangui: true,
-            tiyan: false
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=784919758,2045585221&fm=27&gp=0.jpg',
-            name: '一叶子',
-            zhuangui: false,
-            tiyan: true
-          }
-        ]
+        brandList: []
       }
     },
-    created (){
+    created () {
       this.getBrands()
     },
     methods: {
@@ -96,6 +54,12 @@
 </script>
 
 <style scoped>
+  #marketMescroll {
+    position: fixed;
+    top: 1.3rem;
+    bottom: 0;
+    height: auto;
+  }
   .wrap {
 
   }
@@ -110,6 +74,7 @@
     height: 1.3rem;
     border-bottom: 1px solid #f2f2f2;
     background: #fff;
+    z-index: 500;
   }
   .back {
     position: absolute;
@@ -151,6 +116,7 @@
     border: 1px solid #fff;
     box-sizing: border-box;
     border-radius: 0.13rem;
+    overflow: hidden;
   }
   .brandItem.active {
     border: 1px solid #f70057;

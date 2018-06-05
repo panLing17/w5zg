@@ -43,13 +43,13 @@
         }).then(function (response) {
           if (response) {
             self.topList = response.data.data
-            self.$router.push({path: '',query: {id: response.data.data[0].id}})
+            self.$router.replace({path: '',query: {id: response.data.data[0].id}})
           }
         })
       },
       checkItem (index) {
         this.topItemActive = index
-        this.$router.push({path: '',query: {id: this.topList[index].id}})
+        this.$router.replace({path: '',query: {id: this.topList[index].id}})
       }
     }
   }
@@ -82,10 +82,10 @@
     height: 1.6rem;
     position: relative;
     margin: 0 .3333rem .26rem 0;
-    border: 1px solid #fff;
+    /*border: 1px solid #fff;*/
     box-sizing: border-box;
     border-radius: 0.13rem;
-    /*background: black;*/
+    overflow: hidden;
   }
   .topItem.active {
     border: 1px solid #f70057;

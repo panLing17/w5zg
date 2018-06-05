@@ -122,7 +122,10 @@
           if (response && response.data.optSuc) {
             // 成功跳转页面
             self.$message.success(response.data.msg);
-            self.$router.push({path: '/my'})
+            setTimeout(()=>{
+              self.$router.push({path: '/login/login1'})
+            },1000)
+
           }
         })
       }

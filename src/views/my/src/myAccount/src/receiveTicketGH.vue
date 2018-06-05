@@ -6,7 +6,6 @@
       .topCenter(slot="center") 万物商城现金券
       .topRight(slot="right")
     .content(v-loading="loadingFlag")
-      <!--img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")-->
       .form(v-if="!showSuccess")
         .formTop
         .formBottom
@@ -15,10 +14,11 @@
           .text 南京工会送你现金券，购物更省钱！
       .successWrapper(v-if="showSuccess")
         .topWrapper
-          <!--.price {{price}}-->
-            <!--span 元-->
-          <!--.successDec 恭喜您获得“万物直供”-->
-          .againDec
+          .success(v-if="getSuccess")
+            .price {{price}}
+              span 元
+            .successDec 恭喜您获得“万物直供”
+          .againDec(v-if="!getSuccess")
             .line1 领券成功~
             .line2 您可以推荐亲友领券！
         .bottomWrapper
@@ -36,10 +36,11 @@
       return {
         phone: '',
         isLoginFlag: false,
-        showSuccess:true,
+        showSuccess:false,
         url: '',
         price: 0,
-        loadingFlag: false
+        loadingFlag: false,
+        getSuccess: false
       }
     },
     created () {
@@ -104,9 +105,12 @@
             }
           }).then(function (response) {
             _this.loadingFlag = false
-            if (response.data.code === '081') {
-              _this.price = response.data.data
+            if (response) {
               _this.showSuccess = true;
+              if (response.data.code === '081') {
+                _this.price = response.data.data
+                _this.getSuccess = true;
+              }
             }
           })
         }
@@ -214,6 +218,11 @@
     background: url("../../../../../assets/img/issue4@2x.jpg") no-repeat top left;
     background-size: 100% 100%;
 
+  }
+  .success {
+    width: 100%;
+    height: 100%;
+    position: relative;
   }
   .price {
     position: absolute;

@@ -182,8 +182,12 @@ const actions = {
     })
   }
 }
+const getters = {
+  transfer: state => state.transfer,
+}
 export default new Vuex.Store({
   state,
   mutations,
-  actions
+  actions,
+  getters
 })
