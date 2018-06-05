@@ -47,7 +47,7 @@
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
-    location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="computedFreight")
+    location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="locationChange")
 </template>
 
 <script>
@@ -112,6 +112,13 @@
       }
     },
     methods:{
+      // 地址变化后
+      locationChange () {
+        // 为商品赋值运费
+        this.getGoodsFreight().then(()=>{
+          this.computedFreight()
+        })
+      },
       // 获取每个商品运费
       getGoodsFreight () {
         let fun = new Promise((resolve,reject)=>{
@@ -134,13 +141,13 @@
           }).then(function (response) {
             let json = Object.assign(self.transfer)
             // 遍历每个商品，并加入运费
-            for(let i in response.data.data){
-              json.forEach((now)=>{
-                if (now.skuId.toString() === i.toString()) {
-                  now.freight = response.data.data[i]
+            response.data.data.forEach((now)=>{
+              json.forEach((sonNow)=>{
+                if (sonNow.skuId.toString() === now.gsku_id.toString()) {
+                  sonNow.freight = now.freight
                 }
               })
-            }
+            })
             // 重新赋值到vuex
             self.$store.commit('transferGive',json)
             resolve()
@@ -167,8 +174,8 @@
           for (let i in newObject) {
             let nowMaxFreight = 0
             newObject[i].forEach((now)=>{
-              if (now.freight > nowMaxFreight) {
-                nowMaxFreight = now.freight
+              if (parseInt(now.freight) > nowMaxFreight) {
+                nowMaxFreight = parseInt(now.freight)
               }
             })
             allFreight += nowMaxFreight
@@ -348,7 +355,9 @@
               if(now.ra_default === '011'){
                 self.$store.commit('giveGoodsAddressChange',now)
                 // 为商品赋值运费
-                self.getGoodsFreight().then(self.computedFreight())
+                self.getGoodsFreight().then(()=>{
+                  self.computedFreight()
+                })
               }
             })
           }
