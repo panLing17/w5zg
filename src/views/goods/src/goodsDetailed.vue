@@ -25,7 +25,7 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p {{goodsData.counter_interval | price-filter}}
+          p {{goodsData.direct_supply_price | price-filter}}
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
       ul.saveMoney(v-if="userData.member_type !== '092'")
         .saveMoneyTop
@@ -90,10 +90,15 @@
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
-      .numberBox
+      .numberBox(v-if="disTypeName !== '专柜自提'")
         ul.number
           //li 邮费 包邮
           li 邮费 {{freight}}元
+      .promise
+        img(src="../../../assets/img/ic_good_detail_1.png")
+        img(src="../../../assets/img/ic_good_detail_2.png")
+        img(src="../../../assets/img/ic_good_detail_3.png")
+        img(src="../../../assets/img/ic_good_detail_4.png")
       .title
         .line
         p 详情
@@ -104,14 +109,20 @@
       recommend(background="white", ref="recommend")
     div
       .buttons
-        img(src="../../../assets/img/customerservice@3x.png", @click="goService")
+        img(src="../../../assets/img/msg.png", @click="goService")
+        .ready
+          img(src="../../../assets/img/now@2x.png")
+          ul(@click="bespeakFlag = true")
+            li 预约体验
+            li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
       select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
-      store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
-    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange")
-      <!--share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")-->
+      //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
+      //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
+    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
+    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -125,6 +136,7 @@
   import storeSelect from './storeSelect'
   import shareSelect from './shareSelect'
   import onlyStoreSelect from './onlyStoreSelect'
+  import bespeakSelect from './bespeakSelect'
   import cardTips from './cardTips'
   import tagTips from './tagTips'
   import saveMoneyTips from './saveMoneyTips'
@@ -155,6 +167,8 @@
         onlyStoreSelect: false,
         // 仅选择城市开关
         onlyCitySelect: true,
+        // 预约开关
+        bespeakFlag: false,
         banner: [],
         goodsData: {},
         spec: [],
@@ -175,7 +189,7 @@
         // 卡券介绍
         cardTipsFlag: false,
         // 标签介绍
-        tagTipsFlag: true,
+        tagTipsFlag: false,
         // 省钱介绍
         saveMoneyTipsFlag: false,
         onlySelectSpec: true,
@@ -200,7 +214,7 @@
       },*/
       ...mapState(['location', 'userData','skuId'])
     },
-    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, cardTips, saveMoneyTips, tagTips, recommend},
+    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
       if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
@@ -334,7 +348,7 @@
             cityNo: self.location.city.id
           }
         }).then(function (response) {
-          self.freight = response.data.data[self.skuId]
+          self.freight = response.data.data[0].freight
         })
       },
       isShare () {
@@ -790,6 +804,9 @@
         })
       },
       tips (type) {
+        this.tagTipsFlag = true
+        return
+        // 需求有变，不需要弹下面那些玩意，以防他们再想改回来，暂时不删
         switch (type){
           case 0:
             this.$alert('专柜提货','平台支持平台下单，专柜自提，如您需要自提请在配送页选择自提，在收到备货完成的短信提醒后至指定专柜自提。')
@@ -962,6 +979,25 @@
     color: #aaaaaa;
     background: white;
     height: 1rem;
+  }
+  /* 承诺 */
+  .promise{
+    margin-top: 1px;
+    display: flex;
+    padding: .3rem 0;
+    background-color: white;
+  }
+  .promise img{
+    flex-grow: 1;
+    width: 0;
+    height: .55rem;
+    margin-left: .2rem;
+    border-right: solid 1px #aaa;
+    padding-right: .2rem;
+  }
+  .promise img:last-child{
+    margin-right: .2rem;
+    border-right: none
   }
   /* 卡片部分 */
   .card{
@@ -1149,13 +1185,12 @@
     padding: 0 .2rem;
   }
   .buttons {
-    padding: 0 .2rem;
     position: fixed;
     z-index: 1;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 1.2rem;
+    height: 1rem;
     display: flex;
     align-items: center;
     border-top: solid 1px #ddd;
@@ -1165,12 +1200,28 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: .8rem;
-    border-radius: .2rem;
+    height: 100%;
   }
   .buttons>img{
-    height: .8rem;
+    height: .6rem;
     margin: 0 .4rem;
+  }
+  .buttons>.ready{
+    width: 2.2rem;
+    height: 100%;
+    font-size: .25rem;
+    border-right: solid 1px rgb(230, 230, 230);
+    border-left: solid 1px rgb(230, 230, 230);
+  }
+  .buttons>.ready img{
+    width: .5rem;
+    margin-right: .1rem;
+  }
+  .buttons>.ready ul li:first-child{
+    color: rgb(244,0,87);
+  }
+  .buttons>.ready ul li:last-child{
+    color: rgb(100,100,100);
   }
   .buttons .left{
     flex-grow: 1;
@@ -1178,7 +1229,6 @@
     background: rgb(255,128,171);
     font-size: .4rem;
     color: white;
-    margin: 0 .2rem;
   }
   .buttons .right{
     flex-grow: 1;

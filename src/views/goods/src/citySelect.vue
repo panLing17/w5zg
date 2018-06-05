@@ -67,6 +67,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      type: {
+        type: String,
+        default: ''
       }
     },
     watch: {
@@ -74,10 +78,16 @@
         if (val && this.move.first.topMin===0) {
           this.getMinTop(1)
         }
+        if (val) {
+          this.getProvince()
+          this.selectType = 0
+          this.cityList = []
+          this.provinceName = '请选择'
+        }
       }
     },
     mounted () {
-      this.getProvince()
+
     },
     methods:{
       getMinTop (flag) {
@@ -159,11 +169,23 @@
       },
       getProvince () {
         let self = this
+        let data
+        let url
+        if (this.type === '专柜自提') {
+          url = self.$apiGoods + 'store/existProvince'
+          data = {
+            skuId: self.$store.state.skuId
+          }
+        } else {
+          url = self.$apiApp + 'index/allProvince'
+          data = {
+
+          }
+        }
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'index/allProvince',
-          params: {
-          },
+          url: url,
+          params: data,
         }).then(function (response) {
           self.provinceList = response.data.data
         })
@@ -177,12 +199,24 @@
         // 当前选项卡名称改变
         this.provinceName = proName
         let self = this
+        let data
+        let url
+        if (this.type === '专柜自提') {
+          url = self.$apiGoods + 'store/existCity'
+          data = {
+            skuId: self.$store.state.skuId,
+            provinceNo: number
+          }
+        } else {
+          url = self.$apiApp + 'index/cityProvince'
+          data = {
+            pro_no: number
+          }
+        }
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'index/cityProvince',
-          params: {
-            pro_no: number
-          },
+          url: url,
+          params: data,
         }).then(function (response) {
           self.cityList = response.data.data
           self.selectType = 1
