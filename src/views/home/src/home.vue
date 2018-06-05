@@ -18,10 +18,10 @@
         .shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      <!--img.title1(src="../../../assets/img/louceng1.png")-->
+      .tradingArea(@click="$router.push('/searchTradingArea')")
+        img.areaImg(src="../../../assets/img/trading.png")
       .title1
       w-activity(:listData="activityGoods")
-      <!--img.title2(src="../../../assets/img/louceng2.png")-->
       .title2
       recommend(ref="recommend")
       .bottomPlaceholder
@@ -677,5 +677,12 @@
     line-height: 1rem;
     font-size: .4rem;
     border-radius: .5rem;
+  }
+  .areaImg {
+    width: 100%;
+    pointer-events: none;
+  }
+  .tradingArea {
+    margin-top: 6px;
   }
 </style>

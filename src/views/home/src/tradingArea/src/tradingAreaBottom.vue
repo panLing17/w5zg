@@ -1,10 +1,12 @@
 <template lang="pug">
-  ul.bottomListWrapper
-    li.bottomItem(v-for="(item, index) in bottomList", :key="index", @click="$router.push({path: 'market',query:{id:item.id, name:item.name}})")
-      .bottomItemLeft
-        .bottomItemName {{item.name}}
-        .bottomItemAddress {{item.address}}
-      .bottomItemRight 挑选品牌
+  .wrapper
+    ul.bottomListWrapper(v-if="!showEmpty")
+      li.bottomItem(v-for="(item, index) in bottomList", :key="index", @click="$router.push({path: 'market',query:{id:item.id, name:item.name}})")
+        .bottomItemLeft
+          .bottomItemName {{item.name}}
+          .bottomItemAddress {{item.address}}
+        .bottomItemRight 挑选品牌
+    .noData(v-if="showEmpty") 敬请期待~
 </template>
 
 <script>
@@ -13,7 +15,8 @@
     data () {
       return {
         bottomList: [],
-        businessDistrictId: ''
+        businessDistrictId: '',
+        showEmpty: false
       }
     },
     beforeRouteUpdate (to, from, next) {
@@ -40,6 +43,11 @@
         }).then(function (response) {
           if (response) {
             self.bottomList = response.data.data
+            if (self.bottomList.length <= 0) {
+              self.showEmpty = true
+            } else {
+              self.showEmpty = false
+            }
           }
         })
       }
@@ -81,5 +89,11 @@
     color: #999;
     line-height: 1.4;
     margin-top: .2rem;
+  }
+  .noData {
+    font-size: .4rem;
+    text-align: center;
+    margin-top: 2rem;
+    color: #999;
   }
 </style>
