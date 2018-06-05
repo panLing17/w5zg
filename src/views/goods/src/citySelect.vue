@@ -174,7 +174,7 @@
         if (this.type === '专柜自提') {
           url = self.$apiGoods + 'store/existProvince'
           data = {
-            skuId: self.$store.state.skuId
+            spuId: self.$route.query.id
           }
         } else {
           url = self.$apiApp + 'index/allProvince'
@@ -204,7 +204,7 @@
         if (this.type === '专柜自提') {
           url = self.$apiGoods + 'store/existCity'
           data = {
-            skuId: self.$store.state.skuId,
+            spuId: self.$route.query.id,
             provinceNo: number
           }
         } else {
