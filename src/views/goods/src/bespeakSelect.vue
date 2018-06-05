@@ -21,7 +21,7 @@
                 .icon
                   img(src="../../../assets/img/now@2x.png", v-if="bsId === i.bs_id")
                   img(src="../../../assets/img/past@2x.png", v-else)
-        button.ok 确 认
+        button.ok(@click="addBespeak") 确 认
 
 </template>
 
@@ -55,9 +55,6 @@
       close () {
         this.$emit('close')
       },
-      typeClick (type) {
-        this.selectType = type
-      },
       tab (num) {
         this.selectType = num
         switch (num) {
@@ -85,16 +82,23 @@
 
         })
       },
-      selectOver (number, storeName) {
-        // 事件派发，将省市区名字以及编号返回
-        let data = {
-          id: number,
-          name: storeName
+      addBespeak () {
+        if (!this.bsId) {
+          this.$message.warning('请选择门店')
+          return
         }
-        let l = this.$store.state.location
-        l.store = data
-        this.$store.commit('transferGive',l)
-        this.$emit('change', data)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/addTryOn',
+          params: {
+            gspuId: self.$route.query.id,
+            storeId: self.bsId
+          },
+        }).then(function (response) {
+          self.$message.success(response.data.msg)
+          self.close()
+        })
       }
     }
   }
