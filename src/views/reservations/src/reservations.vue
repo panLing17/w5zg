@@ -85,6 +85,7 @@
 
       },
       activated () {
+        this.showList();
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);

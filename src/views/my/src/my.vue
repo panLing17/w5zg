@@ -20,7 +20,7 @@
             li 余额:
             li {{accoutBalance}}
             li 元
-        .upgradeMembers
+        .upgradeMembers(@click="jingqingqidai()")
           img(src="../../../assets/img/upgrade1@2x.png" v-if="imgFlag")
           img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")   
       div.fav_att_foot(v-if="false")
@@ -89,6 +89,12 @@
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(background="white", ref="recommend")
       .bottomPlaceholder
+    .animateWrapper(v-if="animateShow", @click="animateShow=false")
+      .animate
+        span(:class="{play:animateShow}") 敬
+        span(:class="{play:animateShow}") 请
+        span(:class="{play:animateShow}") 期
+        span(:class="{play:animateShow}") 待  
 </template>
 
 <script>
@@ -98,6 +104,7 @@
     name: "my",
     data() {
       return{
+        animateShow:"",
         nameShow:"", //控制上滑时显示的用户名
         footmarkNum: 0,
         accoutBalance: 0,
@@ -165,6 +172,14 @@
       //window.removeEventListener('scroll', this.judgeScroll);
     },
     methods: {
+      //敬请期待
+      jingqingqidai(){
+        this.animateShow = true;
+        let self = this;
+        setTimeout(function(){
+          self.animateShow = false;
+        },1200);
+      },
       //控制升级会员图片的切换
       picShow(){
         let self = this;
@@ -607,5 +622,48 @@
   .slide-fade-enter, .slide-fade-leave-to
   /* .slide-fade-leave-active for below version 2.1.8 */ {
     opacity: 0;
+  }
+  .animateWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,.5);
+  }
+  .animate {
+    font-size: 50px;
+    margin: 6rem auto 0;
+    text-align: center;
+  }
+
+  .animate span {
+    display: inline-block;
+    color: rgb(0,60,137);
+    opacity: 0;
+    transform: translate(-150px, -50px) rotate(-180deg) scale(3);
+  }
+  .animate span.play {
+    animation: revolveScale .4s forwards;
+  }
+  .animate span:nth-of-type(2) {
+    animation-delay: .05s;
+  }
+
+  .animate span:nth-of-type(3) {
+    animation-delay: .1s;
+  }
+
+  .animate span:nth-of-type(4) {
+    animation-delay: .15s;
+  }
+  @keyframes revolveScale {
+    60% {
+      transform: translate(20px, 20px) rotate(30deg) scale(.3);
+    }
+    100% {
+      transform: translate(0) rotate(0) scale(1);
+      opacity: 1;
+    }
   }
 </style>
