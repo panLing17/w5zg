@@ -1,10 +1,10 @@
 <template lang="pug">
   .cardTipsBox
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close", @touchmove.prevent="")
+      .bg(v-show="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
-        .content
+      .main(v-show="show")
+        .content.mescroll(id="tagTips")
           .contentTitle 标签说明
           ul.text
             li
@@ -26,7 +26,17 @@
     props:{
       show: Boolean
     },
+    mounted () {
+      // mescroll初始化
+      this.$mescrollInt("tagTips",this.upCallback)
+    },
     methods: {
+      upCallback: function(page) {
+        let self = this;
+
+          self.mescroll.endSuccess(1)
+
+      },
       close () {
         this.$emit('close')
       }

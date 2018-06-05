@@ -18,10 +18,12 @@
         .shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      <!--img.title1(src="../../../assets/img/louceng1.png")-->
+      .tradingArea(@click="$router.push('/searchTradingArea')")
+        img.areaImg(src="../../../assets/img/trading.png")
+      .member(@click="showAnimate")
+        img.memberImg(src="../../../assets/img/menber.png")
       .title1
       w-activity(:listData="activityGoods")
-      <!--img.title2(src="../../../assets/img/louceng2.png")-->
       .title2
       recommend(ref="recommend")
       .bottomPlaceholder
@@ -42,6 +44,12 @@
                 .dec1 现金券
                 .dec2 领取后3个月内有效
           .rightBtn(@click.stop="closeTicket") 立即使用
+    .animateWrapper(v-if="animateShow", @click="animateShow=false")
+      .animate
+        span(:class="{play:animateShow}") 敬
+        span(:class="{play:animateShow}") 请
+        span(:class="{play:animateShow}") 期
+        span(:class="{play:animateShow}") 待
 </template>
 <script>
   import hotButton from './hotButton'
@@ -84,7 +92,8 @@
           }
         ],
         banner: [],
-        type: ''
+        type: '',
+        animateShow: false
       }
     },
     computed: {
@@ -145,6 +154,13 @@
       this.mescroll.destroy()
     },
     methods: {
+      showAnimate () {
+        this.animateShow = true;
+        let _this = this
+        setTimeout(()=> {
+          this.animateShow = false
+        },1500);
+      },
       loadShare () {
         this.$initShare({
           sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
@@ -678,4 +694,56 @@
     font-size: .4rem;
     border-radius: .5rem;
   }
+  .areaImg, .memberImg {
+    width: 100%;
+    pointer-events: none;
+  }
+  .tradingArea, .member {
+    margin-top: 6px;
+    font-size: 0;
+  }
+  .animateWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,.5);
+  }
+  .animate {
+    font-size: 50px;
+    margin: 6rem auto 0;
+    text-align: center;
+  }
+
+  .animate span {
+    display: inline-block;
+    color: #24a8e6;
+    opacity: 0;
+    transform: translate(-150px, -50px) rotate(-180deg) scale(3);
+  }
+  .animate span.play {
+    animation: revolveScale .4s forwards;
+  }
+  .animate span:nth-of-type(2) {
+    animation-delay: .05s;
+  }
+
+  .animate span:nth-of-type(3) {
+    animation-delay: .1s;
+  }
+
+  .animate span:nth-of-type(4) {
+    animation-delay: .15s;
+  }
+  @keyframes revolveScale {
+    60% {
+      transform: translate(20px, 20px) rotate(30deg) scale(.3);
+    }
+    100% {
+      transform: translate(0) rotate(0) scale(1);
+      opacity: 1;
+    }
+  }
+
 </style>

@@ -187,12 +187,14 @@ const router = new Router ({
         {
           path: '',
           name: '商场详情',
-          component: TradingArea.marketBottom,
-          meta: {
-            keepAlive: true
-          }
+          component: TradingArea.marketBottom
         }
       ]
+    },
+    {
+      path: '/goodsList',
+      name: '商场商品列表',
+      component: TradingArea.goodsList
     },
     {
       path: '/scavengingPayment',

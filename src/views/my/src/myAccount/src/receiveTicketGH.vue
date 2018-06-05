@@ -23,8 +23,8 @@
             .line2 您可以推荐亲友领券！
         .bottomWrapper
           .goHome(@click="$router.replace('/home')") 进入万物直供首页
-          a.link(href="") 下载万物APP（安卓版）
-          a.link(href="") 下载万物APP（苹果版）
+          a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002") 下载万物APP（安卓版）
+          a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8") 下载万物APP（苹果版）
           .dec.first 点击下载“万物直供”APP
           .dec 或者进入应用商店搜索“万物直供”下载
 </template>
@@ -107,7 +107,7 @@
             _this.loadingFlag = false
             if (response) {
               _this.showSuccess = true;
-              if (response.data.code === '081') {
+              if (response.data.msg != '您已经超过领取上限') {
                 _this.price = response.data.data
                 _this.getSuccess = true;
               }

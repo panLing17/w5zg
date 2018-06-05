@@ -10,11 +10,11 @@
         .heading 全部品牌
         ul.brandList
           li.brandItem(v-for="(item, index) in brandList", :class="{active: brandItemActive===index}", :key="index", @click="brandCheck(index)")
-            <!--img.brandImg(src="")-->
+            img.brandImg(:src="item.bi_pic_url | img-filter")
             .brandName {{item.bi_name}}
             .statusWrapper
-              .status1(v-if="item.zhuangui") 专柜提货
-              .status2(v-if="item.tiyan") 预约体验
+              .status1(v-if="item.bs_type==='211'||item.bs_type==='213'") 专柜提货
+              .status2(v-if="item.bs_type==='212'||item.bs_type==='213'") 预约体验
       router-view
 </template>
 
@@ -23,12 +23,21 @@
     name: "market",
     data () {
       return {
-        brandItemActive: 0,
-        brandList: []
+        brandItemActive: -1,
+        brandList: [],
+        marketId:''
       }
     },
     created () {
+      this.marketId = this.$route.query.id
       this.getBrands()
+    },
+    activated () {
+      this.brandItemActive = -1
+      if (this.marketId!=this.$route.query.id) {
+        this.marketId = this.$route.query.id
+        this.getBrands()
+      }
     },
     methods: {
       getBrands () {
@@ -37,7 +46,7 @@
           method: 'post',
           url: self.$apiApp + 'market/queryMarketBrands',
           params: {
-            marketId  : this.$route.query.id
+            marketId  : this.marketId
           },
         }).then(function (response) {
           if (response) {
@@ -48,6 +57,8 @@
       },
       brandCheck (index) {
         this.brandItemActive = index
+        // this.$router.replace({path:'market',query:{id:this.marketId,name: this.$route.query.name,brandName:this.brandList[index].bi_name}})
+        this.$router.push({path: '/goodsList', query: {name: this.brandList[index].bi_name}})
       }
     }
   }
