@@ -111,7 +111,7 @@
       .buttons
         img(src="../../../assets/img/msg.png", @click="goService")
         .ready
-          img(src="../../../assets/img/now@2x.png")
+          img(src="../../../assets/img/ic_center_yyty@2x.png")
           ul(@click="bespeakFlag = true")
             li 预约体验
             li 每次99款
@@ -1207,14 +1207,14 @@
     margin: 0 .4rem;
   }
   .buttons>.ready{
-    width: 2.2rem;
+    width: 2.6rem;
     height: 100%;
     font-size: .25rem;
     border-right: solid 1px rgb(230, 230, 230);
     border-left: solid 1px rgb(230, 230, 230);
   }
   .buttons>.ready img{
-    width: .5rem;
+    width: .8rem;
     margin-right: .1rem;
   }
   .buttons>.ready ul li:first-child{

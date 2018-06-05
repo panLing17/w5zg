@@ -5,49 +5,50 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 确认订单
       .topRight(slot="right")
-    .title
-      .stud 联系人
-    .location(v-if="$route.query.since === 'true'")
-      ul.locationInput
+    #confirmOrderBox.mescroll
+      .title
+        .stud 联系人
+      .location(v-if="$route.query.since === 'true'")
+        ul.locationInput
+          li
+            label 提货人
+              input(type="text", placeholder="请输入提货人姓名", v-model="name")
+          li
+            label 联系方式
+              input(type="text", placeholder="请输入提货人联系方式", v-model="phone")
+      .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) !== '{}'", @click="goSelectLocation")
+        .content
+          .nameAndMobile
+            p 收件人：{{giveGoodsAddress.ra_name}}
+            p 手机号：{{giveGoodsAddress.ra_phone}}
+          .giveGoodsLocation
+            .label 收货地址
+            .info {{giveGoodsAddress.province_name}} {{giveGoodsAddress.city_name}} {{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
+        .icon
+          img(src="../../../assets/img/next@2x.png")
+      .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) === '{}'")
+        .addLocation
+          p(@click="$router.push('/my/localAdd')") 添加收货地址
+      goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
+      .allPrice
+        .goodsNum 共计{{content}}件商品
+        .price
+          span 合计
+          p {{computedPriceText | price-filter}}
+      ul.switchList
         li
-          label 提货人
-            input(type="text", placeholder="请输入提货人姓名", v-model="name")
+          .left 现金券
+          .right
+            span 可抵扣{{netAndCommitCard.netCard}}
+            toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
         li
-          label 联系方式
-            input(type="text", placeholder="请输入提货人联系方式", v-model="phone")
-    .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) !== '{}'", @click="goSelectLocation")
-      .content
-        .nameAndMobile
-          p 收件人：{{giveGoodsAddress.ra_name}}
-          p 手机号：{{giveGoodsAddress.ra_phone}}
-        .giveGoodsLocation
-          .label 收货地址
-          .info {{giveGoodsAddress.province_name}} {{giveGoodsAddress.city_name}} {{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
-      .icon
-        img(src="../../../assets/img/next@2x.png")
-    .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) === '{}'")
-      .addLocation
-        p(@click="$router.push('/my/localAdd')") 添加收货地址
-    goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
-    .allPrice
-      .goodsNum 共计{{content}}件商品
-      .price
-        span 合计
-        p {{computedPriceText | price-filter}}
-    ul.switchList
-      li
-        .left 现金券
-        .right
-          span 可抵扣{{netAndCommitCard.netCard}}
-          toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
-      li
-        .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
-        .right
-          toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
+          .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
+          .right
+            toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
-    location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+      location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="locationChange")
 </template>
 
 <script>
@@ -103,6 +104,8 @@
     },
     components:{goodsCard,locationSelect},
     mounted () {
+      // mescroll初始化
+      this.$mescrollInt("confirmOrderBox",this.upCallback)
       this.getLocation()
       this.computedPrice()
       // this.computedFreight()
@@ -112,6 +115,9 @@
       }
     },
     methods:{
+      upCallback () {
+        this.mescroll.endSuccess(1)
+      },
       // 地址变化后
       locationChange () {
         // 为商品赋值运费
@@ -437,8 +443,13 @@
 <style scoped>
   .confirmOrderBox {
     background:rgb(242,242,242);
-    padding-bottom: 2rem;
+
     min-height: 100vh;
+
+  }
+  #confirmOrderBox {
+    position: fixed;
+    padding-bottom: 1.3rem;
   }
   .title{
     background: white;
