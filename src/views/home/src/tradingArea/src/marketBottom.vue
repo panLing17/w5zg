@@ -2,48 +2,27 @@
   .marketBottom
     .tagWrapper
       ul.tagList
-        li.tagItem(v-for="(item, index) in tagList", :class="{active: tagItemActive[index]}", :key="index", @click="tagCheck(index)") {{item.name}}
+        li.tagItem(v-for="(item, index) in tagList", :class="{active: tagItemActive===index}", :key="index", @click="tagCheck(index)") {{item.gc_name}}
     .recommendWrapper
       recommend(ref="recommend")
 </template>
 
 <script>
-  import recommend from '../../recommend'
+  import recommend from './recommend'
   export default {
     name: "marketBottom",
     components: {recommend},
     data () {
       return {
-        tagItemActive: [],
-        tagList: [
-          {
-            name: '美妆护肤'
-          },
-          {
-            name: '运动'
-          },
-          {
-            name: '母婴'
-          },
-          {
-            name: '日化'
-          },
-          {
-            name: '配饰'
-          },
-          {
-            name: '鞋'
-          },
-          {
-            name: '数码3C'
-          },
-          {
-            name: '进口食品'
-          }
-        ]
+        tagItemActive: -1,
+        tagList: [],
+        marketId: '',
+        goodsUrl: '',
+        goodsParams: {}
       }
     },
     created () {
+      this._initData(this.$apiApp, 'market/queryRecommendGoods',{marketId  : this.$route.query.id})
       this.getCategory()
     },
     deactivated () {
@@ -53,53 +32,72 @@
       })
     },
     activated () {
-      let _this = this
-      this.$store.state.position.forEach((now) => {
-        if (now.path === '/market') {
-          _this.mescroll.scrollTo(now.y, 0);
-        }
-      })
+      this.tagItemActive = -1
+      if (this.marketId == this.$route.query.id) {
+        let _this = this
+        this.$store.state.position.forEach((now) => {
+          if (now.path === '/market') {
+            _this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      } else {
+        this._initData(this.$apiApp, 'market/queryRecommendGoods',{marketId  : this.$route.query.id})
+        this.mescroll.resetUpScroll();
+        this.getCategory()
+      }
     },
+    // beforeRouteUpdate (to, from, next) {
+    //   this._initData(this.$apiGoods, 'goodsSearch/spus',{keywords: to.query.brandName})
+    //   this.mescroll.resetUpScroll();
+    //   next()
+    // },
     mounted () {
       this.$mescrollInt("marketMescroll",this.upCallback,() => {}, () => {});
     },
-    beforeRouteLeave (to, from, next) {
-      if (to.path === '/searchTradingArea') {
-        from.meta.keepAlive = true
-      } else {
-        from.meta.keepAlive = false
-      }
-      next()
-    },
     beforeDestroy () {
-      console.log(1111)
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      _initData (api, url, obj) {
+        this.marketId = this.$route.query.id
+        this.goodsUrl = api +  url
+        this.goodsParams = obj
+      },
       getCategory () {
         let self = this
         this.$ajax({
           method: 'post',
           url: self.$apiApp + 'market/queryMarketCategory',
           params: {
-            marketId  : this.$route.query.id
+            marketId  : this.marketId
           },
         }).then(function (response) {
           if (response) {
             self.tagList = response.data.data
-            self.initTagItemActive()
+            // self.initTagItemActive()
           }
         })
       },
-      initTagItemActive () {
-        let _this = this
-        this.tagList.forEach(()=> {
-          _this.tagItemActive.push(false)
-        })
-      },
+      // initTagItemActive () {
+      //   let _this = this
+      //   this.tagList.forEach(()=> {
+      //     _this.tagItemActive.push(false)
+      //   })
+      // },
       tagCheck (index) {
-        this.tagItemActive.splice(index, 1, !this.tagItemActive[index])
+        this.tagItemActive = index
+        this.$router.push({path: '/goodsList', query: { name: this.tagList[index].gc_name}})
+        // this.tagItemActive.splice(index, 1, !this.tagItemActive[index])
+        // let keywords = []
+        // this.tagItemActive.forEach((item, index) => {
+        //   if (item === true) {
+        //     keywords.push(this.tagList[index].gc_name)
+        //   }
+        // })
+        // keywords = keywords.join(' ')
+        // this._initData(this.$apiGoods, 'goodsSearch/spus',{keywords: keywords})
+        // this.mescroll.resetUpScroll();
       },
       upCallback: function(page) {
         let self = this;
@@ -112,22 +110,20 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        this.goodsParams.page = pageNum
+        this.goodsParams.rows = pageSize
         let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiApp +  'market/queryRecommendGoods',
-          params: {
-            page: pageNum,
-            rows: pageSize,
-            marketId : this.$route.query.id
-          },
+          url:this.goodsUrl,
+          params: this.goodsParams,
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           if (response) {
-            if (response.data.data && response.data.data.data) {
+            if (response.data.data instanceof Array) {
+              successCallback&&successCallback(response.data.data);
+            } else {
               successCallback&&successCallback(response.data.data.data);
-            }else {
-              successCallback&&successCallback([]);
             }
           } else {
             self.mescroll.endErr();
@@ -166,6 +162,9 @@
     background: #ffe8f0;
     border: 1px solid #f70057;
     color: #f70057;
+  }
+  .recommendWrapper {
+    padding-top: .2rem;
   }
 
 </style>
