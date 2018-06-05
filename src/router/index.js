@@ -27,7 +27,9 @@ import Headlines from '../views/home/src/headlines/index'
 import Common from '../views/common/index'
 //搜商圈
 import TradingArea from '../views/home/src/tradingArea/index'
-
+//预约试穿
+import Reservations from '../views/reservations/index.js'
+ 
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -198,6 +200,11 @@ const router = new Router ({
       path: '/scavengingPayment',
       name: '扫码支付',
       component: Common.paySao
+    },
+    {
+      path: '/reservations',
+      name: '预约试穿',
+      component: Reservations.reservations
     },
     {
       path: '/',
