@@ -67,6 +67,7 @@
           method: 'post',
           url:this.$apiGoods + 'goodsSearch/spus',
           params: {
+            searchRuleConstant: this.$route.query.searchRuleConstant,
             keywords: this.$route.query.name,
             page: pageNum,
             rows: pageSize
