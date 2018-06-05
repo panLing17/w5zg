@@ -33,7 +33,7 @@
           li 足迹
       .wrapMyOrderForm.wrapDiv
         div.myOrderForm
-          ul.top(@click="$router.push('/my/orderManage')")
+          ul.top(@click.prevent="$router.push('/my/orderManage')")
             li 我的订单
             li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
           ul.bottom
@@ -55,7 +55,7 @@
             li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
               img(src="../../../assets/img/my_completed.png")
               .character 已完成
-            li(@click="$router.push('/my/refundAfterSale')")
+            li(@click.prevent="$router.push('/my/refundAfterSale')")
               img(src="../../../assets/img/my_aftersale2@2x.png")
               .character 退货/售后
       .wrapMyTreasure.wrapDiv
