@@ -6,8 +6,8 @@
       .main(v-if="show")
         .title
           span 专柜体验
-          .right
-            img(src="../../../assets/img/pageList.png", @click="close")
+          .right(@click="$router.push('/reservations')")
+            img(src="../../../assets/img/pageList.png")
             span 我的预约
         ul.list
           li.city(v-for="item in storeList")

@@ -1,11 +1,11 @@
 <template lang="pug">
   div.box
     ul
-      li(v-for="(item, index) in list.slice(0,4)")
+      li(v-for="(item, index) in list.slice(0,5)")
         img(:src="item.image | img-filter" , @click="toNext(1,index)")
         span {{item.title}}
     ul
-      li(v-for="(item, index) in list.slice(4,8)", @click="toNext(2,index)")
+      li(v-for="(item, index) in list.slice(5,10)", @click="toNext(2,index)")
         img(:src="item.image | img-filter" )
         span {{item.title}}
 </template>
@@ -56,7 +56,7 @@
   }
 
   .box > ul > li {
-    width: 25%;
+    width: 20%;
     height: 100%;
     display: flex;
     flex-direction: column;
