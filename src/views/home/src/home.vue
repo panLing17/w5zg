@@ -718,7 +718,7 @@
 
   .animate span {
     display: inline-block;
-    color: #24a8e6;
+    color: rgb(0,60,137);
     opacity: 0;
     transform: translate(-150px, -50px) rotate(-180deg) scale(3);
   }
