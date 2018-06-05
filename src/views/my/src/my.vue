@@ -1,30 +1,29 @@
 <template lang="pug">
   .wrapTop
-    .toper
-      .lefter
-        img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
-      transition(name="slide-fade")
-        .center(v-if="nameShow") {{userData.mi_nickname}}
-      .righter
-        img(src="../../../assets/img/message@2x.png", v-if="false")
-        img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
-        img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
     div.myBox.mescroll#myMescroll(:class="{positionFixed: positionFixed}")
       .head#header
+        .toper
+          .lefter
+            img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
+          .center(v-if="false")
+          .righter
+            img(src="../../../assets/img/message@2x.png", v-if="false")
+            img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
+            img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
         p.center
             ul.headPic
               li(@click="$router.push('/my/settings')")
                 img(:src="userData.mi_head_sculpture | img-filter")
             ul.userName
-              li {{userData.mi_nickname}}
-            ul.balance(v-if="userData.member_type === '092'")
+              li {{userData.mi_nickname}} ＞
+            ul.balance
               li 余额:
               li {{accoutBalance}}
               li 元
-      div.fav_att_foot
-        ul.left
+      div.fav_att_foot(v-if="false")
+        ul.left(@click="$router.push('/reservations')")
           li 0
-          li 收藏夹
+          li 预约体验
         ul.center
           li 0
           li 关注店铺
@@ -35,7 +34,7 @@
         div.myOrderForm
           ul.top(@click.prevent="$router.push('/my/orderManage')")
             li 我的订单
-            li(style="color:rgb(151,151,151);font-weight:400;") 查看更多 ＞
+            li(style="color:rgb(151,151,151);font-weight:400;") 全部订单 ＞
           ul.bottom
             li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
               .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
@@ -61,12 +60,12 @@
       .wrapMyTreasure.wrapDiv
         div.myTreasure
           ul.top
-            li 我的财富
+            li 贴心服务
             li
           ul.bottom
-            li(@click="goBankCard")
-              img(src="../../../assets/img/my_bankcard@2x.png")
-              .words 银行卡
+            li(@click="$router.push('/reservations')")
+              img(src="../../../assets/img/ic_center_yyty@2x.png")
+              .words 预约体验
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
               .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
@@ -75,6 +74,14 @@
             li(v-if="userData.member_type === '091'", @click="goAllCard")
               img(src="../../../assets/img/my_cashcoupon@2x.png")
               .words 通用劵
+            li(@click="goBankCard")
+              img(src="../../../assets/img/my_bankcard@2x.png")
+              .words 银行卡  
+            li(@click="$router.push('/my/footMark')")
+              img(src="../../../assets/img/ic_center_zj@2x.png")
+              .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center'}") {{footmarkNum}}
+                i(v-if="footmarkNum>99") +
+              .words 足迹  
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(background="white", ref="recommend")
@@ -115,6 +122,10 @@
           this.mescroll.scrollTo(now.y, 0);
         }
       })
+      //判断页面是否向上滚动
+      window.addEventListener('scroll',this.judgeScroll,true);
+      //改变下拉刷新的样式
+      this.changeStyles();
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn();
@@ -334,12 +345,6 @@
     padding: .3rem .3rem .2rem;
     display: flex;
     justify-content: space-between;
-    z-index: 200;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: url("../../../assets/img/topbackground@2x.png");
   }
   .toper .lefter img{
     width: .7rem;
@@ -356,18 +361,20 @@
     margin-left: .2rem;
   }
   .head .center{
-    margin-top: 1rem;
+    /*margin-top: 1rem;*/
     display: flex;
     position: relative;
   }
   .head .center .headPic{
-    width: 1.6rem;
-    height: 1.6rem;
-    margin-left: .5rem;
+    width: 2rem;
+    height: 2rem;
+    margin-left: 2rem;
     margin-top: .4rem;
     border-radius: 50%;
     text-align: center;
     line-height: 1.6rem;
+    background: url('../../../assets/img/headshot@2x.png') no-repeat;
+    background-size: 100%;
   }
   .head .center .headPic li{
     width: 100%;
@@ -388,7 +395,7 @@
   .head .center .userName li{
     align-self: center;
     color: #fff;
-    font-size: .4rem;
+    font-size: .45rem;
   }
   .head .center .balance{
     display: flex;
@@ -431,7 +438,7 @@
   /*收藏夹，关注店铺，足迹--结束*/
   /*我的订单和我的财富--开始*/
   .wrapDiv{
-    padding-top: .2rem;
+    padding-bottom: .2rem;
     background-color: rgb(242,242,242);
   }
 	.myOrderForm,
@@ -457,18 +464,21 @@
 	.myOrderForm ul.bottom{
 		display: flex;
 		justify-content: space-around;
-		padding: .4rem .2rem 0;
+		padding: .4rem .3rem 0;
     text-align: center;
 	}
   .myOrderForm ul.bottom li{
     position: relative;
   }
-  .myOrderForm ul.bottom li:nth-child(2),
+  .myOrderForm ul.bottom li img{
+    width: 1rem;
+  }
+  /*.myOrderForm ul.bottom li:nth-child(2),
   .myOrderForm ul.bottom li:nth-child(3),
   .myOrderForm ul.bottom li:nth-child(4){
     margin-left: .7rem;
-  }
-  .myOrderForm ul.bottom li:nth-child(2) img{
+  }*/
+  /*.myOrderForm ul.bottom li:nth-child(2) img{
     width: .7rem;
   }
   .myOrderForm ul.bottom li:nth-child(3) img{
@@ -484,10 +494,10 @@
   .myOrderForm ul.bottom li:nth-child(5) img{
     width: .68rem;
     margin-bottom: .03rem;
-  }
-	.myOrderForm ul.bottom li img{
+  }*/
+	/*.myOrderForm ul.bottom li img{
 		width: .7rem;
-	}
+	}*/
   .myOrderForm ul.bottom li .character{
     margin-top: .2rem;
     text-align: center;
@@ -502,7 +512,7 @@
     /*clear: both;*/
   /*}*/
 	.myTreasure ul.bottom{
-		padding: .4rem 0 0;
+		padding: .4rem .2rem 0;
     display: flex;
     justify-content: space-around;
 	}
@@ -513,7 +523,7 @@
     /*margin-right: 2.7rem;*/
   /*}*/
 	.myTreasure ul.bottom li img{
-		width: .8rem;
+		width: 1rem;
 	}
   .myTreasure ul.bottom li .words{
     margin-top: .2rem;
@@ -550,7 +560,7 @@
     font-size: .29rem;
     position: absolute;
     right: 0;
-    top: -0.2rem;
+    top: 0;
     line-height: .5rem;
   }
   .badge i {
