@@ -10,7 +10,7 @@
         .heading 全部品牌
         ul.brandList
           li.brandItem(v-for="(item, index) in brandList", :class="{active: brandItemActive===index}", :key="index", @click="brandCheck(index)")
-            <!--img.brandImg(src="")-->
+            img.brandImg(:src="item.bi_pic_url | img-filter")
             .brandName {{item.bi_name}}
             .statusWrapper
               .status1(v-if="item.bs_type==='211'||item.bs_type==='213'") 专柜提货
