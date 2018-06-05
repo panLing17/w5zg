@@ -87,7 +87,7 @@
       // },
       tagCheck (index) {
         this.tagItemActive = index
-        this.$router.push({path: '/goodsList', query: { name: this.tagList[index].gc_name}})
+        this.$router.push({path: '/goodsList', query: { name: this.tagList[index].gc_name, searchRuleConstant: 2}})
         // this.tagItemActive.splice(index, 1, !this.tagItemActive[index])
         // let keywords = []
         // this.tagItemActive.forEach((item, index) => {

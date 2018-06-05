@@ -58,7 +58,7 @@
       brandCheck (index) {
         this.brandItemActive = index
         // this.$router.replace({path:'market',query:{id:this.marketId,name: this.$route.query.name,brandName:this.brandList[index].bi_name}})
-        this.$router.push({path: '/goodsList', query: {name: this.brandList[index].bi_name}})
+        this.$router.push({path: '/goodsList', query: {name: this.brandList[index].bi_name, searchRuleConstant: 3}})
       }
     }
   }
