@@ -11,15 +11,18 @@
             img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
             img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
         p.center
-            ul.headPic
-              li(@click="$router.push('/my/settings')")
-                img(:src="userData.mi_head_sculpture | img-filter")
-            ul.userName
-              li {{userData.mi_nickname}} ＞
-            ul.balance
-              li 余额:
-              li {{accoutBalance}}
-              li 元
+          ul.headPic
+            li(@click="$router.push('/my/settings')")
+              img(:src="userData.mi_head_sculpture | img-filter")
+          ul.userName
+            li {{userData.mi_nickname}} ＞
+          ul.balance(v-if="userData.member_type === '092'")
+            li 余额:
+            li {{accoutBalance}}
+            li 元
+        .upgradeMembers
+          img(src="../../../assets/img/upgrade1@2x.png" v-if="imgFlag")
+          img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")   
       div.fav_att_foot(v-if="false")
         ul.left(@click="$router.push('/reservations')")
           li 0
@@ -104,7 +107,8 @@
         positionFixed: false,
         orderCount:{},
         netcardCount: 0,
-        loadingFlag:0
+        loadingFlag:0,
+        imgFlag:true, //控制升级会员图片的显隐
       }
     },
     components:{recommend},
@@ -152,6 +156,8 @@
       window.addEventListener('scroll',this.judgeScroll,true);
       //改变下拉刷新的样式
       this.changeStyles();
+      //控制升级会员图片的切换
+      this.picShow();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -159,6 +165,13 @@
       //window.removeEventListener('scroll', this.judgeScroll);
     },
     methods: {
+      //控制升级会员图片的切换
+      picShow(){
+        let self = this;
+        setInterval(function(){
+          self.imgFlag = !self.imgFlag;
+        },500);  
+      },
       //改变下拉刷新的样式
       changeStyles(){
         var downwarp = document.getElementsByClassName("mescroll-downwarp")[0];
@@ -339,6 +352,7 @@
     background: url("../../../assets/img/my_bg.png") no-repeat;
     background-size: 100% 100%;
     overflow: hidden;
+    position: relative;
   }
   .toper{
     width: 100%;
@@ -369,7 +383,7 @@
     width: 2rem;
     height: 2rem;
     margin-left: 2rem;
-    margin-top: .4rem;
+    /*margin-top: .4rem;*/
     border-radius: 50%;
     text-align: center;
     line-height: 1.6rem;
@@ -389,7 +403,7 @@
   }
   .head .center .userName{
     display: flex;
-    margin-top: .4rem;
+    /*margin-top: .4rem;*/
     margin-left: .3rem;
   }
   .head .center .userName li{
@@ -407,7 +421,7 @@
     border-bottom-left-radius: .4rem;
     position: absolute;
     right: 0;
-    top: .4rem;
+    bottom: -.8rem;
   }
   .head .center .balance li{
     line-height: .8rem;
@@ -417,6 +431,15 @@
   }
   .head .center .balance li:nth-child(1){
     margin-left: .4rem;
+  }
+  .upgradeMembers{
+    /*width: 4rem;*/
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
+  .upgradeMembers img{
+    width: 3.5rem;
   }
   /*头部--结束*/
   /*收藏夹，关注店铺，足迹--开始*/
