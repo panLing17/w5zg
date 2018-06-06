@@ -46,11 +46,10 @@
         this.getCategory()
       }
     },
-    // beforeRouteUpdate (to, from, next) {
-    //   this._initData(this.$apiGoods, 'goodsSearch/spus',{keywords: to.query.brandName})
-    //   this.mescroll.resetUpScroll();
-    //   next()
-    // },
+    beforeRouteLeave (to, from, next) {
+      to.meta.keepAlive = true
+      next()
+    },
     mounted () {
       this.$mescrollInt("marketMescroll",this.upCallback,() => {}, () => {});
     },
