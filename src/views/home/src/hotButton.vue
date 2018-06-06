@@ -59,7 +59,16 @@
     width: 20%;
     height: 100%;
     display: flex;
+    display:-webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
     flex-direction: column;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    -ms-flex-direction: column;
+    -o-flex-direction: column;
     justify-content: center;
     align-items: center;
   }
@@ -68,6 +77,7 @@
     width: 1rem;
   }
   .box > ul > li > span {
+    display: block;
     margin-top: .2rem;
     font-size: .32rem;
     font-style: normal;

@@ -696,10 +696,11 @@
   }
   .areaImg, .memberImg {
     width: 100%;
+    padding: 0 .4rem;
     pointer-events: none;
   }
   .tradingArea, .member {
-    margin-top: 6px;
+    margin-top: .2rem;
     font-size: 0;
   }
   .animateWrapper {

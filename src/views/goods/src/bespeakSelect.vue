@@ -21,6 +21,7 @@
                 .icon
                   img(src="../../../assets/img/now@2x.png", v-if="bsId === i.bs_id")
                   img(src="../../../assets/img/past@2x.png", v-else)
+        p(v-if="storeList.length<1").notFindStore 该商品无可选门店或未登录
         button.ok(@click="addBespeak") 确 认
 
 </template>
@@ -215,6 +216,10 @@
     color: rgb(245,0,87);
     margin-left: .2rem;
     border-radius: 3px;
+  }
+  .notFindStore {
+    color: #aaaaaa;
+    text-align: center;
   }
   .ok {
     width: 100%;
