@@ -46,11 +46,10 @@
         this.getCategory()
       }
     },
-    // beforeRouteUpdate (to, from, next) {
-    //   this._initData(this.$apiGoods, 'goodsSearch/spus',{keywords: to.query.brandName})
-    //   this.mescroll.resetUpScroll();
-    //   next()
-    // },
+    beforeRouteLeave (to, from, next) {
+      to.meta.keepAlive = true
+      next()
+    },
     mounted () {
       this.$mescrollInt("marketMescroll",this.upCallback,() => {}, () => {});
     },
@@ -154,6 +153,9 @@
     box-sizing: border-box;
     font-size: .34rem;
     color: #333;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .tagItem:nth-child(4n) {
     margin-right: 0;
