@@ -18,9 +18,12 @@
           .price {{price}}
             span 元
         .bottomWrapper
-          .goHome(@click="$router.replace('/home')") 进入万物商城首页
           img.ewm(src="../../../../../assets/img/gzh.jpg")
-          .dec 长按关注“万物商城”公众号
+          .dec 长按关注“万物直供商城”公众号
+          .downloadWrapper
+            a.btn(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
+            a.btn(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8")
+          .goHome(@click="$router.push('/home')") 进入万物直供商城首页 >
 </template>
 
 <script>
@@ -207,13 +210,13 @@
     width: 100%;
     height: 50%;
     position: relative;
-    background: url("../../../../../assets/img/issue2@3x.png") no-repeat top left;
+    background: url("../../../../../assets/img/issue2@3x.jpg") no-repeat top left;
     background-size: 100% 100%;
 
   }
   .price {
     position: absolute;
-    bottom: .8rem;
+    bottom: .6rem;
     left: 0;
     width: 100%;
     text-align: center;
@@ -233,25 +236,11 @@
     background: #c72d26;
     position: relative;
   }
-  .goHome {
-    position: absolute;
-    top: .5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 7.7rem;
-    height: 1.2rem;
-    background: #f2f2f2;
-    color: #7e7e7e;
-    border-radius: 1rem;
-    line-height: 1.2rem;
-    text-align: center;
-    font-size: .4rem;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-  }
+
   .ewm {
     width: 3.2rem;
     height: 3.2rem;
-    margin-top: 2rem;
+    margin-top: .5rem;
     pointer-events: auto !important;
   }
   .dec {
@@ -261,5 +250,30 @@
   }
   img {
     pointer-events: none;
+  }
+  .downloadWrapper {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 .3rem;
+    margin-top: .5rem;
+  }
+  .downloadWrapper .btn {
+    width: 4.6rem;
+    height: 1.4rem;
+    flex: none;
+  }
+  .downloadWrapper .btn:nth-child(1) {
+    background: url("../../../../../assets/img/11.png") no-repeat;
+    background-size: 4.6rem 1.4rem;
+  }
+  .downloadWrapper .btn:nth-child(2) {
+    background: url("../../../../../assets/img/12.png") no-repeat;
+    background-size: 4.6rem 1.4rem;
+  }
+  .goHome {
+    text-align: center;
+    color: #fff;
+    font-size: .4rem;
+    margin-top: .2rem;
   }
 </style>
