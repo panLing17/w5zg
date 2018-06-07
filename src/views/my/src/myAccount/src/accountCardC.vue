@@ -13,7 +13,7 @@
         li.tabItem(:class="{'active':listActive===2}",@click="tabChange(2)") 已过期
         li.line(:style="{'left':listActive*33.33+'%'}")
     transition(name="fade", mode="out-in")
-      router-view
+      router-view.mescroll#Mescroll
 </template>
 
 <script>
@@ -24,7 +24,13 @@
             listActive: 0
           }
         },
+      mounted () {
+        this.$mescrollInt('Mescroll', this.upCallback)
+      },
         methods: {
+          upCallback: function () {
+            this.mescroll.endErr()
+          },
           tabChange(index) {
             this.listActive = index;
             this.$router.replace({path:`/my/useDetail/${index}`});
