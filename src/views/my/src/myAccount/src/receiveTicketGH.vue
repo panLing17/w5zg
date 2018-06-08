@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="$router.replace('/home')")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center") 万物商城现金券
+      .topCenter(slot="center") 万物直供商城现金券
       .topRight(slot="right")
     .content(v-loading="loadingFlag")
       .form(v-if="!showSuccess")
@@ -11,20 +11,20 @@
         .formBottom
           input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
-          .text 南京工会送你现金券，购物更省钱！
+          .text 南京工会送您现金券，购物更省钱！
       .successWrapper(v-if="showSuccess")
         .topWrapper
           .success(v-if="getSuccess")
             .price {{price}}
               span 元
-            .successDec 恭喜您获得“万物直供”
+            .successDec 恭喜您获得“万物直供”商城
           .againDec(v-if="!getSuccess")
             .line1 领券成功~
             .line2 您可以推荐亲友领券！
         .bottomWrapper
           .goHome(@click="$router.replace('/home')") 进入万物直供首页
-          a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002") 下载万物APP（安卓版）
-          a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8") 下载万物APP（苹果版）
+          a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002") 下载万物直供APP（安卓版）
+          a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8") 下载万物直供APP（苹果版）
           .dec.first 点击下载“万物直供”APP
           .dec 或者进入应用商店搜索“万物直供”下载
 </template>
