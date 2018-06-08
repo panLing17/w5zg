@@ -27,7 +27,7 @@
           span 实付价
           p {{goodsData.direct_supply_price | price-filter}}
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
-      ul.saveMoney(v-if="userData.member_type !== '092'")
+      ul.saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         .saveMoneyTop
           li.red
             .label 专柜折后价
@@ -68,7 +68,7 @@
             .leftRadio
             .righttRadio
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
-      .myPrice(@click="cardTipsFlag = true")
+      .myPrice(@click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
         .left 余额
           span 现金券 / 通用券 / 使用说明
         img(src="../../../assets/img/right.png").right

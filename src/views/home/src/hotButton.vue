@@ -20,7 +20,7 @@
       toNext (arrType,index) {
         let data = {};
         if (arrType === 2) {
-          data = this.list[4+index];
+          data = this.list[5+index];
         }else {
           data = this.list[index];
         }

@@ -207,13 +207,12 @@
 
   .text {
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     word-break: break-all;
   }
 
@@ -265,17 +264,23 @@
   }
   /* 推荐标签布局 */
   .tagType {
-    height: 3.4rem;
+    height: 7.2rem;
     background-color:  rgb(242, 242, 242);
-    padding: .5rem .25rem;
+    padding: .2rem .25rem;
   }
   .tagType>li{
-    padding: .1rem .2rem;
+    /*padding: .1rem .2rem;*/
+    width: 47%;
+    line-height: .86rem;
+    text-align: center;
     background-color: white;
     color: #aaaaaa;
     float: left;
     margin-right: .2rem;
     margin-bottom: .2rem;
     border-radius: .2rem;
+  }
+  .tagType>li:nth-child(2n) {
+    margin-right: 0;
   }
 </style>
