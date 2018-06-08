@@ -7,6 +7,9 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "build": "node build/build.js build",
+    "build:test": "cross-env NODE_ENV=production env_config=test node build/build.js",
+    "build:pre": "cross-env NODE_ENV=production env_config=pre node build/build.js",
+    "build:prod": "cross-env NODE_ENV=production env_config=prod node build/build.js",
     "report": "node build/build.js build --report"
   },
   "dependencies": {
@@ -41,6 +44,7 @@
     "chalk": "^2.3.0",
     "connect-history-api-fallback": "^1.5.0",
     "copy-webpack-plugin": "^4.2.0",
+    "cross-env": "^5.1.6",
     "css-loader": "^0.28.7",
     "eslint": "^4.12.1",
     "eslint-config-standard": "^10.2.1",

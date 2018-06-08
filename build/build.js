@@ -1,6 +1,7 @@
 require('./check-versions')()
 
-process.env.NODE_ENV = 'production'
+// 注释掉赋值，为增加新的打包环境
+// process.env.NODE_ENV = 'production'
 var ora = require('ora')
 var rm = require('rimraf')
 var path = require('path')
@@ -8,7 +9,8 @@ var chalk = require('chalk')
 var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.prod.conf')
-var spinner = ora('正在为' + process.argv[2] + '环境打包代码...')
+// var spinner = ora('正在为' + process.argv[2] + '环境打包代码...')
+var spinner = ora('building for ' + process.env.NODE_ENV + ' of ' + process.env.env_config+ ' mode...' )
 spinner.start()
 
 rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {

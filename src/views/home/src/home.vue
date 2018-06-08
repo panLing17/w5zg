@@ -22,7 +22,6 @@
         img.areaImg(src="../../../assets/img/trading.png")
       .member(@click="showAnimate")
         img.memberImg(src="../../../assets/img/menber.png")
-      .title1
       w-activity(:listData="activityGoods")
       .title2
       recommend(ref="recommend")
@@ -701,6 +700,7 @@
   }
   .tradingArea, .member {
     margin-top: .2rem;
+    margin-bottom: .2rem;
     font-size: 0;
   }
   .animateWrapper {
