@@ -76,8 +76,9 @@
       components:{recommend},
       data(){
         return{
-          contLists:[],
-          invalid:[{},{}]
+          listLength:"", //预约数组的长度
+          contLists:[], //预约的数组
+          invalid:[{},{}], //失效的数组
         }
       },
       computed: mapState(['position']),
@@ -123,7 +124,8 @@
             rows:99
           }
         }).then(function(res){
-          console.log(res.data.data[0].gcGoodsSkuVO);
+          console.log(res.data.data.length);
+          self.listLength = res.data.data.length;
           self.contLists = res.data.data;
         })
        },
