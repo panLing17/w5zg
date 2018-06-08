@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 预约体验(试穿)
+      .topCenter(slot="center") {{listLength<99?'预约体验(试穿)':'预约体验单已满(99)'}}
       .topRight(slot="right")
         span(v-if="false") 管理
         img(src="../../../assets/img/share.png" v-if="false")
@@ -173,12 +173,12 @@
     min-height: 100vh;
   }
   .topCenter{
-    width: 3.8rem;
+    width: 4.5rem;
     font-size: .5rem;
     font-weight: 400;
   }
   .topRight{
-    padding-right: .3rem;
+    padding-right: .2rem;
   }
   .topRight span{
     display: inline-block;
