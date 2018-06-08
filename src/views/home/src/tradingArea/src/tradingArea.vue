@@ -1,7 +1,7 @@
 <template lang="pug">
   .wrap
     nav-bar(background="white")
-      .topLeft(slot="left", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="goBack")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center") 搜商圈
       .topRight(slot="right")
@@ -40,6 +40,14 @@
       this.$mescrollInt('Mescroll', this.upCallback)
     },
     methods: {
+      goBack () {
+        this.$router.go(-1)
+        // app交互
+        if (typeof w5zgApp !== 'undefined') {
+          w5zgApp.onfinish()
+        }
+        // 交互完毕
+      },
       upCallback: function (page) {
         this.mescroll.endErr()
       },

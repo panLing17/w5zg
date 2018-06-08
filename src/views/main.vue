@@ -137,6 +137,7 @@
 
   .bottomNav {
     background: white;
+    padding: 0 .2rem;
     width: 100%;
     height: 1.6rem;
     border-top: solid 1px #d7d7d7;
@@ -144,7 +145,7 @@
     z-index: 99;
     bottom: 0;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
   }
 
@@ -152,6 +153,7 @@
     width: 20%;
     text-align: center;
     display: flex;
+    justify-content: center;
     flex-direction: column;
   }
 

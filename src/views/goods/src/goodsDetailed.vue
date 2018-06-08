@@ -27,15 +27,15 @@
           span 实付价
           p {{goodsData.direct_supply_price | price-filter}}
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
-      ul.saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
-        .saveMoneyTop
+      .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
+        ul.saveMoneyTop
           li.red
             .label 专柜折后价
             .text <span>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 专柜价购买
             .text 返现<span>{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}</span>元
-        .saveMoneyBottom
+        ul.saveMoneyBottom
           li.gray
             .label 现金券购买
             .text 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
@@ -828,6 +828,8 @@
   .goodsBox {
     background: rgb(242,242,242);
     padding-bottom: 1rem;
+    width: 100%;
+    overflow-x: hidden;
   }
   .banner{
     position: relative;
@@ -910,6 +912,7 @@
   .saveMoney {
     width: 100%;
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
   }
   .saveMoney>.saveMoneyTop{
@@ -926,7 +929,7 @@
   }
   .saveMoney li{
     display: flex;
-    width: 4rem;
+    width: 5rem;
     align-items: center;
   }
   .saveMoney li .label{
@@ -938,8 +941,11 @@
     background-color: rgb(255,232,240);
   }
   .saveMoney li .text{
-    width: 1.7rem;
-    text-align: center;
+    word-wrap: normal;
+    flex-grow: 1;
+    padding-left: .1rem;
+    width: 0;
+    text-align: left;
   }
   .red{
 
