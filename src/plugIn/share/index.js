@@ -67,9 +67,6 @@ function wxShare (options) {
       if (options.handleSuccess) {
         options.handleSuccess()
       }
-    },
-    cancel: function () {
-      // 用户取消分享后执行的回调函数
     }
   });
 }
@@ -84,9 +81,6 @@ function friendShare (options) {
       if (options.handleSuccess) {
         options.handleSuccess()
       }
-    },
-    cancel: function () {
-      // 用户取消分享后执行的回调函数
     }
   });
 }

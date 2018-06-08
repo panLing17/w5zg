@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="$router.replace('/home')")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center") 万物商城现金券
+      .topCenter(slot="center", style="width: 5rem;text-align:center;") 万物直供商城现金券
       .topRight(slot="right")
     .content(v-loading="loadingFlag")
       <!--img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")-->
@@ -12,15 +12,23 @@
         .formBottom
           input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
-          .text 万物商城送你现金券，购物更省钱！
+          .text 万物直供商城送您现金券，购物更省钱！
       .successWrapper(v-if="showSuccess")
         .topWrapper
-          .price {{price}}
-            span 元
+          .success(v-if="getSuccess")
+            .price {{price}}
+              span 元
+            .successDec 恭喜您获得“万物直供”商城
+          .againDec(v-if="!getSuccess")
+            .line1 已经领过券了哦~
+            .line2 您可以推荐亲友领券！
         .bottomWrapper
-          .goHome(@click="$router.replace('/home')") 进入万物商城首页
           img.ewm(src="../../../../../assets/img/gzh.jpg")
-          .dec 长按关注“万物商城”公众号
+          .dec 长按关注“万物直供”商城公众号
+          .downloadWrapper
+            a.btn(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
+            a.btn(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8")
+          .goHome(@click="$router.push('/home')") 进入万物直供商城首页 >
 </template>
 
 <script>
@@ -33,7 +41,8 @@
         showSuccess:false,
         url: '',
         price: 0,
-        loadingFlag: false
+        loadingFlag: false,
+        getSuccess: false
       }
     },
     created () {
@@ -98,11 +107,12 @@
             }
           }).then(function (response) {
             _this.loadingFlag = false
-            if (response.data.code === '081') {
-              _this.price = response.data.data
+            if (response) {
               _this.showSuccess = true;
-            } else {
-              _this.$message.error(response.data.msg)
+              if (response.data.msg != '您已经超过领取上限') {
+                _this.price = response.data.data
+                _this.getSuccess = true;
+              }
             }
           })
         }
@@ -213,7 +223,7 @@
   }
   .price {
     position: absolute;
-    bottom: .8rem;
+    bottom: .6rem;
     left: 0;
     width: 100%;
     text-align: center;
@@ -233,25 +243,11 @@
     background: #c72d26;
     position: relative;
   }
-  .goHome {
-    position: absolute;
-    top: .5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 7.7rem;
-    height: 1.2rem;
-    background: #f2f2f2;
-    color: #7e7e7e;
-    border-radius: 1rem;
-    line-height: 1.2rem;
-    text-align: center;
-    font-size: .4rem;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-  }
+
   .ewm {
     width: 3.2rem;
     height: 3.2rem;
-    margin-top: 2rem;
+    margin-top: .5rem;
     pointer-events: auto !important;
   }
   .dec {
@@ -261,5 +257,54 @@
   }
   img {
     pointer-events: none;
+  }
+  .downloadWrapper {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 .3rem;
+    margin-top: .5rem;
+  }
+  .downloadWrapper .btn {
+    width: 4.6rem;
+    height: 1.4rem;
+    flex: none;
+  }
+  .downloadWrapper .btn:nth-child(1) {
+    background: url("../../../../../assets/img/11.png") no-repeat;
+    background-size: 4.6rem 1.4rem;
+  }
+  .downloadWrapper .btn:nth-child(2) {
+    background: url("../../../../../assets/img/12.png") no-repeat;
+    background-size: 4.6rem 1.4rem;
+  }
+  .goHome {
+    text-align: center;
+    color: #fff;
+    font-size: .4rem;
+    margin-top: .2rem;
+  }
+  .successDec {
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    bottom: 2.8rem;
+    left: 0;
+    font-size: .53rem;
+    color: #c82c26;
+  }
+  .success {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  .againDec {
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    bottom: 1.5rem;
+    left: 0;
+    font-size: .53rem;
+    color: #c82c26;
+    line-height: 1.5;
   }
 </style>

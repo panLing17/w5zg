@@ -207,13 +207,12 @@
 
   .text {
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
     word-break: break-all;
   }
 

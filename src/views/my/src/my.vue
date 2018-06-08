@@ -20,7 +20,7 @@
             li 余额:
             li {{accoutBalance}}
             li 元
-        .upgradeMembers(@click="jingqingqidai()")
+        .upgradeMembers(@click="jingqingqidai()" v-if="userData.member_type !== '092'")
           img(src="../../../assets/img/upgrade1@2x.png" v-if="imgFlag")
           img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")   
       div.fav_att_foot(v-if="false")
@@ -84,7 +84,7 @@
               img(src="../../../assets/img/ic_center_zj@2x.png")
               .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center'}") {{footmarkNum}}
                 i(v-if="footmarkNum>99") +
-              .words 足迹  
+              .words 足迹    
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(background="white", ref="recommend")
@@ -390,14 +390,14 @@
     margin-left: .2rem;
   }
   .head .center{
-    /*margin-top: 1rem;*/
+    margin-top: .3rem;
     display: flex;
     position: relative;
   }
   .head .center .headPic{
     width: 2rem;
     height: 2rem;
-    margin-left: 2rem;
+    margin-left: .3rem;
     /*margin-top: .4rem;*/
     border-radius: 50%;
     text-align: center;
@@ -502,38 +502,37 @@
   }
 	.myOrderForm ul.bottom{
 		display: flex;
-		justify-content: space-around;
-		padding: .4rem .3rem 0;
+		justify-content: space-between;
+		padding: .4rem .5rem 0;
     text-align: center;
 	}
   .myOrderForm ul.bottom li{
     position: relative;
   }
   .myOrderForm ul.bottom li img{
-    width: 1rem;
+    width: .8rem;
+    /*height: .8rem;*/
   }
   /*.myOrderForm ul.bottom li:nth-child(2),
   .myOrderForm ul.bottom li:nth-child(3),
   .myOrderForm ul.bottom li:nth-child(4){
     margin-left: .7rem;
   }*/
-  /*.myOrderForm ul.bottom li:nth-child(2) img{
+  .myOrderForm ul.bottom li:nth-child(2) img{
     width: .7rem;
   }
   .myOrderForm ul.bottom li:nth-child(3) img{
-    width: .72rem;
+    width: .85rem;
   }
   .myOrderForm ul.bottom li:nth-child(4) img{
-    width: .56rem;
-    margin-bottom: .08rem;
+    width: .65rem;
   }
-  .myOrderForm ul.bottom li:nth-child(5){
+  /*.myOrderForm ul.bottom li:nth-child(5){
     margin-left: .3rem;
-  }
-  .myOrderForm ul.bottom li:nth-child(5) img{
-    width: .68rem;
-    margin-bottom: .03rem;
   }*/
+  .myOrderForm ul.bottom li:nth-child(5) img{
+    width: .67rem;
+  }
 	/*.myOrderForm ul.bottom li img{
 		width: .7rem;
 	}*/
@@ -551,18 +550,39 @@
     /*clear: both;*/
   /*}*/
 	.myTreasure ul.bottom{
-		padding: .4rem .2rem 0;
+		padding: .4rem .4rem 0;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
 	}
-  /*.myTreasure ul.bottom li:nth-child(1),*/
-  /*.myTreasure ul.bottom li:nth-child(2){*/
-    /*text-align: center;*/
-    /*float: left;*/
-    /*margin-right: 2.7rem;*/
-  /*}*/
+  .myTreasure ul.bottom li:nth-child(2){
+    margin-left: -.5rem;
+  }
+  .myTreasure ul.bottom li:nth-child(2) img{
+    width: .75rem;
+    margin-bottom: .15rem;
+  }
+  .myTreasure ul.bottom li:nth-child(3){
+    margin-left: -.3rem;
+  }
+  .myTreasure ul.bottom li:nth-child(3) img{
+    width: .8rem;
+    margin-bottom: .17rem;
+  }
+  .myTreasure ul.bottom li:nth-child(4){
+    margin-left: -.3rem;
+  }
+  .myTreasure ul.bottom li:nth-child(4) img{
+    width: .85rem;
+    margin-bottom: .13rem;
+  }
+  .myTreasure ul.bottom li:nth-child(5){
+    margin-right: .5rem;
+  }
+  .myTreasure ul.bottom li:nth-child(5) img{
+    width: .6rem;
+  }
 	.myTreasure ul.bottom li img{
-		width: 1rem;
+		width: .7rem;
 	}
   .myTreasure ul.bottom li .words{
     margin-top: .2rem;
@@ -591,22 +611,22 @@
     width: 55%;
   }
   .badge {
-    width: .5rem;
-    height: .5rem;
+    width: .4rem;
+    height: .4rem;
     border-radius: 50%;
     background: rgb(246,0,87);
     color: #fff;
-    font-size: .29rem;
+    font-size: .3rem;
     position: absolute;
     right: 0;
-    top: 0;
-    line-height: .5rem;
+    top: -.15rem;
+    line-height: .4rem;
   }
   .badge i {
     position: absolute;
     top: -.1rem;
     right: .05rem;
-    font-size: .29rem;
+    font-size: .3rem;
   }
   .myTreasure ul.bottom li {
     position: relative;
