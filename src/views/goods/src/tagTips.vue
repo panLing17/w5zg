@@ -26,9 +26,19 @@
     props:{
       show: Boolean
     },
+    watch:{
+      show (val) {
+        if (val) {
+          // mescroll初始化
+          this.$mescrollInt("tagTips",this.upCallback)
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy()
+        }
+      }
+    },
     mounted () {
-      // mescroll初始化
-      this.$mescrollInt("tagTips",this.upCallback)
+
     },
     methods: {
       upCallback: function(page) {

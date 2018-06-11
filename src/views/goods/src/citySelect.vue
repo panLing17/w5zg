@@ -1,9 +1,9 @@
 <template lang="pug">
   .citySelectBox
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
-      .bg(v-if="show", @click="close", @touchmove.prevent="")
+      .bg(v-show="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show", @touchmove.prevent="")
+      .main(v-show="show", @touchmove.prevent="")
         .title
           span 配送至
           img(src="../../../assets/img/cancle@3x.png", @click="close")
@@ -18,10 +18,10 @@
         <!--ul.list-->
           <!--li(v-for="item in cityList", @click="selectOver(item.city_no,item.city_name)") {{item.city_name}}-->
         ul.list(@touchmove.prevent="", ref="list")
-          li(@touchstart.stop="touchStart($event, 1)", @touchmove.stop="touchMove($event, 1)", :style="{top: move.first.top + 'px'}")
+          li(@touchstart="touchStart($event, 1)", @touchmove="touchMove($event, 1)", :style="{top: move.first.top + 'px'}")
             .item(v-for="(item, index) in provinceList", @click.stop="getCity(item.pro_no,item.pro_name)", :key="index", ref="item") {{item.pro_name}}
         ul.list(@touchmove.prevent="")
-          li(@touchstart.stop="touchStart($event, 2)", @touchmove.stop="touchMove($event, 2)", :style="{top: move.second.top + 'px'}")
+          li(@touchstart="touchStart($event, 2)", @touchmove="touchMove($event, 2)", :style="{top: move.second.top + 'px'}")
             .item(v-for="(item, index) in cityList", @click.stop="selectOver(item.city_no,item.city_name)", :key="index") {{item.city_name}}
 
 </template>
@@ -75,14 +75,18 @@
     },
     watch: {
       show (val) {
-        if (val && this.move.first.topMin===0) {
-          this.getMinTop(1)
-        }
         if (val) {
-          this.getProvince()
           this.selectType = 0
+          this.provinceList = []
           this.cityList = []
           this.provinceName = '请选择'
+        } else {
+          this.move.first.topMin = 0
+        }
+        if (val && this.move.first.topMin===0) {
+          this.getProvince().then(()=>{
+            this.getMinTop(1)
+          })
         }
       }
     },
@@ -168,27 +172,31 @@
         }
       },
       getProvince () {
-        let self = this
-        let data
-        let url
-        if (this.type === '专柜自提') {
-          url = self.$apiGoods + 'store/existProvince'
-          data = {
-            spuId: self.$route.query.id
-          }
-        } else {
-          url = self.$apiApp + 'index/allProvince'
-          data = {
+        let fun = new Promise((resolve)=>{
+          let self = this
+          let data
+          let url
+          if (this.type === '专柜自提') {
+            url = self.$apiGoods + 'store/existProvince'
+            data = {
+              spuId: self.$route.query.id
+            }
+          } else {
+            url = self.$apiApp + 'index/allProvince'
+            data = {
 
+            }
           }
-        }
-        self.$ajax({
-          method: 'get',
-          url: url,
-          params: data,
-        }).then(function (response) {
-          self.provinceList = response.data.data
+          self.$ajax({
+            method: 'get',
+            url: url,
+            params: data,
+          }).then(function (response) {
+            self.provinceList = response.data.data
+            resolve()
+          })
         })
+        return fun
       },
       getCity (number,proName) {
         // 记录选中的省的编码

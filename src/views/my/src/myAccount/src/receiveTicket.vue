@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="$router.replace('/home')")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="width: 5rem;text-align:center;") 万物直供商城现金券
+      .topCenter(slot="center", style="width: 6rem;text-align:center;") 万物直供商城现金券
       .topRight(slot="right")
     .content(v-loading="loadingFlag")
       <!--img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")-->

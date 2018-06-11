@@ -2,6 +2,10 @@
 const path = require('path')
 module.exports = {
   build: {
+    // 添加test pre prod 三处环境的配制
+    prodEnv: require('./prod.env'),
+    preEnv: require('./pre.env'),
+    testEnv: require('./test.env'),
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
     assetsRoot: path.resolve(__dirname, '../dist'),

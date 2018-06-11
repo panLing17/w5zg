@@ -29,7 +29,7 @@ import Common from '../views/common/index'
 import TradingArea from '../views/home/src/tradingArea/index'
 //预约试穿
 import Reservations from '../views/reservations/index.js'
- 
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -738,6 +738,16 @@ const router = new Router ({
 })
 // 全局前置守卫
 router.beforeEach ((to, from, next) => {
+  // app交互
+  if (typeof w5zgApp !== 'undefined') {
+    w5zgApp.page(JSON.stringify({
+      path: to.path,
+      query: to.query
+    }))
+    next()
+    return
+  }
+  // 交互完毕
   const list = ['首页', '分类', '购物车', '我的']  // 将需要切换效果的路由名称组成一个数组
   const toName = to.name  // 即将进入的路由名字
   const fromName = from.name  // 即将离开的路由名字

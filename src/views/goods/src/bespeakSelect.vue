@@ -9,7 +9,7 @@
           .right(@click="$router.push('/reservations')")
             img(src="../../../assets/img/pageList.png")
             span 我的预约
-        ul.list(v-if="!isEmpty")
+        ul.list
           li.city(v-for="item in storeList")
             h1 {{item.cityName}}
             ul
@@ -21,7 +21,7 @@
                 .icon
                   img(src="../../../assets/img/now@2x.png", v-if="bsId === i.bs_id")
                   img(src="../../../assets/img/past@2x.png", v-else)
-        .nodata(v-if="isEmpty") 暂无可试穿门店，敬请期待
+        p(v-if="storeList.length<1").notFindStore 该商品无可选门店或未登录
         button.ok(@click="addBespeak") 确 认
 
 </template>
@@ -33,8 +33,7 @@
       return {
         // 当前选中的地址的id
         bsId: '',
-        storeList: [],
-        isEmpty: false
+        storeList: []
       }
     },
     props: {
@@ -80,11 +79,7 @@
             storeType: 1
           },
         }).then(function (response) {
-          if (response && response.data.data.length>0) {
-            self.storeList = response.data.data
-          } else {
-            self.isEmpty = true
-          }
+          self.storeList = response.data.data
 
         })
       },
@@ -222,6 +217,10 @@
     margin-left: .2rem;
     border-radius: 3px;
   }
+  .notFindStore {
+    color: #aaaaaa;
+    text-align: center;
+  }
   .ok {
     width: 100%;
     height: 1rem;
@@ -240,11 +239,5 @@
     margin-left: 0;
     background: rgb(245,0,87);
     transition: margin-left .6s;
-  }
-  .nodata {
-    font-size: .4rem;
-    text-align: center;
-    margin-top: 2rem;
-    color: #999;
   }
 </style>
