@@ -633,6 +633,7 @@
     background-color: #fff;
     padding: .2rem .3rem;
     display: flex;
+    justify-content: space-between;
   }
   .toggle li img{
     width: 2.5rem;
@@ -640,9 +641,10 @@
     border-radius: .1rem;
   }
   .toggle li .wrapWords{
+    width: 0;
     margin-left: .3rem;
-    width: 100%;
     background-color: #fff;
+    flex-grow: 1;
   }
   .toggle .wrapWords .text{
     width: 100%;
