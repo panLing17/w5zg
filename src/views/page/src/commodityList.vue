@@ -660,10 +660,10 @@
     /*margin: .2rem 0;*/
     padding-top: .4rem;
     color: rgb(246,0,87);
-    font-weight: 600;
+    /*font-weight: 600;*/
     font-size: .4rem;
     display: flex;
-    justify-content: space-between;
+    /*justify-content: space-between;*/
     align-items: center;
   }
   .toggle .bottom{
