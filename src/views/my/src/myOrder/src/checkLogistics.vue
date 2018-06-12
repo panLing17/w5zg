@@ -281,8 +281,9 @@
     font-size: .3rem;
   }
   .logisticsMsg li .time span.wrap{
+    text-align: center;
     position: absolute;
-    top: -.3rem;
+    top: -.14rem;
   }
   .logisticsMsg li .messages{
     width: 80%;
@@ -303,7 +304,7 @@
   }
   .logisticsMsg li .messages span.state{
     position: absolute;
-    top: -.15em;
+    top: -.6em;
     font-size: .3rem;
   }
   /*物流信息--结束*/
