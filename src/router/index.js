@@ -293,6 +293,18 @@ const router = new Router ({
               path: '/home/sports',
               name: '三级活动',
               component: Home.sports
+            },
+            {
+              path: '/home/activity',
+              name: '活动集合',
+              component: Home.activity,
+              children: [
+                {
+                  path: '',
+                  name: '活动集合内容',
+                  component: Home.activityContent
+                }
+              ]
             }
           ]
         }, {
