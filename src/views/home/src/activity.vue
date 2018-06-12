@@ -3,12 +3,12 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="back")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="width: 5rem;text-align: center;") 活动集合
+      .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
+    .tabListWrapper
+      ul.tabList
+        li.tabItem(v-for="(item, index) in tabList", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
     .mescroll#activityMescroll
-      .tabListWrapper
-        ul.tabList
-          li.tabItem(v-for="(item, index) in tabList", :class="{active: tabActive===index}", @click="tabActive=index", :key="index") {{item}}
       .contentWrapper
         router-view
 </template>
@@ -23,10 +23,30 @@
       }
     },
     mounted () {
-      this.$mescrollInt("activityMescroll",this.upCallback);
+      this.getTabList()
+    },
+    activated () {
+      this.getTabList()
     },
     methods: {
-      upCallback: function(page) {},
+      tabCheck (index) {
+        this.tabActive = index;
+        this.$router.replace({path: '/content', query: {id:this.tabList[index].id, title: this.$route.query.title, actId: this.$route.query.actId}})
+      },
+      getTabList () {
+        let _this = this;
+        this.$ajax({
+          url: this.$apiApp + 'acActivityContent/acActivityContentList',
+          methods: 'get',
+          params: {
+            actId: this.$route.query.actId,
+            parentType: this.$route.query.parentType
+          }
+        }).then((response) => {
+          _this.tabList = response.data.data;
+          _this.$router.replace({path: '/content', query: {id:_this.tabList[0].id, title: this.$route.query.title, actId: this.$route.query.actId}})
+        })
+      },
       back () {
         if (window.history.length<=2) {
           this.$router.push('/home')
@@ -39,11 +59,13 @@
 </script>
 
 <style scoped>
-  ::-webkit-scrollbar {
-    width: 0px;
-  }
-  ::-webkit-scrollbar {
-    display: none;/*隐藏滚轮*/
+  .mescroll {
+    position: fixed;
+    top: 2.8rem;
+    bottom: 0;
+    height: auto;
+    width: 100%;
+    overflow-x: auto;
   }
   .wrap {
     position: absolute;
@@ -55,17 +77,18 @@
   .tabListWrapper {
     border: 1px solid #f2f2f2;
     border-top: none;
-    overflow: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
   }
   .tabList {
-    width: 20rem;
+    float: left;
     height: 1.5rem;
     line-height: 1.5rem;
-    display: flex;
-    flex-wrap: nowrap;
   }
   .tabItem {
-    flex: none;
+    display: inline-block;
     padding: 0 .5rem;
     font-size: .4rem;
     color: #333;

@@ -300,7 +300,7 @@ const router = new Router ({
               component: Home.activity,
               children: [
                 {
-                  path: '',
+                  path: '/content',
                   name: '活动集合内容',
                   component: Home.activityContent
                 }
