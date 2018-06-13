@@ -265,7 +265,7 @@
   }
   /* 推荐标签布局 */
   .tagType {
-    height: 7.5rem;
+    height: 9.08rem;
     background-color:  rgb(242, 242, 242);
     padding: .5rem .25rem;
   }

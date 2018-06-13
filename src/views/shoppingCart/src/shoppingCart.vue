@@ -30,6 +30,7 @@
         .right
           .prive 合计：{{computedPrice | price-filter}}
           .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+    cart-guide
 </template>
 
 <script>
@@ -37,6 +38,7 @@
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
   import recommend from './recommend'
+  import cartGuide from './cartGuide'
   import {mapState} from 'vuex'
 
   export default {
@@ -51,7 +53,7 @@
         nowTab: 0
       }
     },
-    components: {goodsCard, disableGoods, citySelect, recommend},
+    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend},
     computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
     mounted() {
       // mescroll初始化

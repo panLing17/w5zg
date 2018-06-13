@@ -15,14 +15,14 @@
             li(@click="$router.push('/my/settings')")
               img(:src="userData.mi_head_sculpture | img-filter")
           ul.userName
-            li {{userData.mi_nickname? userData.mi_nickname: '万物直供'}} 
+            li {{userData.mi_nickname? userData.mi_nickname: '万物直供'}}
           ul.balance(v-if="userData.member_type === '092'")
             li 余额:
             li {{accoutBalance}}
             li 元
         .upgradeMembers(@click="jingqingqidai()" v-if="userData.member_type !== '092'")
           img(src="../../../assets/img/upgrade1@2x.png" v-if="imgFlag")
-          img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")   
+          img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")
       div.fav_att_foot(v-if="false")
         ul.left(@click="$router.push('/reservations')")
           li 0
@@ -79,12 +79,12 @@
               .words 通用劵
             li(@click="goBankCard")
               img(src="../../../assets/img/my_bankcard@2x.png")
-              .words 银行卡  
+              .words 银行卡
             li(@click="$router.push('/my/footMark')")
               img(src="../../../assets/img/ic_center_zj@2x.png")
               .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center'}") {{footmarkNum}}
                 i(v-if="footmarkNum>99") +
-              .words 足迹    
+              .words 足迹
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(background="white", ref="recommend")
@@ -94,11 +94,13 @@
         span(:class="{play:animateShow}") 敬
         span(:class="{play:animateShow}") 请
         span(:class="{play:animateShow}") 期
-        span(:class="{play:animateShow}") 待  
+        span(:class="{play:animateShow}") 待
+    myGuide
 </template>
 
 <script>
   import {mapState} from 'vuex'
+  import myGuide from './myGuide'
   import recommend from './recommend'
   export default {
     name: "my",
@@ -118,7 +120,7 @@
         imgFlag:true, //控制升级会员图片的显隐
       }
     },
-    components:{recommend},
+    components:{myGuide, recommend},
     computed: mapState(['userData','position']),
     created () {
       this.getOrderCount()
@@ -185,7 +187,7 @@
         let self = this;
         setInterval(function(){
           self.imgFlag = !self.imgFlag;
-        },500);  
+        },500);
       },
       //改变下拉刷新的样式
       changeStyles(){
