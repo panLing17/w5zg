@@ -30,7 +30,7 @@
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         ul.saveMoneyTop
           li.red
-            .label 专柜折后价
+            .label {{goodsData.retail_interval>goodsData.counter_interval? '专柜价':'专柜折后价'}}
             .text <span>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 专柜价购买
@@ -126,6 +126,8 @@
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
+    // 新手教程
+    goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
 
@@ -140,6 +142,7 @@
   import cardTips from './cardTips'
   import tagTips from './tagTips'
   import saveMoneyTips from './saveMoneyTips'
+  import goodsGuide from './goodsGuide'
   import recommend from './recommend'
   // import onlyCitySelect from './onlyCitySelect'
   import {mapState} from 'vuex'
@@ -214,7 +217,7 @@
       },*/
       ...mapState(['location', 'userData','skuId'])
     },
-    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, recommend},
+    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
       if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
@@ -331,6 +334,9 @@
       }
     },
     methods:{
+      scrollTo(h,t){
+        this.mescroll.scrollTo( h, t );
+      },
       getFreight () {
         if (!this.skuId) {
           return

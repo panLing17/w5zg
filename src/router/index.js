@@ -29,6 +29,8 @@ import Common from '../views/common/index'
 import TradingArea from '../views/home/src/tradingArea/index'
 //预约试穿
 import Reservations from '../views/reservations/index.js'
+//首页活动
+import Acitivity from '../views/home/src/activity/index'
 
 Vue.use(Router)
 const router = new Router ({
@@ -297,14 +299,19 @@ const router = new Router ({
             {
               path: '/home/activity',
               name: '活动集合',
-              component: Home.activity,
+              component: Acitivity.activity,
               children: [
                 {
                   path: '',
                   name: '活动集合内容',
-                  component: Home.activityContent
+                  component: Acitivity.activityContent
                 }
               ]
+            },
+            {
+              path: '/home/twoLevel',
+              name: '新二级活动',
+              component: Acitivity.twoLevel
             }
           ]
         }, {

@@ -201,26 +201,30 @@
             this.allFreight = 0
           }
         }*/
-        // 通过接口请求运费，临时用，后续修改
-        let self = this
-        let jsonStr = []
-        this.transfer.forEach((now)=>{
-          jsonStr.push({
-            gsku_id: now.skuId,
-            goods_num: now.number
+        if (this.$route.query.since !== 'true'){
+          // 通过接口请求运费，临时用，后续修改
+          let self = this
+          let jsonStr = []
+          this.transfer.forEach((now)=>{
+            jsonStr.push({
+              gsku_id: now.skuId,
+              goods_num: now.number
+            })
           })
-        })
-        jsonStr = JSON.stringify(jsonStr)
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'shoppingCart/queryFreight',
-          params: {
-            skuNumArrayStr: jsonStr,
-            cityNo: self.giveGoodsAddress.ra_city
-          }
-        }).then(function (response) {
-          self.allFreight = response.data.data
-        })
+          jsonStr = JSON.stringify(jsonStr)
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/queryFreight',
+            params: {
+              skuNumArrayStr: jsonStr,
+              cityNo: self.giveGoodsAddress.ra_city
+            }
+          }).then(function (response) {
+            self.allFreight = response.data.data
+          })
+
+        }
+
       },
       submit () {
         if (this.submitFlag) {
