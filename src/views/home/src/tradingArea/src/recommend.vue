@@ -180,7 +180,7 @@
 
   .goodsList {
     width: calc(50% - .1rem);
-    background: rgb(242, 242, 242);
+    background: #fff;
   }
 
   .goodsList>li {

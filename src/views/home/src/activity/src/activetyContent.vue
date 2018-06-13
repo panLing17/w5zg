@@ -4,7 +4,7 @@
 </template>
 
 <script>
-  import recommend from './tradingArea/src/recommend'
+  import recommend from '../../tradingArea/src/recommend'
   export default {
     name: "activetyContent",
     components: {
@@ -22,8 +22,20 @@
         y: this.mescroll.getScrollTop()
       })
     },
+    activated () {
+      if (this.parentId == this.$route.query.id || !this.$route.query.id) {
+        let _this = this
+        this.$store.state.position.forEach((now) => {
+          if (now.path === '/activity') {
+            _this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      } else {
+        this.parentId = this.$route.query.id
+        this.mescroll.resetUpScroll();
+      }
+    },
     beforeRouteUpdate  (to, from, next) {
-
       if (this.parentId == to.query.id) {
         let _this = this
         this.$store.state.position.forEach((now) => {
@@ -63,6 +75,9 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        if (!this.parentId) {
+          return
+        }
         let self = this
         self.$ajax({
           method: 'post',
