@@ -85,6 +85,7 @@
         pages: 1, //商品展示页码
         pageRows: 8, //商品展示每页的长度
         flagNum: this.$route.query.flags, //判断是筛选还是url传来的
+        defaultRule: 1, //默认规则
       }
     },
     computed:{
@@ -356,7 +357,8 @@
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
             sortFieldType: self.order, //字段排序
-            city_no: self.location.city.id //当前城市编号
+            searchRuleConstant: self.defaultRule, //默认规则
+            city_no: 100100 //当前城市编号
           }
         }).then(function(response){
           self.goodsFlag = true;
@@ -399,7 +401,8 @@
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
             sortFieldType: self.order, //字段排序
-            city_no: self.location.city.id //当前城市编号
+            searchRuleConstant: self.defaultRule, //默认规则
+            city_no: 100100 //当前城市编号
           }
         }).then(function(response){
           console.log(response.data.data.length)
@@ -588,10 +591,11 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
     font-size: .3rem;
+    padding-top: .1rem;
   }
   .text span{
     margin-top: 10px;
-    padding: 1px 2px;
+    padding: .01rem .02rem;
     background-color: rgb(255, 232, 240);
     border: solid .5px #f70057;
     color: #f70057;
