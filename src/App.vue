@@ -146,6 +146,10 @@
 </script>
 
 <style>
+  @font-face {
+    font-family: Webdings;
+    src: url('./assets/font/DFPHanziPenW5-GB.ttf')
+  }
   * {
     padding: 0;
     margin: 0;

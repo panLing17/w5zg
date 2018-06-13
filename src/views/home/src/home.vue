@@ -49,12 +49,14 @@
         span(:class="{play:animateShow}") 请
         span(:class="{play:animateShow}") 期
         span(:class="{play:animateShow}") 待
+    home-guide
 </template>
 <script>
   import hotButton from './hotButton'
   import lNews from './news'
   import wActivity from './activities'
   import recommend from './recommend'
+  import homeGuide from './homeGuide'
   import {mapState} from 'vuex'
   import store from '../../../vuex/store'
   import shareImg from '../../../assets/img/applogo@2x.png'
@@ -95,6 +97,7 @@
         animateShow: false
       }
     },
+    components: {hotButton, lNews, wActivity, recommend, homeGuide},
     computed: {
       ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket'])
     },
@@ -381,8 +384,7 @@
             break;
         }
       }
-    },
-    components: {hotButton, lNews, wActivity, recommend}
+    }
   }
 </script>
 
@@ -564,7 +566,7 @@
     position: fixed;
     top: 9.5rem;
     right: -0.2rem;
-    z-index: 888;
+    z-index: 101;
   }
 
   .adWrapper img {
