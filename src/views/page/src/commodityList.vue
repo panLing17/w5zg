@@ -104,6 +104,7 @@
     watch :{
       '$route' (to, from) {
         console.log(to);
+        console.log(this.$store.state.pageNums);
         if (from.path == '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
@@ -128,6 +129,13 @@
       // } else if (this.flagNum == 1) {
       //   this.message = this.$route.query.msg;
       // }
+      this.position.forEach((now) => {
+          if (this.saveMsg == this.message) {
+            this.pages = 1;
+            this.pageRows = (this.$store.state.pageNums-0)*8;
+          }
+      })
+
       if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL;
       } else if (this.$route.query.flags == 1){
@@ -138,9 +146,8 @@
     mounted(){
       this.saveMsg = this.$route.query.msg;
       this.flagNum = this.$route.query.flags;
-
       //进入页面时加载
-      this.request();
+      //this.request();
       //根据判断是哪个页面传过来的关键字
       //this.keywordsSearch();
       //上拉加载
@@ -166,6 +173,11 @@
       this.mescroll.destroy();
     },
     methods:{
+      //当无订单时，将end去掉
+      emptys(){
+        var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
+         mescrollUpwarp.style.visibility = "hidden";   
+      },
       //回退事件
       backgo(){
         this.$router.go(-1);
@@ -246,7 +258,6 @@
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
-
         }
         if (data.flag1 == false) {
           commodityList.style.overflow = "scroll";
@@ -376,7 +387,10 @@
             }
             successCallback&&successCallback(response.data.data);//成功回调
           // }
-
+          console.log(self.recommendGoods.length);
+          if (self.recommendGoods.length == 0) {
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
+          }
         })
 
 //        .catch(function(error) {
