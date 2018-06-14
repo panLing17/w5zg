@@ -3,8 +3,8 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
-        .content
+      .main(v-show="show")
+        .content.mescroll#cartTips
           .contentTitle 用券说明
           .cancel(@click="close")
           ul.text
@@ -43,7 +43,22 @@
     props:{
       show: Boolean
     },
+    watch:{
+      show (val) {
+        if (val) {
+          // mescroll初始化
+          this.$mescrollInt("cartTips",this.upCallback)
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy()
+        }
+      }
+    },
     methods: {
+      upCallback: function(page) {
+        let self = this;
+        self.mescroll.endSuccess(1)
+      },
       close () {
         this.$emit('close')
       }
