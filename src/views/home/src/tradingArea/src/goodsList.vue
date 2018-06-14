@@ -6,6 +6,11 @@
           img(src="../../../../../assets/img/back@2x.png")
         .title {{$route.query.name}}
     .mescroll#listMescroll
+      .noData(v-if="isEmpty")
+        span 没有
+        span.special 此类
+        span 商品
+        img.recommendImg(src="../../../../../assets/img/recommend.png")
       recommend(ref="recommend")
 </template>
 
@@ -15,11 +20,22 @@
     name: "goodsList",
     data () {
       return {
+        url: '',
+        params: {},
+        isEmpty: false,
         keywords: ''
       }
     },
     components: {
       recommend
+    },
+    beforeRouteEnter (to, from , next) {
+      to.meta.keepAlive = false
+      next();
+    },
+    beforeRouteLeave (to, from, next) {
+      to.meta.keepAlive = true
+      next()
     },
     deactivated () {
       this.$store.commit('setPosition', {
@@ -37,8 +53,13 @@
         })
       } else {
         this.keywords = this.$route.query.name
-        this.mescroll.resetUpScroll();
+        this.isEmpty = false
+        this.url = this.$apiGoods + 'goodsSearch/spus'
+        this.params.keywords = this.$route.query.name
+        this.params.searchRuleConstant = this.$route.query.searchRuleConstant
+        this.mescroll.resetUpScroll()
       }
+
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -46,6 +67,11 @@
     },
     created (){
       this.keywords = this.$route.query.name
+      this.url = this.$apiGoods + 'goodsSearch/spus'
+      this.params = {
+        keywords: this.$route.query.name,
+        searchRuleConstant: this.$route.query.searchRuleConstant
+      }
     },
     mounted () {
       this.$mescrollInt("listMescroll",this.upCallback,() => {}, () => {});
@@ -54,8 +80,18 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          self.$refs.recommend.more(curPageData,page.num,page.size)
-          self.mescroll.endSuccess(curPageData.length)
+
+          if (page.num == 1 && curPageData.length <= 0) {
+            self.isEmpty = true
+            self.url = self.$apiGoods +  'goodsSearch/goodsRecommendationList'
+            self.params = {}
+            self.mescroll.resetUpScroll()
+          } else {
+
+            self.$refs.recommend.more(curPageData,page.num,page.size)
+            self.mescroll.endSuccess(curPageData.length)
+          }
+
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
@@ -63,15 +99,12 @@
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         let self = this
+        this.params.page = pageNum
+        this.params.rows = pageSize
         self.$ajax({
           method: 'post',
-          url:this.$apiGoods + 'goodsSearch/spus',
-          params: {
-            searchRuleConstant: this.$route.query.searchRuleConstant,
-            keywords: this.$route.query.name,
-            page: pageNum,
-            rows: pageSize
-          },
+          url: this.url,
+          params: this.params,
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           if (response) {
@@ -126,5 +159,20 @@
     font-weight: bold;
     text-align: center;
     line-height: 1.3rem;
+  }
+  .noData {
+    line-height: 2rem;
+    text-align: center;
+    font-size: .4rem;
+  }
+  .special {
+    color: rgb(244,0,87);
+    margin: 0 .2rem;
+  }
+  .recommendImg {
+    display: block;
+    margin: 0 auto;
+    width: 55%;
+    pointer-events: none;
   }
 </style>

@@ -85,6 +85,7 @@
         pages: 1, //商品展示页码
         pageRows: 8, //商品展示每页的长度
         flagNum: this.$route.query.flags, //判断是筛选还是url传来的
+        defaultRule: 1, //默认规则
       }
     },
     computed:{
@@ -103,15 +104,16 @@
     watch :{
       '$route' (to, from) {
         console.log(to);
+        console.log(this.$store.state.pageNums);
         if (from.path == '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
               this.mescroll.scrollTo(now.y, 0); 
-              if (this.saveMsg == this.message) {
+              // if (this.saveMsg == this.message) {
                 this.pages = 1;
                 this.pageRows = (this.$store.state.pageNums-0)*8;
-              }
-              this.request();
+              // }
+              //this.request();
             }
           })
         }
@@ -127,6 +129,7 @@
       // } else if (this.flagNum == 1) {
       //   this.message = this.$route.query.msg;
       // }
+
       if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL;
       } else if (this.$route.query.flags == 1){
@@ -137,9 +140,8 @@
     mounted(){
       this.saveMsg = this.$route.query.msg;
       this.flagNum = this.$route.query.flags;
-
       //进入页面时加载
-      this.request();
+      //this.request();
       //根据判断是哪个页面传过来的关键字
       //this.keywordsSearch();
       //上拉加载
@@ -165,6 +167,11 @@
       this.mescroll.destroy();
     },
     methods:{
+      //当无订单时，将end去掉
+      emptys(){
+        var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
+         mescrollUpwarp.style.visibility = "hidden";   
+      },
       //回退事件
       backgo(){
         this.$router.go(-1);
@@ -228,7 +235,7 @@
         this.$store.commit('setKeyWords',data.brandName);
         this.saveMsg = data.brandName;
         this.maskFlag = false;
-        this.goodsFlag = false;
+        this.goodsFlag = true;
         this.mescroll.lockDownScroll(false);
         this.mescroll.lockUpScroll(false);
         var commodityList = document.getElementsByClassName("commodityList")[0];
@@ -245,7 +252,6 @@
           this.maxPrice = data.maxPrice;
           this.minPrice = data.minPrice;
           this.checkFlag = true;
-
         }
         if (data.flag1 == false) {
           commodityList.style.overflow = "scroll";
@@ -356,7 +362,8 @@
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
             sortFieldType: self.order, //字段排序
-            city_no: self.location.city.id //当前城市编号
+            searchRuleConstant: self.defaultRule, //默认规则
+            city_no: 100100 //当前城市编号
           }
         }).then(function(response){
           self.goodsFlag = true;
@@ -374,7 +381,10 @@
             }
             successCallback&&successCallback(response.data.data);//成功回调
           // }
-
+          console.log(self.recommendGoods.length);
+          if (self.recommendGoods.length == 0) {
+            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
+          }
         })
 
 //        .catch(function(error) {
@@ -399,7 +409,8 @@
             sortType: self.sort, //正序倒序
             keywords: self.message, //关键字
             sortFieldType: self.order, //字段排序
-            city_no: self.location.city.id //当前城市编号
+            searchRuleConstant: self.defaultRule, //默认规则
+            city_no: 100100 //当前城市编号
           }
         }).then(function(response){
           console.log(response.data.data.length)
@@ -588,10 +599,11 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
     font-size: .3rem;
+    padding-top: .1rem;
   }
   .text span{
     margin-top: 10px;
-    padding: 1px 2px;
+    padding: .01rem .02rem;
     background-color: rgb(255, 232, 240);
     border: solid .5px #f70057;
     color: #f70057;

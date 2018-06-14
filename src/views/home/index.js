@@ -9,9 +9,8 @@ import activities from './src/activities'
 //import classification from './src/classification'
 import largeCollection from './src/largeCollection'
 import sports from './src/sports'
-import activity from './src/activity'
-import activityContent from './src/activetyContent'
+
 
 export default {
-  index,home,searchHistory,searchResult,activities,largeCollection,sports,activity,activityContent
+  index,home,searchHistory,searchResult,activities,largeCollection,sports
 }

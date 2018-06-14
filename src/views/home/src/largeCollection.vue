@@ -50,7 +50,8 @@
             methods: 'get',
             params: {
               actId: this.$route.query.actId,
-              parentType: this.$route.query.parentType
+              parentType: this.$route.query.parentType,
+              conType: '481'
             }
           }).then((response) => {
             _this.bankList = response.data.data;
@@ -67,6 +68,8 @@
             case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id,title: title}}); break;
             // 跳商品详情
             case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
+            // 跳3级页面模板2
+            case '149': this.$router.push({ path: '/home/activity', query: { actId: id, title: title, parentType: '362'}}); break;
           }
         }
         // upCallback: function(page) {
