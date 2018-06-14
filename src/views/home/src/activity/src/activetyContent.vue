@@ -1,6 +1,7 @@
 <template lang="pug">
   .content
     recommend(ref="recommend")
+    .noData(v-if="isEmpty") 暂无相关商品
 </template>
 
 <script>
@@ -13,7 +14,8 @@
     data () {
       return {
         parentId: '',
-        parentType: ''
+        parentType: '',
+        isEmpty: false
       }
     },
     deactivated () {
@@ -70,6 +72,11 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if (page.num == 1 && curPageData.length <= 0) {
+            self.isEmpty = true
+          } else {
+            self.isEmpty = false
+          }
           self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
@@ -79,6 +86,7 @@
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         if (!this.parentId) {
+          successCallback&&successCallback([])
           return
         }
         let self = this
@@ -116,5 +124,11 @@
   li {
     height: 2rem;
 
+  }
+  .noData {
+    margin-top: 3rem;
+    text-align: center;
+    color: #999;
+    font-size: .4rem;
   }
 </style>

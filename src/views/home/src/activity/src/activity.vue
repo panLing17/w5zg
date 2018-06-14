@@ -34,7 +34,6 @@
       this.getTabList(this.$route.query.id)
     },
     activated () {
-
       if (this.actId != this.$route.query.actId) {
         this.actId = this.$route.query.actId
         this.getTabList()
@@ -57,6 +56,9 @@
           }
         }).then((response) => {
           _this.tabList = response.data.data;
+          if (_this.tabList.length <= 0) {
+            return
+          }
           if (!id) {
             _this.$router.replace({path: '', query: {id:_this.tabList[0].id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
           } else {
