@@ -109,11 +109,11 @@
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
               this.mescroll.scrollTo(now.y, 0); 
-              if (this.saveMsg == this.message) {
+              // if (this.saveMsg == this.message) {
                 this.pages = 1;
                 this.pageRows = (this.$store.state.pageNums-0)*8;
-              }
-              this.request();
+              // }
+              //this.request();
             }
           })
         }
