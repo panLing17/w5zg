@@ -108,13 +108,20 @@
     float: left;
     height: 1.2rem;
     line-height: 1.2rem;
+    display: flex;
+    min-width: 100%;
   }
   .tabItem {
-    display: inline-block;
-    padding: 0 .4rem;
+    flex: 1;
+    /*padding: 0 .2rem;*/
+    min-width: 2.5rem;
+    text-align: center;
     font-size: .4rem;
     color: #333;
     position: relative;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .tabItem.active {
     color: rgb(245, 0, 87);
@@ -122,7 +129,7 @@
   .tabItem.active:before {
     content: '';
     display: block;
-    width: calc(100% - 0.8rem);
+    width: 100%;
     height: 2px;
     background: rgb(245, 0, 87);
     position: absolute;
