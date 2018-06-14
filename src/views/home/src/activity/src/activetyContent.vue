@@ -13,7 +13,7 @@
     data () {
       return {
         parentId: '',
-        parentType: '362'
+        parentType: ''
       }
     },
     deactivated () {
@@ -32,6 +32,7 @@
         })
       } else {
         this.parentId = this.$route.query.id
+        this.parentType = this.$route.query.parentType
         this.mescroll.resetUpScroll();
       }
     },
@@ -45,6 +46,7 @@
         })
       } else {
         this.parentId = to.query.id
+        this.parentType = this.$route.query.parentType
         this.mescroll.resetUpScroll();
       }
       next();
@@ -55,6 +57,7 @@
     },
     created () {
       this.parentId = this.$route.query.id
+      this.parentType = this.$route.query.parentType
     },
     mounted () {
       this.$mescrollInt("activityMescroll",this.upCallback);

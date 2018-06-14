@@ -72,8 +72,12 @@
           }
         })
       },
+      beforeRouteEnter (to, from , next) {
+        to.meta.keepAlive = false
+        next();
+      },
       beforeRouteLeave (to, from, next) {
-        from.meta.keepAlive = false
+        to.meta.keepAlive = true
         next()
       },
       methods: {
