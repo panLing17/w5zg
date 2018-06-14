@@ -3,13 +3,14 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
-        .title
-          span 配送至
-          img(src="../../../assets/img/cancle@3x.png", @click="close")
-        ul.list
-          li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_address}}
-          li(v-if="storeList.length === 0") 该城市无可选门店
+      .main(v-show="show")
+        .mescroll(id="storeSelect")
+          .title
+            span 配送至
+            img(src="../../../assets/img/cancle@3x.png", @click="close")
+          ul.list
+            li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_address}}
+            li(v-if="storeList.length === 0") 该城市无可选门店
 </template>
 
 <script>
@@ -40,16 +41,25 @@
       }
     },
     watch: {
-      show () {
-        if (this.show) {
+      show (val) {
+        if (val) {
           this.storeList = []
           this.getStore()
+          // mescroll初始化
+          this.$mescrollInt("storeSelect",this.upCallback)
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy()
         }
       }
     },
     mounted () {
     },
     methods:{
+      upCallback: function(page) {
+        let self = this;
+        self.mescroll.endSuccess(1)
+      },
       close () {
         this.$emit('close')
       },

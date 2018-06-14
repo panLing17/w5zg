@@ -259,7 +259,7 @@
   }
   /* 广告图布局 */
   .advertType {
-    height: 4.8rem;
+
 
     background-color: rgb(242, 242, 242);
   }
