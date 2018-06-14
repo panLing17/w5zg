@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="back")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="width: 5rem;text-align: center;") 美妆
+      .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
     .mescroll#twoLevelMescroll
       .contentWrapper
@@ -12,154 +12,181 @@
             .name 大牌推荐
             .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)")
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
-            li.brandItem(v-for="(item, index) in brandList", :key="index")
-              img.brandImg(:src="item.img")
-              .brandName {{item.name}}
+            li.brandItem(v-for="(item, index) in brandList", :key="index", @click="toNext(0, index)")
+              img.brandImg(:src="item.image")
+              .brandName {{item.title}}
         .block
           .blockTitle
             .name 精选分类
             .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)")
           ul.categoryList(:style="{'max-height': category.height}", ref="category")
-            li.categoryItem(v-for="(item, index) in categoryList", :key="index")
-              img.categoryImg(:src="item.img")
-              .categoryName {{item.name}}
+            li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
+              img.categoryImg(:src="item.image")
+              .categoryName {{item.title}}
         img.louceng(src="../../../../../assets/img/louceng2.png")
+        .recommendWrapper
+          recommend(ref="recommend")
 </template>
 
 <script>
+  import recommend from '../../tradingArea/src/recommend'
   export default {
     name: "twoLevel",
+    components: { recommend },
     data () {
       return {
         brand: {
           show: true,
           status: false,
           height: '5.32rem',
-          auto: ''
+          auto: 'none'
         },
         category: {
           show: true,
           status: false,
           height: '3.36rem',
-          auto: ''
+          auto: 'none'
         },
-        brandList: [
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
-          },
-          {
-            img: 'http://img5.imgtn.bdimg.com/it/u=211538858,2454809367&fm=27&gp=0.jpg',
-            name: '雅诗兰黛'
+        brandList: [],
+        categoryList: []
+      }
+    },
+    beforeRouteEnter (to, from , next) {
+      to.meta.keepAlive = false
+      next();
+    },
+    beforeRouteLeave (to, from, next) {
+      to.meta.keepAlive = true
+      next()
+    },
+    deactivated () {
+      this.$store.commit('setPosition', {
+        path: '/twoLevel',
+        y: this.mescroll.getScrollTop()
+      })
+    },
+    activated () {
+      if (this.parentId == this.$route.query.id || !this.$route.query.id) {
+        let _this = this
+        this.$store.state.position.forEach((now) => {
+          if (now.path === '/twoLevel') {
+            _this.mescroll.scrollTo(now.y, 0);
           }
-        ],
-        categoryList: [
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=118412108,1954933262&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-          {
-            img: 'http://img4.imgtn.bdimg.com/it/u=3179922072,3856683512&fm=27&gp=0.jpg',
-            name: '美妆'
-          },
-        ]
+        })
+      } else {
+        this.parentId = this.$route.query.id
+        this.mescroll.resetUpScroll();
       }
     },
     mounted () {
-      this.getHeight()
+      this.$mescrollInt("twoLevelMescroll",this.upCallback,() => {}, () => {});
+      this.getBrandList()
+      this.getCategoryList()
     },
     methods: {
+      toNext (status, index) {
+        let obj;
+        if (status === 0) {
+          obj = this.brandList[index]
+        } else if(status === 1) {
+          obj = this.categoryList[index]
+        }
+        switch (obj.url_type) {
+          // 跳外链
+          case '143': window.location.href = obj.url; break;
+          // 跳3级页面模板1 362代表从2级跳3级
+          case '145': this.$router.push({ path: '/home/sports',query:{parentType: '362',actId:obj.id,title: obj.title}}); break;
+          // 跳商品详情
+          case '141': this.$router.push({ path: '/goodsDetailed', query: { id: obj.relate_id }}); break;
+          // 跳3级页面模板2
+          case '149': this.$router.push({ path: '/home/activity', query: { actId: obj.id, title: obj.title, parentType: '362'}}); break;
+        }
+      },
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if (page.num === 1 && curPageData.length === 0 ) {
+            self.isEmpty = true
+          }else {
+            self.$refs.recommend.more(curPageData,page.num,page.size)
+          }
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'acactivitydetail/spus',
+          params: {
+            page: pageNum,
+            rows: pageSize,
+            parentId: this.$route.query.actId,
+            parentType: this.$route.query.parentType
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          if (response.data.code === '081') {
+            if (response.data.data && response.data.data.rows) {
+              successCallback&&successCallback(response.data.data.rows);
+            }else {
+              successCallback&&successCallback([]);
+            }
+          } else {
+            self.mescroll.endErr();
+          }
+        })
+      },
+      getBrandList () {
+        let _this = this;
+        this.$ajax({
+          url: this.$apiApp + 'acActivityContent/acActivityContentList',
+          methods: 'get',
+          params: {
+            actId: this.$route.query.actId,
+            parentType: this.$route.query.parentType,
+            conType: '482'
+          }
+        }).then((response) => {
+          if (response) {
+            _this.brandList = response.data.data;
+            if (_this.brandList.length <= 6) {
+              _this.brand.show = false
+            } else {
+              _this.$nextTick(()=> {
+                _this.getHeight()
+              })
+            }
+          }
+        })
+      },
+      getCategoryList () {
+        let _this = this;
+        this.$ajax({
+          url: this.$apiApp + 'acActivityContent/acActivityContentList',
+          methods: 'get',
+          params: {
+            actId: this.$route.query.actId,
+            parentType: this.$route.query.parentType,
+            conType: '483'
+          }
+        }).then((response) => {
+          if (response) {
+            _this.categoryList = response.data.data;
+            if (_this.categoryList.length <= 10) {
+              _this.category.show = false
+            } else {
+              _this.$nextTick(()=> {
+                _this.getHeight()
+              })
+            }
+          }
+        })
+      },
       getHeight () {
-        if (this.brandList.length <= 6) {
-          this.brand.show = false
-        }
-        if (this.categoryList.length <= 10) {
-          this.category.show = false
-        }
         this.brand.height = 'none'
         this.category.height = 'none'
         this.$nextTick(()=>{
@@ -269,6 +296,9 @@
     line-height: 1;
     margin-top: .73rem;
     text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .categoryList {
     padding: 0 .26rem;
@@ -300,6 +330,9 @@
     font-size: .26rem;
     color: #333;
     width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .louceng {
     margin-top: .26rem;

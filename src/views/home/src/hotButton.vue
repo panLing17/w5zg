@@ -33,8 +33,11 @@
           case '141': this.$router.push({ path: '/goodsDetailed', query: { id: data.relate_id }}); break;
           // 跳2级页面
           case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: data.id, title: data.title}}); break;
-          // 跳tab页
-          case '148': this.$router.push({path: '/home/activity', query: {parentType: '361',actId: data.id, title: data.title}}); break;
+          // 跳3级页面模板2
+          case '148': this.$router.push({path: '/home/twoLevel', query: {parentType: '361',actId: data.id, title: data.title}}); break;
+          // 跳3级页面模板2
+          case '149': this.$router.push({ path: '/home/activity', query: { actId: data.id, title: data.title, parentType: '361'}}); break;
+
         }
       }
     }

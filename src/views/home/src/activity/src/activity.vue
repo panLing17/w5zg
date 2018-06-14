@@ -39,29 +39,28 @@
         this.actId = this.$route.query.actId
         this.getTabList()
       } else {
-        this.$router.replace({path: '', query: {id:this.tabList[this.tabActive].id, title: this.$route.query.title, actId: this.$route.query.actId}})
+        this.$router.replace({path: '', query: {id:this.tabList[this.tabActive].id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
       }
     },
     methods: {
       tabCheck (index) {
         this.tabActive = index;
-        this.$router.replace({path: '', query: {id:this.tabList[index].id, title: this.$route.query.title, actId: this.$route.query.actId}})
+        this.$router.replace({path: '', query: {id:this.tabList[index].id, title: this.$route.query.title, actId: this.$route.query.actId,  parentType: this.$route.query.parentType}})
       },
       getTabList (id) {
         let _this = this;
         this.$ajax({
-          url: this.$apiApp + 'acActivityContent/acActivityContentList',
+          url: this.$apiApp + 'acActivityContent/queryTagAcActivityContentList',
           methods: 'get',
           params: {
-            actId: this.actId,
-            parentType: this.$route.query.parentType
+            parent_con_id: this.actId
           }
         }).then((response) => {
           _this.tabList = response.data.data;
           if (!id) {
-            _this.$router.replace({path: '', query: {id:_this.tabList[0].id, title: this.$route.query.title, actId: this.$route.query.actId}})
+            _this.$router.replace({path: '', query: {id:_this.tabList[0].id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
           } else {
-            _this.$router.replace({path: '', query: {id:id, title: this.$route.query.title, actId: this.$route.query.actId}})
+            _this.$router.replace({path: '', query: {id:id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
             _this.tabList.forEach((item, index) => {
               if (item.id == id) {
                 _this.tabActive = index
