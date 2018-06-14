@@ -129,12 +129,6 @@
       // } else if (this.flagNum == 1) {
       //   this.message = this.$route.query.msg;
       // }
-      this.position.forEach((now) => {
-          if (this.saveMsg == this.message) {
-            this.pages = 1;
-            this.pageRows = (this.$store.state.pageNums-0)*8;
-          }
-      })
 
       if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL;
@@ -241,7 +235,7 @@
         this.$store.commit('setKeyWords',data.brandName);
         this.saveMsg = data.brandName;
         this.maskFlag = false;
-        this.goodsFlag = false;
+        this.goodsFlag = true;
         this.mescroll.lockDownScroll(false);
         this.mescroll.lockUpScroll(false);
         var commodityList = document.getElementsByClassName("commodityList")[0];
