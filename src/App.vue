@@ -148,7 +148,7 @@
 <style>
   @font-face {
     font-family: Webdings;
-    src: url('./assets/font/DFPHanziPenW5-GB.ttf')
+    src: url('./assets/font/Webdings.ttf')
   }
   * {
     padding: 0;
