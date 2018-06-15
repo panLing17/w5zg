@@ -29,15 +29,16 @@
         topList: []
       }
     },
+    beforeRouteEnter (to, from , next) {
+      to.meta.keepAlive = false
+      next();
+    },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
     created () {
       this.getTradingArea()
-    },
-    mounted () {
-      this.$mescrollInt('Mescroll', this.upCallback)
     },
     methods: {
       goBack () {
@@ -47,9 +48,6 @@
           w5zgApp.onfinish()
         }
         // 交互完毕
-      },
-      upCallback: function (page) {
-        this.mescroll.endErr()
       },
       getTradingArea () {
         let self = this
@@ -75,6 +73,13 @@
 </script>
 
 <style scoped>
+  .mescroll {
+    position: absolute;
+    top: 1.3rem;
+    bottom: 0;
+    left: 0;
+    height: auto;
+  }
   .wrap {
     position: absolute;
     top: 0;

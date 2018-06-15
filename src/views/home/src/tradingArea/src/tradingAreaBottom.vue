@@ -19,7 +19,26 @@
         showEmpty: false
       }
     },
+    deactivated () {
+      this.$store.commit('setPosition', {
+        path: '/tradingArea',
+        y: this.mescroll.getScrollTop()
+      })
+    },
+    activated () {
+      let _this = this
+      this.$store.state.position.forEach((now) => {
+        if (now.path === '/tradingArea') {
+          _this.mescroll.scrollTo(now.y, 0);
+        }
+      })
+    },
+    beforeRouteLeave (to, from, next) {
+      to.meta.keepAlive = true
+      next()
+    },
     beforeRouteUpdate (to, from, next) {
+      this.mescroll.scrollTo(0, 0);
       this.businessDistrictId = to.query.id
       this.getMarket()
       next()
@@ -28,7 +47,13 @@
       this.businessDistrictId = this.$route.query.id
       this.getMarket()
     },
+    mounted () {
+      this.$mescrollInt('Mescroll', this.upCallback)
+    },
     methods: {
+      upCallback: function (page) {
+        this.mescroll.endErr()
+      },
       getMarket () {
         if (!this.businessDistrictId) {
           return
