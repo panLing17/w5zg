@@ -111,7 +111,6 @@
       })
     },
     beforeRouteLeave (to, from, next) {
-      to.meta.keepAlive = true
       this.mescroll.hideTopBtn();
       next()
     },
