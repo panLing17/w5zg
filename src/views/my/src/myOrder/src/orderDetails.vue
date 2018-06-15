@@ -184,7 +184,7 @@
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);
           }
-        })    
+        })
       },
       mounted(){
         //判断用户身份
@@ -252,7 +252,7 @@
         //订单最下面的左边按钮
         jumpToLeft(e){
           if (e.target.innerHTML == "删除订单") {
-            alert("你被耍了！");
+
           }
           if (e.target.innerHTML == "取消订单") {
             this.$confirm({

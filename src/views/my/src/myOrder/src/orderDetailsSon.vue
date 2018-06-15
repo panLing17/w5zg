@@ -140,7 +140,7 @@
           var orderNums = document.getElementsByClassName("orderNums")[0];
           //orderNums.select();
           document.execCommand("Copy"); // 执行浏览器复制命令
-          alert("复制成功");
+
         },
 
         upCallback: function(page) {

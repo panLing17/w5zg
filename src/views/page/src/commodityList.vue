@@ -39,7 +39,7 @@
                 .text <span v-show="item.carryFlag">专柜提货</span> {{item.gi_name}}
                 .price <span>实付</span>{{item.direct_supply_price | price-filter}}
                   span(v-if="false") 可省{{item.economize_price}}元
-                .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}  
+                .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
       .bottomPlaceholder
     transition(name="slide-fade")
@@ -105,12 +105,12 @@
         if (from.path == '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0); 
+              this.mescroll.scrollTo(now.y, 0);
               if (this.saveMsg == this.message) {
                 this.pages = 1;
                 this.pageRows = (this.$store.state.pageNums-0)*8;
               }
-              
+
             }
           })
         } else if(from.path != '/goodsDetailed'){
@@ -120,7 +120,7 @@
             this.message = this.$route.query.msg;
           }
           if (this.$refs.oInput.value == this.$route.query.msg) {
-            alert(2)
+
             this.mescroll.resetUpScroll( true );
             this.mescroll.scrollTo(0, 0);
           }
@@ -128,7 +128,7 @@
       }
     },
     destroyed (){
-      
+
     },
     activated (){
       // console.log(this.flagNum)
@@ -139,12 +139,12 @@
       // }
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0); 
+          this.mescroll.scrollTo(now.y, 0);
           if (this.saveMsg == this.message) {
             this.pages = 1;
             this.pageRows = (this.$store.state.pageNums-0)*8;
           }
-          
+
         }
       })
       if (this.$route.query.id) {
@@ -155,7 +155,6 @@
       console.log(this.$refs.oInput.value);
       console.log(this.$route.query.msg);
       if (this.$refs.oInput.value == this.$route.query.msg) {
-        alert(1)
         this.check = true;
         this.checked = false;
         this.change = false;
@@ -203,7 +202,7 @@
       //当无订单时，将end去掉
       emptys(){
         var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
-         mescrollUpwarp.style.visibility = "hidden";   
+         mescrollUpwarp.style.visibility = "hidden";
       },
       //回退事件
       backgo(){

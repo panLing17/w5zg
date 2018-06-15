@@ -116,7 +116,7 @@
         //当无订单时，将end去掉
         emptys(){
           var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
-           mescrollUpwarp.style.visibility = "hidden";   
+           mescrollUpwarp.style.visibility = "hidden";
         },
         //回退判断
         backJump(){
@@ -272,7 +272,7 @@
             })
           }
           if (e.target.innerText == "再次购买") {
-            alert("逗你玩！");
+
           }
           if (e.target.innerText == "确认收货") {
             let self = this;

@@ -37,7 +37,7 @@
       shareTitle: String
     },
     mounted () {
-      alert('进入到分享啦啦啦啦')
+
       this.wxConfig()
       // this.wxShare()
       // this.friendShare()
@@ -128,7 +128,7 @@
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          alert('配置成功')
+
           wx.config({
             debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
             appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
