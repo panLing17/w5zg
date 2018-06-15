@@ -120,7 +120,6 @@
             this.message = this.$route.query.msg;
           }
           if (this.$refs.oInput.value == this.$route.query.msg) {
-
             this.mescroll.resetUpScroll( true );
             this.mescroll.scrollTo(0, 0);
           }
