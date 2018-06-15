@@ -14,7 +14,6 @@
     data () {
       return {
         parentId: '',
-        parentType: '',
         isEmpty: false
       }
     },
@@ -34,7 +33,6 @@
         })
       } else {
         this.parentId = this.$route.query.id
-        this.parentType = this.$route.query.parentType
         this.mescroll.resetUpScroll();
       }
     },
@@ -48,7 +46,6 @@
         })
       } else {
         this.parentId = to.query.id
-        this.parentType = this.$route.query.parentType
         this.mescroll.resetUpScroll();
       }
       next();
@@ -59,7 +56,6 @@
     },
     created () {
       this.parentId = this.$route.query.id
-      this.parentType = this.$route.query.parentType
     },
     mounted () {
       this.$mescrollInt("activityMescroll",this.upCallback);
@@ -97,7 +93,7 @@
             page: pageNum,
             rows: pageSize,
             parentId: this.parentId,
-            parentType: this.parentType
+            parentType: '362'
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
