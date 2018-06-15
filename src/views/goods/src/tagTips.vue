@@ -43,9 +43,7 @@
     methods: {
       upCallback: function(page) {
         let self = this;
-
-          self.mescroll.endSuccess(1)
-
+        self.mescroll.endSuccess(1)
       },
       close () {
         this.$emit('close')

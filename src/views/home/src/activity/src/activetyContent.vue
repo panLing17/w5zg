@@ -1,6 +1,7 @@
 <template lang="pug">
   .content
     recommend(ref="recommend")
+    .noData(v-if="isEmpty") 暂无相关商品
 </template>
 
 <script>
@@ -13,7 +14,7 @@
     data () {
       return {
         parentId: '',
-        parentType: ''
+        isEmpty: false
       }
     },
     deactivated () {
@@ -32,7 +33,6 @@
         })
       } else {
         this.parentId = this.$route.query.id
-        this.parentType = this.$route.query.parentType
         this.mescroll.resetUpScroll();
       }
     },
@@ -46,7 +46,6 @@
         })
       } else {
         this.parentId = to.query.id
-        this.parentType = this.$route.query.parentType
         this.mescroll.resetUpScroll();
       }
       next();
@@ -57,7 +56,6 @@
     },
     created () {
       this.parentId = this.$route.query.id
-      this.parentType = this.$route.query.parentType
     },
     mounted () {
       this.$mescrollInt("activityMescroll",this.upCallback);
@@ -70,6 +68,11 @@
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          if (page.num == 1 && curPageData.length <= 0) {
+            self.isEmpty = true
+          } else {
+            self.isEmpty = false
+          }
           self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
@@ -79,6 +82,7 @@
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         if (!this.parentId) {
+          successCallback&&successCallback([])
           return
         }
         let self = this
@@ -89,7 +93,7 @@
             page: pageNum,
             rows: pageSize,
             parentId: this.parentId,
-            parentType: this.parentType
+            parentType: '362'
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
@@ -116,5 +120,11 @@
   li {
     height: 2rem;
 
+  }
+  .noData {
+    margin-top: 3rem;
+    text-align: center;
+    color: #999;
+    font-size: .4rem;
   }
 </style>

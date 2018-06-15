@@ -13,19 +13,22 @@
             .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)")
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
             li.brandItem(v-for="(item, index) in brandList", :key="index", @click="toNext(0, index)")
-              img.brandImg(:src="item.image")
+              img.brandImg(:src="item.image | img-filter")
               .brandName {{item.title}}
+          .noData(v-if="noDataShow.brand") 暂无大牌推荐
         .block
           .blockTitle
             .name 精选分类
             .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)")
           ul.categoryList(:style="{'max-height': category.height}", ref="category")
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
-              img.categoryImg(:src="item.image")
+              img.categoryImg(:src="item.image | img-filter")
               .categoryName {{item.title}}
+          .noData(v-if="noDataShow.category") 暂无精选分类
         img.louceng(src="../../../../../assets/img/louceng2.png")
         .recommendWrapper
           recommend(ref="recommend")
+          .noData(v-if="noDataShow.goods") 暂无相关商品
 </template>
 
 <script>
@@ -46,6 +49,11 @@
           status: false,
           height: '3.36rem',
           auto: 'none'
+        },
+        noDataShow: {
+          brand: false,
+          category: false,
+          goods: false
         },
         brandList: [],
         categoryList: []
@@ -78,6 +86,10 @@
         this.mescroll.resetUpScroll();
       }
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy()
+    },
     mounted () {
       this.$mescrollInt("twoLevelMescroll",this.upCallback,() => {}, () => {});
       this.getBrandList()
@@ -106,10 +118,11 @@
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
           if (page.num === 1 && curPageData.length === 0 ) {
-            self.isEmpty = true
+            self.noDataShow.goods = true
           }else {
-            self.$refs.recommend.more(curPageData,page.num,page.size)
+            self.noDataShow.goods = false
           }
+          self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -153,7 +166,12 @@
         }).then((response) => {
           if (response) {
             _this.brandList = response.data.data;
-            if (_this.brandList.length <= 6) {
+            if (_this.brandList.length <= 0) {
+              _this.noDataShow.brand = true
+            } else {
+              _this.noDataShow.brand = false
+            }
+            if (_this.brandList.length <= 9) {
               _this.brand.show = false
             } else {
               _this.$nextTick(()=> {
@@ -176,6 +194,11 @@
         }).then((response) => {
           if (response) {
             _this.categoryList = response.data.data;
+            if (_this.categoryList.length <= 0) {
+              _this.noDataShow.category = true
+            } else {
+              _this.noDataShow.category = false
+            }
             if (_this.categoryList.length <= 10) {
               _this.category.show = false
             } else {
@@ -338,5 +361,11 @@
     margin-top: .26rem;
     width: 100%;
     pointer-events: none;
+  }
+  .noData {
+    line-height: 2rem;
+    text-align: center;
+    color: #999;
+    font-size: .4rem;
   }
 </style>

@@ -164,17 +164,11 @@ const router = new Router ({
       path: '/searchTradingArea',
       name: '搜商圈',
       component: TradingArea.tradingArea,
-      meta: {
-        keepAlive: true
-      },
       children: [
         {
           path: '',
           name: '搜商圈',
-          component: TradingArea.tradingAreaBottom,
-          meta: {
-            keepAlive: true
-          }
+          component: TradingArea.tradingAreaBottom
         }
       ]
     },
@@ -182,9 +176,6 @@ const router = new Router ({
       path: '/market',
       name: '商场详情',
       component: TradingArea.market,
-      meta: {
-        keepAlive: true
-      },
       children: [
         {
           path: '',
