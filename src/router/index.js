@@ -318,9 +318,6 @@ const router = new Router ({
           path: '/page',
           name: '分类',
           component: Page.index,
-          meta: {
-            keepAlive: true
-          },
           children: [
             {
               path: '/',
@@ -330,7 +327,10 @@ const router = new Router ({
             {
               path: '/page/commodityList',
               name: '商品列表',
-              component: Page.commodityList
+              component: Page.commodityList,
+              meta: {
+                keepAlive: false
+              },
             }
           ]
         }, {

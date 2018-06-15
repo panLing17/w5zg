@@ -30,18 +30,17 @@
           li.filters(@click="leftScroll()") | 筛选
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
-      transition(name="slide")
-        .contenter(v-show="goodsFlag")
-          .bottomList
-            ul.goodsList#box
-              li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
-                img(:src="item.gi_image_url | img-filter" @click.prevent="")
-                .wrapWords
-                  .text <span v-show="item.carryFlag">专柜提货</span> {{item.gi_name}}
-                  .price <span>实付</span>{{item.direct_supply_price | price-filter}}
-                    span(v-if="false") 可省{{item.economize_price}}元
-                  .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}  
-                  .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
+      .contenter(v-show="goodsFlag")
+        .bottomList
+          ul.goodsList#box
+            li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
+              img(:src="item.gi_image_url | img-filter" @click.prevent="")
+              .wrapWords
+                .text <span v-show="item.carryFlag">专柜提货</span> {{item.gi_name}}
+                .price <span>实付</span>{{item.direct_supply_price | price-filter}}
+                  span(v-if="false") 可省{{item.economize_price}}元
+                .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}  
+                .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
       .bottomPlaceholder
     transition(name="slide-fade")
       .mask(v-show="maskFlag")
@@ -67,7 +66,7 @@
         check: true,
         checked: false,
         change: false,
-        change1: true,
+        change1: false,
         change2: false,
         recommendGoods: [],
         style: false,
@@ -88,9 +87,7 @@
         defaultRule: 1, //默认规则
       }
     },
-    computed:{
-      ...mapState(['location','position'])
-    },
+    computed: mapState(['location','position']),
     props: {
       type: {
         type: String,
@@ -103,19 +100,30 @@
     },
     watch :{
       '$route' (to, from) {
-        console.log(to);
+        console.log(from);
         console.log(this.$store.state.pageNums);
         if (from.path == '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
               this.mescroll.scrollTo(now.y, 0); 
-              // if (this.saveMsg == this.message) {
+              if (this.saveMsg == this.message) {
                 this.pages = 1;
                 this.pageRows = (this.$store.state.pageNums-0)*8;
-              // }
-              //this.request();
+              }
+              
             }
           })
+        } else if(from.path != '/goodsDetailed'){
+          if (this.$route.query.id) {
+            this.message = this.$store.state.keywordsL;
+          } else if (this.$route.query.flags == 1) {
+            this.message = this.$route.query.msg;
+          }
+          if (this.$refs.oInput.value == this.$route.query.msg) {
+            alert(2)
+            this.mescroll.resetUpScroll( true );
+            this.mescroll.scrollTo(0, 0);
+          }
         }
       }
     },
@@ -129,13 +137,38 @@
       // } else if (this.flagNum == 1) {
       //   this.message = this.$route.query.msg;
       // }
-
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0); 
+          if (this.saveMsg == this.message) {
+            this.pages = 1;
+            this.pageRows = (this.$store.state.pageNums-0)*8;
+          }
+          
+        }
+      })
       if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL;
-      } else if (this.$route.query.flags == 1){
+      } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg;
       }
-      this.request();
+      console.log(this.$refs.oInput.value);
+      console.log(this.$route.query.msg);
+      if (this.$refs.oInput.value == this.$route.query.msg) {
+        alert(1)
+        this.check = true;
+        this.checked = false;
+        this.change = false;
+        this.change1 = false;
+        this.change2 = false;
+        this.order = 0;
+        this.sort = "";
+        this.mescroll.resetUpScroll( true );
+        this.mescroll.scrollTo(0, 0);
+
+      }
+      // this.request();
+      // this.mescroll.triggerDownScroll();
     },
     mounted(){
       this.saveMsg = this.$route.query.msg;
@@ -269,6 +302,7 @@
         this.$router.replace({path:'/page/commodityList',query:{id:data.brandId,jumps:this.$route.query.jumps}});
         this.mescroll.scrollTo(0,0);
         this.request();
+        this.mescroll.resetUpScroll( true );
       },
 
       //综合排序
@@ -285,6 +319,7 @@
           this.order = "";
         }
         this.request();
+        this.mescroll.resetUpScroll( true );
       },
       //销量排序
       changes2:function(){
@@ -300,6 +335,7 @@
           this.order = "";
         }
         this.request();
+        this.mescroll.resetUpScroll( true );
       },
       exchange:function(){
         this.goodsFlag = true;
@@ -334,6 +370,7 @@
           this.sort = 1;
         }
         this.request();
+        this.mescroll.resetUpScroll( true );
       },
       upCallback: function(page) {
         let self = this;
@@ -415,7 +452,8 @@
         }).then(function(response){
           console.log(response.data.data.length)
           //self.recommendGoods = response.data.data;//成功回调
-          if(response.data.data.length<=0){
+          self.recommendGoods = response.data.data;
+          if(self.recommendGoods.length<=0){
             self.brandId = ""; //品牌的id
             self.minPrice = ""; //开始价格区间
             self.maxPrice = ""; //结束价格区间
@@ -423,7 +461,6 @@
             self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
           } else{
             self.goodsFlag = true;
-            self.recommendGoods = response.data.data;
             for (var i = 0; i < self.recommendGoods.length; i++) {
               if(self.recommendGoods[i].carry_type == 1){
                 self.recommendGoods[i].carryFlag = true;
