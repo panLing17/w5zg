@@ -83,7 +83,6 @@
       // 分享给朋友
       wxShare () {
         let self = this
-        alert(self.shareTitle + self.sharePhoto[0])
         wx.onMenuShareAppMessage({
           title: self.shareTitle, // 分享标题
           desc: '我发现了个宝贝,跟专卖店比贼便宜', // 分享描述
