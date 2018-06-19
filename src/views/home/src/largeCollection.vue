@@ -22,7 +22,6 @@
         }
       },
       created () {
-        console.log('created')
         this.getList();
       },
       computed: {
@@ -36,14 +35,12 @@
         }
       },
       deactivated () {
-        console.log('deactivated')
         this.$store.commit('setPosition', {
           path: '/largeCollection',
           y: this.mescroll.getScrollTop()
         })
       },
       activated () {
-        console.log('activated')
         let _this = this
         this.$store.state.position.forEach((now) => {
           if (now.path === '/largeCollection') {
@@ -56,7 +53,6 @@
         next();
       },
       beforeDestroy () {
-        console.log('beforeDestroy')
         this.mescroll.hideTopBtn();
         this.mescroll.destroy()
       },
