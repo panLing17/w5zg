@@ -5,10 +5,11 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="color: rgb(245,0,87);width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
-    .content(ref="largeConllection")
-      ul.list
-        li.item(v-for="item in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id, item.title)")
-          img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
+    .mescroll#largeMescroll
+      .content(ref="largeConllection")
+        ul.list
+          li.item(v-for="(item, index) in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id, item.title)", :key="index")
+            img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
     <!--.noData(v-if="isEmpty") 暂无更多活动-->
 </template>
 
@@ -33,16 +34,52 @@
           }
         }
       },
+      deactivated () {
+        this.$store.commit('setPosition', {
+          path: '/largeCollection',
+          y: this.mescroll.getScrollTop()
+        })
+      },
+      activated () {
+        let _this = this
+        this.$store.state.position.forEach((now) => {
+          if (now.path === '/largeCollection') {
+            _this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      },
+      beforeRouteEnter (to, from , next) {
+        to.meta.keepAlive = false
+        next();
+      },
+      beforeDestroy () {
+        this.mescroll.hideTopBtn();
+        this.mescroll.destroy()
+      },
       mounted () {
-        // this.$mescrollInt("largeMescroll",this.upCallback);
+        this.$mescrollInt("largeMescroll",this.upCallback, () => {
+          this.$store.state.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }, (obj) => {
+          this.$store.commit('setPosition', {
+            path: this.$route.path,
+            y: obj.preScrollY
+          })
+        });
       },
-      beforeRouteLeave (to, from, next) {
-        if (to.path === '/home/sports') {
-          to.meta.keepAlive = true
-        }
-        next()
-      },
+      // beforeRouteLeave (to, from, next) {
+      //   if (to.path === '/home/sports') {
+      //     to.meta.keepAlive = true
+      //   }
+      //   next()
+      // },
       methods: {
+        upCallback: function (page) {
+          this.mescroll.endErr()
+        },
         getList () {
           let _this = this;
           this.$ajax({
@@ -55,9 +92,6 @@
             }
           }).then((response) => {
             _this.bankList = response.data.data;
-            _this.$nextTick(()=>{
-              _this.$initScroll(_this.$refs.largeConllection)
-            })
           })
         },
         toNext (type, url, id, relateId, title) {

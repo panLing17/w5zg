@@ -277,10 +277,7 @@ const router = new Router ({
             {
               path: '/home/largeCollection',
               name: '二级活动',
-              component: Home.largeCollection,
-              meta: {
-                keepAlive: true
-              }
+              component: Home.largeCollection
             },
             {
               path: '/home/sports',

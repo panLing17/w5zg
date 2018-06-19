@@ -118,7 +118,7 @@
     },
     methods: {
       alt(){
-        alert(1)
+
       }
     },
     created() {
