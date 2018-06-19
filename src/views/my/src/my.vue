@@ -87,7 +87,7 @@
               .words 足迹
       .title
         img(src="../../../assets/img/recommend.png")
-      recommend#dataId(background="white", ref="recommend")
+      recommend#dataId(ref="recommend")
       .bottomPlaceholder
     .animateWrapper(v-if="animateShow", @click="animateShow=false")
       .animate
@@ -361,6 +361,7 @@
   .myBox {
     /*min-height: calc(100vh - 1.6rem);*/
     width: 100%;
+    background-color: #f2f2f2;
   }
   /*头部--开始*/
   .head{
