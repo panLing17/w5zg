@@ -620,7 +620,7 @@
     color: #fff;
     font-size: .3rem;
     position: absolute;
-    right: 0;
+    right: -.1rem;
     top: -.15rem;
     line-height: .4rem;
   }
