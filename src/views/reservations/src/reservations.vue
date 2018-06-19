@@ -18,7 +18,7 @@
         li(v-for="item in contLists")
           .topper(@click="$router.push({path:'/goodsDetailed',query:{id:item.gcGoodsSkuVO.gspu_id}})")
             .left
-              img(:src="item.gcGoodsSkuVO.gi_image_url | img-filter")
+              img(:src="item.gcGoodsSkuVO.gi_image_url | img-filter" @click.prevent="")
             .right
               .up <span v-if="item.gcGoodsSkuVO.carry_type==1">专柜提货</span> {{item.gcGoodsSkuVO.gi_name}}
               .down 
@@ -176,6 +176,7 @@
     width: 4.5rem;
     font-size: .5rem;
     font-weight: 400;
+    text-align: center;
   }
   .topRight{
     padding-right: .2rem;
@@ -194,7 +195,7 @@
   }
   /*警告--开始*/
   .notice{
-    padding: .4rem .3rem;
+    padding: .3rem;
     display: flex;
     background-color: #fff;
     border-bottom: .5px solid #f2f2f2;
@@ -208,7 +209,7 @@
   }
   .notice .words .top{
     color: rgb(247,0,88);
-    margin-bottom: .15rem;
+    /*margin-bottom: .05rem;*/
   }
   /*警告--结束*/
   /*内容列表--开始*/
@@ -299,13 +300,14 @@
     display: flex;
   }
   .bottommer .left img{
-    width: .33rem;
+    width: .32rem;
     height: .4rem;
     vertical-align: middle;
   }
   .bottommer .left span{
-    font-size: .35rem;
+    font-size: .34rem;
     margin-left: .2rem;
+    margin-top: -.03rem;
     color: rgb(160,160,160);
   }
   .bottommer .right{
@@ -394,6 +396,8 @@
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
+    margin-top: 1rem;
+    margin-bottom: .2rem;
   }
   .title img{
     width: 55%;
