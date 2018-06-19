@@ -15,7 +15,7 @@
       .content(v-loading="loadingFlag<2")
         .left(ref='lefters').mescroll#pagesLMescroll
           ul
-            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}       
+            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
         .right(:class="{styles:flag}" ref='righters').mescroll#pagesRMescroll
           ul.tabs(v-for="(item,index) in productList" v-if="rightShowFlag")
             li.tabsList
@@ -46,7 +46,7 @@
       }
     },
     activated () {
-      
+
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
@@ -59,7 +59,7 @@
       this.request();
       //判断显示当前城市
       this.judgeCity();
-      
+
 
       this.$mescrollInt('pagesLMescroll', this.upCallbackL)
       this.$mescrollInt('pagesRMescroll', this.upCallbackR)
@@ -127,10 +127,10 @@
           },
           error: function(res){
             if(res.errMsg.indexOf('function_not_exist') > 0){
-              alert('版本过低请升级')
+
             }
           }
-        })    
+        })
       },
 
       //第一个二级分类

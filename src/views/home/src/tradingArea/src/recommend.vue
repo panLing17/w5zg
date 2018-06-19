@@ -258,17 +258,15 @@
   }
   /* 广告图布局 */
   .advertType {
-    height: 4.8rem;
-
     background-color: rgb(242, 242, 242);
   }
   .advertType> img{
     width: 100% !important;
-    height: 100% !important;
+    /*height: 100% !important;*/
   }
   /* 推荐标签布局 */
   .tagType {
-    height: 7.2rem;
+    height: 7.6rem;
     background-color:  rgb(242, 242, 242);
     padding: .2rem .25rem;
   }

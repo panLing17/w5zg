@@ -318,10 +318,10 @@
           title: '确认',
           message: '真的要这样做吗',
           confirm: () => {
-            alert('确定')
+
           },
           noConfirm: () => {
-            alert('取消')
+
           }
         })
       },
@@ -351,7 +351,7 @@
           },
           error: function (res) {
             if (res.errMsg.indexOf('function_not_exist') > 0) {
-              alert('版本过低请升级')
+
             }
           }
         })
