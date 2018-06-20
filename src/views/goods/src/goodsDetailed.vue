@@ -111,7 +111,7 @@
       .buttons
         img(src="../../../assets/img/msg.png", @click="goService")
         .ready
-          img(src="../../../assets/img/ic_center_yyty@2x.png")
+          img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
           ul(@click="bespeakFlag = true")
             li 预约体验
             li 每次99款
@@ -1202,7 +1202,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 1rem;
+    height: 1.2rem;
     display: flex;
     align-items: center;
     border-top: solid 1px #ddd;

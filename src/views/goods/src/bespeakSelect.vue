@@ -7,7 +7,7 @@
         .title
           span 专柜体验
           .right(@click="$router.push('/reservations')")
-            img(src="../../../assets/img/pageList.png")
+            img(src="../../../assets/img/ic_yuyue_into.png")
             span 我的预约
         ul.list
           li.city(v-for="item in storeList")
@@ -141,13 +141,14 @@
   .title .right{
     position: absolute;
     right: .2rem;
-    font-size: .3rem;
+    color: #666666;
+    font-size: .4rem;
     display: flex;
     align-items: center;
   }
   .title .right img{
-    width: .6rem;
-    margin-right: .1rem;
+    height: .45rem;
+    margin-right: .15rem;
   }
   .tab{
     display: flex;
@@ -197,14 +198,14 @@
     max-width: 8rem;
   }
   .text h2{
-    font-size: .3rem;
+    font-size: .35rem;
     font-weight: 500;
     text-align: left;
     line-height: .5rem;
     color: #222;
   }
   .text p{
-    font-size: .3rem;
+    font-size: .35rem;
     line-height: .5rem;
     text-align: left;
     color: #aaa;

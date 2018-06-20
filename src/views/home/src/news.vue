@@ -3,7 +3,7 @@
       img(src="../../../assets/img/headline.png")
       div
         ul#newsList
-          li(v-for="(item,index) in newsData ", @click="$router.push({path: '/home/headlinesDetail',query:{url: item.i_photo}})") {{item.i_title}}
+          li(v-for="(item,index) in newsData ", @click="$router.push({path: '/home/headlinesDetail',query:{url: item.i_photo}})") <span>必看</span>{{item.i_title}}
 </template>
 
 <script>
@@ -70,6 +70,13 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: .37rem;
+  }
+  .box li span{
+    padding: 1px 3px;
+    border: solid 1px #F70057;
+    font-size: .3rem;
+    color: #F70057;
+    margin-right: .1rem;
   }
   /*.box>div>ul>li:nth-child(2n+1){*/
     /*border-bottom: #ddd 1px solid;*/
