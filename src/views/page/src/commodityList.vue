@@ -100,8 +100,8 @@
     },
     watch :{
       '$route' (to, from) {
-        console.log(from);
-        console.log(this.$store.state.pageNums);
+        //console.log(from);
+        //console.log(this.$store.state.pageNums);
         if (from.path == '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
@@ -130,12 +130,6 @@
 
     },
     activated (){
-      // console.log(this.flagNum)
-      // if (this.flagNum == 2) {
-      //   this.message = this.$store.state.keywordsL;
-      // } else if (this.flagNum == 1) {
-      //   this.message = this.$route.query.msg;
-      // }
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -151,8 +145,8 @@
       } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg;
       }
-      console.log(this.$refs.oInput.value);
-      console.log(this.$route.query.msg);
+      //console.log(this.$refs.oInput.value);
+      //console.log(this.$route.query.msg);
       if (this.$refs.oInput.value == this.$route.query.msg) {
         this.check = true;
         this.checked = false;
@@ -163,18 +157,11 @@
         this.sort = "";
         this.mescroll.resetUpScroll( true );
         this.mescroll.scrollTo(0, 0);
-
       }
-      // this.request();
-      // this.mescroll.triggerDownScroll();
     },
     mounted(){
       this.saveMsg = this.$route.query.msg;
       this.flagNum = this.$route.query.flags;
-      //进入页面时加载
-      //this.request();
-      //根据判断是哪个页面传过来的关键字
-      //this.keywordsSearch();
       //上拉加载
       this.$mescrollInt("pageMescroll",this.upCallback,()=>{
         this.position.forEach((now) => {
@@ -188,10 +175,6 @@
             y: obj.preScrollY
           })
       });
-      //商品展示
-      //this.exhibition();
-      //让页面加载时将搜索的文字拼到url上
-      //this.onload();
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -402,7 +385,6 @@
           }
         }).then(function(response){
           self.goodsFlag = true;
-          console.log(response.data.data);
           // if(response.data.data.length<=0){
           //   self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
           // } else {
@@ -416,7 +398,6 @@
             }
             successCallback&&successCallback(response.data.data);//成功回调
           // }
-          console.log(self.recommendGoods.length);
           if (self.recommendGoods.length == 0) {
             self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
           }
@@ -448,7 +429,6 @@
             city_no: 100100 //当前城市编号
           }
         }).then(function(response){
-          console.log(response.data.data.length)
           //self.recommendGoods = response.data.data;//成功回调
           self.recommendGoods = response.data.data;
           if(self.recommendGoods.length<=0){
@@ -619,6 +599,8 @@
   .goodsList li img{
     width: 100%;
     height: 4.5rem;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
   .goodsList li .wrapWords{
     width: 100%;
