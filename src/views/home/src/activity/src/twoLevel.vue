@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import recommend from '../../tradingArea/src/recommend'
+  import recommend from '../../recommend'
   export default {
     name: "twoLevel",
     components: { recommend },
@@ -96,6 +96,10 @@
       this.getCategoryList()
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       toNext (status, index) {
         let obj;
         if (status === 0) {
