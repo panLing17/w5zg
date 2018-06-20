@@ -34,6 +34,9 @@
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
+          .tagTitle
+            .text 细分
+            .line
           li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
     div(style="clear:both")
 </template>
