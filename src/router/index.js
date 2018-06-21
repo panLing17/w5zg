@@ -202,9 +202,20 @@ const router = new Router ({
       component: Reservations.reservations
     },
     {
+      path: '/marketing/index',
+      name: '耐克鞋活动首页',
+      component: Marketing.index,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/marketing/receiveTicket',
       name: '耐克鞋活动领券',
-      component: Marketing.receiveTicket
+      component: Marketing.receiveTicket,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/marketing/movies',
