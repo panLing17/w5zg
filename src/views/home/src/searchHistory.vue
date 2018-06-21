@@ -116,6 +116,10 @@
       this.mescroll.destroy();
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       //判断回退事件
       backRouter(){
         if (this.$route.query.jumps == 'page') {
