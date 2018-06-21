@@ -31,6 +31,8 @@ import TradingArea from '../views/home/src/tradingArea/index'
 import Reservations from '../views/reservations/index.js'
 //首页活动
 import Acitivity from '../views/home/src/activity/index'
+//耐克鞋活动
+import Marketing from '../views/common/src/marketing/index'
 
 Vue.use(Router)
 const router = new Router ({
@@ -200,6 +202,11 @@ const router = new Router ({
       component: Reservations.reservations
     },
     {
+      path: '/marketing/receiveTicket',
+      name: '耐克鞋活动领券',
+      component: Marketing.receiveTicket
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
@@ -285,7 +292,7 @@ const router = new Router ({
               component: Home.sports
             },
             {
-              path: '/home/activity',
+              path: '/activity',
               name: '活动集合',
               component: Acitivity.activity,
               children: [
@@ -297,7 +304,7 @@ const router = new Router ({
               ]
             },
             {
-              path: '/home/twoLevel',
+              path: '/twoLevel',
               name: '新二级活动',
               component: Acitivity.twoLevel
             }

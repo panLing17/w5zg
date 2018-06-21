@@ -97,7 +97,7 @@
         })
       },
       back () {
-        if (window.history.length<=2) {
+        if (window.history.length<=1) {
           this.$router.push('/home')
         } else {
           this.$router.go(-1)

@@ -103,7 +103,7 @@
             // 跳商品详情
             case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
             // 跳3级页面模板2
-            case '149': this.$router.push({ path: '/home/activity', query: { actId: id, title: title, parentType: '362'}}); break;
+            case '149': this.$router.push({ path: '/activity', query: { actId: id, title: title, parentType: '362'}}); break;
           }
         }
         // upCallback: function(page) {

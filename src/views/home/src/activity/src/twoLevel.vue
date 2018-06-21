@@ -115,7 +115,7 @@
           // 跳商品详情
           case '141': this.$router.push({ path: '/goodsDetailed', query: { id: obj.relate_id }}); break;
           // 跳3级页面模板2
-          case '149': this.$router.push({ path: '/home/activity', query: { actId: obj.id, title: obj.title, parentType: '362'}}); break;
+          case '149': this.$router.push({ path: '/activity', query: { actId: obj.id, title: obj.title, parentType: '362'}}); break;
         }
       },
       upCallback: function(page) {
@@ -243,10 +243,15 @@
         }
       },
       back () {
-        if (window.history.length<=2) {
+        if (window.history.length<=1) {
           this.$router.push('/home')
         } else {
           this.$router.go(-1)
+          // app交互
+          if (typeof w5zgApp !== 'undefined') {
+            w5zgApp.onfinish()
+          }
+          // 交互完毕
         }
       }
     }
