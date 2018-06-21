@@ -8,7 +8,7 @@
 </template>
 
 <script>
-  import recommend from './recommend'
+  import recommend from '../../recommend'
   export default {
     name: "marketBottom",
     components: {recommend},
@@ -62,6 +62,10 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       _initData (api, url, obj) {
         this.marketId = this.$route.query.id
         this.goodsUrl = api +  url

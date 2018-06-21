@@ -5,7 +5,7 @@
 </template>
 
 <script>
-  import recommend from '../../tradingArea/src/recommend'
+  import recommend from '../../recommend'
   export default {
     name: "activetyContent",
     components: {
@@ -65,6 +65,10 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {

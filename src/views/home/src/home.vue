@@ -22,6 +22,7 @@
         img.areaImg(src="../../../assets/img/trading.png")
       .member(@click="showAnimate")
         img.memberImg(src="../../../assets/img/menber.png")
+      .title1
       w-activity(:listData="activityGoods")
       .title2
       recommend(ref="recommend")
@@ -111,7 +112,6 @@
       })
     },
     beforeRouteLeave (to, from, next) {
-      // to.meta.keepAlive = true
       this.mescroll.hideTopBtn();
       next()
     },
@@ -161,6 +161,10 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       showAnimate () {
         this.animateShow = true;
         let _this = this

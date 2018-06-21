@@ -81,6 +81,10 @@
       //   next()
       // },
       methods: {
+        // 锁定或者解锁上拉加载
+        lockUpDown (isLock) {
+          this.mescroll.lockUpScroll( isLock );
+        },
         back () {
           if (window.history.length<=2) {
             this.$router.push('/home')

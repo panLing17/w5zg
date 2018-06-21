@@ -126,6 +126,10 @@
       this.$store.commit('computedPriceChange', 0)
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       upCallback: function (page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function (curPageData) {

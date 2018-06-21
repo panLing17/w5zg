@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import recommend from '../../tradingArea/src/recommend'
+  import recommend from '../../recommend'
   export default {
     name: "twoLevel",
     components: { recommend },
@@ -47,7 +47,7 @@
         category: {
           show: true,
           status: false,
-          height: '3.36rem',
+          height: '3.66rem',
           auto: 'none'
         },
         noDataShow: {
@@ -96,6 +96,10 @@
       this.getCategoryList()
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       toNext (status, index) {
         let obj;
         if (status === 0) {
@@ -216,7 +220,7 @@
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
           this.brand.height = '5.32rem'
-          this.category.height = '3.36rem'
+          this.category.height = '3.66rem'
         })
       },
       dropCheck (index) {
@@ -234,7 +238,7 @@
           if (this.category.status) {
             this.category.height = this.category.auto
           } else {
-            this.category.height = '3.36rem'
+            this.category.height = '3.66rem'
           }
         }
       },
@@ -268,7 +272,7 @@
   }
   .name {
     flex: none;
-    font-size: .48rem;
+    font-size: .4rem;
     color: #333;
     font-weight: bold;
   }
@@ -333,7 +337,7 @@
   .categoryItem {
     margin: 0 .8rem .26rem 0;
     width: 1.133rem;
-    height: 1.55rem;
+    height: 1.7rem;
     overflow: hidden;
     position: relative;
   }

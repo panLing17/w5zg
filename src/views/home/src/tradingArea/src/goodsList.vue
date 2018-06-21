@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import recommend from './recommend'
+  import recommend from '../../recommend'
   export default {
     name: "goodsList",
     data () {
@@ -77,6 +77,10 @@
       this.$mescrollInt("listMescroll",this.upCallback,() => {}, () => {});
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
