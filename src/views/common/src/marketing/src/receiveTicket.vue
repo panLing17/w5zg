@@ -23,7 +23,7 @@
             .desc2 已发放至您的手机账号
           .desc3 免费领取
             strong.strong1 1200元耐克鞋
-          .nextBtn
+          .nextBtn(@click="$router.push({path: '/marketing/publicNum', query: {temp: 1}})")
             img.nextImg(src="../../../../../assets/img/nike5.png")
         .template3(v-if="showIndex===3")
           .template2ImgWrapper
@@ -62,7 +62,9 @@
     methods: {
       getData () {
         this.url = this.$route.query.redirect_url;
-        // this.showIndex = this.$route.query.show_index;
+        if (this.$route.query.show_index) {
+          this.showIndex = this.$route.query.show_index;
+        }
       },
       isLogin () {
         if (localStorage.hasOwnProperty('token')) {
@@ -124,7 +126,11 @@
               //
               // }
             }
-          })
+          }).catch(function (reason) {
+            _this.loadingFlag = false
+            _this.$message.error('出事啦~')
+
+          });
         }
       }
     }

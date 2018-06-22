@@ -1,102 +1,111 @@
 <template lang="pug">
-  .wrapMovies
-    nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png",  @click="$router.go(-1)")
-      .topCenter(slot="center") 观看视频领福利
-      .topRight(slot="right")
-        img(src="../../../../../assets/img/diandian.png")
-    .cont
-      .contLogo
-        img(src="../../../../../assets/img/topWords.png")
-      .wrapVideo
-        video(src="../../../../../assets/img/movie.mp4" controls="controls")  
-      .words
-        p 完成观看视频任务, 了解<span>工会福利券</span>有何好处
-        p 下一步可领取福利hhhhhh    
+  .wrap
+    .bgWrapper
+      img.bgImg(src="../../../../../assets/img/nike9.png")
+    .name(v-show="showIndex===1", :style="{'animation-play-state': stateArr[0]}")
+      img.nameImg(src="../../../../../assets/img/nike10.png")
+    .name(v-show="showIndex===2", :style="{'animation-play-state': stateArr[1]}")
+      img.nameImg(src="../../../../../assets/img/nike11.png")
+    .name(v-show="showIndex===3", :style="{'animation-play-state': stateArr[2]}")
+      img.nameImg(src="../../../../../assets/img/nike12.png")
+    .name(v-show="showIndex===4", :style="{'animation-play-state': stateArr[3]}")
+      img.nameImg(src="../../../../../assets/img/nike13.png")
+    .name(v-show="showIndex===5", :style="{'animation-play-state': stateArr[4]}")
+      img.nameImg(src="../../../../../assets/img/nike14.png")
+    .name(v-show="showIndex===6", :style="{'animation-play-state': stateArr[5]}")
+      img.nameImg(src="../../../../../assets/img/nike15.png")
+    .name(v-show="showIndex===7", :style="{'animation-play-state': stateArr[6]}")
+      img.nameImg(src="../../../../../assets/img/nike16.png")
 </template>
 
 <script>
-
   export default {
-      name: "movies",
-      data(){
-        return{
-
-        }
-      },
-      computed: {
-
-      },
-      created(){
-
-      },
-      mounted(){
-        document.title = "观看视频领福利";
-      },
-      methods:{
- 
+    name: "cssTest",
+    data () {
+      return {
+        showIndex: 1,
+        stateArr: ['paused','paused','paused','paused','paused','paused','paused'],
+        timer: null
+      }
+    },
+    activated () {
+      Object.assign(this.$data, this.$options.data())
+      this.startAnimate()
+    },
+    mounted () {
+      this.startAnimate()
+    },
+    beforeDestroy () {
+      if (this.timer) {
+        clearInterval(this.timer)
+      }
+    },
+    methods: {
+      startAnimate () {
+        let _this = this
+        this.$nextTick(()=>{
+          let index = 0
+          this.stateArr.splice(index++, 1, 'running')
+          this.timer = setInterval(()=>{
+            if (_this.showIndex>=7) {
+              clearInterval(_this.timer)
+              _this.$router.push('/marketing/receiveTicket')
+            }
+            _this.stateArr.splice(index++, 1, 'running')
+            _this.showIndex++
+          },1500)
+        })
       }
     }
+  }
 </script>
 
 <style scoped>
-  .wrapMovies{
-    background-color: #e6e6e6;
+  .wrap {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url('../../../../../assets/img/nike8.png') no-repeat;
+    background-size: 100% 100%;
+    /*background: #ff3050;*/
+    overflow: hidden;
   }
-  .topLeft{
-    margin-left: .1rem;
-  }
-  .topLeft img{
-    width: .3rem;
-  }
-  .topCenter{
-    width: 4rem;
-    font-size: .5rem;
-    font-weight: 400;
+  .bgWrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     text-align: center;
   }
-  .topRight{
-    margin-right: .1rem;
+  .bgImg {
+    width: 80%;
+    transform-origin: 50% 40% 0;
+    animation:scalc 20s forwards;
   }
-  .topRight img{
-    vertical-align: middle;
-    width: .7rem;
-  }
-  /*中间内容部分--开始*/
-  .cont{
-    width: 100%;
-    min-height: 100vh;
-    background: url('../../../../../assets/img/backgrounds.png') no-repeat #e6e6e6;
-    background-size: 100%;
-  }
-  .contLogo{
-    width: 100%;
-    padding: 1rem .5rem 0;
-  }
-  .contLogo img{
-    width: 100%;
-  }
-  .wrapVideo{
-    width: 100%;
+  .name {
+    font-size: 0;
     text-align: center;
-    margin-top: .8rem;
+    animation:scalc 1.5s cubic-bezier(.17, .86, .73, .14) forwards;
+    animation-play-state: paused;
+    position: absolute;
+    top: 5rem;
+    left: 0;
+    width: 100%;
   }
-  video{
-    height: 7rem;
+  .nameImg {
+    width: 50%;
   }
-  .words{
-    margin-top: .4rem;
+  @keyframes  scale {
+    0% { transform: scale(1); }
+    100% { transform: scale(5);}
   }
-  .words p{
-    text-align: center;
-    font-size: .4rem;
+  @keyframes scalc
+  {
+    0% {transform:scale(1);}
+    80% {opacity: 1;}
+    100% {transform:scale(2);opacity: 0;}
   }
-  .words p span{
-    color: #ff3050;
-  }
-  .words p:nth-child(2){
-    margin-top: .2rem;
-  }
-  /*中间内容部分--结束*/
 </style>

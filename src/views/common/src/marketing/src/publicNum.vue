@@ -1,11 +1,11 @@
 <template lang="pug">
   .wrapPublicNum
-    nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png",  @click="$router.go(-1)")
-      .topCenter(slot="center") 关注公众号
-      .topRight(slot="right")
-        img(src="../../../../../assets/img/diandian.png")
+    <!--nav-bar(background="white")-->
+      <!--.topLeft(slot="left")-->
+        <!--img(src="../../../../../assets/img/back@2x.png",  @click="$router.go(-1)")-->
+      <!--.topCenter(slot="center") 关注公众号-->
+      <!--.topRight(slot="right")-->
+        <!--img(src="../../../../../assets/img/diandian.png")-->
     .cont
       .message(ref="kaka")
         p 领鞋方法已通过<span>短信方式</span>发送至
@@ -17,7 +17,7 @@
         p 进入商城，立即用券
       .words(v-if="false")
         p 持续关注公众号，
-        p 可查看领鞋进展！            
+        p 可查看领鞋进展！
 </template>
 
 <script>

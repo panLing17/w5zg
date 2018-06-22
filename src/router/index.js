@@ -220,12 +220,18 @@ const router = new Router ({
     {
       path: '/marketing/movies',
       name: '答题',
-      component: Marketing.movies
+      component: Marketing.movies,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/marketing/publicNum',
       name: '公众号',
-      component: Marketing.publicNum
+      component: Marketing.publicNum,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/',

@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="back")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
+      .topCenter(slot="center", style="width: 8rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
     .mescroll#sportsMescroll
       .content
