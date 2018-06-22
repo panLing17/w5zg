@@ -10,6 +10,6 @@ module.exports = {
     extract: isProduction
   }),
   transformToRequire: {
-  "video": "src"
+  	"video": "src"
  }
 }

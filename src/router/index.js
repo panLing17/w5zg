@@ -223,6 +223,11 @@ const router = new Router ({
       component: Marketing.movies
     },
     {
+      path: '/marketing/publicNum',
+      name: '公众号',
+      component: Marketing.publicNum
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,

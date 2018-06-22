@@ -67,9 +67,8 @@
   .cont{
     width: 100%;
     min-height: 100vh;
-    background: url('../../../../../assets/img/backgrounds.png') no-repeat;
+    background: url('../../../../../assets/img/backgrounds.png') no-repeat #e6e6e6;
     background-size: 100%;
-    background-color: #e6e6e6;
   }
   .contLogo{
     width: 100%;
