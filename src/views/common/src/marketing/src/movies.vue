@@ -13,7 +13,7 @@
         video(src="../../../../../assets/img/movie.mp4" controls="controls")  
       .words
         p 完成观看视频任务, 了解<span>工会福利券</span>有何好处
-        p 下一步可领取福利    
+        p 下一步可领取福利hhhhhh    
 </template>
 
 <script>
