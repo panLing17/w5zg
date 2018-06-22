@@ -1,17 +1,20 @@
 <template lang="pug">
   .wrapPublicNum
-    .cont
-      .message(ref="kaka")
-        p 领鞋方法已通过<span>短信方式</span>发送至
-        p 您的手机，请注意查看
+    .cont1(v-if="temp==2")
       .qrCode
         img(src="../../../../../assets/img/qRcode.png")
       .words
         p 关注万物直供公众号
         p 进入商城，立即用券
-      .words(v-if="false")
+    .cont2(v-if="temp==1")
+      .message
+        p 领鞋方法已通过<span>短信方式</span>发送至
+        p 您的手机，请注意查看
+      .qrCode
+        img(src="../../../../../assets/img/qRcode.png")
+      .words
         p 持续关注公众号，
-        p 可查看领鞋进展！            
+        p 可查看领鞋进展！                
 </template>
 
 <script>
@@ -20,7 +23,7 @@
       name: "publicNum",
       data(){
         return{
-
+          temp:1
         }
       },
       computed: {
@@ -31,12 +34,9 @@
       },
       mounted(){
         document.title = "关注公众号";
-        this.change();
       },
       methods:{
-        change(){
-          this.$refs.kaka.style.opacity = '0';
-        }
+        
       }
     }
 </script>
@@ -46,7 +46,14 @@
     background-color: #e6e6e6;
   }
   /*内容部分--开始*/
-  .cont{
+  .cont1{
+    width: 100%;
+    min-height: 100vh;
+    background: url('../../../../../assets/img/backgrounds.png') no-repeat;
+    background-size: 100%;
+    padding-top: 3rem;
+  }
+  .cont2{
     width: 100%;
     min-height: 100vh;
     background: url('../../../../../assets/img/backgrounds.png') no-repeat;
