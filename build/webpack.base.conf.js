@@ -69,6 +69,13 @@ module.exports = {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
+      },
+      {
+        test: /\.(ogg|mp4)(\?.*)?$/,
+        loader: 'url-loader',
+        options: {
+          name: utils.assetsPath('video/[name].[hash:7].[ext]')
+        }
       }
     ]
   },
