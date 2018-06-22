@@ -179,27 +179,28 @@
       created(){
 
       },
-      activated () {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      },
+      // activated () {
+      //   console.log(this.orderId +'=========='+ this.$router.query.orderId)
+      //   this.position.forEach((now) => {
+      //     if (now.path === this.$route.path) {
+      //       this.mescroll.scrollTo(now.y, 0);
+      //     }
+      //   })
+      // },
       mounted(){
         //判断用户身份
         this.judgeBOrC();
         this.$mescrollInt("orderMescroll",this.upCallback,()=>{
-          this.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
-            }
-          })
+          // this.position.forEach((now) => {
+          //   if (now.path === this.$route.path) {
+          //     this.mescroll.scrollTo(now.y, 0);
+          //   }
+          // })
         }, (obj) => {
-          this.$store.commit('setPosition', {
-            path: this.$route.path,
-            y: obj.preScrollY
-          })
+          // this.$store.commit('setPosition', {
+          //   path: this.$route.path,
+          //   y: obj.preScrollY
+          // })
         });
         //this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示

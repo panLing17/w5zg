@@ -57,7 +57,6 @@
         this.mescroll.destroy()
       },
       mounted () {
-        console.log(this.$route.meta.keepAlive)
         this.$mescrollInt("largeMescroll",this.upCallback, () => {
           // this.$store.state.position.forEach((now) => {
           //   if (now.path === this.$route.path) {
