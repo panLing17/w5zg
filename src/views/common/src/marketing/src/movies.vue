@@ -1,16 +1,10 @@
 <template lang="pug">
   .wrapMovies
-    nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png",  @click="$router.go(-1)")
-      .topCenter(slot="center") 观看视频领福利
-      .topRight(slot="right")
-        img(src="../../../../../assets/img/diandian.png")
     .cont
       .contLogo
         img(src="../../../../../assets/img/topWords.png")
       .wrapVideo
-        video(src="../../../../../assets/img/movie.mp4" controls="controls")  
+        video(src="../../../../../assets/img/movie.mp4")  
       .words
         p 完成观看视频任务, 了解<span>工会福利券</span>有何好处
         p 下一步可领取福利hhhhhh    
@@ -43,25 +37,6 @@
 <style scoped>
   .wrapMovies{
     background-color: #e6e6e6;
-  }
-  .topLeft{
-    margin-left: .1rem;
-  }
-  .topLeft img{
-    width: .3rem;
-  }
-  .topCenter{
-    width: 4rem;
-    font-size: .5rem;
-    font-weight: 400;
-    text-align: center;
-  }
-  .topRight{
-    margin-right: .1rem;
-  }
-  .topRight img{
-    vertical-align: middle;
-    width: .7rem;
   }
   /*中间内容部分--开始*/
   .cont{

@@ -1,11 +1,5 @@
 <template lang="pug">
   .wrapPublicNum
-    nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png",  @click="$router.go(-1)")
-      .topCenter(slot="center") 关注公众号
-      .topRight(slot="right")
-        img(src="../../../../../assets/img/diandian.png")
     .cont
       .message(ref="kaka")
         p 领鞋方法已通过<span>短信方式</span>发送至
@@ -48,24 +42,8 @@
 </script>
 
 <style scoped>
-  .topLeft{
-    margin-left: .1rem;
-  }
-  .topLeft img{
-    width: .3rem;
-  }
-  .topCenter{
-    width: 4rem;
-    font-size: .5rem;
-    font-weight: 400;
-    text-align: center;
-  }
-  .topRight{
-    margin-right: .1rem;
-  }
-  .topRight img{
-    vertical-align: middle;
-    width: .7rem;
+  .wrapPublicNum{
+    background-color: #e6e6e6;
   }
   /*内容部分--开始*/
   .cont{
