@@ -219,8 +219,10 @@
   }
 
   .text {
+    /*position:relative;*/
+    /*height: .92rem;*/
+
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -229,6 +231,15 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
   }
+  /*.text::after {*/
+    /*content:"...";*/
+    /*font-weight:bold;*/
+    /*position:absolute;*/
+    /*bottom:0;*/
+    /*right:0;*/
+    /*padding:0 20px 1px 45px;*/
+    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*}*/
 
   .text span {
     font-size: .3rem;
