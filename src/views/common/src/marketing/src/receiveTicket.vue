@@ -15,6 +15,7 @@
             input.phone(type="number", placeholder="请输入手机号领取", v-model="phone")
           .submitBtn(@click="receive")
             img.submitImg(src="../../../../../assets/img/nike3.png")
+          .temp1Desc 我们将保护您的个人隐私不被泄露
         .template2(v-if="showIndex===2")
           .template2ImgWrapper
             img.template2Img(src="../../../../../assets/img/nike4.png")
@@ -293,5 +294,11 @@
   }
   .nextBtn.next {
     padding-top: 0;
+  }
+  .temp1Desc {
+    font-size: .32rem;
+    color: #666;
+    text-align: center;
+    margin-top: .2rem;
   }
 </style>
