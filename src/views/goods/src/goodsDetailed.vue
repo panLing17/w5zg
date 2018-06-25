@@ -90,10 +90,10 @@
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
-      .numberBox(v-if="disTypeName !== '专柜自提'")
-        ul.number
-          //li 邮费 包邮
-          li 邮费 {{freight}}元
+      <!--.numberBox(v-if="disTypeName !== '专柜自提'")-->
+        <!--ul.number-->
+          <!--//li 邮费 包邮-->
+          <!--li 邮费 {{freight}}元-->
       .promise
         img(src="../../../assets/img/ic_good_detail_1.png")
         img(src="../../../assets/img/ic_good_detail_2.png")

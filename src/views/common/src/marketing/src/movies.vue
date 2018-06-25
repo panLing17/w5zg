@@ -28,10 +28,6 @@
         timer: null
       }
     },
-    activated () {
-      Object.assign(this.$data, this.$options.data())
-      this.startAnimate()
-    },
     mounted () {
       this.startAnimate()
     },
@@ -88,7 +84,7 @@
   .name {
     font-size: 0;
     text-align: center;
-    animation:scalc 1.5s cubic-bezier(.17, .86, .73, .14) forwards;
+    animation:scalc 2.5s cubic-bezier(.17, .86, .73, .14) forwards;
     animation-play-state: paused;
     position: absolute;
     top: 5rem;

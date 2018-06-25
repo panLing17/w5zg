@@ -236,7 +236,18 @@ const router = new Router ({
     {
       path: '/marketing/assisting',
       name: '助力活动',
-      component: Marketing.assisting
+      component: Marketing.assisting,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/personal',
+      name: '个人中心',
+      component: Marketing.personal,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/',
