@@ -239,6 +239,21 @@ const router = new Router ({
       component: Marketing.assisting
     },
     {
+      path: '/marketing/rankingList',
+      name: '排行榜',
+      component: Marketing.rankingList
+    },
+    {
+      path: '/marketing/prizeResult',
+      name: '获奖结果',
+      component: Marketing.prizeResult
+    },
+    {
+      path: '/marketing/selectSize',
+      name: '选择尺码',
+      component: Marketing.selectSize
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
