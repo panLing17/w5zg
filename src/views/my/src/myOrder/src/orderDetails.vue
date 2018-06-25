@@ -68,10 +68,10 @@
             span {{item.address}}
           p(v-if="item.shopFlag")
             span.shop 门店联系人:
-            span {{linkMan}}
+            span {{item.bs_linkman}}
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
-            span {{linkPhone}}
+            span {{item.bs_phone}}
       .total
         ul
           li.totalQuantity
@@ -179,28 +179,34 @@
       created(){
 
       },
-      // activated () {
-      //   console.log(this.orderId +'=========='+ this.$router.query.orderId)
-      //   this.position.forEach((now) => {
-      //     if (now.path === this.$route.path) {
-      //       this.mescroll.scrollTo(now.y, 0);
-      //     }
-      //   })
-      // },
+      activated () {
+        if (this.orderId != this.$route.query.orderId) {
+          this.orderId = this.$route.query.orderId
+          this.mescroll.scrollTo(0, 0);
+          this.orderDetailShow();
+        } else{
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }
+        
+      },
       mounted(){
         //判断用户身份
         this.judgeBOrC();
         this.$mescrollInt("orderMescroll",this.upCallback,()=>{
-          // this.position.forEach((now) => {
-          //   if (now.path === this.$route.path) {
-          //     this.mescroll.scrollTo(now.y, 0);
-          //   }
-          // })
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
         }, (obj) => {
-          // this.$store.commit('setPosition', {
-          //   path: this.$route.path,
-          //   y: obj.preScrollY
-          // })
+          this.$store.commit('setPosition', {
+            path: this.$route.path,
+            y: obj.preScrollY
+          })
         });
         //this.judgeState();//判断状态
         this.orderDetailShow();//订单详情展示

@@ -250,6 +250,21 @@ const router = new Router ({
       }
     },
     {
+      path: '/marketing/rankingList',
+      name: '排行榜',
+      component: Marketing.rankingList
+    },
+    {
+      path: '/marketing/prizeResult',
+      name: '获奖结果',
+      component: Marketing.prizeResult
+    },
+    {
+      path: '/marketing/selectSize',
+      name: '选择尺码',
+      component: Marketing.selectSize
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
@@ -521,7 +536,7 @@ const router = new Router ({
               name: '订单详情',
               component: MyOrder.orderDetails,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
