@@ -334,6 +334,10 @@
       }
     },
     methods:{
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       scrollTo(h,t){
         this.mescroll.scrollTo( h, t );
       },
