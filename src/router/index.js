@@ -504,7 +504,7 @@ const router = new Router ({
               name: '订单详情',
               component: MyOrder.orderDetails,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {

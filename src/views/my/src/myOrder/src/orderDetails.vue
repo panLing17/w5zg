@@ -68,10 +68,10 @@
             span {{item.address}}
           p(v-if="item.shopFlag")
             span.shop 门店联系人:
-            span {{linkMan}}
+            span {{item.bs_linkman}}
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
-            span {{linkPhone}}
+            span {{item.bs_phone}}
       .total
         ul
           li.totalQuantity
@@ -180,11 +180,18 @@
 
       },
       activated () {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
+        if (this.orderId != this.$route.query.orderId) {
+          this.orderId = this.$route.query.orderId
+          this.mescroll.scrollTo(0, 0);
+          this.orderDetailShow();
+        } else{
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }
+        
       },
       mounted(){
         //判断用户身份
