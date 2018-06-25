@@ -55,7 +55,7 @@
     data () {
       return {
         ruleFlag: '',
-        temp: 2,
+        temp: 1,
         lists: [{}, {}, {}, {}, {}]
       }
     },
@@ -77,18 +77,22 @@
 }
 /*第一内容部分--开始*/
 .topLogo{
-  padding: 1rem .4rem 0;
+  padding: 1rem .5rem 0;
 }
 .topLogo img{
   width: 9rem;
 }
 .words{
-  margin-top: 1.2rem;
+  margin: .5rem .5rem 0;
+  padding: 1rem 0;
   color: #fff;
   text-align: center;
+  background-color: #d80014;
+  border-radius: .3rem;
 }
 .words h1{
   font-size: .8rem;
+  font-weight: 600;
 }
 .words p{
   font-size: .5rem;
@@ -106,7 +110,7 @@
   width: 9.4rem;
 }
 .rule{
-  margin-top: 1rem;
+  margin-top: .6rem;
 }
 .rule img{
   width: 10rem;
