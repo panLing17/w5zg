@@ -13,6 +13,7 @@
             img.template1Img(src="../../../../../assets/img/nike2.png")
           .inputWrapper
             input.phone(type="number", placeholder="请输入手机号领取", v-model="phone")
+          #sc(ref="sc")
           .submitBtn(@click="receive")
             img.submitImg(src="../../../../../assets/img/nike3.png")
           .temp1Desc 我们将保护您的个人隐私不被泄露
@@ -40,6 +41,15 @@
             img.nextImg(src="../../../../../assets/img/nike6.png")
           .nextBtn.next
             img.nextImg(src="../../../../../assets/img/nike7.png")
+      transition(name="fade")
+        .mask(v-show="popShow", @click="hidePop")
+      transition(name="fade")
+        .popWrapper(v-show="popShow")
+          .popDesc 我们会通过短信的形式，发送验证码至您的手机，请注意查收。
+          .popInputWrapper
+            input.popInput(type="text", placeholder="请输入验证码")
+            .inputBtn(:class="{'red': inputStatus.flag, 'gray': !inputStatus.flag}") {{inputStatus.inputBtnText}}
+          .popBtn 立即验证
 </template>
 
 <script>
@@ -51,7 +61,13 @@
         phone: '',
         url: '',
         isLoginFlag: false,
-        loadingFlag: false
+        loadingFlag: false,
+        scFlag: false,
+        inputStatus:{
+          inputBtnText: '获取验证码',
+          flag: true
+        },
+        popShow: false
       }
     },
     created () {
@@ -59,8 +75,43 @@
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
+      this._initSc()
     },
     methods: {
+      hidePop () {
+        this.popShow = false
+      },
+      _initSc () {
+        let _this = this
+        this.$nextTick(()=>{
+          var ic = new smartCaptcha({
+            renderTo: '#sc',
+            width: '7.2rem',
+            height: '1.17rem',
+            default_txt: '< 点击按钮开始智能验证',
+            success_txt: '验证成功',
+            fail_txt: '验证失败，请在此点击按钮刷新',
+            scaning_txt: '智能检测中',
+            success: function(data) {
+              _this.$ajax({
+                method: 'post',
+                url: _this.$apiMember + 'afs/afsValidateWeb',
+                params: {
+                  sessionId: data.sessionId,
+                  sig: data.sig,
+                  token: NVC_Opt.token,
+                  scene: NVC_Opt.scene
+                }
+              }).then(function (response) {
+                if (response) {
+                  _this.scFlag = true
+                }
+              })
+            },
+          });
+          ic.init();
+        })
+      },
       getData () {
         this.url = this.$route.query.redirect_url;
         if (this.$route.query.show_index) {
@@ -96,16 +147,17 @@
           }
         }
 
-        if (!this.showSuccess){
-
-          if (this.isLoginFlag && this.phone.length!==11) {
-            this.getUserData(function () {
-              _this.getTicket();
-            })
-            return
-          }
-          this.getTicket();
+        if (this.scFlag){
+          this.popShow = true
+          // if (this.isLoginFlag && this.phone.length!==11) {
+          //   this.getUserData(function () {
+          //     _this.getTicket();
+          //   })
+          //   return
+          // }
+          // this.getTicket();
         }else {
+          this.$message.warning('请点击智能验证按钮')
           return
         }
       },
@@ -122,14 +174,15 @@
           }).then(function (response) {
             _this.loadingFlag = false
             if (response) {
-              _this.showIndex = 2;
-              // if (response.data.msg != '您已经超过领取上限') {
-              //
-              // }
+              if (response.data.msg != '您已经超过领取上限') {
+                _this.showIndex = 2;
+              } else {
+                _this.$message.error(response.data.msg)
+              }
             }
           }).catch(function (reason) {
             _this.loadingFlag = false
-            _this.$message.error('出事啦~')
+            _this.$message.error('系统出错~')
 
           });
         }
@@ -193,7 +246,7 @@
   }
   .template1ImgWrapper {
     text-align: center;
-    padding-top: .98rem;
+    padding-top: .5rem;
     font-size: 0;
   }
   .template1Img {
@@ -201,7 +254,7 @@
   }
   .inputWrapper {
     text-align: center;
-    margin-top: .94rem;
+    margin-top: .5rem;
   }
   .phone {
     width: 7.2rem;
@@ -219,7 +272,7 @@
   }
   .submitBtn {
     text-align: center;
-    margin-top: .46rem;
+    margin-top: .2rem;
   }
   .submitImg {
     width: 7.2rem;
@@ -300,5 +353,70 @@
     color: #666;
     text-align: center;
     margin-top: .2rem;
+  }
+  #sc {
+    margin: .2rem auto 0;
+    width: 7.2rem;
+  }
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,.5);
+    z-index: 1500;
+  }
+  .popWrapper {
+    width: 9rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    z-index: 1501;
+    padding: 0 .8rem 1.5rem;
+    border-radius: .2rem;
+  }
+  .popDesc {
+    margin-top: 1rem;
+    font-size: .32rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .popInputWrapper {
+    display: flex;
+    justify-content: space-between;
+    margin-top: .46rem;
+  }
+  .popInput {
+    border: 1px solid #b5b5b5;
+    width: 5rem;
+    height: .93rem;
+    outline: none;
+    padding-left: .33rem;
+  }
+  .inputBtn {
+    line-height: .93rem;
+    width: 2.1rem;
+    text-align: center;
+    border-radius: .2rem;
+  }
+  .red {
+    border: 1px solid #ff3050;
+    color: #ff3050;
+  }
+  .gray {
+    border: 1px solid #999;
+    color: #999;
+  }
+  .popBtn {
+    border-radius: .2rem;
+    line-height: .93rem;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(#ffab8d, #ff3050);
+    margin-top: .37rem;
+    font-size: .37rem;
   }
 </style>

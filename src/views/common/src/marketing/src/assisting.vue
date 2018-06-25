@@ -55,7 +55,7 @@
     data () {
       return {
         ruleFlag: '',
-        temp: 2,
+        temp: 1,
         lists: [{}, {}, {}, {}, {}]
       }
     },

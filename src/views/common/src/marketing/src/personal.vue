@@ -59,7 +59,7 @@
       .contentBottom
         .temp2Bottom(v-if="temp==2 || temp==3 || temp==4 || temp==6")
           .temp2BottomDesc 或者还可以先逛逛商城，使用工会福利现金券
-          .temp2BottomBtn
+          .temp2BottomBtn(@click="$router.push('/home')")
             img.temp2BottomBtnImg(src="../../../../../assets/img/06_user_not_started_btn.png")
 </template>
 
@@ -77,7 +77,7 @@
     name: "personal",
     data () {
       return {
-        temp: 6
+        temp: 1
       }
     },
     mounted () {
