@@ -7,10 +7,12 @@
         h1 活动暂未开始
         p 报名满20,000人，立即开始活动
         p 邀请好友关注“万物直供商城”,一起免费领鞋吧~
-      .goShopping(v-if="temp == 1")
+      .goShopping(v-if="temp == 1", @click="$router.push('/home')")
         img(src="../../../../../assets/img/user_not_started_btn.png" @click.prevent="")
       .rule(v-if="temp == 1")
-        img(src="../../../../../assets/img/01_index_6.png" @click.prevent="")
+        .ruleTitle 活动规则
+        .ruleDesc1 送1万双耐克鞋，限3万人报名参加（成功率33%），按领券数排名，前1万名立得1双1200元耐克鞋。
+        .ruleDesc2 即日起，报名满2万人，短信通知报名者：活动开始。
       .center(v-if="temp == 2 || temp == 3")
         .topper
           .lefter
@@ -59,193 +61,248 @@
         lists: [{}, {}, {}, {}, {}]
       }
     },
+    created () {
+      this.isStart()
+    },
     mounted () {
       document.title = "助力活动";
     },
     methods: {
+      isStart () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isStart',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no') {
+              self.temp = 1
+            }
+          }
 
+        })
+      }
     }
   }
 </script>
 
 <style scoped>
-.wrapAssisting{
-  background-color: #ff3050;
-}
-.cont{
-  min-height: 100vh;
-}
-/*第一内容部分--开始*/
-.topLogo{
-  padding: 1rem .5rem 0;
-}
-.topLogo img{
-  width: 9rem;
-}
-.words{
-  margin: .5rem .5rem 0;
-  padding: 1rem 0;
-  color: #fff;
-  text-align: center;
-  background-color: #d80014;
-  border-radius: .3rem;
-}
-.words h1{
-  font-size: .8rem;
-  font-weight: 600;
-}
-.words p{
-  font-size: .5rem;
-}
-.words p:nth-child(3){
-  font-size: .34rem;
-  margin-top: .1rem;
-  color: #fec45f;
-}
-.goShopping{
-  margin-top: .4rem;
-  text-align: center;
-}
-.goShopping img{
-  width: 9.4rem;
-}
-.rule{
-  margin-top: .6rem;
-}
-.rule img{
-  width: 10rem;
-}
-/*第一内容部分--结束*/
-.center{
-  margin: .4rem .4rem 0;
-  padding-top: .4rem;
-  border-top: 1px solid #fff;
-}
-.center .topper{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.center .topper .lefter{
-  display: flex;
-  align-items: center;
-  color: #fff;
-}
-.center .topper .lefter .pic{
-  width: 1.5rem;
-  height: 1.5rem;
-  background-color: rgba(255,255,255,.4);
-  border-radius: 50%;
-  text-align: center;
-  line-height: 1.45rem;
-}
-.center .topper .lefter .pic img{
-  width: 1.3rem;
-  height: 1.3rem;
-  border-radius: 50%;
-  vertical-align: middle;
-}
-.center .topper .lefter .namer{
-  margin-left: .3rem;
-  font-size: .4rem;
-}
-.center .topper .righter img{
-  width: 2rem;
-  vertical-align: middle;
-}
-.center .middler{
-  height: 4.5rem;
-  margin-top: .2rem;
-  padding-top: 1.2rem;
-  background: url('../../../../../assets/img/06_user_circlesbg.png') no-repeat center;
-  background-size: 45%;
-  text-align: center;
-}
-.center .middler p{
-  font-size: .42rem;
-  color: #fff;
-}
-.center .middler p:nth-child(2){
-  font-size: 1rem;
-  color: #ffe277;
-}
-.center .bottommer{
-  padding: 0 1rem;
-  display: flex;
-  justify-content: space-around;
-}
-.center .bottommer img{
-  width: 4rem;
-}
-.bottom{
-  padding: 0 .3rem;
-}
-.bottom .assists{
-  height: 4.5rem;
-  border-radius: .2rem;
-  background-color: #fff;
-  overflow: scroll;
-}
-.bottom .assists .logoN{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-top: .4rem;
-}
-.bottom .assists .logoN .line{
-  width: 1rem;
-  height: 1px;
-  background-color: rgb(153,153,153);
-}
-.bottom .assists .logoN .titleN{
-  margin: 0 .2rem;
-  font-size: .4rem;
-  color: rgb(153,153,153);
-}
-ul.listter{
-  padding: .4rem .3rem;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-ul.listter li{
-  display: flex;
-  align-items: center;
-  margin-bottom: .4rem;
-}
-ul.listter li .headPic{
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-}
-ul.listter li .headPic img{
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-}
-ul.listter li .wordsR{
-  margin-left: .2rem;
-  width: 70%;
-}
-ul.listter li .wordsR p:nth-child(1){
-  font-size: .4rem;
-}
-ul.listter li .wordsR p:nth-child(2){
-  color: #b0b0b0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.btnN{
-  margin-top: .3rem;
-}
-.btnN img{
-  width: 10rem;
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
-}
+  .wrapAssisting{
+    background-color: #ff3050;
+  }
+  .cont{
+    min-height: 100vh;
+  }
+  /*第一内容部分--开始*/
+  .topLogo{
+    padding: 1rem .5rem 0;
+  }
+  .topLogo img{
+    width: 9rem;
+  }
+  .words{
+    margin: .5rem .5rem 0;
+    padding: 1rem 0;
+    color: #fff;
+    text-align: center;
+    background-color: #d80014;
+    border-radius: .3rem;
+  }
+  .words h1{
+    font-size: .8rem;
+    font-weight: 600;
+  }
+  .words p{
+    font-size: .5rem;
+  }
+  .words p:nth-child(3){
+    font-size: .34rem;
+    margin-top: .1rem;
+    color: #fec45f;
+  }
+  .goShopping{
+    margin-top: .4rem;
+    text-align: center;
+  }
+  .goShopping img{
+    width: 9.4rem;
+  }
+  .rule{
+    margin-top: .6rem;
+    color: #fff;
+    position: relative;
+  }
+  .ruleTitle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: .4rem;
+  }
+  .ruleTitle:before, .ruleTitle:after {
+    content: '';
+    display: block;
+    width: .8rem;
+    height: 1px;
+    background: #fff;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .ruleTitle:before {
+    left: -1rem;
+  }
+  .ruleTitle:after {
+    right: -1rem;
+  }
+  .ruleDesc1, .ruleDesc2 {
+    font-size: .32rem;
+    line-height: 1.5;
+    padding-left: .69rem;
+    padding-right: .69rem;
+  }
+  .ruleDesc1 {
+    padding-top: .8rem;
+  }
+  .ruleDesc2 {
+    margin-top: .62rem;
+  }
+  .rule img{
+    width: 10rem;
+  }
+  /*第一内容部分--结束*/
+  .center{
+    margin: .4rem .4rem 0;
+    padding-top: .4rem;
+    border-top: 1px solid #fff;
+  }
+  .center .topper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .center .topper .lefter{
+    display: flex;
+    align-items: center;
+    color: #fff;
+  }
+  .center .topper .lefter .pic{
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: rgba(255,255,255,.4);
+    border-radius: 50%;
+    text-align: center;
+    line-height: 1.45rem;
+  }
+  .center .topper .lefter .pic img{
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+  .center .topper .lefter .namer{
+    margin-left: .3rem;
+    font-size: .4rem;
+  }
+  .center .topper .righter img{
+    width: 2rem;
+    vertical-align: middle;
+  }
+  .center .middler{
+    height: 4.5rem;
+    margin-top: .2rem;
+    padding-top: 1.2rem;
+    background: url('../../../../../assets/img/06_user_circlesbg.png') no-repeat center;
+    background-size: 45%;
+    text-align: center;
+  }
+  .center .middler p{
+    font-size: .42rem;
+    color: #fff;
+  }
+  .center .middler p:nth-child(2){
+    font-size: 1rem;
+    color: #ffe277;
+  }
+  .center .bottommer{
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-around;
+  }
+  .center .bottommer img{
+    width: 4rem;
+  }
+  .bottom{
+    padding: 0 .3rem;
+  }
+  .bottom .assists{
+    height: 4.5rem;
+    border-radius: .2rem;
+    background-color: #fff;
+    overflow: scroll;
+  }
+  .bottom .assists .logoN{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: .4rem;
+  }
+  .bottom .assists .logoN .line{
+    width: 1rem;
+    height: 1px;
+    background-color: rgb(153,153,153);
+  }
+  .bottom .assists .logoN .titleN{
+    margin: 0 .2rem;
+    font-size: .4rem;
+    color: rgb(153,153,153);
+  }
+  ul.listter{
+    padding: .4rem .3rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  ul.listter li{
+    display: flex;
+    align-items: center;
+    margin-bottom: .4rem;
+  }
+  ul.listter li .headPic{
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+  }
+  ul.listter li .headPic img{
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+  }
+  ul.listter li .wordsR{
+    margin-left: .2rem;
+    width: 70%;
+  }
+  ul.listter li .wordsR p:nth-child(1){
+    font-size: .4rem;
+  }
+  ul.listter li .wordsR p:nth-child(2){
+    color: #b0b0b0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .btnN{
+    margin-top: .3rem;
+  }
+  .btnN img{
+    width: 10rem;
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+
 </style>

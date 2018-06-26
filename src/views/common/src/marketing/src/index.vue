@@ -22,7 +22,7 @@
             .right 本活动共送出1万双耐克鞋，限3万人报名，按领券数量排名，前1万人立得1双价值1200元耐克鞋。
           .info
             .left 2)
-            .right 领鞋地址：现代快报大厦18楼、金陵晚报。
+            .right 领鞋地址：现代快报大厦18楼、金陵晚报虎凤蝶旅行社。
           .info
             .left 3)
             .right 领取时间：7月20日-7月27日，早9:00-晚18:00
@@ -35,6 +35,7 @@
 
 <script>
   import BScroll from 'better-scroll'
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "index",
     data () {
@@ -53,10 +54,49 @@
         }
       }
     },
+    created () {
+      this.saveUrl()
+      this.judeg()
+
+    },
     mounted () {
-      document.title = '专题活动名称';
+      document.title = '送耐克活动';
+      this.loadShare()
     },
     methods: {
+
+      loadShare () {
+        this.$initShare({
+          sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
+          shareTitle: '万物直供送耐克鞋活动',
+          shareDesc: '万物直供送礼啦，参加活动即有33%的机会领取耐克鞋',
+          link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+        })
+      },
+      judeg () {
+        if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'netcard/presentShoes/join/isJoinActivity',
+            params: {
+              mobile: localStorage.getItem('phone')
+            }
+          }).then(function (response) {
+            if (response) {
+              if (response.data.data == 1) {
+                self.isPartake = true
+              }
+            }
+          })
+        }
+      },
+      saveUrl () {
+        if (this.$route.query.redirect_url) {
+          localStorage.setItem('redirect_url', this.$route.query.redirect_url)
+        }
+
+      },
       showPop (index) {
         this.temp = index;
         this.popShow = true;
@@ -65,7 +105,7 @@
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')
         } else {
-
+          this.$router.push('/marketing/assisting')
         }
       },
       toNext2 () {

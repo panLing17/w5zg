@@ -14,16 +14,16 @@
         img(src="../../../../../assets/img/qRcode.png")
       .words
         p 持续关注公众号，
-        p 可查看领鞋进展！                
+        p 可查看领鞋进展！
 </template>
 
 <script>
-
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
       name: "publicNum",
       data(){
         return{
-          temp:1
+          temp:2
         }
       },
       computed: {
@@ -34,9 +34,18 @@
       },
       mounted(){
         document.title = "关注公众号";
+        this.loadShare()
       },
       methods:{
-        
+        loadShare () {
+          console.log(window.location.href.split('/#')[0] + shareImg.substr(1))
+          this.$initShare({
+            sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
+            shareTitle: '万物直供送耐克鞋活动',
+            shareDesc: '万物直供送礼啦，参加活动即有33%的机会领取耐克鞋',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+          })
+        }
       }
     }
 </script>

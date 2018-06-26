@@ -9,47 +9,77 @@
     .name(v-show="showIndex===3", :style="{'animation-play-state': stateArr[2]}")
       img.nameImg(src="../../../../../assets/img/nike12.png")
     .name(v-show="showIndex===4", :style="{'animation-play-state': stateArr[3]}")
-      img.nameImg(src="../../../../../assets/img/nike13.png")
-    .name(v-show="showIndex===5", :style="{'animation-play-state': stateArr[4]}")
       img.nameImg(src="../../../../../assets/img/nike14.png")
-    .name(v-show="showIndex===6", :style="{'animation-play-state': stateArr[5]}")
+    .name(v-show="showIndex===5", :style="{'animation-play-state': stateArr[4]}")
       img.nameImg(src="../../../../../assets/img/nike15.png")
-    .name(v-show="showIndex===7", :style="{'animation-play-state': stateArr[6]}")
+    .name(v-show="showIndex===6", :style="{'animation-play-state': stateArr[5]}")
       img.nameImg(src="../../../../../assets/img/nike16.png")
+    .timerWrapper
+      .timer(v-if="s>0") {{s}}s
+      .toNext(v-if="s<=0", @click="$router.push('/marketing/receiveTicket')") 跳过
 </template>
 
 <script>
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "cssTest",
     data () {
       return {
         showIndex: 1,
-        stateArr: ['paused','paused','paused','paused','paused','paused','paused'],
-        timer: null
+        stateArr: ['paused','paused','paused','paused','paused','paused'],
+        timer: null,
+        s: 5,
+        timer2: null
       }
     },
     mounted () {
+      this.loadShare()
       this.startAnimate()
+      this.timerToNext()
     },
     beforeDestroy () {
       if (this.timer) {
         clearInterval(this.timer)
       }
+      if (this.timer2) {
+        clearInterval(this.timer2)
+      }
     },
     methods: {
+      timerToNext () {
+        let _this = this
+        this.$nextTick(()=>{
+          this.timer2 = setInterval(()=>{
+            this.s--
+            if (this.s<=0) {
+              clearInterval(_this.timer2)
+            }
+
+          },1000)
+        })
+      },
+      loadShare () {
+        console.log(window.location.href.split('/#')[0] + shareImg.substr(1))
+        this.$initShare({
+          sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
+          shareTitle: '万物直供送耐克鞋活动',
+          shareDesc: '万物直供送礼啦，参加活动即有33%的机会领取耐克鞋',
+          link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+        })
+      },
       startAnimate () {
         let _this = this
         this.$nextTick(()=>{
           let index = 0
           this.stateArr.splice(index++, 1, 'running')
           this.timer = setInterval(()=>{
-            if (_this.showIndex>=7) {
+            if (_this.showIndex>=6) {
               clearInterval(_this.timer)
               _this.$router.push('/marketing/receiveTicket')
             }
             _this.stateArr.splice(index++, 1, 'running')
             _this.showIndex++
-          },1500)
+          },2500)
         })
       }
     }
@@ -78,7 +108,8 @@
   }
   .bgImg {
     width: 80%;
-    transform-origin: 50% 40% 0;
+    margin-top: 3.5rem;
+    transform-origin: 50% 50% 0;
     animation:scalc 20s forwards;
   }
   .name {
@@ -87,7 +118,7 @@
     animation:scalc 2.5s cubic-bezier(.17, .86, .73, .14) forwards;
     animation-play-state: paused;
     position: absolute;
-    top: 5rem;
+    top: 7rem;
     left: 0;
     width: 100%;
   }
@@ -103,5 +134,27 @@
     0% {transform:scale(1);}
     80% {opacity: 1;}
     100% {transform:scale(2);opacity: 0;}
+  }
+  img {
+    pointer-events: none;
+  }
+  .timerWrapper {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+  }
+  .timer {
+    color: gray;
+    font-size: .5rem;
+    padding: 0 .3rem;
+    border-radius: .5rem;
+    border: 1px solid gray;
+  }
+  .toNext {
+    color: gray;
+    font-size: .5rem;
+    padding: 0 .3rem;
+    border-radius: .5rem;
+    border: 1px solid gray;
   }
 </style>
