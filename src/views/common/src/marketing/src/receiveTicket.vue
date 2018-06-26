@@ -229,7 +229,7 @@
                     sig: data.sig,
                     token: NVC_Opt.token,
                     scene: NVC_Opt.scene,
-                    W5MALLTOKEN: this.W5MALLTOKEN
+                    W5MALLTOKEN: _this.W5MALLTOKEN
                   }
                 }).then(function (response) {
                   if (response) {

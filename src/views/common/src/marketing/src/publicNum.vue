@@ -8,12 +8,15 @@
         p 进入商城，立即用券
     .cont2(v-if="temp==1")
       .message
-        p 领鞋方法已通过<span>短信方式</span>发送至
+        p 参与方法已通过<span>短信方式</span>发送至
         p 您的手机，请注意查看
       .qrCode
         img(src="../../../../../assets/img/qRcode.png")
-      .words
+      .words(v-if="isWX")
         p 持续关注公众号，
+        p 可查看领鞋进展！
+      .words2(v-if="!isWX")
+        p 关注微信公众号“<span>万物直供商城</span>”
         p 可查看领鞋进展！
 </template>
 
@@ -23,22 +26,30 @@
       name: "publicNum",
       data(){
         return{
-          temp:2
+          temp:1,
+          isWX: false
         }
       },
       computed: {
 
       },
       created(){
-
+        this.isWeiXin()
       },
       mounted(){
         document.title = "关注公众号";
         this.loadShare()
       },
       methods:{
+        isWeiXin() {
+          let ua = window.navigator.userAgent.toLowerCase()
+          if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            this.isWX = true
+          } else {
+            this.isWX = false
+          }
+        },
         loadShare () {
-          console.log(window.location.href.split('/#')[0] + shareImg.substr(1))
           this.$initShare({
             sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
             shareTitle: '万物直供送耐克鞋活动',
@@ -94,6 +105,18 @@
     color: #ff3050;
   }
   .words p{
+    margin-top: .2rem;
+  }
+  .words2{
+    padding-top: .2rem;
+    font-size: .4rem;
+    text-align: center;
+    color: #333;
+  }
+  .words2 span {
+    color: #ff3050;
+  }
+  .words2 p{
     margin-top: .2rem;
   }
   /*内容部分--结束*/
