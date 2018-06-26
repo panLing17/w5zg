@@ -162,7 +162,7 @@
       // 切换动画HACK
       this.animateHack();
       //判断页面是否向上滚动
-      window.addEventListener('scroll',this.judgeScroll,true);
+      //window.addEventListener('scroll',this.judgeScroll,true);
       //改变下拉刷新的样式
       //this.changeStyles();
       //控制升级会员图片的切换

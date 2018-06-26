@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 足迹
       .topRight(slot="right")
-    .content
+    .content(ref="conts").mescroll#footMescroll
       .date(v-for="item in footMarkData")
         .title  {{item.create_time}}
         ul
@@ -36,10 +36,19 @@
         show: false
       }
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
+    },
     mounted () {
       this.getData()
+      this.$mescrollInt('footMescroll', this.upCallback)
+      this.hideStyles()
     },
     methods:{
+      hideStyles(){
+        this.$refs.conts.children[1].style.display = 'none'
+      },
       getData () {
         let self = this
         self.$ajax({
@@ -53,7 +62,22 @@
       },
       goGoods (id) {
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
-      }
+      },
+
+      upCallback: function (page) {
+        let self = this
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          //if (page.num === 1) self.pageName = []
+          //self.pageName = self.pageName.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
+        })
+      },
+      getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
+        successCallback && successCallback({}) // 成功回调
+      },
     }
   }
 </script>
