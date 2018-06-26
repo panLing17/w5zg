@@ -66,8 +66,9 @@
     methods: {
 
       loadShare () {
+        console.log(shareImg.substr(1))
         this.$initShare({
-          sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
+          sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
           shareTitle: '万物直供送耐克鞋活动',
           shareDesc: '万物直供送礼啦，参加活动即有33%的机会领取耐克鞋',
           link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")

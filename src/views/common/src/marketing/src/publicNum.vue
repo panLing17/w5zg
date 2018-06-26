@@ -13,7 +13,7 @@
       .qrCode
         img(src="../../../../../assets/img/qRcode.png")
       .words(v-if="isWX")
-        p 持续关注公众号，
+        p 长按关注公众号，
         p 可查看领鞋进展！
       .words2(v-if="!isWX")
         p 关注微信公众号“<span>万物直供商城</span>”
@@ -51,7 +51,7 @@
         },
         loadShare () {
           this.$initShare({
-            sharePhoto: window.location.href.split('/#')[0] + shareImg.substr(1),
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
             shareTitle: '万物直供送耐克鞋活动',
             shareDesc: '万物直供送礼啦，参加活动即有33%的机会领取耐克鞋',
             link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
