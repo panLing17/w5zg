@@ -69,8 +69,8 @@
         console.log(shareImg.substr(1))
         this.$initShare({
           sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-          shareTitle: '万物直供送耐克鞋活动',
-          shareDesc: '万物直供送礼啦，参加活动即有33%的机会领取耐克鞋',
+          shareTitle: '万双耐克，要否？',
+          shareDesc: '天降耐克，速来领取！！！还有超值现金券，先到先得！！！',
           link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
         })
       },
