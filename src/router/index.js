@@ -252,17 +252,26 @@ const router = new Router ({
     {
       path: '/marketing/rankingList',
       name: '排行榜',
-      component: Marketing.rankingList
+      component: Marketing.rankingList,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/marketing/prizeResult',
       name: '获奖结果',
-      component: Marketing.prizeResult
+      component: Marketing.prizeResult,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/marketing/selectSize',
       name: '选择尺码',
-      component: Marketing.selectSize
+      component: Marketing.selectSize,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/',
