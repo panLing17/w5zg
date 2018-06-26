@@ -537,7 +537,7 @@ const router = new Router ({
               name: '订单管理',
               component: MyOrder.orderManage,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
@@ -561,7 +561,7 @@ const router = new Router ({
               name: '查看物流',
               component: MyOrder.searchOrder,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
