@@ -1,8 +1,8 @@
 <template lang="pug">
   .wrap
     .bgWrapper
-      img.bgImg(src="../../../../../assets/img/nike9.png", :style="{'animation-play-state': bgArr[0]}", v-show="bg==1")
-      img.bgImg2(src="../../../../../assets/img/nike92.png", :style="{'animation-play-state': bgArr[1]}", v-show="bg==2")
+      img.bgImg(src="../../../../../assets/img/nike9.png", :style="{'animation-play-state': bgArr[0]}", v-show="bg1")
+      img.bgImg2(src="../../../../../assets/img/nike92.png", :style="{'animation-play-state': bgArr[1]}", v-show="bg2")
     .name(v-show="showIndex===1", :style="{'animation-play-state': stateArr[0]}")
       img.nameImg(src="../../../../../assets/img/nike10.png")
     .name(v-show="showIndex===2", :style="{'animation-play-state': stateArr[1]}")
@@ -31,7 +31,8 @@
         timer: null,
         s: 15,
         timer2: null,
-        bg: 0,
+        bg1: false,
+        bg2: false,
         bgArr: ['paused', 'paused'],
         start: false
       }
@@ -62,11 +63,50 @@
         })
       },
       loadShare () {
-        this.$initShare({
-          sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-          shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-          shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-          link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+        if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+            this.getSharerId(function (data) {
+              if (data != '用户不存在') {
+                this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                })
+              }
+            })
+          } else {
+            this.$initShare({
+              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+            })
+          }
+        } else {
+          this.$initShare({
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+          })
+        }
+      },
+      getSharerId (callback){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/queryMemberIdByMobile',
+          params: {
+            mobile: localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data != '用户不存在') {
+              localStorage.setItem('sharerId', response.data.data)
+            }
+            callback && callback(response.data.data)
+          }
         })
       },
       startAnimate () {
@@ -76,14 +116,17 @@
           this.stateArr.splice(index++, 1, 'running')
           this.timer = setInterval(()=>{
             if (index == 1) {
-              _this.bg = 1
+              _this.bg1 = true
               _this.bgArr.splice(0, 1, 'running')
               _this.start = true
               _this.timerToNext()
             }
-            if (index == 3) {
-              _this.bg = 2
-              _this.bgArr.splice(1, 1, 'running')
+            if (index == 2) {
+              setTimeout(()=>{
+                _this.bg2 = 2
+                _this.bgArr.splice(1, 1, 'running')
+              },2000)
+
             }
             if (_this.showIndex>=6) {
               clearInterval(_this.timer)
@@ -120,10 +163,18 @@
   }
   .bgImg, .bgImg2 {
     width: 100%;
-    margin-top: 1rem;
+    top: 1rem;
+    left: 0;
+    /*transform: translateX(-50%);*/
     transform-origin: 50% 40% 0;
-    animation:scalc 20s forwards;
+    position: absolute;
     animation-play-state: paused;
+  }
+  .bgImg {
+    animation:scalc2 6s forwards;
+  }
+  .bgImg2 {
+    animation:scalc2 10s forwards;
   }
   .name {
     font-size: 0;
@@ -138,10 +189,16 @@
   .nameImg {
     width: 50%;
   }
-  @keyframes  scale {
-    0% { transform: scale(1); }
-    100% { transform: scale(5);}
+  @keyframes  scalc2 {
+    0% { transform: scale(1);opacity: 0;}
+    20% {opacity: 1;}
+    80% {opacity: 1;}
+    100% { transform: scale(1.5);opacity: 0;}
   }
+
+
+
+
   @keyframes scalc
   {
     0% {transform:scale(1);}
@@ -157,14 +214,14 @@
     right: .5rem;
   }
   .timer {
-    color: #fff;
+    color: #999;
     font-size: .32rem;
     padding: 0 .3rem;
     /*border-radius: .5rem;*/
     /*border: 1px solid gray;*/
   }
   .timer span {
-    color: #ff3050;
+    color: #ff005e;
   }
   .toNext {
     color: gray;
