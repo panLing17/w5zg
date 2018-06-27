@@ -52,8 +52,8 @@
         loadShare () {
           this.$initShare({
             sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-            shareTitle: '万双耐克，要否？',
-            shareDesc: '天降耐克，速来领取！！！还有超值现金券，先到先得！！！',
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
             link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
           })
         }

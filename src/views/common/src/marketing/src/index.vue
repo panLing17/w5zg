@@ -19,15 +19,18 @@
           .titleBtn 活动安排
           .info
             .left 1)
-            .right 本活动共送出1万双耐克鞋，限3万人报名，按领券数量排名，前1万人立得1双价值1200元耐克鞋。
+            .right 本活动送1万双耐克鞋，限3万人报名，按领券数量排名，前1万人每人立得1双价值1200元耐克。
           .info
             .left 2)
-            .right 领鞋地址：现代快报大厦18楼、金陵晚报虎凤蝶旅行社。
+            .right 即日起开始报名；活动起始时间：7月3日-10日
           .info
             .left 3)
-            .right 领取时间：7月20日-7月27日，早9:00-晚18:00
-          .info.last
+            .right 领取时间：7月20日-7月27日，早9:00-18:00
+          .info
             .left 4)
+            .right 领鞋地址：现代快报大厦18楼、金陵晚报虎凤蝶发行部
+          .info.last
+            .left 5)
             .right 具体参与规则请关注“<span>万物直供商城</span>”公众号查看
         .closeBtn(@click.prevent="popShow=false", @touchmove.stop="")
           img.closeBtnImg(src="../../../../../assets/img/01_index_10_rules_close.png")
@@ -69,8 +72,8 @@
         console.log(shareImg.substr(1))
         this.$initShare({
           sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-          shareTitle: '万双耐克，要否？',
-          shareDesc: '天降耐克，速来领取！！！还有超值现金券，先到先得！！！',
+          shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+          shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
           link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
         })
       },

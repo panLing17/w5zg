@@ -2,6 +2,7 @@
   .wrap
     .bgWrapper
       img.bgImg(src="../../../../../assets/img/nike9.png")
+      img.bgImg2(src="")
     .name(v-show="showIndex===1", :style="{'animation-play-state': stateArr[0]}")
       img.nameImg(src="../../../../../assets/img/nike10.png")
     .name(v-show="showIndex===2", :style="{'animation-play-state': stateArr[1]}")
@@ -9,11 +10,11 @@
     .name(v-show="showIndex===3", :style="{'animation-play-state': stateArr[2]}")
       img.nameImg(src="../../../../../assets/img/nike12.png")
     .name(v-show="showIndex===4", :style="{'animation-play-state': stateArr[3]}")
-      img.nameImg(src="../../../../../assets/img/nike14.png")
+      img.nameImg(src="../../../../../assets/img/nike13.png")
     .name(v-show="showIndex===5", :style="{'animation-play-state': stateArr[4]}")
-      img.nameImg(src="../../../../../assets/img/nike15.png")
+      img.nameImg(src="../../../../../assets/img/nike14.png")
     .name(v-show="showIndex===6", :style="{'animation-play-state': stateArr[5]}")
-      img.nameImg(src="../../../../../assets/img/nike16.png")
+      img.nameImg(src="../../../../../assets/img/nike15.png")
     .timerWrapper
       .timer(v-if="s>0") {{s}}s
       .toNext(v-if="s<=0", @click="$router.push('/marketing/receiveTicket')") 跳过
@@ -61,8 +62,8 @@
       loadShare () {
         this.$initShare({
           sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-          shareTitle: '万双耐克，要否？',
-          shareDesc: '天降耐克，速来领取！！！还有超值现金券，先到先得！！！',
+          shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+          shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
           link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
         })
       },
