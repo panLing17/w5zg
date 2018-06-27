@@ -1,8 +1,8 @@
 <template lang="pug">
   .wrap
     .bgWrapper
-      img.bgImg(src="../../../../../assets/img/nike9.png")
-      img.bgImg2(src="")
+      img.bgImg(src="../../../../../assets/img/nike9.png", :style="{'animation-play-state': bgArr[0]}", v-show="bg==1")
+      img.bgImg2(src="../../../../../assets/img/nike92.png", :style="{'animation-play-state': bgArr[1]}", v-show="bg==2")
     .name(v-show="showIndex===1", :style="{'animation-play-state': stateArr[0]}")
       img.nameImg(src="../../../../../assets/img/nike10.png")
     .name(v-show="showIndex===2", :style="{'animation-play-state': stateArr[1]}")
@@ -16,8 +16,8 @@
     .name(v-show="showIndex===6", :style="{'animation-play-state': stateArr[5]}")
       img.nameImg(src="../../../../../assets/img/nike15.png")
     .timerWrapper
-      .timer(v-if="s>0") {{s}}s
-      .toNext(v-if="s<=0", @click="$router.push('/marketing/receiveTicket')") 跳过
+      .timer(v-if="start") <span>{{s}}s</span>后,进入领券/领鞋活动
+      <!--.toNext(v-if="s<=0", @click="$router.push('/marketing/receiveTicket')") 跳过-->
 </template>
 
 <script>
@@ -29,14 +29,16 @@
         showIndex: 1,
         stateArr: ['paused','paused','paused','paused','paused','paused'],
         timer: null,
-        s: 5,
-        timer2: null
+        s: 15,
+        timer2: null,
+        bg: 0,
+        bgArr: ['paused', 'paused'],
+        start: false
       }
     },
     mounted () {
       this.loadShare()
       this.startAnimate()
-      this.timerToNext()
     },
     beforeDestroy () {
       if (this.timer) {
@@ -73,13 +75,23 @@
           let index = 0
           this.stateArr.splice(index++, 1, 'running')
           this.timer = setInterval(()=>{
+            if (index == 1) {
+              _this.bg = 1
+              _this.bgArr.splice(0, 1, 'running')
+              _this.start = true
+              _this.timerToNext()
+            }
+            if (index == 3) {
+              _this.bg = 2
+              _this.bgArr.splice(1, 1, 'running')
+            }
             if (_this.showIndex>=6) {
               clearInterval(_this.timer)
               _this.$router.push('/marketing/receiveTicket')
             }
             _this.stateArr.splice(index++, 1, 'running')
             _this.showIndex++
-          },2500)
+          },3000)
         })
       }
     }
@@ -106,16 +118,17 @@
     height: 100%;
     text-align: center;
   }
-  .bgImg {
-    width: 80%;
-    margin-top: 3.5rem;
-    transform-origin: 50% 50% 0;
+  .bgImg, .bgImg2 {
+    width: 100%;
+    margin-top: 1rem;
+    transform-origin: 50% 40% 0;
     animation:scalc 20s forwards;
+    animation-play-state: paused;
   }
   .name {
     font-size: 0;
     text-align: center;
-    animation:scalc 2.5s cubic-bezier(.17, .86, .73, .14) forwards;
+    animation:scalc 3s cubic-bezier(.17, .86, .73, .14) forwards;
     animation-play-state: paused;
     position: absolute;
     top: 7rem;
@@ -144,11 +157,14 @@
     right: .5rem;
   }
   .timer {
-    color: gray;
-    font-size: .5rem;
+    color: #fff;
+    font-size: .32rem;
     padding: 0 .3rem;
-    border-radius: .5rem;
-    border: 1px solid gray;
+    /*border-radius: .5rem;*/
+    /*border: 1px solid gray;*/
+  }
+  .timer span {
+    color: #ff3050;
   }
   .toNext {
     color: gray;
