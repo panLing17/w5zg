@@ -242,6 +242,14 @@ const router = new Router ({
       }
     },
     {
+      path: '/marketing/bindMobile',
+      name: '绑定手机号',
+      component: Marketing.bindMobile,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/marketing/assisting',
       name: '助力活动',
       component: Marketing.assisting,
