@@ -4,8 +4,8 @@
       .topLogo
         img(src="../../../../../assets/img/user_title.png" @click.prevent="")
       .words(v-if="temp == 1")
-        h1 活动暂未开始
-        p 报名满20,000人，立即开始活动
+        h1 活动7月3日开始
+        p
         p 邀请好友关注“万物直供商城”,一起免费领鞋吧~
       .goShopping(v-if="temp == 1", @click="$router.push('/home')")
         img(src="../../../../../assets/img/user_not_started_btn.png" @click.prevent="")
@@ -51,7 +51,7 @@
     .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
       img(src="../../../../../assets/img/arrow.png")
       p 点击右上角
-      p 召唤TA来帮忙吧！  
+      p 召唤TA来帮忙吧！
 </template>
 <script>
   import RulesTemp from './rulesTemp.vue'
@@ -75,6 +75,7 @@
       this.loadShare()
     },
     methods: {
+      //分享
       loadShare () {
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
@@ -113,6 +114,7 @@
           })
         }
       },
+      //获取用户ID
       getSharerId (callback){
         let self = this
         self.$ajax({
@@ -130,6 +132,7 @@
           }
         })
       },
+      //活动是否开启
       isStart () {
         let self = this
         self.$ajax({
@@ -141,10 +144,87 @@
             if (response.data.data == 'no') {
               self.temp = 1
             } else {
-
+              self.authority()
             }
           }
 
+        })
+      },
+      /*
+      * 判断来者身份,originatorId 发起人ID   selfId 被分享者ID
+      *   1. 如果originatorId==selfId => 个人中心 /marketing/assisting
+      *   2. 如果originatorId!=selfId => 助力 /marketing/personal
+      *   3. originatorId 有    selfId 没有 => 助力
+      *   4. originatorId 没有  selfId 有 => 个人中心
+      *   5. originatorId 没有  selfId 没有 => 报名(不处理)
+      * */
+      authority () {
+        let originatorId = localStorage.getItem('originatorId')
+        let selfId = localStorage.getItem('sharerId')
+        let phone = localStorage.getItem('phone')
+        let _this = this
+
+
+        if (originatorId && originatorId.length>0) {
+          if (selfId && selfId.length>0) {
+            if (originatorId == selfId) {
+              this.isPartake()
+            } else {
+              this.$router.replace('/marketing/personal')
+            }
+          } else {
+            if (phone && phone.length === 11) {
+              this.getSharerId (function (data) {
+                if (data != '用户不存在') {
+                  if (data == originatorId) {
+                    _this.isPartake()
+                  } else {
+                    _this.$router.replace('/marketing/personal')
+                  }
+                } else {
+                  _this.$router.replace('/marketing/personal')
+                }
+              })
+            } else {
+              _this.$router.replace('/marketing/personal')
+            }
+          }
+        } else {
+          if (selfId && selfId.length>0) {
+            this.isPartake()
+          } else {
+            if (phone && phone.length === 11) {
+              this.getSharerId (function (data) {
+                if (data != '用户不存在') {
+                  _this.isPartake()
+                } else {
+                  _this.$router.replace('/marketing/index')
+                }
+              })
+            } else {
+              _this.$router.replace('/marketing/index')
+            }
+          }
+        }
+      },
+      //用户是否参加过
+      isPartake () {
+        localStorage.setItem('unionId', this.$route.query.unionId)
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isJoined',
+          params: {
+            unionId: this.$route.query.unionId
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no') {
+              self.$router.replace('/marketing/noAttended')
+            } else {
+              self.temp = 2
+            }
+          }
         })
       },
 

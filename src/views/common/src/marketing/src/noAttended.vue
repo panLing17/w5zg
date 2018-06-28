@@ -7,7 +7,7 @@
         img.contentCenterImg(src="../../../../../assets/img/06_user_error_btn2.jpg")
         .temp1
           .temp1Desc 您还没参加领鞋活动哦
-          .temp1Btn
+          .temp1Btn(@click="$router.push('/marketing/bindMobile')")
             img.temp1BtnImg(src="../../../../../assets/img/06_user_error_btn.png")
 </template>
 

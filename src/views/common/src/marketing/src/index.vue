@@ -58,7 +58,6 @@
       }
     },
     created () {
-      this.authority()
       this.saveUrl()
       this.judeg()
 
@@ -80,56 +79,50 @@
           s.parentNode.insertBefore(hm, s);
         })();
       },
-      /*
-      * 判断来者身份,originatorId 发起人ID   selfId 被分享者ID
-      *   1. 如果originatorId==selfId => 个人中心 /marketing/assisting
-      *   2. 如果originatorId!=selfId => 助力 /marketing/personal
-      *   3. originatorId 有    selfId 没有 => 助力
-      *   4. originatorId 没有  selfId 有 => 个人中心
-      *   5. originatorId 没有  selfId 没有 => 报名(不处理)
-      * */
-      authority () {
-        let originatorId = this.$route.query.sharerId
-        let selfId = localStorage.getItem('sharerId')
-        let phone = localStorage.getItem('phone')
-        let _this = this
-
-
-        if (originatorId && originatorId.length>0) {
-          if (selfId && selfId.length>0) {
-            if (originatorId == selfId) {
-              this.$router.replace('/marketing/assisting')
-            } else {
-              this.$router.replace('/marketing/personal')
-            }
-          } else {
-            if (phone && phone.length === 11) {
-              this.getSharerId (function (data) {
-                if (data != '用户不存在') {
-                  if (data == originatorId) {
-                    _this.$router.replace('/marketing/assisting')
-                  } else {
-                    _this.$router.replace('/marketing/personal')
-                  }
+      isStart () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isStart',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'yes') {
+              if (self.$route.query.sharerId || localStorage.getItem('sharerId')) {
+                if (self.isWeiXin()) {
+                  localStorage.setItem('originatorId', self.$route.query.sharerId)
+                  self.getWXUrl()
                 } else {
-                  _this.$router.replace('/marketing/personal')
+                  self.$message.error('请在微信中打开！')
+                  self.$router.push('/home')
                 }
-              })
-            } else {
-              _this.$router.replace('/marketing/personal')
+              }
+
             }
           }
+        })
+      },
+      //是否是微信环境
+      isWeiXin() {
+        let ua = window.navigator.userAgent.toLowerCase()
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+          return true
         } else {
-          if (selfId && selfId.length>0) {
-            this.$router.replace('/marketing/assisting')
-          } else if (phone && phone.length === 11) {
-              this.getSharerId (function (data) {
-              if (data != '用户不存在') {
-                _this.$router.replace('/marketing/assisting')
-              }
-            })
-          }
+          return false
         }
+      },
+      //获取微信授权URL
+      getWXUrl () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            window.location.href = response.data.data
+          }
+        })
       },
       // 分享
       loadShare () {
