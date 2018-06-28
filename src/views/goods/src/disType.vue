@@ -8,6 +8,7 @@
 </template>
 
 <script>
+  import {bus} from '../../../bus'
   export default {
     name: "city-select",
     data () {
@@ -25,6 +26,7 @@
       selected (num) {
         this.nowType = num
         this.$emit('selectType',num)
+        bus.$emit('selectType', num)
       }
     }
   }

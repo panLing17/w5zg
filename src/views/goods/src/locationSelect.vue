@@ -44,6 +44,30 @@
       },
       locationSelected (item) {
         this.close()
+        console.log(item)
+        let {
+          city_name,
+          county_name,
+          province_name,
+          ra_city,
+          ra_county,
+          ra_province
+        } = item
+        let location = {
+          province: {
+            name: province_name,
+            id: ra_province
+          },
+          city: {
+            name: city_name,
+            id: ra_city
+          },
+          area: {
+            name: county_name,
+            id: ra_county
+          }
+        }
+        this.$store.commit('getLocation',location)
         this.$store.commit('giveGoodsAddressChange',item)
         this.$emit('selected')
       }

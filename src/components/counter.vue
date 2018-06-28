@@ -1,7 +1,7 @@
 <template lang="pug">
-  .counterBox(:style="{width:width}")
+  .counterBox(:style="{width:width,height:height,lineHeight:height}")
     span(@click="minus") -
-    input( v-model="msg", @change='changeValue' , @focus="handleFocus" , type="number")
+    input( v-model="msg", @change='changeValue' , @focus="handleFocus" , type="number", :style="{height:height}")
     span(@click="plus") +
 </template>
 
@@ -29,6 +29,10 @@
           width:{
             type:String,
             default: '80px'
+          },
+          height:{
+            type:String,
+            default: '30px'
           }
         },
         methods:{

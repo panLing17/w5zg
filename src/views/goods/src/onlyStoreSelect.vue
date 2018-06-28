@@ -104,6 +104,7 @@
         l.store = data
         this.$store.commit('transferGive',l)
         this.$emit('change', data)
+        this.close()
       }
     }
   }

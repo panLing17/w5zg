@@ -384,7 +384,7 @@
             self.locationList = response.data.data
             self.locationList.forEach((now)=>{
               if(now.ra_default === '011'){
-                self.$store.commit('giveGoodsAddressChange',now)
+                // self.$store.commit('giveGoodsAddressChange',now)
                 // 为商品赋值运费
                 self.getGoodsFreight().then(()=>{
                   self.computedFreight()
