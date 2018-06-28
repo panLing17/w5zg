@@ -404,11 +404,17 @@ const router = new Router ({
           path: '/page',
           name: '分类',
           component: Page.index,
+          meta: {
+            keepAlive: false
+          },
           children: [
             {
               path: '/',
               name: '分类',
-              component: Page.page
+              component: Page.page,
+              meta: {
+                keepAlive: false
+              },
             },
             {
               path: '/page/commodityList',
