@@ -373,7 +373,6 @@
     bottom: 0;
     background-color: rgba(0,0,0,.4);
     text-align: right;
-    padding-right: 1rem;
   }
   .shareFriend img{
     width: 1.5rem;
@@ -383,7 +382,7 @@
     color: #fff;
     font-size: .5rem;
     text-align: center;
-    padding-left: 4rem;
+    padding-left: 5rem;
   }
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
