@@ -158,9 +158,9 @@
           // 跳2级页面
           case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: data.id, title: data.title}}); break;
           // 跳3级页面模板2
-          case '149': this.$router.push({ path: '/home/activity', query: { actId: data.id, title: data.title, parentType: '361'}}); break;
+          case '149': this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: '361'}}); break;
           // 跳三级页面模板2
-          case '148': this.$router.push({path: '/home/twoLevel', query: {parentType: '361',actId: data.id, title: data.title}}); break;
+          case '148': this.$router.push({path: '/twoLevel', query: {parentType: '361',actId: data.id, title: data.title}}); break;
         }
 
         /*let {
@@ -219,8 +219,10 @@
   }
 
   .text {
+    /*position:relative;*/
+    /*height: .92rem;*/
+
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -229,6 +231,15 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
   }
+  /*.text::after {*/
+    /*content:"...";*/
+    /*font-weight:bold;*/
+    /*position:absolute;*/
+    /*bottom:0;*/
+    /*right:0;*/
+    /*padding:0 20px 1px 45px;*/
+    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*}*/
 
   .text span {
     font-size: .3rem;

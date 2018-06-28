@@ -3,7 +3,7 @@
     nav-bar(background="white")
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="color: rgb(245,0,87);width: 5rem;text-align: center;") {{$route.query.title}}
+      .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right")
     .mescroll#largeMescroll
       .content(ref="largeConllection")
@@ -34,35 +34,35 @@
           }
         }
       },
-      deactivated () {
-        this.$store.commit('setPosition', {
-          path: '/largeCollection',
-          y: this.mescroll.getScrollTop()
-        })
-      },
-      activated () {
-        let _this = this
-        this.$store.state.position.forEach((now) => {
-          if (now.path === '/largeCollection') {
-            _this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      },
-      beforeRouteEnter (to, from , next) {
-        to.meta.keepAlive = false
-        next();
-      },
+      // deactivated () {
+      //   this.$store.commit('setPosition', {
+      //     path: '/largeCollection',
+      //     y: this.mescroll.getScrollTop()
+      //   })
+      // },
+      // activated () {
+      //   let _this = this
+      //   this.$store.state.position.forEach((now) => {
+      //     if (now.path === '/largeCollection') {
+      //       _this.mescroll.scrollTo(now.y, 0);
+      //     }
+      //   })
+      // },
+      // beforeRouteEnter (to, from , next) {
+      //   to.meta.keepAlive = false
+      //   next();
+      // },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
         this.mescroll.destroy()
       },
       mounted () {
         this.$mescrollInt("largeMescroll",this.upCallback, () => {
-          this.$store.state.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
-            }
-          })
+          // this.$store.state.position.forEach((now) => {
+          //   if (now.path === this.$route.path) {
+          //     this.mescroll.scrollTo(now.y, 0);
+          //   }
+          // })
         }, (obj) => {
           this.$store.commit('setPosition', {
             path: this.$route.path,
@@ -78,7 +78,10 @@
       // },
       methods: {
         upCallback: function (page) {
-          this.mescroll.endErr()
+          // this.mescroll.endErr()
+          this.mescroll.endSuccess(0)
+          this.mescroll.lockDownScroll( true );
+          this.mescroll.lockUpScroll( true );
         },
         getList () {
           let _this = this;
@@ -92,6 +95,13 @@
             }
           }).then((response) => {
             _this.bankList = response.data.data;
+            _this.$nextTick(()=>{
+              _this.$store.state.position.forEach((now) => {
+                if (now.path === _this.$route.path) {
+                  _this.mescroll.scrollTo(now.y, 0);
+                }
+              })
+            })
           })
         },
         toNext (type, url, id, relateId, title) {
@@ -103,7 +113,7 @@
             // 跳商品详情
             case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
             // 跳3级页面模板2
-            case '149': this.$router.push({ path: '/home/activity', query: { actId: id, title: title, parentType: '362'}}); break;
+            case '149': this.$router.push({ path: '/activity', query: { actId: id, title: title, parentType: '362'}}); break;
           }
         }
         // upCallback: function(page) {

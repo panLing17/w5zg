@@ -28,7 +28,7 @@
     },
     beforeRouteEnter (to, from , next) {
       to.meta.keepAlive = false
-      next();
+      next()
     },
     created () {
 
@@ -97,7 +97,7 @@
         })
       },
       back () {
-        if (window.history.length<=2) {
+        if (window.history.length<=1) {
           this.$router.push('/home')
         } else {
           this.$router.go(-1)
@@ -135,6 +135,7 @@
     line-height: 1.2rem;
     display: flex;
     min-width: 100%;
+    position: relative;
   }
   .tabItem {
     flex: 1;

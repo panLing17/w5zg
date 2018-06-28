@@ -31,6 +31,8 @@ import TradingArea from '../views/home/src/tradingArea/index'
 import Reservations from '../views/reservations/index.js'
 //首页活动
 import Acitivity from '../views/home/src/activity/index'
+//耐克鞋活动
+import Marketing from '../views/common/src/marketing/index'
 
 Vue.use(Router)
 const router = new Router ({
@@ -200,6 +202,102 @@ const router = new Router ({
       component: Reservations.reservations
     },
     {
+      path: '/marketing/index',
+      name: '耐克鞋活动首页',
+      component: Marketing.index,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/receiveTicket',
+      name: '耐克鞋活动领券',
+      component: Marketing.receiveTicket,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/receiveTicketSuccess',
+      name: '耐克鞋活动领券成功',
+      component: Marketing.receiveTicketSuccess,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/movies',
+      name: '答题',
+      component: Marketing.movies,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/publicNum',
+      name: '公众号',
+      component: Marketing.publicNum,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/bindMobile',
+      name: '绑定手机号',
+      component: Marketing.bindMobile,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/noAttended',
+      name: '未参加个人中心',
+      component: Marketing.noAttended,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/assisting',
+      name: '助力活动',
+      component: Marketing.assisting,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/personal',
+      name: '个人中心',
+      component: Marketing.personal,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/rankingList',
+      name: '排行榜',
+      component: Marketing.rankingList,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/prizeResult',
+      name: '获奖结果',
+      component: Marketing.prizeResult,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/selectSize',
+      name: '选择尺码',
+      component: Marketing.selectSize,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
@@ -285,7 +383,7 @@ const router = new Router ({
               component: Home.sports
             },
             {
-              path: '/home/activity',
+              path: '/activity',
               name: '活动集合',
               component: Acitivity.activity,
               children: [
@@ -297,7 +395,7 @@ const router = new Router ({
               ]
             },
             {
-              path: '/home/twoLevel',
+              path: '/twoLevel',
               name: '新二级活动',
               component: Acitivity.twoLevel
             }
@@ -306,11 +404,17 @@ const router = new Router ({
           path: '/page',
           name: '分类',
           component: Page.index,
+          meta: {
+            keepAlive: false
+          },
           children: [
             {
               path: '/',
               name: '分类',
-              component: Page.page
+              component: Page.page,
+              meta: {
+                keepAlive: false
+              },
             },
             {
               path: '/page/commodityList',
@@ -463,7 +567,7 @@ const router = new Router ({
               name: '订单管理',
               component: MyOrder.orderManage,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
@@ -471,7 +575,7 @@ const router = new Router ({
               name: '订单详情',
               component: MyOrder.orderDetails,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
@@ -487,7 +591,7 @@ const router = new Router ({
               name: '查看物流',
               component: MyOrder.searchOrder,
               meta: {
-                keepAlive: true
+                keepAlive: false
               }
             },
             {
