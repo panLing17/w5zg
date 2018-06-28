@@ -104,12 +104,19 @@
             W5MALLTOKEN: this.W5MALLTOKEN
           }
         }).then(function (response) {
+          if (response) {
 
+          }
         })
       },
       checkCode () {
-        if (this.code.length === 6) {
-          this.joinActivity();
+        if (this.code.length === 6 ) {
+          if (this.scFlag) {
+            this.joinActivity()
+          } else {
+            this.$message.error('请获取点击获取验证码按钮！')
+          }
+
         } else {
           this.$message.error('验证码输入有误！')
         }
@@ -118,7 +125,7 @@
         let _this = this
         this.$ajax({
           method: 'post',
-          url: _this.$apiMember + 'sms/sendCodeByAfs',
+          url: _this.$apiMember + 'member/bindAccount',
           params: {
             unionId: localStorage.getItem('unionId'),
             mobile : this.phone,
@@ -180,7 +187,6 @@
     width: 8.2rem;
     height: 1.17rem;
     text-align: center;
-    font-weight: bold;
     font-size: .4rem;
     color: #333;
     border-radius: .58rem;

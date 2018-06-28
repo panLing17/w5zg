@@ -13,14 +13,14 @@
         .ruleTitle 活动规则
         .ruleDesc1 送1万双耐克鞋，限3万人报名参加（成功率33%），按领券数排名，前1万名立得1双1200元耐克鞋。
         .ruleDesc2 即日起，报名满2万人，短信通知报名者：活动开始。
-      .center(v-if="temp == 2 || temp == 3")
+      .center(v-if="temp == 2")
         .topper
           .lefter
             .pic
               img(src="../../../../../assets/img/kaka.jpg")
             .namer 你好，KAKA！
-          .righter
-            img(src="../../../../../assets/img/06_user_started_ruls.png", @click.prevent = "ruleFlag = 0")
+          .righter(@click="ruleFlag=0")
+            img(src="../../../../../assets/img/06_user_started_ruls.png")
         .middler
           p 奔跑值
           p 54
@@ -29,23 +29,21 @@
             img(src="../../../../../assets/img/06_user_invite_btn.png")
           .right
             img(src="../../../../../assets/img/06_user_mall_btn.png")
-      .bottom(v-if="temp == 2 || temp == 3")
+      .bottom(v-if="temp == 2", ref="bottom")
         .assists
           .logoN
             .line
             .titleN 我的助力团
             .line
           ul.listter
-            li(v-for="item in lists")
+            li(v-for="item in aGroup")
               .headPic
                 img(src="../../../../../assets/img/kaka.jpg")
               .wordsR
                 p KAKA牛逼
                 p 已领500元工会福利券
-      .btnN(v-if="temp == 2")
-        img(src="../../../../../assets/img/06_user_24h_btn_n.png")
-      .btnN(v-if="temp == 3")
-        img(src="../../../../../assets/img/06_user_24h_btn_y.png")
+      .btnN
+        img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")
       rules-temp(v-if="ruleFlag === 0", @closeBtn="ruleFlag = 1")
     .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
@@ -56,6 +54,7 @@
 <script>
   import RulesTemp from './rulesTemp.vue'
   import shareImg from '../../../../../assets/img/applogo@2x.png'
+  import BScroll from 'better-scroll'
   export default {
     components: {RulesTemp},
     name: 'assisting',
@@ -64,17 +63,68 @@
         shareFlag: 0,
         ruleFlag: '',
         temp: 2,
-        lists: [{}, {}, {}, {}, {}]
+        aGroup: [{}, {}, {}, {}, {}],
+        oMyInfo: {},
+        bIsLast: ''
       }
     },
     created () {
       // this.isStart()
+      this.isLast()
     },
     mounted () {
       document.title = "助力活动";
       this.loadShare()
     },
     methods: {
+      //获取助力团
+      getGroup () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/myHelpList',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.aGroup = response.data.data
+            self.$nextTick(()=>{
+              self.scroll = new BScroll(self.$refs.bottom, {
+                click: true
+              })
+            })
+          }
+        })
+      },
+      //获取我的昵称、头像
+      getMyInfo (){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/myInfo',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.oMyInfo = response.data.data
+          }
+        })
+      },
+      //是否是最后48小时
+      isLast() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isFinal',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            self.bIsLast = response.data.data
+          }
+        })
+      },
       //分享
       loadShare () {
         let _this = this
@@ -159,6 +209,8 @@
       *   5. originatorId 没有  selfId 没有 => 报名(不处理)
       * */
       authority () {
+        localStorage.setItem('unionId', this.$route.query.unionId)
+
         let originatorId = localStorage.getItem('originatorId')
         let selfId = localStorage.getItem('sharerId')
         let phone = localStorage.getItem('phone')
@@ -209,7 +261,6 @@
       },
       //用户是否参加过
       isPartake () {
-        localStorage.setItem('unionId', this.$route.query.unionId)
         let self = this
         self.$ajax({
           method: 'get',
@@ -223,6 +274,9 @@
               self.$router.replace('/marketing/noAttended')
             } else {
               self.temp = 2
+              self.getGroup()
+              self.getMyInfo()
+              self.isLast()
             }
           }
         })
@@ -470,5 +524,7 @@
   .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
   }
-
+  img {
+    pointer-events: none;
+  }
 </style>

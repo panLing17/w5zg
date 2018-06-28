@@ -4,20 +4,16 @@
       .contentTop
         img.contentTopImg(src="../../../../../assets/img/01_index_1.png")
       .contentCenter(:class="{'margin-1': temp==1 || temp==5 }")
-        img.contentCenterImg(src="../../../../../assets/img/13_helper_notice_bg.png")
-        .temp1(v-if="temp==1")
-          .temp1Desc 您还没参加领鞋活动哦
-          .temp1Btn
-            img.temp1BtnImg(src="../../../../../assets/img/06_user_error_btn.png")
+        img.contentCenterImg(src="../../../../../assets/img/13_helper_notice_bg.jpg")
         .temp2(v-if="temp==2")
           .info
             img.avatar
             .infoDesc 发起人：
             .infoName 张三(微信名)
           .temp2Desc
-            p 已经为TA助力过啦~
+            p 已经为TA攒了片<span>{{randomText}}</span>啦~
             p 您还有3次领券机会，
-            p 快去帮助其他小伙伴领券吧！
+            p 快去给其他小伙伴加油抢鞋吧！
           .temp2Btn
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         .temp3(v-if="temp==3")
@@ -30,12 +26,12 @@
             p 您的助力次数已达到上限！
           .temp2Btn
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
-        .temp4(v-if="temp==4")
-          .temp4Desc
-            p 您已参加免费领鞋活动，
-            p 不能帮其他小伙伴领券啦～
-          .temp2Btn
-            img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_user_btn.png")
+        <!--.temp4(v-if="temp==4")-->
+          <!--.temp4Desc-->
+            <!--p 您已参加免费领鞋活动，-->
+            <!--p 不能帮其他小伙伴领券啦～-->
+          <!--.temp2Btn-->
+            <!--img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_user_btn.png")-->
         .temp5(v-if="temp==5")
           .info
             img.avatar
@@ -66,7 +62,6 @@
 <script>
   /*
   * temp 模板类型
-  *   1：未参加用户-误点个人中心(默认)
   *   2：a-绑定-未达上限-普通用户
   *   3：b-绑定-已达上限-普通用户
   *   4：c-好友是发起人
@@ -77,11 +72,73 @@
     name: "personal",
     data () {
       return {
-        temp: 1
+        temp: 1,
+        oOriginInfo: {},
+        randomText: '',
+        bIsHelped: '',
+        bIsOutRule: ''
       }
     },
     mounted () {
       document.title = "个人中心"
+    },
+    methods: {
+      //是否达到助力上限
+      isOutRule () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isOutRule',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.bIsOutRule = response.data.data
+          }
+        })
+      },
+      //是否给好友助力过
+      isHelped () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isHelped',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            sharerId: localStorage.setItem('originatorId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.bIsHelped = response.data.data
+          }
+        })
+      },
+      //获取发起人的头像、昵称
+      getOriginInfo () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/myInfo',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.oOriginInfo = response.data.data
+          }
+        })
+      },
+      //获取随机字符串
+      getRandomText () {
+        if (this.showIndex==3) {
+          let Range = 4;
+          let Rand = Math.random();
+          let num = Math.round(Rand * Range);
+          let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
+          this.randomText = aText[num]
+        }
+      }
     }
   }
 </script>
@@ -168,6 +225,10 @@
     color: #333;
     margin-top: .38rem;
     line-height: 1.5;
+  }
+  .temp2Desc p span {
+    color: #ff314f;
+    font-weight: 400;
   }
   .temp2BtnImg {
     width: 5rem;
