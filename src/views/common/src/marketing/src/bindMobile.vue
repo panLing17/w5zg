@@ -4,14 +4,141 @@
       .contentTop
         img.contentTopImg(src="../../../../../assets/img/01_index_1.png")
       .content
-        input.phoneInput(type="number", placeholder="请输入手机号登录")
-        .bindBtn
+        input.phoneInput(type="number", placeholder="请输入手机号登录", v-model="phone")
+        .bindBtn(@click="submit")
           img.bindBtnImg(src="../../../../../assets/img/bindMobile1.png")
+      transition(name="fade")
+        .mask(v-show="popShow", @click="hidePop")
+      transition(name="fade")
+        .popWrapper(v-show="popShow")
+          .popDesc 我们会通过短信的形式，发送验证码至您的手机，请注意查收。
+          #sc(ref="sc")
+          .popInputWrapper
+            input.popInput(type="text", placeholder="请输入验证码", v-model="code")
+          .popBtn(@click="checkCode") 立即参与
 </template>
 
 <script>
   export default {
-    name: "bindMobile"
+    name: "bindMobile",
+    data () {
+      return {
+        phone: '',
+        popShow: false,
+        W5MALLTOKEN: '',
+        scFlag: false,
+        sessionId: '',
+        code: ''
+      }
+    },
+    created () {
+      this.getToken()
+    },
+    mounted (){
+      this._initSc()
+    },
+    methods: {
+      getToken () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/getSessionId',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            self.W5MALLTOKEN = response.data.data
+          }
+        })
+      },
+      _initSc () {
+        let _this = this
+        this.$nextTick(()=>{
+          var ic = new smartCaptcha({
+            renderTo: '#sc',
+            width: '7.4rem',
+            height: '1rem',
+            default_txt: '获取验证码',
+            success_txt: '获取成功，请查收短信',
+            fail_txt: '获取失败，请在此点击按钮刷新',
+            scaning_txt: '验证码发送中',
+            success: function(data) {
+
+              _this.$ajax({
+                method: 'post',
+                url: _this.$apiMember + 'afs/afsValidateWeb',
+                params: {
+                  sessionId: data.sessionId,
+                  sig: data.sig,
+                  token: NVC_Opt.token,
+                  scene: NVC_Opt.scene,
+                  W5MALLTOKEN: _this.W5MALLTOKEN
+                }
+              }).then(function (response) {
+                if (response) {
+                  _this.scFlag = true
+                  _this.sessionId = data.sessionId
+                  _this.sendCode()
+                }
+              })
+            },
+          });
+          ic.init();
+        })
+      },
+      sendCode () {
+        if (this.scFlag){
+          this.sendCodeAjax()
+        }else {
+          this.$message.warning('请点击获取验证码按钮')
+          return
+        }
+      },
+      sendCodeAjax () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'sms/sendCodeByAfs',
+          params: {
+            sessionId: this.sessionId,
+            mobile : this.phone,
+            W5MALLTOKEN: this.W5MALLTOKEN
+          }
+        }).then(function (response) {
+
+        })
+      },
+      checkCode () {
+        if (this.code.length === 6) {
+          this.joinActivity();
+        } else {
+          this.$message.error('验证码输入有误！')
+        }
+      },
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'sms/sendCodeByAfs',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            mobile : this.phone,
+            W5MALLTOKEN: this.W5MALLTOKEN
+          }
+        }).then(function (response) {
+
+        })
+      },
+      hidePop () {
+        this.popShow = false
+      },
+      submit () {
+        if (!/^1[0-9]{10}$/.test(this.phone)) {
+          this.$message.warning('手机号码格式不正确！');
+          return;
+        }
+        this.popShow = true
+      }
+    }
   }
 </script>
 
@@ -67,5 +194,62 @@
   }
   .bindBtnImg {
     width: 8.5rem;
+  }
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0,0,0,.5);
+    z-index: 1500;
+  }
+  .popWrapper {
+    width: 9rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    z-index: 9999;
+    padding: 0 .8rem 1.5rem;
+    border-radius: .2rem;
+  }
+  .popDesc {
+    margin-top: 1rem;
+    font-size: .32rem;
+    color: #666;
+    line-height: 1.5;
+  }
+  .popInputWrapper {
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    margin-top: .46rem;
+  }
+  .popInput {
+    border: 1px solid #b5b5b5;
+    width: 100%;
+    height: .93rem;
+    outline: none;
+    padding-left: .33rem;
+  }
+  .inputBtn {
+    line-height: .93rem;
+    width: 2.1rem;
+    text-align: center;
+    border-radius: .2rem;
+  }
+  .popBtn {
+    border-radius: .2rem;
+    line-height: .93rem;
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(#ffab8d, #ff3050);
+    margin-top: .37rem;
+    font-size: .37rem;
+  }
+  #sc {
+    margin: .26rem auto 0;
+    width: 7.4rem;
   }
 </style>
