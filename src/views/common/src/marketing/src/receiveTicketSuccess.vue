@@ -37,7 +37,7 @@
 
 <script>
   export default {
-    name: "receiveTicket",
+    name: "receiveTicketSuccess",
     data () {
       return {
         showIndex: 1,

@@ -18,8 +18,8 @@
         //.shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
-      .tradingArea(@click="$router.push('/searchTradingArea')")
-        img.areaImg(src="../../../assets/img/trading.png")
+      <!--.tradingArea(@click="$router.push('/searchTradingArea')")-->
+        <!--img.areaImg(src="../../../assets/img/trading.png")-->
       <!--.member(@click="showAnimate")-->
         <!--img.memberImg(src="../../../assets/img/menber.png")-->
       .title1

@@ -9,7 +9,8 @@ import prizeResult from './src/prizeResult'
 import selectSize from './src/selectSize'
 import receiveTicketSuccess from './src/receiveTicketSuccess'
 import bindMobile from './src/bindMobile'
+import noAttended from './src/noAttended'
 
 export default {
-  receiveTicket,movies,index,personal,publicNum,assisting, rankingList, prizeResult, selectSize, receiveTicketSuccess, bindMobile
+  receiveTicket,movies,index,personal,publicNum,assisting, rankingList, prizeResult, selectSize, receiveTicketSuccess, bindMobile, noAttended
 }

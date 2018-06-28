@@ -250,6 +250,14 @@ const router = new Router ({
       }
     },
     {
+      path: '/marketing/noAttended',
+      name: '未参加个人中心',
+      component: Marketing.noAttended,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/marketing/assisting',
       name: '助力活动',
       component: Marketing.assisting,
