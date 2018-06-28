@@ -5,6 +5,8 @@
         img.contentTopImg(src="../../../../../assets/img/01_index_1.png")
       .content
         input.phoneInput(type="number", placeholder="请输入手机号登录")
+        .bindBtn
+          img.bindBtnImg(src="../../../../../assets/img/bindMobile1.png")
 </template>
 
 <script>
@@ -45,6 +47,7 @@
     border-radius: .53rem;
     text-align: center;
     margin: .4rem auto 0;
+    padding-bottom: .6rem;
   }
   .phoneInput {
     width: 8.2rem;
@@ -57,5 +60,12 @@
     border: none;
     outline: none;
     margin-top: .66rem;
+  }
+  .bindBtn {
+    font-size: 0;
+    margin-top: .48rem;
+  }
+  .bindBtnImg {
+    width: 8.5rem;
   }
 </style>

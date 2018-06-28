@@ -58,6 +58,7 @@
       }
     },
     created () {
+      this.authority()
       this.saveUrl()
       this.judeg()
 
@@ -67,6 +68,14 @@
       this.loadShare()
     },
     methods: {
+      //判断来者身份
+      authority () {
+        let sharerId = this.$route.query.sharerId
+        if (sharerId) {
+
+        }
+      },
+      // 分享
       loadShare () {
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
@@ -105,6 +114,7 @@
           })
         }
       },
+      //验证是否是已报名用户
       judeg () {
         if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
           let self = this
@@ -127,6 +137,7 @@
           }
         }
       },
+      //获取sharerId
       getSharerId (callback){
         let self = this
         self.$ajax({
@@ -144,16 +155,19 @@
           }
         })
       },
+      //保存URL
       saveUrl () {
         if (this.$route.query.redirect_url) {
           localStorage.setItem('redirect_url', this.$route.query.redirect_url)
         }
 
       },
+      //打开弹窗
       showPop (index) {
         this.temp = index;
         this.popShow = true;
       },
+      //上面按钮判断走向
       toNext1 () {
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')
@@ -161,6 +175,7 @@
           this.$router.push('/marketing/assisting')
         }
       },
+      //下面按钮判断走向
       toNext2 () {
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')

@@ -15,7 +15,7 @@
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
           div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")
-        .shanxing
+        //.shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
       .tradingArea(@click="$router.push('/searchTradingArea')")
