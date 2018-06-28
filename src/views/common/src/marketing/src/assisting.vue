@@ -22,10 +22,10 @@
           .righter
             img(src="../../../../../assets/img/06_user_started_ruls.png", @click.prevent = "ruleFlag = 0")
         .middler
-          p 已获得助力
-          p 54位
+          p 奔跑值
+          p 54
         .bottommer
-          .left
+          .left(@click="shareFlag = 1")
             img(src="../../../../../assets/img/06_user_invite_btn.png")
           .right
             img(src="../../../../../assets/img/06_user_mall_btn.png")
@@ -48,6 +48,10 @@
         img(src="../../../../../assets/img/06_user_24h_btn_y.png")
     transition(name="fade")
       rules-temp(v-if="ruleFlag === 0", @closeBtn="ruleFlag = 1")
+    .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
+      img(src="../../../../../assets/img/arrow.png")
+      p 点击右上角
+      p 召唤TA来帮忙吧！  
 </template>
 <script>
   import RulesTemp from './rulesTemp.vue'
@@ -57,6 +61,7 @@
     name: 'assisting',
     data () {
       return {
+        shareFlag: 0,
         ruleFlag: '',
         temp: 2,
         lists: [{}, {}, {}, {}, {}]
@@ -141,7 +146,8 @@
           }
 
         })
-      }
+      },
+
     }
   }
 </script>
@@ -155,7 +161,7 @@
   }
   /*第一内容部分--开始*/
   .topLogo{
-    padding: 1rem .5rem 0;
+    padding: .8rem .5rem 0;
   }
   .topLogo img{
     width: 9rem;
@@ -269,19 +275,18 @@
     vertical-align: middle;
   }
   .center .middler{
-    height: 4.5rem;
-    margin-top: .2rem;
+    height: 4rem;
     padding-top: 1.2rem;
     background: url('../../../../../assets/img/06_user_circlesbg.png') no-repeat center;
-    background-size: 45%;
+    background-size: 40%;
     text-align: center;
   }
   .center .middler p{
-    font-size: .42rem;
+    font-size: .43rem;
     color: #fff;
   }
   .center .middler p:nth-child(2){
-    font-size: 1rem;
+    font-size: .9rem;
     color: #ffe277;
   }
   .center .bottommer{
@@ -296,7 +301,7 @@
     padding: 0 .3rem;
   }
   .bottom .assists{
-    height: 4.5rem;
+    height: 3rem;
     border-radius: .2rem;
     background-color: #fff;
     overflow: scroll;
@@ -327,6 +332,8 @@
     display: flex;
     align-items: center;
     margin-bottom: .4rem;
+    width: 48%;
+    overflow: hidden;
   }
   ul.listter li .headPic{
     width: 1rem;
@@ -353,9 +360,30 @@
   }
   .btnN{
     margin-top: .3rem;
+    padding-bottom: .8rem;
   }
   .btnN img{
     width: 10rem;
+  }
+  .shareFriend{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.4);
+    text-align: right;
+    padding-right: 1rem;
+  }
+  .shareFriend img{
+    width: 1.5rem;
+    margin-right: 1rem;
+  }
+  .shareFriend p{
+    color: #fff;
+    font-size: .5rem;
+    text-align: center;
+    padding-left: 4rem;
   }
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
