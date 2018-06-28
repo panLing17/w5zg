@@ -304,7 +304,7 @@
   }
   .logisticsMsg li .messages span.state{
     position: absolute;
-    top: -.6em;
+    top: -.2em;
     font-size: .3rem;
   }
   /*物流信息--结束*/

@@ -8,6 +8,7 @@
     .tabListWrapper(ref="tabWrapper")
       ul.tabList
         li.tabItem(v-for="(item, index) in tabList", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
+    .morer(@click="more()") ----＞
     .mescroll#activityMescroll
       .contentWrapper
         router-view
@@ -28,7 +29,7 @@
     },
     beforeRouteEnter (to, from , next) {
       to.meta.keepAlive = false
-      next();
+      next()
     },
     created () {
 
@@ -135,6 +136,7 @@
     line-height: 1.2rem;
     display: flex;
     min-width: 100%;
+    position: relative;
   }
   .tabItem {
     flex: 1;
@@ -164,5 +166,17 @@
   }
   .contentWrapper {
     border-top: .26rem solid #f3f3f3;
+  }
+
+  .morer{
+    position: fixed;
+    top: 1.28rem;
+    right: 0;
+    width: 2.5rem;
+    height: 1.2rem;
+    line-height: 1.2rem;
+    font-size: .5rem;
+    text-align: center;
+    background-color: #fff;
   }
 </style>

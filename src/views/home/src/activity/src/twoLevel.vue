@@ -10,7 +10,7 @@
         .block
           .blockTitle
             .name 大牌推荐
-            .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)")
+            .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多推荐
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
             li.brandItem(v-for="(item, index) in brandList", :key="index", @click="toNext(0, index)")
               img.brandImg(:src="item.image | img-filter")
@@ -19,7 +19,7 @@
         .block
           .blockTitle
             .name 精选分类
-            .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)")
+            .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
           ul.categoryList(:style="{'max-height': category.height}", ref="category")
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
               img.categoryImg(:src="item.image | img-filter")
@@ -283,8 +283,10 @@
   }
   .more {
     flex: none;
-    width: 1rem;
+    width: 2rem;
     height: 1rem;
+    line-height: 1rem;
+    color: rgb(153,153,153);
   }
   .more.down {
     background: url("../../../../../assets/img/ic_page_xljt@2x.png") no-repeat center right;
