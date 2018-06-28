@@ -63,7 +63,7 @@
       }
     },
     created () {
-      this.isStart()
+      // this.isStart()
     },
     mounted () {
       document.title = "助力活动";
@@ -135,6 +135,8 @@
           if (response) {
             if (response.data.data == 'no') {
               self.temp = 1
+            } else {
+
             }
           }
 
