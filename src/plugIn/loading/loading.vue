@@ -44,7 +44,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999;
+    z-index: 10000;
   }
   .box{
     height: 80px;

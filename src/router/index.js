@@ -218,6 +218,14 @@ const router = new Router ({
       }
     },
     {
+      path: '/marketing/receiveTicketSuccess',
+      name: '耐克鞋活动领券成功',
+      component: Marketing.receiveTicketSuccess,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/marketing/movies',
       name: '答题',
       component: Marketing.movies,
@@ -229,6 +237,14 @@ const router = new Router ({
       path: '/marketing/publicNum',
       name: '公众号',
       component: Marketing.publicNum,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/bindMobile',
+      name: '绑定手机号',
+      component: Marketing.bindMobile,
       meta: {
         keepAlive: true
       }

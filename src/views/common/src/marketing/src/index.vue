@@ -19,15 +19,18 @@
           .titleBtn 活动安排
           .info
             .left 1)
-            .right 本活动共送出1万双耐克鞋，限3万人报名，按领券数量排名，前1万人立得1双价值1200元耐克鞋。
+            .right 本活动送1万双耐克鞋，限3万人报名，按领券数量排名，前1万人每人立得1双价值1200元耐克。
           .info
             .left 2)
-            .right 领鞋地址：现代快报大厦18楼、金陵晚报。
+            .right 即日起开始报名；活动起始时间：7月3日-10日
           .info
             .left 3)
-            .right 领取时间：7月20日-7月27日，早9:00-晚18:00
-          .info.last
+            .right 领取时间：7月20日-7月27日，早9:00-18:00
+          .info
             .left 4)
+            .right 领鞋地址：现代快报大厦18楼、金陵晚报虎凤蝶发行部
+          .info.last
+            .left 5)
             .right 具体参与规则请关注“<span>万物直供商城</span>”公众号查看
         .closeBtn(@click.prevent="popShow=false", @touchmove.stop="")
           img.closeBtnImg(src="../../../../../assets/img/01_index_10_rules_close.png")
@@ -35,6 +38,7 @@
 
 <script>
   import BScroll from 'better-scroll'
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "index",
     data () {
@@ -53,21 +57,125 @@
         }
       }
     },
+    created () {
+      this.authority()
+      this.saveUrl()
+      this.judeg()
+
+    },
     mounted () {
-      document.title = '专题活动名称';
+      document.title = '送耐克活动';
+      this.loadShare()
     },
     methods: {
+      //判断来者身份
+      authority () {
+        let sharerId = this.$route.query.sharerId
+        if (sharerId) {
+
+        }
+      },
+      // 分享
+      loadShare () {
+        let _this = this
+        if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+            this.getSharerId(function (data) {
+              if (data != '用户不存在') {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                })
+              } else {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                })
+              }
+            })
+          } else {
+            this.$initShare({
+              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+            })
+          }
+        } else {
+          this.$initShare({
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+          })
+        }
+      },
+      //验证是否是已报名用户
+      judeg () {
+        if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'netcard/presentShoes/join/isJoinActivity',
+            params: {
+              mobile: localStorage.getItem('phone')
+            }
+          }).then(function (response) {
+            if (response) {
+              if (response.data.data == 1) {
+                self.isPartake = true
+              }
+            }
+          })
+
+          if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+            this.getSharerId()
+          }
+        }
+      },
+      //获取sharerId
+      getSharerId (callback){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/queryMemberIdByMobile',
+          params: {
+            mobile: localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data != '用户不存在') {
+              localStorage.setItem('sharerId', response.data.data)
+            }
+            callback && callback(response.data.data)
+          }
+        })
+      },
+      //保存URL
+      saveUrl () {
+        if (this.$route.query.redirect_url) {
+          localStorage.setItem('redirect_url', this.$route.query.redirect_url)
+        }
+
+      },
+      //打开弹窗
       showPop (index) {
         this.temp = index;
         this.popShow = true;
       },
+      //上面按钮判断走向
       toNext1 () {
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')
         } else {
-
+          this.$router.push('/marketing/assisting')
         }
       },
+      //下面按钮判断走向
       toNext2 () {
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')

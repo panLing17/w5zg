@@ -37,10 +37,16 @@ function wxConfig(vm, options) {
 
 // 分享到qq
 function qqShare (options) {
+  var link;
+  if (options.link) {
+    link = options.link
+  } else {
+    link = window.location.href.replace(/\?*#/, "?#")
+  }
   wx.onMenuShareQQ({
     title: options.shareTitle, // 分享标题
     desc: options.shareDesc, // 分享描述
-    link: window.location.href.replace(/\?*#/, "?#"), // 分享链接
+    link: link, // 分享链接
     imgUrl: options.sharePhoto , // 分享图标
     success: function () {
       // 用户确认分享后执行的回调函数
@@ -55,10 +61,16 @@ function qqShare (options) {
 }
 // 分享给朋友
 function wxShare (options) {
+  var link;
+  if (options.link) {
+    link = options.link
+  } else {
+    link = window.location.href.replace(/\?*#/, "?#")
+  }
   wx.onMenuShareAppMessage({
     title: options.shareTitle, // 分享标题
     desc: options.shareDesc, // 分享描述
-    link: window.location.href.replace(/\?*#/, "?#"), // 分享链接，该链接域名必须与当前企业的可信域名一致
+    link: link, // 分享链接，该链接域名必须与当前企业的可信域名一致
     imgUrl: options.sharePhoto, // 分享图标
     type: 'link', // 分享类型,music、video或link，不填默认为link
     dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
@@ -72,9 +84,15 @@ function wxShare (options) {
 }
 // 分享到朋友圈
 function friendShare (options) {
+  var link;
+  if (options.link) {
+    link = options.link
+  } else {
+    link = window.location.href.replace(/\?*#/, "?#")
+  }
   wx.onMenuShareTimeline({
     title: options.shareTitle, // 分享标题
-    link: window.location.href.replace(/\?*#/, "?#"), // 分享链接，该链接域名必须与当前企业的可信域名一致
+    link: link, // 分享链接，该链接域名必须与当前企业的可信域名一致
     imgUrl: options.sharePhoto, // 分享图标
     success: function () {
       // 用户确认分享后执行的回调函数
