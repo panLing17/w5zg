@@ -63,12 +63,12 @@
       return {
         shareFlag: 0,
         ruleFlag: '',
-        temp: 0,
+        temp: 2,
         lists: [{}, {}, {}, {}, {}]
       }
     },
     created () {
-      this.isStart()
+      // this.isStart()
     },
     mounted () {
       document.title = "助力活动";
