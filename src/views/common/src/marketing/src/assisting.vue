@@ -20,8 +20,8 @@
           .righter
             img(src="../../../../../assets/img/06_user_started_ruls.png", @click.prevent = "ruleFlag = 0")
         .middler
-          p 已获得助力
-          p 54位
+          p 奔跑值
+          p 54
         .bottommer
           .left
             img(src="../../../../../assets/img/06_user_invite_btn.png")
@@ -156,7 +156,7 @@
 .center .middler{
   height: 4.5rem;
   margin-top: .2rem;
-  padding-top: 1.2rem;
+  padding-top: 1.5rem;
   background: url('../../../../../assets/img/06_user_circlesbg.png') no-repeat center;
   background-size: 45%;
   text-align: center;
@@ -166,7 +166,7 @@
   color: #fff;
 }
 .center .middler p:nth-child(2){
-  font-size: 1rem;
+  font-size: .8rem;
   color: #ffe277;
 }
 .center .bottommer{

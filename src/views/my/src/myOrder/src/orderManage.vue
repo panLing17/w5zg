@@ -83,7 +83,7 @@
 
       },
       activated () {
-        this.keepStatus();
+        //this.keepStatus();
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);
@@ -92,7 +92,7 @@
       },
       mounted(){
         //this.jump();
-        this.keepStatus();
+        
         this.$mescrollInt("orderManageMescroll",this.upCallback,()=>{
           this.position.forEach((now) => {
               if (now.path === this.$route.path) {
@@ -105,6 +105,7 @@
               y: obj.preScrollY
             })
         });
+        this.keepStatus();
         //this.request();
 
       },
@@ -168,6 +169,7 @@
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           this.request();
+          this.mescroll.resetUpScroll( true );
         },
         //保持状态判断
         keepStatus(){
@@ -206,6 +208,7 @@
             lineDiv.style.left = this.$route.query.lefts;
           }
           this.request();
+          this.mescroll.resetUpScroll( true );
         },
         //判断两个按钮上的文字
         buttonLeft(e,id){
@@ -248,7 +251,12 @@
                   }
                 }).then(function(res){
                   self.request();
-                  self.$message.success('删除成功！');
+                  if (res.msg === '订单状态异常') {
+                    // self.$message.warning('此商品存在退货情况！')
+                  } else{
+                    self.$message.success('删除成功！');
+                  }
+                  
                 })
               },
               noConfirm: () => {
@@ -656,7 +664,7 @@
   }
   .slide-fade-enter, .slide-fade-leave-to
   /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translateX(30px);
+    /*transform: translateX(30px);*/
     opacity: 0;
   }
 </style>

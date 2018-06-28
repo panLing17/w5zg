@@ -12,9 +12,12 @@
         p 您的手机，请注意查看
       .qrCode
         img(src="../../../../../assets/img/qRcode.png")
-      .words
+      .words(v-if="isWX")
         p 持续关注公众号，
-        p 可查看领鞋进展！                
+        p 可查看领鞋进展！
+      .words2(v-else="isWX")
+        p 关注WX公众号“<span>万物直供商城</span>”
+        p 可查看领鞋进展！                      
 </template>
 
 <script>
@@ -27,7 +30,15 @@
         }
       },
       computed: {
-
+        isWX () {
+          var ua = navigator.userAgent.toLowerCase();
+          var isWeixin = ua.indexOf('micromessenger') != -1;
+          if (isWeixin) {
+              return true;
+          }else{
+              return false;
+          }
+        }
       },
       created(){
 
@@ -86,6 +97,18 @@
   }
   .words p{
     margin-top: .2rem;
+  }
+  .words2{
+    color: #333;
+    font-size: .4rem;
+    padding-top: .2rem;
+    text-align: center;
+  }
+  .words2 p{
+    margin-top: .2rem;
+  }
+  .words2 p span{
+    color: #ff3050;
   }
   /*内容部分--结束*/
 </style>
