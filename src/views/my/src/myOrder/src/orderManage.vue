@@ -92,7 +92,7 @@
       },
       mounted(){
         //this.jump();
-        
+        this.keepStatus();
         this.$mescrollInt("orderManageMescroll",this.upCallback,()=>{
           this.position.forEach((now) => {
               if (now.path === this.$route.path) {
@@ -105,7 +105,7 @@
               y: obj.preScrollY
             })
         });
-        this.keepStatus();
+        
         //this.request();
 
       },
@@ -138,7 +138,7 @@
 
         //点击tab切换
         check(item,index){
-          this.mescroll.scrollTo(0,0);
+          //this.mescroll.scrollTo(0,0);
           this.contentFlag = false;
           this.num = index;
           var lineDiv = document.getElementsByClassName("lineDiv")[0];
@@ -168,8 +168,9 @@
             lineDiv.style.left = "80%";
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
-          this.request();
+          //this.request();
           this.mescroll.resetUpScroll( true );
+          //this.mescroll.triggerDownScroll();
         },
         //保持状态判断
         keepStatus(){
@@ -207,8 +208,6 @@
             var lineDiv = document.getElementsByClassName("lineDiv")[0];
             lineDiv.style.left = this.$route.query.lefts;
           }
-          this.request();
-          this.mescroll.resetUpScroll( true );
         },
         //判断两个按钮上的文字
         buttonLeft(e,id){

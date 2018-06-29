@@ -347,6 +347,10 @@
       selectCityOpen(){
         this.selectCity = true
       },
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       selectCityShow () {
         //this.selectCity = true
         if (this.disTypeName === '专柜自提') {
