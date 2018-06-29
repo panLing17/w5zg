@@ -15,6 +15,9 @@
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
+          .tagTitle
+            .text 细分
+            .line
           li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
     ul.goodsList.right(:style="{background:background}", ref="right")
       li(v-for="item in listData.right")
@@ -31,6 +34,9 @@
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
+          .tagTitle
+            .text 细分
+            .line
           li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
     div(style="clear:both")
 </template>
@@ -56,6 +62,8 @@
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
       },
       more(newList, pageNum, pageSize) {
+        // 为了防止网速过慢导致的布局错乱问题，执行回调后则锁定上拉加载事件
+        this.$parent.lockUpDown(true)
         // 将原始数据的每条加入type
         newList.forEach((now)=>{
           now.type = '0'
@@ -94,10 +102,11 @@
               leftH += imgaDom.clientHeight
             }
             num += 1
-            // 若大于page，则证明已经成功加载完一页，移除盒子以及执行插入广告
+            // 若大于page，则证明已经成功加载完一页，移除盒子以及执行插入广告,并允许加载下一页
             if (num >= pageSize) {
               this.$refs.left.removeChild(box)
               this.advertInsert(pageNum, leftH, rightH)
+              this.$parent.lockUpDown(false)
             }
           }
         })
@@ -148,6 +157,10 @@
           case '141': this.$router.push({ path: '/goodsDetailed', query: { id: data.relate_id }}); break;
           // 跳2级页面
           case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: data.id, title: data.title}}); break;
+          // 跳3级页面模板2
+          case '149': this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: '361'}}); break;
+          // 跳三级页面模板2
+          case '148': this.$router.push({path: '/twoLevel', query: {parentType: '361',actId: data.id, title: data.title}}); break;
         }
 
         /*let {
@@ -206,8 +219,10 @@
   }
 
   .text {
+    /*position:relative;*/
+    /*height: .92rem;*/
+
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -216,6 +231,15 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
   }
+  /*.text::after {*/
+    /*content:"...";*/
+    /*font-weight:bold;*/
+    /*position:absolute;*/
+    /*bottom:0;*/
+    /*right:0;*/
+    /*padding:0 20px 1px 45px;*/
+    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*}*/
 
   .text span {
     font-size: .3rem;
@@ -255,8 +279,6 @@
   }
   /* 广告图布局 */
   .advertType {
-    height: 4.8rem;
-
     background-color: rgb(242, 242, 242);
   }
   .advertType> img{
@@ -265,17 +287,41 @@
   }
   /* 推荐标签布局 */
   .tagType {
-    height: 9.08rem;
     background-color:  rgb(242, 242, 242);
     padding: .5rem .25rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .tagType>li:nth-child(-n+6){
+    background-color: #E2EFFF;
   }
   .tagType>li{
+    width: 47.5%;
+    text-align: center;
     padding: .1rem .2rem;
     background-color: white;
     color: #aaaaaa;
     float: left;
-    margin-right: .2rem;
     margin-bottom: .2rem;
     border-radius: .2rem;
+  }
+  .tagTitle{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tagTitle .text{
+    background-color: rgb(242,242,242);
+    padding: 1px .2rem;
+    position: relative;
+    z-index: 5;
+  }
+  .tagTitle .line{
+    width: 90%;
+    height: 1px;
+    background-color: #666;
+    position: absolute;
   }
 </style>

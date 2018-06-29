@@ -34,6 +34,9 @@
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
+          .tagTitle
+            .text 细分
+            .line
           li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
     div(style="clear:both")
 </template>
@@ -216,8 +219,10 @@
   }
 
   .text {
+    /*position:relative;*/
+    /*height: .92rem;*/
+
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -226,6 +231,15 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
   }
+  /*.text::after {*/
+    /*content:"...";*/
+    /*font-weight:bold;*/
+    /*position:absolute;*/
+    /*bottom:0;*/
+    /*right:0;*/
+    /*padding:0 20px 1px 45px;*/
+    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*}*/
 
   .text span {
     font-size: .3rem;
@@ -279,7 +293,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .tagType>li:nth-child(-n+8){
+  .tagType>li:nth-child(-n+6){
     background-color: #E2EFFF;
   }
   .tagType>li{

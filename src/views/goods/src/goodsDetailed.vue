@@ -341,6 +341,10 @@
       }
     },
     methods:{
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       selectCityShow () {
         if (this.disTypeName === '专柜自提') {
           this.onlyStoreSelect = true
