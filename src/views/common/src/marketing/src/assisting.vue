@@ -29,21 +29,21 @@
             img(src="../../../../../assets/img/06_user_invite_btn.png")
           .right
             img(src="../../../../../assets/img/06_user_mall_btn.png")
-      .bottom(v-if="temp == 2", ref="bottom")
-        .assists
-          .logoN
-            .line
-            .titleN 我的助力团
-            .line
-          ul.listter
-            li(v-for="item in aGroup")
-              .headPic
-                img(src="../../../../../assets/img/kaka.jpg")
-              .wordsR
-                p KAKA牛逼
-                p 已领500元工会福利券
-      .btnN
-        img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
+        .bottom(v-if="temp == 2", ref="bottom")
+          .assists
+            .logoN
+              .line
+              .titleN 我的助力团
+              .line
+            ul.listter
+              li(v-for="item in aGroup")
+                .headPic
+                  img(src="../../../../../assets/img/kaka.jpg")
+                .wordsR
+                  p KAKA牛逼
+                  p 已领500元工会福利券
+        .btnN
+          img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")
       rules-temp(v-if="ruleFlag === 0", @closeBtn="ruleFlag = 1")
     .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
@@ -69,18 +69,23 @@
       }
     },
     created () {
-      this.isFrom()
-      // this.isStart()
-      this.isLast()
+      this.whereFrom()
     },
     mounted () {
-      document.title = "助力活动";
+      document.title = "送耐克活动";
       this.loadShare()
     },
     methods: {
-      //判断是否是从参加活动过来的
-      isFrom () {
-
+      /*
+      * 判断是否是从参加活动过来的
+      * temp=2 true
+      * */
+      whereFrom () {
+        if (this.$route.query.temp == 2) {
+          this.isPartake()
+        } else {
+          this.isStart()
+        }
       },
       //获取助力团
       getGroup () {
@@ -189,21 +194,22 @@
       },
       //活动是否开启
       isStart () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'presentShoes/isStart',
-          params: {}
-        }).then(function (response) {
-          if (response) {
-            if (response.data.data == 'no') {
-              self.temp = 1
-            } else {
-              self.authority()
-            }
-          }
-
-        })
+        this.authority()
+        // let self = this
+        // self.$ajax({
+        //   method: 'get',
+        //   url: self.$apiApp + 'presentShoes/isStart',
+        //   params: {}
+        // }).then(function (response) {
+        //   if (response) {
+        //     if (response.data.data == 'no') {
+        //       self.temp = 1
+        //     } else {
+        //       self.authority()
+        //     }
+        //   }
+        //
+        // })
       },
       /*
       * 判断来者身份,originatorId 发起人ID   selfId 被分享者ID
@@ -222,7 +228,7 @@
         let _this = this
 
 
-        if (originatorId && originatorId.length>0) {
+        if (originatorId && originatorId.length>0 && originatorId!='undefined') {
           if (selfId && selfId.length>0) {
             if (originatorId == selfId) {
               this.isPartake()
@@ -255,11 +261,11 @@
                 if (data != '用户不存在') {
                   _this.isPartake()
                 } else {
-                  _this.$router.replace('/marketing/index')
+                  // _this.$router.replace('/marketing/index')
                 }
               })
             } else {
-              _this.$router.replace('/marketing/index')
+              // _this.$router.replace('/marketing/index')
             }
           }
         }
@@ -500,9 +506,11 @@
   .btnN{
     margin-top: .3rem;
     padding-bottom: .8rem;
+    text-align: center;
+    font-size: 0;
   }
   .btnN img{
-    width: 10rem;
+    width: 9.1rem;
   }
   .shareFriend{
     position: fixed;

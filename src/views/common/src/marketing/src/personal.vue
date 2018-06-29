@@ -84,7 +84,7 @@
       // this.getOriginInfo()
     },
     mounted () {
-      document.title = "个人中心"
+      document.title = "送耐克活动"
     },
     methods: {
       //是否达到助力上限

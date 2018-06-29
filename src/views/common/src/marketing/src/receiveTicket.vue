@@ -237,11 +237,6 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data == 1) {
-              localStorage.setItem('phone', phone)
-              self.$message.warning('您已经报名过活动！')
-              self.$router.replace('/marketing/index')
-            }
             callback && callback(response.data.data )
           }
         })
@@ -362,7 +357,15 @@
         }
 
         this.isJoinActivity(this.phone, function (flag) {
-          if (flag == 0) {
+          if (flag == 1) {
+            if (_this.temp == 1) {
+              localStorage.setItem('phone', _this.phone)
+              _this.$message.warning('您已经报名过活动！')
+              _this.$router.replace('/marketing/index')
+            } else if(_this.temp == 4) {
+              _this.popShow = true
+            }
+          }else if (flag == 0) {
             _this.popShow = true
           }
         })

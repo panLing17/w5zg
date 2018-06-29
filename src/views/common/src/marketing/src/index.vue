@@ -58,6 +58,7 @@
       }
     },
     created () {
+      this.isStart()
       this.saveUrl()
       this.judeg()
 
@@ -80,27 +81,37 @@
         })();
       },
       isStart () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'presentShoes/isStart',
-          params: {}
-        }).then(function (response) {
-          if (response) {
-            if (response.data.data == 'yes') {
-              if (self.$route.query.sharerId || localStorage.getItem('sharerId')) {
-                if (self.isWeiXin()) {
-                  localStorage.setItem('originatorId', self.$route.query.sharerId)
-                  self.getWXUrl()
-                } else {
-                  self.$message.error('请在微信中打开！')
-                  self.$router.push('/home')
-                }
-              }
-
-            }
+        if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
+          if (this.isWeiXin()) {
+            localStorage.setItem('originatorId', this.$route.query.sharerId)
+            this.getWXUrl()
+          } else {
+            this.$message.error('请在微信中打开！')
+            this.$router.push('/home')
           }
-        })
+        }
+
+        // let self = this
+        // self.$ajax({
+        //   method: 'get',
+        //   url: self.$apiApp + 'presentShoes/isStart',
+        //   params: {}
+        // }).then(function (response) {
+        //   if (response) {
+        //     if (response.data.data == 'yes') {
+        //       if (self.$route.query.sharerId || localStorage.getItem('sharerId')) {
+        //         if (self.isWeiXin()) {
+      //             localStorage.setItem('originatorId', self.$route.query.sharerId)
+        //           self.getWXUrl()
+        //         } else {
+        //           self.$message.error('请在微信中打开！')
+        //           self.$router.push('/home')
+        //         }
+        //       }
+        //
+        //     }
+        //   }
+        // })
       },
       //是否是微信环境
       isWeiXin() {
@@ -113,16 +124,21 @@
       },
       //获取微信授权URL
       getWXUrl () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
-          params: {}
-        }).then(function (response) {
-          if (response) {
-            window.location.href = response.data.data
-          }
-        })
+        if (localStorage.getItem('authority') && localStorage.getItem('authority')=='1') {
+          this.$router.push('/marketing/assisting')
+        } else {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+            params: {}
+          }).then(function (response) {
+            if (response) {
+              localStorage.setItem('authority', '1')
+              window.location.href = response.data.data
+            }
+          })
+        }
       },
       // 分享
       loadShare () {

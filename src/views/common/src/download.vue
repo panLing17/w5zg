@@ -22,7 +22,7 @@
     width: 100vw;
     height: 100vh;
     /*background-image:linear-gradient(135deg, #85ccf8 141.4213562373095px, #3db1f8 282.842712474619px);*/
-    background: url("../../../assets/img/background3@2x.png") no-repeat;
+    background: url("../../../assets/img/background3@2x.jpg") no-repeat;
     background-size: 100% 100%;
     overflow: hidden;
   }
