@@ -4,14 +4,14 @@
       .title 六款鞋款式任性选
       .goodsPic
         .left(@click="previousN()")
-          img(src="../../../../../assets/img/10_choise_left_100.png" v-if="lMore")
-          img(src="../../../../../assets/img/10_choise_left_40.png" v-else="lMore")
+          img(src="../../../../../assets/img/10_choise_left_100.png" v-if="lMore" @click.prevent="")
+          img(src="../../../../../assets/img/10_choise_left_40.png" v-else="lMore" @click.prevent="")
         .center
           .wrapImg(v-for="(item,index) in shoesPic" v-show="clickN === index")
-            img(:src="item")
+            img(:src="item" @click.prevent="")
         .right(@click="nextN()")
-          img(src="../../../../../assets/img/10_choise_rigth_40.png" v-if="rMore")
-          img(src="../../../../../assets/img/10_choise_rigth_100.png" v-else="rMore")
+          img(src="../../../../../assets/img/10_choise_rigth_40.png" v-if="rMore" @click.prevent="")
+          img(src="../../../../../assets/img/10_choise_rigth_100.png" v-else="rMore" @click.prevent="")
       .styles
         .lefter 款式:
         ul.righter
@@ -22,7 +22,7 @@
           input(type="text")
       .prompt *请填写您需要的尺码，例如：男41码
       .submitB
-        img(src="../../../../../assets/img/10_choise_submit_btn.png")
+        img(src="../../../../../assets/img/10_choise_submit_btn.png" @click.prevent="")
 </template>
 <script>
   import one from '../../../../../assets/img/10_choise_shoes_1.png'
@@ -92,6 +92,8 @@
   color: #ff314f;
 }
 .wrapSelectSize{
+  position: absolute;
+  width: 100%;
   background-color: #ff314f;
   min-height: 100vh;
 }
