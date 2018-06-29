@@ -54,7 +54,7 @@
       receive () {
         let _this = this
         if (!this.isLoginFlag) {
-          let reg = /^((13[0-9])|(14[0-9])|(15([0-9]))|(17[0-9])|(18[0-9])|(19[0-9]))\d{8}$/;
+          let reg = /^1[0-9]{10}$/;
           if (!reg.test(this.phone)) {
             this.$message.error('手机号码格式不正确！');
             return;

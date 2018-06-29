@@ -23,27 +23,27 @@
             img(src="../../../../../assets/img/06_user_started_ruls.png")
         .middler
           p 奔跑值
-          p 54
+          p {{iHelpActivity}}
         .bottommer
           .left(@click="shareFlag = 1")
             img(src="../../../../../assets/img/06_user_invite_btn.png")
           .right
             img(src="../../../../../assets/img/06_user_mall_btn.png")
-      .bottom(v-if="temp == 2", ref="bottom")
-        .assists
-          .logoN
-            .line
-            .titleN 我的助力团
-            .line
-          ul.listter
-            li(v-for="item in aGroup")
-              .headPic
-                img(src="../../../../../assets/img/kaka.jpg")
-              .wordsR
-                p KAKA牛逼
-                p 已领500元工会福利券
-      .btnN
-        img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
+        .bottom(v-if="temp == 2", ref="bottom")
+          .assists
+            .logoN
+              .line
+              .titleN 我的助力团
+              .line
+            ul.listter
+              li(v-for="item in aGroup")
+                .headPic
+                  img(src="../../../../../assets/img/kaka.jpg")
+                .wordsR
+                  p KAKA牛逼
+                  p 已领500元工会福利券
+        .btnN
+          img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")
       rules-temp(v-if="ruleFlag === 0", @closeBtn="ruleFlag = 1")
     .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
@@ -62,21 +62,39 @@
       return {
         shareFlag: 0,
         ruleFlag: '',
-        temp: 2,
+        temp: 0,
         aGroup: [{}, {}, {}, {}, {}],
         oMyInfo: {},
-        bIsLast: ''
+        bIsLast: '',
+        iHelpActivity: 0
       }
     },
     created () {
-      // this.isStart()
-      this.isLast()
+      this.saveUnionId()
+      this.whereFrom()
     },
     mounted () {
-      document.title = "助力活动";
+      document.title = "送耐克活动";
       this.loadShare()
     },
     methods: {
+      //保存unionId
+      saveUnionId () {
+        if (this.$route.query.unionId) {
+          localStorage.setItem('unionId')
+        }
+      },
+      /*
+      * 判断是否是从参加活动过来的
+      * temp=2 true
+      * */
+      whereFrom () {
+        if (this.$route.query.temp == 2) {
+          this.isPartake()
+        } else {
+          this.isStart()
+        }
+      },
       //获取助力团
       getGroup () {
         let self = this
@@ -89,6 +107,7 @@
         }).then(function (response) {
           if (response) {
             self.aGroup = response.data.data
+            self.iHelpActivity = response.data.data.length
             self.$nextTick(()=>{
               self.scroll = new BScroll(self.$refs.bottom, {
                 click: true
@@ -184,21 +203,22 @@
       },
       //活动是否开启
       isStart () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'presentShoes/isStart',
-          params: {}
-        }).then(function (response) {
-          if (response) {
-            if (response.data.data == 'no') {
-              self.temp = 1
-            } else {
-              self.authority()
-            }
-          }
-
-        })
+        this.authority()
+        // let self = this
+        // self.$ajax({
+        //   method: 'get',
+        //   url: self.$apiApp + 'presentShoes/isStart',
+        //   params: {}
+        // }).then(function (response) {
+        //   if (response) {
+        //     if (response.data.data == 'no') {
+        //       self.temp = 1
+        //     } else {
+        //       self.authority()
+        //     }
+        //   }
+        //
+        // })
       },
       /*
       * 判断来者身份,originatorId 发起人ID   selfId 被分享者ID
@@ -209,7 +229,6 @@
       *   5. originatorId 没有  selfId 没有 => 报名(不处理)
       * */
       authority () {
-        localStorage.setItem('unionId', this.$route.query.unionId)
 
         let originatorId = localStorage.getItem('originatorId')
         let selfId = localStorage.getItem('sharerId')
@@ -217,7 +236,7 @@
         let _this = this
 
 
-        if (originatorId && originatorId.length>0) {
+        if (originatorId && originatorId.length>0 && originatorId!='undefined') {
           if (selfId && selfId.length>0) {
             if (originatorId == selfId) {
               this.isPartake()
@@ -250,11 +269,11 @@
                 if (data != '用户不存在') {
                   _this.isPartake()
                 } else {
-                  _this.$router.replace('/marketing/index')
+                  // _this.$router.replace('/marketing/index')
                 }
               })
             } else {
-              _this.$router.replace('/marketing/index')
+              // _this.$router.replace('/marketing/index')
             }
           }
         }
@@ -266,22 +285,77 @@
           method: 'get',
           url: self.$apiApp + 'presentShoes/isJoined',
           params: {
-            unionId: this.$route.query.unionId
+            unionId: localStorage.getItem('unionId')
           }
         }).then(function (response) {
           if (response) {
             if (response.data.data == 'no') {
               self.$router.replace('/marketing/noAttended')
-            } else {
+            } else if (response.data.data == 'yes'){
               self.temp = 2
               self.getGroup()
               self.getMyInfo()
               self.isLast()
+            } else if (response.data.data == 'no auth') {
+              self.getWXUrl()
+            } else if (response.data.data == 'no binding') {
+              if (localStorage.getItem('phone') && localStorage.getItem('phone').length == 11) {
+                self.bindAccount()
+              } else {
+                self.$router.replace('/marketing/noAttended')
+              }
             }
+           }
+        })
+      },
+      //绑定手机
+      bindAccount () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'member/bindAccount',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            mobile : localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.joinActivity()
           }
         })
       },
-
+      //参加活动
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/joinActivity',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.temp = 2
+            _this.getGroup()
+            _this.getMyInfo()
+            _this.isLast()
+          }
+        })
+      },
+      //获取微信授权
+      getWXUrl () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            localStorage.setItem('authority', '1')
+            window.location.href = response.data.data
+          }
+        })
+      }
     }
   }
 </script>
@@ -495,9 +569,11 @@
   .btnN{
     margin-top: .3rem;
     padding-bottom: .8rem;
+    text-align: center;
+    font-size: 0;
   }
   .btnN img{
-    width: 10rem;
+    width: 9.1rem;
   }
   .shareFriend{
     position: fixed;

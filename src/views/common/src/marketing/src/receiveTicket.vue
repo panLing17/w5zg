@@ -14,40 +14,15 @@
           .inputWrapper(v-if="!isLoginFlag")
             input.phone(type="number", placeholder="请输入手机号领取", v-model="phone")
           <!--#sc(ref="sc", :class="{'margin-1': isLoginFlag}")-->
-          .submitBtn(@click="receive")
+          .submitBtn(@click="receive", :class="{'margin-1': isLoginFlag}")
             img.submitImg(src="../../../../../assets/img/nike3.png")
         .template4(v-if="showIndex==4")
           .template1ImgWrapper
             img.template1Img(src="../../../../../assets/img/nike2.png")
           .inputWrapper(v-if="!isLoginFlag")
             input.phone(type="number", placeholder="请输入手机号领取", v-model="phone")
-          .submitBtn(@click="receive")
+          .submitBtn(@click="receive", :class="{'margin-1': isLoginFlag}")
             img.submitImg(src="../../../../../assets/img/16_inputnum_btn.png")
-        <!--.template2(v-if="showIndex==2")-->
-          <!--.template2ImgWrapper-->
-            <!--img.template2Img(src="../../../../../assets/img/nike4.png")-->
-            <!--.price ￥{{price}}-->
-          <!--.descWrapper-->
-            <!--.desc1.temp2Desc1 {{price}}元<span>工会福利券已到账</span>-->
-            <!--.desc2.temp2Desc2 手机号登录万物直供商城使用-->
-          <!--.desc3 免费领取-->
-            <!--strong.strong1 1200元耐克鞋-->
-          <!--.nextBtn(@click="sendEnrollSmsByAfs")-->
-            <!--img.nextImg(src="../../../../../assets/img/nike5.png")-->
-        <!--.template3(v-if="showIndex==3")-->
-          <!--.template2ImgWrapper-->
-            <!--img.template2Img(src="../../../../../assets/img/nike4.png")-->
-          <!--.descWrapper-->
-            <!--.desc1.tamp3Desc1 已经为TA攒了片<strong>{{randomText}}</strong>啦~-->
-            <!--.desc4 额外赠送-->
-              <!--strong.strong2 {{price}}元工会福利券-->
-              <!--span 已发放至您的手机账号-->
-          <!--.desc3.small 免费领取-->
-            <!--strong.strong1 1200元耐克鞋-->
-          <!--.nextBtn-->
-            <!--img.nextImg(src="../../../../../assets/img/nike6.png")-->
-          <!--.nextBtn.next-->
-            <!--img.nextImg(src="../../../../../assets/img/nike7.png")-->
       .temp1Desc(v-if="showIndex==1 || showIndex==4") 我们将保护您的个人隐私不被泄露
       transition(name="fade")
         .mask(v-show="popShow", @click="hidePop")
@@ -58,7 +33,7 @@
           .popInputWrapper
             input.popInput(type="text", placeholder="请输入验证码", v-model="code")
             <!--.inputBtn(:class="{'red': inputStatus.flag, 'gray': !inputStatus.flag}", @click="getCode") {{inputStatus.inputBtnText}}-->
-          .popBtn(@click="checkCode") 立即领取
+          .popBtn(@click="checkCode") 提交
 </template>
 
 <script>
@@ -88,8 +63,8 @@
       }
     },
     created () {
-      this.getToken()
       this.getData()
+      this.getToken()
       this.checkAuthority()
       this.isLogin()
       this.getRandomText()
@@ -100,6 +75,39 @@
       this.loadShare()
     },
     methods: {
+      //绑定手机
+      bindAccount () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'member/bindAccount',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            mobile : this.phone,
+            W5MALLTOKEN: this.W5MALLTOKEN
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.helpActivity()
+          }
+        })
+      },
+      //助力
+      helpActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/helpActivity',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            sharerId : localStorage.getItem('originatorId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.getTicket2()
+          }
+        })
+      },
       loadShare () {
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
@@ -160,20 +168,31 @@
         }
       },
       checkCode () {
+        let _this = this
         if (this.code.length === 6) {
           if (this.isLoginFlag && this.phone.length!==11) {
             this.getUserData(function () {
-              _this.getTicket();
+              if (_this.showIndex==1) {
+                _this.getTicket();
+              } else if (_this.showIndex == 4){
+                _this.bindAccount();
+              }
             })
             return
           }
-          this.getTicket();
+          if (this.showIndex==1) {
+            this.getTicket();
+          } else if (this.showIndex == 4){
+            this.bindAccount();
+          }
 
         } else {
           this.$message.error('验证码输入有误！')
         }
       },
+      //查看权限
       checkAuthority () {
+        let _this = this
         if (this.showIndex == 1 || this.showIndex == 4) {
           if (localStorage.getItem('redirect_url') == 'undefined' || !localStorage.getItem('redirect_url')) {
             this.$message.error('请从活动入口进入！');
@@ -181,7 +200,9 @@
           } else {
             this.url = localStorage.getItem('redirect_url')
             if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
-              this.isJoinActivity(localStorage.getItem('phone'))
+              this.isJoinActivity(localStorage.getItem('phone'), function () {
+                _this.$router.push('/marketing/index')
+              })
               if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
                 this.getSharerId()
               }
@@ -190,6 +211,7 @@
         }
 
       },
+      //获取ID
       getSharerId (callback){
         let self = this
         self.$ajax({
@@ -207,6 +229,7 @@
           }
         })
       },
+      //是否报过名
       isJoinActivity (phone, callback) {
         let self = this
         self.$ajax({
@@ -217,42 +240,10 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data == 1) {
-              localStorage.setItem('phone', phone)
-              self.$message.warning('您已经报名过活动！')
-              self.$router.replace('/marketing/index')
-            }
             callback && callback(response.data.data )
           }
         })
       },
-      // getCode () {
-      //   if (!this.inputStatus.flag) {
-      //     return
-      //   }
-      //   this.inputStatus.flag = false
-      //   let count = 60
-      //   this.inputStatus.inputBtnText = count + 's'
-      //   this.timer = setInterval(()=>{
-      //     if (count <= 0) {
-      //       clearInterval(this.timer)
-      //       this.inputStatus.flag = true
-      //       this.inputStatus.inputBtnText = '获取验证码'
-      //     } else {
-      //       count--
-      //       this.inputStatus.inputBtnText = count + 's'
-      //     }
-      //   }, 1000)
-      //
-      //
-      //   if (this.isLoginFlag && this.phone.length!==11) {
-      //     this.getUserData(function () {
-      //       _this.getTicket();
-      //     })
-      //     return
-      //   }
-      //   this.getTicket();
-      // },
       hidePop () {
         this.popShow = false
       },
@@ -369,7 +360,15 @@
         }
 
         this.isJoinActivity(this.phone, function (flag) {
-          if (flag == 0) {
+          if (flag == 1) {
+            if (_this.showIndex == 1) {
+              localStorage.setItem('phone', _this.phone)
+              _this.$message.warning('您已经报名过活动！')
+              _this.$router.replace('/marketing/index')
+            } else if(_this.showIndex == 4) {
+              _this.popShow = true
+            }
+          }else if (flag == 0) {
             _this.popShow = true
           }
         })
@@ -407,11 +406,32 @@
             if (response) {
               if (response.data.msg != '您已经超过领取上限') {
                 _this.price = response.data.data
-                _this.$router.replace({path: '/marketing/receiveTicketSuccess', query: {price: response.data.data, sessionId: _this.sessionId,
-                    phone: _this.phone,
-                    W5MALLTOKEN: _this.W5MALLTOKEN}})
                 localStorage.setItem('phone',_this.phone)
                 _this.getSharerId()
+                if (_this.showIndex==1) {
+                  _this.$router.replace({
+                    path: '/marketing/receiveTicketSuccess',
+                    query: {
+                      price: response.data.data,
+                      sessionId: _this.sessionId,
+                      phone: _this.phone,
+                      W5MALLTOKEN: _this.W5MALLTOKEN
+                    }
+                  })
+                } else if(_this.showIndex==4) {
+                  _this.$router.replace({
+                    path: '/marketing/receiveTicketSuccess',
+                    query: {
+                      price: response.data.data,
+                      sessionId: _this.sessionId,
+                      phone: _this.phone,
+                      W5MALLTOKEN: _this.W5MALLTOKEN,
+                      show_index: 2
+                    }
+                  })
+                }
+
+
 
               } else {
                 _this.$message.error(response.data.msg)
@@ -419,7 +439,7 @@
             }
           }).catch(function (reason) {
             _this.loadingFlag = false
-            _this.$message.error('系统出错~')
+            // _this.$message.error('系统出错~')
 
           });
         }
@@ -597,7 +617,7 @@
     margin: .26rem auto 0;
     width: 7.4rem;
   }
-  #sc.margin-1 {
+  .margin-1 {
     margin-top: 1rem;
   }
   .mask {

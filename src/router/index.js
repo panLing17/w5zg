@@ -849,6 +849,9 @@ const router = new Router ({
 })
 // 全局前置守卫
 router.beforeEach ((to, from, next) => {
+  // 百度统计每个URL的访问量
+  _hmt.push(['_trackPageview', to.path])
+
   // app交互
   if (typeof w5zgApp !== 'undefined') {
     w5zgApp.page(JSON.stringify({
