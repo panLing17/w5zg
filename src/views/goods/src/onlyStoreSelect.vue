@@ -98,16 +98,19 @@
         })
       },
       selectOver (number, storeName) {
+        let data
         this.storeList.forEach((now)=>{
           now.storeList.forEach((sonNow)=>{
-            console.log(sonNow.bs_id === this.bsId)
+            if (sonNow.bs_id === this.bsId) {
+              console.log(sonNow)
+              data = {
+                id: sonNow.bs_city_no,
+                name: sonNow.bs_name
+              }
+            }
           })
         })
         // 事件派发，将省市区名字以及编号返回
-        let data = {
-          id: number,
-          name: storeName
-        }
         let l = this.$store.state.location
         l.store = data
         this.$store.commit('transferGive',l)

@@ -7,24 +7,20 @@
       .topRight(slot="right")
     .mescroll#twoLevelMescroll
       .contentWrapper
-        .block
-          .blockTitle
-            .name 大牌推荐
-            .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多推荐
+        .block     
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
             li.brandItem(v-for="(item, index) in brandList", :key="index", @click="toNext(0, index)")
               img.brandImg(:src="item.image | img-filter")
               .brandName {{item.title}}
           .noData(v-if="noDataShow.brand") 暂无大牌推荐
-        .block
-          .blockTitle
-            .name 精选分类
-            .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
+          .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多推荐
+        .block       
           ul.categoryList(:style="{'max-height': category.height}", ref="category")
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
               img.categoryImg(:src="item.image | img-filter")
               .categoryName {{item.title}}
           .noData(v-if="noDataShow.category") 暂无精选分类
+          .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
         img.louceng(src="../../../../../assets/img/louceng2.png")
         .recommendWrapper
           recommend(ref="recommend")
@@ -41,13 +37,13 @@
         brand: {
           show: true,
           status: false,
-          height: '5.32rem',
+          height: '5.72rem',
           auto: 'none'
         },
         category: {
           show: true,
           status: false,
-          height: '3.66rem',
+          height: '4.05rem',
           auto: 'none'
         },
         noDataShow: {
@@ -219,8 +215,8 @@
         this.$nextTick(()=>{
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
-          this.brand.height = '5.32rem'
-          this.category.height = '3.66rem'
+          this.brand.height = '5.72rem'
+          this.category.height = '4.05rem'
         })
       },
       dropCheck (index) {
@@ -229,7 +225,7 @@
           if (this.brand.status) {
             this.brand.height = this.brand.auto
           } else {
-            this.brand.height = '5.32rem'
+            this.brand.height = '5.72rem'
           }
         }
 
@@ -238,7 +234,7 @@
           if (this.category.status) {
             this.category.height = this.category.auto
           } else {
-            this.category.height = '3.66rem'
+            this.category.height = '4.05rem'
           }
         }
       },
@@ -267,13 +263,14 @@
     height: auto;
   }
   .block {
-    padding: 0 .26rem;
+    padding-top: .2rem;
   }
   .blockTitle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 1.2rem;
+    padding: 0 .26rem;
   }
   .name {
     flex: none;
@@ -287,6 +284,8 @@
     height: 1rem;
     line-height: 1rem;
     color: rgb(153,153,153);
+    margin: 0 auto;
+    font-size: .35rem;
   }
   .more.down {
     background: url("../../../../../assets/img/ic_page_xljt@2x.png") no-repeat center right;
@@ -298,22 +297,22 @@
   }
   .brandList {
     display: flex;
+    /*justify-content: space-between;*/
     flex-wrap: wrap;
     overflow: hidden;
     transition: all 0.5s;
   }
   .brandItem {
-    width: 2.933rem;
-    height: 1.6rem;
+    width: 3.28rem;
+    height: 1.86rem;
     position: relative;
-    margin: 0 .3333rem .26rem 0;
     border: 1px solid #fff;
     box-sizing: border-box;
-    border-radius: 0.13rem;
     overflow: hidden;
+    margin-bottom: .05rem;
   }
-  .brandItem:nth-child(3n) {
-    margin-right: 0;
+  .brandItem:nth-child(3n-1) {
+    margin: 0 .06rem;
   }
   .brandImg {
     position: absolute;
@@ -337,23 +336,25 @@
   .categoryList {
     padding: 0 .26rem;
     display: flex;
+    /*justify-content: space-between;*/
     flex-wrap: wrap;
     overflow: hidden;
     transition: all 0.5s;
   }
   .categoryItem {
-    margin: 0 .8rem .26rem 0;
-    width: 1.133rem;
-    height: 1.7rem;
+    /*margin: 0 .8rem .26rem ;*/
+    width: 1.46rem;
+    height: 1.9rem;
     overflow: hidden;
     position: relative;
+    margin: 0 .43rem .2rem;
   }
-  .categoryItem:nth-child(5n) {
+  .categoryItem:nth-child(4n) {
     margin-right: 0;
   }
   .categoryImg {
-    width: 1.133rem;
-    height: 1.133rem;
+    width: 1.46rem;
+    height: 1.46rem;
     pointer-events: none;
   }
   .categoryName {
@@ -361,7 +362,7 @@
     bottom: 0;
     left: 0;
     text-align: center;
-    font-size: .26rem;
+    font-size: .3rem;
     color: #333;
     width: 100%;
     white-space: nowrap;

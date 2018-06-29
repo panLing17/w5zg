@@ -4,18 +4,14 @@
       .title 六款鞋款式任性选
       .goodsPic
         .left(@click="previousN()")
-          img(src="../../../../../assets/img/10_choise_left_100.png" v-if="lMore")
-          img(src="../../../../../assets/img/10_choise_left_40.png" v-else="lMore")
+          img(src="../../../../../assets/img/10_choise_left_100.png" v-if="lMore" @click.prevent="")
+          img(src="../../../../../assets/img/10_choise_left_40.png" v-else="lMore" @click.prevent="")
         .center
-          img(src="../../../../../assets/img/10_choise_shoes_1.png" v-if="clickN == 0")
-          img(src="../../../../../assets/img/10_choise_shoes_2.png" v-if="clickN == 1")
-          img(src="../../../../../assets/img/10_choise_shoes_3.png" v-if="clickN == 2")
-          img(src="../../../../../assets/img/10_choise_shoes_4.png" v-if="clickN == 3")
-          img(src="../../../../../assets/img/10_choise_shoes_5.png" v-if="clickN == 4")
-          img(src="../../../../../assets/img/10_choise_shoes_6.png" v-if="clickN == 5")
+          .wrapImg(v-for="(item,index) in shoesPic" v-show="clickN === index")
+            img(:src="item" @click.prevent="")
         .right(@click="nextN()")
-          img(src="../../../../../assets/img/10_choise_rigth_40.png" v-if="rMore")
-          img(src="../../../../../assets/img/10_choise_rigth_100.png" v-else="rMore")
+          img(src="../../../../../assets/img/10_choise_rigth_40.png" v-if="rMore" @click.prevent="")
+          img(src="../../../../../assets/img/10_choise_rigth_100.png" v-else="rMore" @click.prevent="")
       .styles
         .lefter 款式:
         ul.righter
@@ -26,9 +22,15 @@
           input(type="text")
       .prompt *请填写您需要的尺码，例如：男41码
       .submitB
-        img(src="../../../../../assets/img/10_choise_submit_btn.png")
+        img(src="../../../../../assets/img/10_choise_submit_btn.png" @click.prevent="")
 </template>
 <script>
+  import one from '../../../../../assets/img/10_choise_shoes_1.png'
+  import two from '../../../../../assets/img/10_choise_shoes_2.png'
+  import three from '../../../../../assets/img/10_choise_shoes_3.png'
+  import four from '../../../../../assets/img/10_choise_shoes_4.png'
+  import five from '../../../../../assets/img/10_choise_shoes_5.png'
+  import six from '../../../../../assets/img/10_choise_shoes_6.png'
   export default {
     name: 'selectSize',
     data () {
@@ -36,7 +38,8 @@
         lMore: true, // 向左按钮
         rMore: false, // 向右按钮
         clickN: 0,
-        styleList: ['A款', 'B款', 'C款', 'D款', 'E款', 'F款']
+        styleList: ['A款', 'B款', 'C款', 'D款', 'E款', 'F款'],
+        shoesPic: [ one, two, three, four, five, six]
       }
     },
     mounted () {
@@ -89,8 +92,10 @@
   color: #ff314f;
 }
 .wrapSelectSize{
+  position: absolute;
+  width: 100%;
   background-color: #ff314f;
-  height: 100vh;
+  min-height: 100vh;
 }
 .cont{
   padding: .5rem .4rem 0;
@@ -171,10 +176,16 @@
 .submitB img{
   width: 5rem;
 }
-.fade-enter-active, .fade-leave-active {
-  transition: opacity .5s;
+.fadeIn-enter-active{
+  transition: all 1s ease;
 }
-.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+.fadeIn-leave-active{
+  transition: all 1s ease;
+}
+.fadeIn-enter-active,.fadeIn-leave{
+  opacity: 1;
+}
+.fadeIn-enter,.fadeIn-leave-active {
   opacity: 0;
 }
 </style>
