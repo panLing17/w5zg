@@ -94,6 +94,10 @@
         this.mescroll.destroy();
       },
       methods:{
+        // 锁定或者解锁上拉加载
+        lockUpDown (isLock) {
+          this.mescroll.lockUpScroll( isLock );
+        },
         //判断是商品订单还是退货订单
         judgeOrderType(){
           if (true) {
