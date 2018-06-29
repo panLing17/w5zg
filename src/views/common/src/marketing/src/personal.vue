@@ -79,6 +79,9 @@
         bIsOutRule: ''
       }
     },
+    created () {
+      this.isHelped()
+    },
     mounted () {
       document.title = "个人中心"
     },
@@ -95,6 +98,20 @@
         }).then(function (response) {
           if (response) {
             self.bIsOutRule = response.data.data
+            if (self.bIsOutRule=='yes') {
+              if (self.bIsHelped == 'yes') {
+                self.temp = 3
+              } else {
+                self.getRandomText()
+                self.temp = 2
+              }
+            } else {
+              if (self.bIsHelped == 'yes') {
+                self.temp = 6
+              } else {
+                self.temp = 5
+              }
+            }
           }
         })
       },
@@ -106,11 +123,12 @@
           url: self.$apiApp + 'presentShoes/isHelped',
           params: {
             unionId: localStorage.getItem('unionId'),
-            sharerId: localStorage.setItem('originatorId')
+            sharerId: localStorage.getItem('originatorId')
           }
         }).then(function (response) {
           if (response) {
             self.bIsHelped = response.data.data
+            self.isOutRule()
           }
         })
       },
