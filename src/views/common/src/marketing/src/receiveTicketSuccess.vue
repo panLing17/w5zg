@@ -29,9 +29,9 @@
               span 已发放至您的手机账号
           .desc3.small 免费领取
             strong.strong1 1200元耐克鞋
-          .nextBtn
+          .nextBtn(@click="sendEnrollSmsByAfs")
             img.nextImg(src="../../../../../assets/img/nike6.png")
-          .nextBtn.next
+          .nextBtn.next(@click="$router.push('/home')")
             img.nextImg(src="../../../../../assets/img/nike7.png")
 </template>
 
@@ -40,15 +40,16 @@
     name: "receiveTicketSuccess",
     data () {
       return {
-        showIndex: 1,
+        showIndex: 2,
         price: '',
         sessionId:'',
         phone:'',
-        W5MALLTOKEN:''
+        W5MALLTOKEN:'',
+        randomText: ''
       }
     },
     created () {
-      this.getData()
+      // this.getData()
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
@@ -111,6 +112,7 @@
       },
       getData () {
         if (this.$route.query.show_index) {
+          this.getRandomText()
           this.showIndex = this.$route.query.show_index;
         }
         this.price = this.$route.query.price

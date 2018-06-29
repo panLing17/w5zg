@@ -93,6 +93,7 @@
           return
         }
       },
+      //发送验证码
       sendCodeAjax () {
         let _this = this
         this.$ajax({
@@ -112,7 +113,7 @@
       checkCode () {
         if (this.code.length === 6 ) {
           if (this.scFlag) {
-            this.joinActivity()
+            this.bindAccount()
           } else {
             this.$message.error('请获取点击获取验证码按钮！')
           }
@@ -121,7 +122,8 @@
           this.$message.error('验证码输入有误！')
         }
       },
-      joinActivity () {
+      //绑定手机
+      bindAccount () {
         let _this = this
         this.$ajax({
           method: 'post',
@@ -132,7 +134,24 @@
             W5MALLTOKEN: this.W5MALLTOKEN
           }
         }).then(function (response) {
-
+          if (response) {
+            _this.joinActivity()
+          }
+        })
+      },
+      //参加活动
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/joinActivity',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.$router.push({path: '/marketing/assisting', query: {show_index: 2}})
+          }
         })
       },
       hidePop () {

@@ -62,13 +62,14 @@
       return {
         shareFlag: 0,
         ruleFlag: '',
-        temp: 2,
+        temp: 0,
         aGroup: [{}, {}, {}, {}, {}],
         oMyInfo: {},
         bIsLast: ''
       }
     },
     created () {
+      this.isFrom()
       // this.isStart()
       this.isLast()
     },
@@ -77,6 +78,10 @@
       this.loadShare()
     },
     methods: {
+      //判断是否是从参加活动过来的
+      isFrom () {
+
+      },
       //获取助力团
       getGroup () {
         let self = this
