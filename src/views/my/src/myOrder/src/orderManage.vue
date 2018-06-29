@@ -169,8 +169,8 @@
             this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           //this.request();
-          //this.mescroll.resetUpScroll( true );
-          this.mescroll.triggerDownScroll();
+          this.mescroll.resetUpScroll( true );
+          //this.mescroll.triggerDownScroll();
         },
         //保持状态判断
         keepStatus(){
@@ -208,9 +208,6 @@
             var lineDiv = document.getElementsByClassName("lineDiv")[0];
             lineDiv.style.left = this.$route.query.lefts;
           }
-          //this.request();
-          //this.mescroll.resetUpScroll( true );
-          //this.mescroll.triggerDownScroll();
         },
         //判断两个按钮上的文字
         buttonLeft(e,id){
