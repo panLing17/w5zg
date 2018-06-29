@@ -172,17 +172,17 @@
         if (this.code.length === 6) {
           if (this.isLoginFlag && this.phone.length!==11) {
             this.getUserData(function () {
-              if (_this.temp==1) {
+              if (_this.showIndex==1) {
                 _this.getTicket();
-              } else if (temp == 4){
+              } else if (_this.showIndex == 4){
                 _this.bindAccount();
               }
             })
             return
           }
-          if (this.temp==1) {
+          if (this.showIndex==1) {
             this.getTicket();
-          } else if (temp == 4){
+          } else if (this.showIndex == 4){
             this.bindAccount();
           }
 
@@ -192,6 +192,7 @@
       },
       //查看权限
       checkAuthority () {
+        let _this = this
         if (this.showIndex == 1 || this.showIndex == 4) {
           if (localStorage.getItem('redirect_url') == 'undefined' || !localStorage.getItem('redirect_url')) {
             this.$message.error('请从活动入口进入！');
@@ -199,7 +200,9 @@
           } else {
             this.url = localStorage.getItem('redirect_url')
             if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
-              this.isJoinActivity(localStorage.getItem('phone'))
+              this.isJoinActivity(localStorage.getItem('phone'), function () {
+                _this.$router.push('/marketing/index')
+              })
               if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
                 this.getSharerId()
               }
@@ -358,11 +361,11 @@
 
         this.isJoinActivity(this.phone, function (flag) {
           if (flag == 1) {
-            if (_this.temp == 1) {
+            if (_this.showIndex == 1) {
               localStorage.setItem('phone', _this.phone)
               _this.$message.warning('您已经报名过活动！')
               _this.$router.replace('/marketing/index')
-            } else if(_this.temp == 4) {
+            } else if(_this.showIndex == 4) {
               _this.popShow = true
             }
           }else if (flag == 0) {
@@ -405,7 +408,7 @@
                 _this.price = response.data.data
                 localStorage.setItem('phone',_this.phone)
                 _this.getSharerId()
-                if (_this.temp==1) {
+                if (_this.showIndex==1) {
                   _this.$router.replace({
                     path: '/marketing/receiveTicketSuccess',
                     query: {
@@ -415,7 +418,7 @@
                       W5MALLTOKEN: _this.W5MALLTOKEN
                     }
                   })
-                } else if(_this.temp==4) {
+                } else if(_this.showIndex==4) {
                   _this.$router.replace({
                     path: '/marketing/receiveTicketSuccess',
                     query: {
@@ -436,7 +439,7 @@
             }
           }).catch(function (reason) {
             _this.loadingFlag = false
-            _this.$message.error('系统出错~')
+            // _this.$message.error('系统出错~')
 
           });
         }

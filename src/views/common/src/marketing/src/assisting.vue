@@ -23,7 +23,7 @@
             img(src="../../../../../assets/img/06_user_started_ruls.png")
         .middler
           p 奔跑值
-          p 54
+          p {{iHelpActivity}}
         .bottommer
           .left(@click="shareFlag = 1")
             img(src="../../../../../assets/img/06_user_invite_btn.png")
@@ -65,10 +65,12 @@
         temp: 0,
         aGroup: [{}, {}, {}, {}, {}],
         oMyInfo: {},
-        bIsLast: ''
+        bIsLast: '',
+        iHelpActivity: 0
       }
     },
     created () {
+      this.saveUnionId()
       this.whereFrom()
     },
     mounted () {
@@ -76,6 +78,12 @@
       this.loadShare()
     },
     methods: {
+      //保存unionId
+      saveUnionId () {
+        if (this.$route.query.unionId) {
+          localStorage.setItem('unionId')
+        }
+      },
       /*
       * 判断是否是从参加活动过来的
       * temp=2 true
@@ -99,6 +107,7 @@
         }).then(function (response) {
           if (response) {
             self.aGroup = response.data.data
+            self.iHelpActivity = response.data.data.length
             self.$nextTick(()=>{
               self.scroll = new BScroll(self.$refs.bottom, {
                 click: true
@@ -220,7 +229,6 @@
       *   5. originatorId 没有  selfId 没有 => 报名(不处理)
       * */
       authority () {
-        localStorage.setItem('unionId', this.$route.query.unionId)
 
         let originatorId = localStorage.getItem('originatorId')
         let selfId = localStorage.getItem('sharerId')
@@ -277,11 +285,11 @@
           method: 'get',
           url: self.$apiApp + 'presentShoes/isJoined',
           params: {
-            unionId: this.$route.query.unionId
+            unionId: localStorage.getItem('unionId')
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data == 'no' || response.data.data == 'no binding') {
+            if (response.data.data == 'no') {
               self.$router.replace('/marketing/noAttended')
             } else if (response.data.data == 'yes'){
               self.temp = 2
@@ -290,8 +298,48 @@
               self.isLast()
             } else if (response.data.data == 'no auth') {
               self.getWXUrl()
+            } else if (response.data.data == 'no binding') {
+              if (localStorage.getItem('phone') && localStorage.getItem('phone').length == 11) {
+                self.bindAccount()
+              } else {
+                self.$router.replace('/marketing/noAttended')
+              }
             }
            }
+        })
+      },
+      //绑定手机
+      bindAccount () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'member/bindAccount',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            mobile : localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.joinActivity()
+          }
+        })
+      },
+      //参加活动
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/joinActivity',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.temp = 2
+            _this.getGroup()
+            _this.getMyInfo()
+            _this.isLast()
+          }
         })
       },
       //获取微信授权

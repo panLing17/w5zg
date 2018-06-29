@@ -112,7 +112,7 @@
       },
       //获取微信授权URL
       getWXUrl () {
-        if (localStorage.getItem('authority') && localStorage.getItem('authority')=='1') {
+        if (localStorage.getItem('unionId')) {
           this.$router.push('/marketing/assisting')
         } else {
           let self = this
@@ -122,7 +122,6 @@
             params: {}
           }).then(function (response) {
             if (response) {
-              localStorage.setItem('authority', '1')
               window.location.href = response.data.data
             }
           })
