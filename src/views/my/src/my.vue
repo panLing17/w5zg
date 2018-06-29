@@ -71,8 +71,8 @@
               .words 预约体验
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
-              .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center'}") {{netcardCount}}
-                i(v-if="orderCount.unSendOrder>99") +
+              .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center','width':netcardCount>99?'.55rem':'.4rem','padding':netcardCount>99?'0 .05rem':'0'}") {{netcardCount>99?'99':netcardCount}}
+                i(v-if="netcardCount>99") +
               .words 现金券
             li(v-if="userData.member_type === '091'", @click="goAllCard")
               img(src="../../../assets/img/my_cashcoupon@2x.png")
@@ -82,8 +82,8 @@
               .words 银行卡
             li(@click="$router.push('/my/footMark')")
               img(src="../../../assets/img/ic_center_zj@2x.png")
-              .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center'}") {{footmarkNum}}
-                i(v-if="footmarkNum>99") +
+              .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center','width':footmarkNum>99?'.55rem':'.4rem','padding':footmarkNum>99?'0 .05rem':'0'}") {{footmarkNum<=99?footmarkNum:'99'}}
+                i(v-if="footmarkNum>99") ＋
               .words 足迹
       .title
         img(src="../../../assets/img/recommend.png")
@@ -623,17 +623,18 @@
     border-radius: 50%;
     background: rgb(246,0,87);
     color: #fff;
-    font-size: .3rem;
+    font-size: .25rem;
     position: absolute;
     right: -.1rem;
     top: -.15rem;
-    line-height: .4rem;
+    line-height: .45rem;
   }
   .badge i {
     position: absolute;
-    top: -.1rem;
-    right: .05rem;
-    font-size: .3rem;
+    top: -.05rem;
+    right: 0;
+    font-size: .15rem;
+    font-style: normal;
   }
   .myTreasure ul.bottom li {
     position: relative;

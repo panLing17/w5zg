@@ -106,11 +106,6 @@
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
               this.mescroll.scrollTo(now.y, 0);
-              if (this.saveMsg == this.message) {
-                this.pages = 1;
-                this.pageRows = (this.$store.state.pageNums-0)*8;
-              }
-
             }
           })
         } else if(from.path != '/goodsDetailed'){
@@ -133,11 +128,6 @@
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
-          if (this.saveMsg == this.message) {
-            this.pages = 1;
-            this.pageRows = (this.$store.state.pageNums-0)*8;
-          }
-
         }
       })
       if (this.$route.query.id) {
@@ -145,8 +135,8 @@
       } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg;
       }
-      //console.log(this.$refs.oInput.value);
-      //console.log(this.$route.query.msg);
+      // console.log(this.$refs.oInput.value);
+      // console.log(this.$route.query.msg);
       if (this.$refs.oInput.value == this.$route.query.msg) {
         this.check = true;
         this.checked = false;
@@ -156,7 +146,7 @@
         this.order = 0;
         this.sort = "";
         this.mescroll.resetUpScroll( true );
-        this.mescroll.scrollTo(0, 0);
+        //this.mescroll.scrollTo(0, 0);
       }
     },
     mounted(){
@@ -197,24 +187,6 @@
       //遮罩层出现后不让页面滑动
       notScroll (e) {
         e.preventDefault();
-      },
-      //让页面加载时将搜索的文字拼到url上
-      onload(){
-        this.$router.push({path:'/page/commodityList',query:{name:this.message}});
-      },
-      //根据判断是哪个页面传过来的关键字
-      keywordsSearch(){
-        //从分类首页的三级传来
-        // if (this.$route.query.thirdFlag == true) {
-        //   this.message = this.$route.query.thirdKey;
-        // }
-        //从搜索历史页传来
-        // if (this.$route.query.flag == true) {
-        //   this.message = this.$route.query.msg;
-        // }
-        //this.message = this.$route.query.msg;
-        this.onload();
-        //this.exhibition();
       },
       //进入商品详情
       goGoods(goodsId){
@@ -282,7 +254,6 @@
         }
         this.$router.replace({path:'/page/commodityList',query:{id:data.brandId,jumps:this.$route.query.jumps}});
         this.mescroll.scrollTo(0,0);
-        this.request();
         this.mescroll.resetUpScroll( true );
       },
 
@@ -299,7 +270,6 @@
         } else{
           this.order = "";
         }
-        this.request();
         this.mescroll.resetUpScroll( true );
       },
       //销量排序
@@ -315,7 +285,6 @@
         } else {
           this.order = "";
         }
-        this.request();
         this.mescroll.resetUpScroll( true );
       },
       exchange:function(){
@@ -350,7 +319,6 @@
         if (this.check == true) {
           this.sort = 1;
         }
-        this.request();
         this.mescroll.resetUpScroll( true );
       },
       upCallback: function(page) {
@@ -365,7 +333,7 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        this.$store.commit('setPage', pageNum);
+        //this.$store.commit('setPage', pageNum);
         let self = this;
         self.$ajax({
           method:"post",
@@ -402,10 +370,7 @@
             self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
           }
         })
-
-//        .catch(function(error) {
-//          errorCallback&&errorCallback()//失败回调
-//        });
+        //this.$store.commit('setPage', pageNum);
 
       },
 
