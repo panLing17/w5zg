@@ -281,18 +281,33 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data == 'no') {
+            if (response.data.data == 'no' || response.data.data == 'no binding') {
               self.$router.replace('/marketing/noAttended')
-            } else {
+            } else if (response.data.data == 'yes'){
               self.temp = 2
               self.getGroup()
               self.getMyInfo()
               self.isLast()
+            } else if (response.data.data == 'no auth') {
+              self.getWXUrl()
             }
-          }
+           }
         })
       },
-
+      //获取微信授权
+      getWXUrl () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            localStorage.setItem('authority', '1')
+            window.location.href = response.data.data
+          }
+        })
+      }
     }
   }
 </script>

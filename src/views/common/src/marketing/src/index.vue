@@ -65,21 +65,9 @@
     },
     mounted () {
       document.title = '送耐克活动';
-      this.tongji()
       this.loadShare()
-
     },
     methods: {
-      //百度统计
-      tongji () {
-        var _hmt = _hmt || [];
-        (function() {
-          var hm = document.createElement("script");
-          hm.src = "https://hm.baidu.com/hm.js?4b645c94af05d48604fd84cccb5cc2aa";
-          var s = document.getElementsByTagName("script")[0];
-          s.parentNode.insertBefore(hm, s);
-        })();
-      },
       isStart () {
         if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
           if (this.isWeiXin()) {
