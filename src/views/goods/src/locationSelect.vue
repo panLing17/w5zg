@@ -17,7 +17,8 @@
                 .label 收货地址
                 .info {{item.province_name}} {{item.city_name}} {{item.county_name}} {{item.ra_detailed_addr}}
           .button
-            w-button(@click="$router.push('/my/localAdd')") 新增收货地址
+            w-button(@click="$router.push('/my/localAdd')" v-if="origin==='confirm'") 新增收货地址
+            w-button(@click="openCitySelect" v-else) 选择其他省市
 </template>
 
 <script>
@@ -33,6 +34,10 @@
         type: Boolean,
         default: false
       },
+      origin:{
+        type: String,
+        default: 'confirm'
+      },
       location: Array
     },
     mounted () {
@@ -41,6 +46,9 @@
     methods:{
       close () {
         this.$emit('close')
+      },
+      openCitySelect () {
+        this.$parent.selectCityOpen()
       },
       locationSelected (item) {
         this.close()
@@ -68,7 +76,10 @@
           }
         }
         this.$store.commit('getLocation',location)
-        this.$store.commit('giveGoodsAddressChange',item)
+        // 延时赋值收货地址，防止选择城市处同时监听到两个变化
+        setTimeout(()=>{
+          this.$store.commit('giveGoodsAddressChange',item)
+        },500)
         this.$emit('selected')
       }
     }
@@ -87,7 +98,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 101;
+    z-index: 103;
   }
 
   .main {
@@ -97,7 +108,7 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 102;
+    z-index: 104;
   }
   .title {
     display: flex;
