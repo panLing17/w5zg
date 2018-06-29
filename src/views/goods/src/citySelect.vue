@@ -60,7 +60,7 @@
             moveY: 0,
             topMin: 0
           }
-        }
+        },
       }
     },
     props: {
@@ -88,7 +88,8 @@
             this.getMinTop(1)
           })
         }
-      }
+      },
+
     },
     mounted () {
 
@@ -282,7 +283,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 101;
+    z-index: 103;
   }
 
   .main {
@@ -292,7 +293,7 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 102;
+    z-index: 105;
   }
   .title {
     display: flex;

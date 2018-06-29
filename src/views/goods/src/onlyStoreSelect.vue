@@ -128,7 +128,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 30%;
+    height: 70%;
     position: fixed;
     bottom: 0;
     left: 0;

@@ -384,7 +384,10 @@
             self.locationList = response.data.data
             self.locationList.forEach((now)=>{
               if(now.ra_default === '011'){
-                // self.$store.commit('giveGoodsAddressChange',now)
+                // 如果没选择过地址，取默认
+                if(!self.giveGoodsAddress.city_name) {
+                  self.$store.commit('giveGoodsAddressChange',now)
+                }
                 // 为商品赋值运费
                 self.getGoodsFreight().then(()=>{
                   self.computedFreight()
