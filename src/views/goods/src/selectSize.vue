@@ -28,9 +28,13 @@
            span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
            span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
           p(@click="changeLocation")
-            span
+            span(v-if="locationOrAddress !== 'location'")
               img(src="../../../assets/img/location.png")
               i(v-if="giveGoodsAddress.city_name") {{giveGoodsAddress.city_name}}{{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
+              i(v-else) 请选择地址
+            span(v-else)
+              img(src="../../../assets/img/location.png")
+              i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
               i(v-else) 请选择地址
             img(src="../../../assets/img/more@2x.png")
         ul.spec
@@ -59,6 +63,8 @@
         content: 1,
         expressType: 0,
         realGoodsData: {},
+        // 当前该显示的地址信息
+        locationOrAddress: 'location'
       }
     },
     props: {
@@ -85,7 +91,25 @@
         obj=JSON.parse(JSON.stringify(this.photos))
         return obj
       },
-      ...mapState(['userData','giveGoodsAddress'])
+      // 定位地址城市名称
+      locationCityName() {
+        return this.location.city.name
+      },
+      // 收货地址城市名称
+      addressCityName() {
+        return this.giveGoodsAddress.city_name
+      },
+      ...mapState(['userData','giveGoodsAddress','location'])
+    },
+    watch:{
+      // 若定位城市变化，则显示定位相关地址信息
+      locationCityName() {
+        this.locationOrAddress = 'location'
+      },
+      // 若定用户地址市变化，则显示用户地址相关地址信息
+      addressCityName() {
+        this.locationOrAddress = 'address'
+      }
     },
     mounted () {
       this.getStoreNum()

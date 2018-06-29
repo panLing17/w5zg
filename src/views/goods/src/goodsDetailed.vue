@@ -120,14 +120,14 @@
       select-size(v-if="selectSizeShow", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
-    //city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
+    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false")
     bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
     // 选择收货地址
-    location-select(:show="locationFlag", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
     // 新手教程
     goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
@@ -165,7 +165,7 @@
         selectSizeShow: false,
         disTypeFlag: false,
         disTypeName: '专柜自提',
-        //selectCity: false,
+        selectCity: false,
         selectStoreFlag: false,
         shoppingCartFlag: false,
         selectShare: false,
@@ -341,11 +341,18 @@
       }
     },
     methods:{
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
+      selectCityOpen(){
+        this.selectCity = true
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll( isLock );
       },
       selectCityShow () {
+        //this.selectCity = true
         if (this.disTypeName === '专柜自提') {
           this.onlyStoreSelect = true
         } else {
@@ -373,7 +380,11 @@
       },
       // 选择收货地址后
       locationChange () {
-
+        // 重新渲染选择规格组件，触发库存等数据的请求
+        this.selectSizeShow = false
+        setTimeout(()=>{
+          this.selectSizeShow = true
+        },50)
       },
       scrollTo(h,t){
         this.mescroll.scrollTo( h, t );
@@ -566,6 +577,8 @@
       cityChange (data) {
         this.$store.commit('getLocation',data)
         this.selectCity = false
+        // 关闭选择收货地址
+        this.locationFlag = false
         // 重新渲染选择规格组件，触发库存等数据的请求
         this.selectSizeShow = false
         setTimeout(()=>{
@@ -593,6 +606,7 @@
         if (this.selectedSpec.length>0) {
           // 根据配送类型进行操作
           if (this.disTypeName==='专柜自提') {
+
             // 根据是否有城市判断是否选择过地址
             if (this.transfer.city) {
               this.onlyStoreChange()
@@ -640,11 +654,9 @@
           } else {
             // 为配送订单并且已选地址直接进入下一步
             console.log(this.$store.state.giveGoodsAddress)
-            if (this.$store.state.giveGoodsAddress.city_name) {
+
               this.expressNext()
-            } else{
-              this.$message.warning('请选择收货/自提地址')
-            }
+
 
           }
         } else {
