@@ -14,7 +14,7 @@
             p 已经为TA攒了片<span>{{randomText}}</span>啦~
             p 您还有3次领券机会，
             p 快去给其他小伙伴加油抢鞋吧！
-          .temp2Btn
+          .temp2Btn(@click="$router.push('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         .temp3(v-if="temp==3")
           .info
@@ -22,9 +22,9 @@
             .infoDesc 发起人：
             .infoName 张三(微信名)
           .temp3Desc
-            p 已经为TA助力过啦~
-            p 您的助力次数已达到上限！
-          .temp2Btn
+            p 已经为TA攒了根鞋带啦~
+            p 您的加油次数已达到上限！
+          .temp2Btn(@click="$router.push('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         <!--.temp4(v-if="temp==4")-->
           <!--.temp4Desc-->
@@ -38,9 +38,9 @@
             .infoDesc 发起人：
             .infoName 张三(微信名)
           .temp3Desc
-            p 您的好友想要领1200元的耐克鞋
+            p 您的好友想要领价值1200元的耐克鞋
             p 快来帮TA免费拿吧！
-          .temp2Btn
+          .temp2Btn(@click="$router.push({path: '/marketing/receiveTicket', query: {show_index: 4}})")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_help_btn.png")
         .temp6(v-if="temp==6")
           .info
@@ -49,8 +49,8 @@
             .infoName 张三(微信名)
           .temp3Desc
             p Sorry，
-            p 您的助力次数已达到上限！
-          .temp2Btn
+            p 您的加油次数已达到上限！
+          .temp2Btn(@click="$router.push('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
       .contentBottom
         .temp2Bottom(v-if="temp==2 || temp==3 || temp==4 || temp==6")
@@ -72,7 +72,7 @@
     name: "personal",
     data () {
       return {
-        temp: 1,
+        temp: 5,
         oOriginInfo: {},
         randomText: '',
         bIsHelped: '',
@@ -80,7 +80,8 @@
       }
     },
     created () {
-      this.isHelped()
+      // this.isHelped()
+      // this.getOriginInfo()
     },
     mounted () {
       document.title = "个人中心"

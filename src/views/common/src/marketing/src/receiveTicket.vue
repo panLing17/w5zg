@@ -23,31 +23,6 @@
             input.phone(type="number", placeholder="请输入手机号领取", v-model="phone")
           .submitBtn(@click="receive")
             img.submitImg(src="../../../../../assets/img/16_inputnum_btn.png")
-        <!--.template2(v-if="showIndex==2")-->
-          <!--.template2ImgWrapper-->
-            <!--img.template2Img(src="../../../../../assets/img/nike4.png")-->
-            <!--.price ￥{{price}}-->
-          <!--.descWrapper-->
-            <!--.desc1.temp2Desc1 {{price}}元<span>工会福利券已到账</span>-->
-            <!--.desc2.temp2Desc2 手机号登录万物直供商城使用-->
-          <!--.desc3 免费领取-->
-            <!--strong.strong1 1200元耐克鞋-->
-          <!--.nextBtn(@click="sendEnrollSmsByAfs")-->
-            <!--img.nextImg(src="../../../../../assets/img/nike5.png")-->
-        <!--.template3(v-if="showIndex==3")-->
-          <!--.template2ImgWrapper-->
-            <!--img.template2Img(src="../../../../../assets/img/nike4.png")-->
-          <!--.descWrapper-->
-            <!--.desc1.tamp3Desc1 已经为TA攒了片<strong>{{randomText}}</strong>啦~-->
-            <!--.desc4 额外赠送-->
-              <!--strong.strong2 {{price}}元工会福利券-->
-              <!--span 已发放至您的手机账号-->
-          <!--.desc3.small 免费领取-->
-            <!--strong.strong1 1200元耐克鞋-->
-          <!--.nextBtn-->
-            <!--img.nextImg(src="../../../../../assets/img/nike6.png")-->
-          <!--.nextBtn.next-->
-            <!--img.nextImg(src="../../../../../assets/img/nike7.png")-->
       .temp1Desc(v-if="showIndex==1 || showIndex==4") 我们将保护您的个人隐私不被泄露
       transition(name="fade")
         .mask(v-show="popShow", @click="hidePop")
@@ -88,8 +63,8 @@
       }
     },
     created () {
-      this.getToken()
       this.getData()
+      this.getToken()
       this.checkAuthority()
       this.isLogin()
       this.getRandomText()

@@ -110,10 +110,13 @@
         })
       },
       getData () {
+        if (this.$route.query.show_index) {
+          this.showIndex = this.$route.query.show_index;
+        }
         this.price = this.$route.query.price
         this.sessionId = this.$route.query.sessionId
         this.phone = this.$route.query.phone,
-          this.W5MALLTOKEN = this.$route.query.W5MALLTOKEN
+        this.W5MALLTOKEN = this.$route.query.W5MALLTOKEN
       },
       sendEnrollSmsByAfs () {
         let _this = this
