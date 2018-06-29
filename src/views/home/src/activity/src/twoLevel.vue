@@ -13,7 +13,7 @@
               img.brandImg(:src="item.image | img-filter")
               .brandName {{item.title}}
           .noData(v-if="noDataShow.brand") 暂无大牌推荐
-          .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多推荐
+          .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多品牌
         .block       
           ul.categoryList(:style="{'max-height': category.height}", ref="category")
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
