@@ -131,7 +131,8 @@
           params: {
             unionId: localStorage.getItem('unionId'),
             mobile : this.phone,
-            W5MALLTOKEN: this.W5MALLTOKEN
+            W5MALLTOKEN: this.W5MALLTOKEN,
+            vcode: this.code
           }
         }).then(function (response) {
           if (response) {
@@ -150,7 +151,7 @@
           }
         }).then(function (response) {
           if (response) {
-            _this.$router.push({path: '/marketing/assisting', query: {show_index: 2}})
+            _this.$router.push({path: '/marketing/assisting', query: {temp: 2}})
           }
         })
       },

@@ -67,7 +67,6 @@
       this.getToken()
       this.checkAuthority()
       this.isLogin()
-      this.getRandomText()
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
@@ -84,10 +83,12 @@
           params: {
             unionId: localStorage.getItem('unionId'),
             mobile : this.phone,
-            W5MALLTOKEN: this.W5MALLTOKEN
+            W5MALLTOKEN: this.W5MALLTOKEN,
+            vcode: this.code
           }
         }).then(function (response) {
           if (response) {
+            localStorage.setItem('phone', _this.phone)
             _this.helpActivity()
           }
         })
@@ -107,6 +108,45 @@
             _this.getTicket2()
           }
         })
+      },
+      getTicket2 () {
+        if (this.loadingFlag === false) {
+          this.loadingFlag = true
+          let _this = this;
+          this.$ajax({
+            method: 'get',
+            url: 'http://trading.w5zg.com/netcard/qrcodeBySys/3defd79d443af9610ee74e406cf51c61',
+            params:{
+              mobile: this.phone,
+              merchant: 'http://trading.w5zg.com/netcard/qrcodeBySys/3defd79d443af9610ee74e406cf51c61'.split('/')['http://trading.w5zg.com/netcard/qrcodeBySys/3defd79d443af9610ee74e406cf51c61'.split('/').length-1]
+            }
+          }).then(function (response) {
+            _this.loadingFlag = false
+            _this.code = ''
+            if (response) {
+              if (response.data.msg != '您已经超过领取上限') {
+                _this.price = response.data.data
+                localStorage.setItem('phone',_this.phone)
+                _this.getSharerId()
+                if(_this.showIndex==4) {
+                  _this.$router.replace({
+                    path: '/marketing/receiveTicketSuccess',
+                    query: {
+                      price: response.data.data,
+                      show_index: 2
+                    }
+                  })
+                }
+              } else {
+                _this.$message.error(response.data.msg)
+              }
+            }
+          }).catch(function (reason) {
+            _this.loadingFlag = false
+            // _this.$message.error('系统出错~')
+
+          });
+        }
       },
       loadShare () {
         let _this = this
@@ -158,15 +198,6 @@
           }
         })
       },
-      getRandomText () {
-        if (this.showIndex==3) {
-          let Range = 4;
-          let Rand = Math.random();
-          let num = Math.round(Rand * Range);
-          let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
-          this.randomText = aText[num]
-        }
-      },
       checkCode () {
         let _this = this
         if (this.code.length === 6) {
@@ -193,15 +224,18 @@
       //查看权限
       checkAuthority () {
         let _this = this
-        if (this.showIndex == 1 || this.showIndex == 4) {
+        if (this.showIndex == 1) {
           if (localStorage.getItem('redirect_url') == 'undefined' || !localStorage.getItem('redirect_url')) {
             this.$message.error('请从活动入口进入！');
             this.$router.replace('/home')
           } else {
             this.url = localStorage.getItem('redirect_url')
             if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
-              this.isJoinActivity(localStorage.getItem('phone'), function () {
-                _this.$router.push('/marketing/index')
+              this.isJoinActivity(localStorage.getItem('phone'), function (data) {
+                if (data == 1) {
+                  _this.$message.warning('您已参加过报名！')
+                  _this.$router.push('/marketing/index')
+                }
               })
               if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
                 this.getSharerId()
@@ -418,21 +452,7 @@
                       W5MALLTOKEN: _this.W5MALLTOKEN
                     }
                   })
-                } else if(_this.showIndex==4) {
-                  _this.$router.replace({
-                    path: '/marketing/receiveTicketSuccess',
-                    query: {
-                      price: response.data.data,
-                      sessionId: _this.sessionId,
-                      phone: _this.phone,
-                      W5MALLTOKEN: _this.W5MALLTOKEN,
-                      show_index: 2
-                    }
-                  })
                 }
-
-
-
               } else {
                 _this.$message.error(response.data.msg)
               }
