@@ -17,8 +17,8 @@
         .topper
           .lefter
             .pic
-              img(src="../../../../../assets/img/kaka.jpg")
-            .namer 你好，KAKA！
+              img(:src="oMyInfo.headimgurl")
+            .namer 你好，{{oMyInfo.nickname}}！
           .righter(@click="ruleFlag=0")
             img(src="../../../../../assets/img/06_user_started_ruls.png")
         .middler
@@ -27,7 +27,7 @@
         .bottommer
           .left(@click="shareFlag = 1")
             img(src="../../../../../assets/img/06_user_invite_btn.png")
-          .right
+          .right(@click="$router.push('/home')")
             img(src="../../../../../assets/img/06_user_mall_btn.png")
         .bottom(v-if="temp == 2", ref="bottom")
           .assists
@@ -38,9 +38,9 @@
             ul.listter
               li(v-for="item in aGroup")
                 .headPic
-                  img(src="../../../../../assets/img/kaka.jpg")
+                  img(:src="item.helper_avatar")
                 .wordsR
-                  p KAKA牛逼
+                  p {{item.helper_name}}
                   p 已领500元工会福利券
         .btnN
           img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
@@ -63,7 +63,7 @@
         shareFlag: 0,
         ruleFlag: '',
         temp: 0,
-        aGroup: [{}, {}, {}, {}, {}],
+        aGroup: [],
         oMyInfo: {},
         bIsLast: '',
         iHelpActivity: 0
@@ -127,7 +127,7 @@
           }
         }).then(function (response) {
           if (response) {
-            self.oMyInfo = response.data.data
+            self.oMyInfo = JSON.parse(response.data.data)
           }
         })
       },
@@ -351,10 +351,10 @@
           params: {}
         }).then(function (response) {
           if (response) {
-            localStorage.setItem('authority', '1')
             window.location.href = response.data.data
           }
         })
+
       }
     }
   }

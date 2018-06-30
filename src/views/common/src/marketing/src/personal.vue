@@ -7,9 +7,9 @@
         img.contentCenterImg(src="../../../../../assets/img/13_helper_notice_bg.jpg")
         .temp2(v-if="temp==2")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.headimgurl")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.nickname}}(微信名)
           .temp2Desc
             p 已经为TA攒了片<span>{{randomText}}</span>啦~
             p 您还有3次领券机会，
@@ -18,9 +18,9 @@
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         .temp3(v-if="temp==3")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.headimgurl")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.nickname}}(微信名)
           .temp3Desc
             p 已经为TA攒了根鞋带啦~
             p 您的加油次数已达到上限！
@@ -34,9 +34,9 @@
             <!--img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_user_btn.png")-->
         .temp5(v-if="temp==5")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.headimgurl")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.nickname}}(微信名)
           .temp3Desc
             p 您的好友想要领价值1200元的耐克鞋
             p 快来帮TA免费拿吧！
@@ -44,9 +44,9 @@
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_help_btn.png")
         .temp6(v-if="temp==6")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.headimgurl")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.nickname}}(微信名)
           .temp3Desc
             p Sorry，
             p 您的加油次数已达到上限！
@@ -72,7 +72,7 @@
     name: "personal",
     data () {
       return {
-        temp: 5,
+        temp: 0,
         oOriginInfo: {},
         randomText: '',
         bIsHelped: '',
@@ -80,8 +80,8 @@
       }
     },
     created () {
-      // this.isHelped()
-      // this.getOriginInfo()
+      this.isHelped()
+      this.getOriginInfo()
     },
     mounted () {
       document.title = "送耐克活动"
@@ -103,12 +103,13 @@
               if (self.bIsHelped == 'yes') {
                 self.temp = 3
               } else {
-                self.getRandomText()
-                self.temp = 2
+                self.temp = 6
               }
             } else {
+
               if (self.bIsHelped == 'yes') {
-                self.temp = 6
+                self.getRandomText()
+                self.temp = 2
               } else {
                 self.temp = 5
               }
@@ -144,19 +145,18 @@
           }
         }).then(function (response) {
           if (response) {
-            self.oOriginInfo = response.data.data
+            self.oOriginInfo = JSON.parse(response.data.data)
           }
         })
       },
       //获取随机字符串
       getRandomText () {
-        if (this.showIndex==3) {
           let Range = 4;
           let Rand = Math.random();
           let num = Math.round(Rand * Range);
           let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
           this.randomText = aText[num]
-        }
+
       }
     }
   }
@@ -222,6 +222,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    flex-wrap: nowrap;
   }
   .avatar {
     width: 1.33rem;
@@ -237,6 +239,10 @@
   }
   .infoName {
     margin-left: 0;
+    max-width: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .temp2Desc, .temp3Desc, .temp4Desc {
     text-align: center;
