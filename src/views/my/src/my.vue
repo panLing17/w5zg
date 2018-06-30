@@ -40,17 +40,17 @@
             li(style="color:rgb(151,151,151);font-weight:400;") 全部订单 ＞
           ul.bottom
             li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
-              .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center'}") {{orderCount.unPayOrder}}
+              .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center','font-size':orderCount.unPayOrder<10?'.3rem':'.25rem'}") {{orderCount.unPayOrder}}
                 i(v-if="orderCount.unPayOrder>99") +
               img(src="../../../assets/img/my_obligation@2x.png")
               .character 待付款
             li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
-              .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center'}") {{orderCount.unSendOrder}}
+              .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center','font-size':orderCount.unSendOrder<10?'.3rem':'.25rem'}") {{orderCount.unSendOrder}}
                 i(v-if="orderCount.unSendOrder>99") +
               img(src="../../../assets/img/my_readyfordelivery@2x.png")
               .character 待发货
             li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
-              .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center'}") {{orderCount.unRecieveOrder}}
+              .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center','font-size':orderCount.unRecieveOrder<10?'.3rem':'.25rem'}") {{orderCount.unRecieveOrder}}
                 i(v-if="orderCount.unRecieveOrder>99") +
               img(src="../../../assets/img/my_waitforreceiving2@2x.png")
               .character 待收货
@@ -82,7 +82,7 @@
               .words 银行卡
             li(@click="$router.push('/my/footMark')")
               img(src="../../../assets/img/ic_center_zj@2x.png")
-              .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center','width':footmarkNum>99?'.55rem':'.4rem','padding':footmarkNum>99?'0 .05rem':'0'}") {{footmarkNum<=99?footmarkNum:'99'}}
+              .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center','width':footmarkNum>99?'.6rem':'.4rem','padding':footmarkNum>99?'.08rem':'0','border-radius':footmarkNum>99?'.4rem':'50%','line-height':footmarkNum>99?'.3rem':'.45rem'}") {{footmarkNum<=99?footmarkNum:'99'}}
                 i(v-if="footmarkNum>99") ＋
               .words 足迹
       .title
@@ -631,8 +631,8 @@
   }
   .badge i {
     position: absolute;
-    top: -.05rem;
-    right: 0;
+    top: .02rem;
+    right: .02rem;
     font-size: .15rem;
     font-style: normal;
   }
