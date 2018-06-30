@@ -12,15 +12,16 @@
           img(:src="goodsPics | img-filter")
         .goodsExplain
           .words {{goodsStatus}}
-          .express {{CourierName}}: {{number}}
-          .contactWay 官方联系: {{phone}}
+          .express {{goodsStatus!='暂无信息'?CourierName:CourierName2}}： {{goodsStatus!='暂无信息'?number:number2}}
+          .contactWay(v-if="false") 官方联系: {{phone}}
     .logisticsAddress
       img(src="../../../../../assets/img/citySearch@2x.png")
       .address
         span 收货地址:
         strong {{address}}
     .logisticsMsg
-      ul
+      .emptyMsg(v-if="logisticsFlag") 对不起，暂无快递物流信息
+      ul(v-else="logisticsFlag")
         li(v-for="(item,index) in states")
           .time
             span.wrap
@@ -46,6 +47,7 @@
       components:{recommend},
       data(){
         return{
+          logisticsFlag:"", //物流信息显隐
           recommendFlag:true, //判断推荐的显隐
           goodsPics:this.$route.query.goodsPic, //商品的图片
           address:this.$route.query.address, //接收订单详情页面的地址
@@ -57,7 +59,9 @@
           CourierName:"", //快递名字
           packDrops:"点击收起详情",
           recommendGoods: [],
-          states:[]
+          states:[],
+          CourierName2:"", //快递名字2
+          number2:"", //快递的编号2
         }
       },
       computed: mapState(['position']),
@@ -114,6 +118,10 @@
             url:self.$apiMember + "orderLogistics/info",
             params:{orderId:self.sonOrder,orderType:self.ordertype}
           }).then(function(res){
+            if (res.data.data.status === "205") {
+              self.logisticsFlag = true;
+              self.secondRequest();
+            }
             self.CourierName = res.data.data.result.expName;
             self.number = res.data.data.result.number;
             self.phone = res.data.data.result.expPhone;
@@ -130,6 +138,22 @@
             if (res.data.data.result.deliverystatus == 4) {
               self.goodsStatus = "派送失败";
             }
+            console.log(res.data.data.result == "") 
+            if (res.data.data.result == "") {
+              self.goodsStatus = "暂无信息";
+            }
+          })
+        },
+        secondRequest(){
+          let self = this;
+          self.$ajax({
+            method:"get",
+            url:self.$apiMember + "orderLogistics/info/common",
+            params:{orderId:self.sonOrder,orderType:self.ordertype}
+          }).then(function(res){
+            console.log(res.data.data);
+            self.CourierName2 = res.data.data.ul_company_name;
+            self.number2 = res.data.data.ul_number;
           })
         },
         //点击收起
@@ -224,7 +248,7 @@
     margin-right: .3rem;
   }
   .center .goodsExplain{
-    padding: .1rem 0 0 .3rem;
+    padding: .2rem 0 0 .3rem;
     width: 100%;
   }
   .center .goodsExplain .words{
@@ -235,7 +259,7 @@
   .center .goodsExplain .contactWay{
     margin-top: .3rem;
     color: rgb(153,153,153);
-    font-size: .35rem;
+    font-size: .38rem;
   }
   /*订单内容--结束*/
   /*物流地址--开始*/
@@ -266,7 +290,8 @@
   .logisticsMsg{
     /*height: 100%;*/
     background-color: #fff;
-    padding-top: .3rem;
+    padding-top: .26rem;
+    padding-bottom: .93rem;
   }
   .logisticsMsg li{
     width: 100%;
@@ -310,6 +335,17 @@
     position: absolute;
     top: -.2em;
     font-size: .3rem;
+  }
+  .emptyMsg{
+    width: 5.46rem;
+    height: .88rem;
+    border: 1px solid #666;
+    color: #666;
+    border-radius: .2rem;
+    margin: 0 auto;
+    font-size: .32rem;
+    text-align: center;
+    line-height: .88rem;
   }
   /*物流信息--结束*/
   /*点击收起下拉--开始*/
