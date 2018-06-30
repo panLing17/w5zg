@@ -70,20 +70,21 @@
     methods: {
       isStart () {
         //微信测试环境
-        // if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
-        //   if (this.isWeiXin()) {
-        //     localStorage.setItem('originatorId', this.$route.query.sharerId)
-        //     this.getWXUrl()
-        //   } else {
-        //     this.$message.error('请在微信中打开！')
-        //     this.$router.push('/home')
-        //   }
-        // }
+        if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
+          if (this.isWeiXin()) {
+            localStorage.setItem('originatorId', this.$route.query.sharerId)
+            this.getWXUrl()
+          } else {
+            this.$message.error('请在微信中打开！')
+            this.$router.push('/home')
+          }
+        }
 
         // 模拟环境
-        localStorage.setItem('originatorId', this.$route.query.sharerId)
-        this.$router.push('/marketing/assisting')
+        // localStorage.setItem('originatorId', this.$route.query.sharerId)
+        // this.$router.push('/marketing/assisting')
 
+        //正式环境
         // let self = this
         // self.$ajax({
         //   method: 'get',
@@ -117,9 +118,7 @@
       },
       //获取微信授权URL
       getWXUrl () {
-        if (localStorage.getItem('unionId')) {
-          this.$router.push('/marketing/assisting')
-        } else {
+        if (!localStorage.getItem('unionId') || localStorage.getItem('unionId')==='undefined' || localStorage.getItem('unionId') == null) {
           let self = this
           self.$ajax({
             method: 'get',
@@ -130,6 +129,9 @@
               window.location.href = response.data.data
             }
           })
+        } else {
+          console.log('有unionId')
+          this.$router.push('/marketing/assisting')
         }
       },
       // 分享

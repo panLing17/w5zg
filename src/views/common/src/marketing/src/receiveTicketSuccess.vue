@@ -22,6 +22,7 @@
         .template3(v-if="showIndex==2")
           .template2ImgWrapper
             img.template2Img(src="../../../../../assets/img/nike4.png")
+            .price ￥{{price}}
           .descWrapper
             .desc1.tamp3Desc1 已经为TA攒了片<strong>{{randomText}}</strong>啦~
             .desc4 额外赠送
@@ -29,7 +30,7 @@
               span 已发放至您的手机账号
           .desc3.small 免费领取
             strong.strong1 1200元耐克鞋
-          .nextBtn(@click="sendEnrollSmsByAfs")
+          .nextBtn(@click="isPartake")
             img.nextImg(src="../../../../../assets/img/nike6.png")
           .nextBtn.next(@click="$router.push('/home')")
             img.nextImg(src="../../../../../assets/img/nike7.png")
@@ -49,12 +50,50 @@
       }
     },
     created () {
-      // this.getData()
+      this.getData()
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
     },
     methods: {
+      //用户是否参加过
+      isPartake () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isJoined',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no') {
+              self.joinActivity()
+            } else if (response.data.data == 'yes'){
+              self.$router.push({path: 'marketing/assisting', query:{temp: 2}})
+            } else if (response.data.data == 'no auth') {
+              self.getWXUrl()
+            } else if (response.data.data == 'no binding') {
+              self.bindAccount()
+            }
+          }
+        })
+      },
+      //参加活动
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/joinActivity',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.$router.push({path: '/marketing/assisting', query: {temp: 2}})
+          }
+        })
+      },
       loadShare () {
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
