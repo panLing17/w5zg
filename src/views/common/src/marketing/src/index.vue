@@ -69,15 +69,20 @@
     },
     methods: {
       isStart () {
-        if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
-          if (this.isWeiXin()) {
-            localStorage.setItem('originatorId', this.$route.query.sharerId)
-            this.getWXUrl()
-          } else {
-            this.$message.error('请在微信中打开！')
-            this.$router.push('/home')
-          }
-        }
+        //微信测试环境
+        // if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
+        //   if (this.isWeiXin()) {
+        //     localStorage.setItem('originatorId', this.$route.query.sharerId)
+        //     this.getWXUrl()
+        //   } else {
+        //     this.$message.error('请在微信中打开！')
+        //     this.$router.push('/home')
+        //   }
+        // }
+
+        // 模拟环境
+        localStorage.setItem('originatorId', this.$route.query.sharerId)
+        this.$router.push('/marketing/assisting')
 
         // let self = this
         // self.$ajax({
@@ -224,7 +229,7 @@
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')
         } else {
-          this.$router.push('/marketing/assisting')
+          this.getWXUrl()
         }
       },
       //下面按钮判断走向
