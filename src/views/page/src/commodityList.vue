@@ -108,7 +108,9 @@
               this.mescroll.scrollTo(now.y, 0);
             }
           })
-        } else if(from.path != '/goodsDetailed'){
+        }  else if (from.path == '/home/searchHistory') {
+          this.mescroll.resetUpScroll( true );
+        } else {
           if (this.$route.query.id) {
             this.message = this.$store.state.keywordsL;
           } else if (this.$route.query.flags == 1) {
@@ -366,7 +368,7 @@
             }
             successCallback&&successCallback(response.data.data);//成功回调
           // }
-          if (self.recommendGoods.length == 0) {
+          if (self.recommendGoods.length === 0) {
             self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
           }
         })

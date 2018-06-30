@@ -19,6 +19,7 @@
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
               img.categoryImg(:src="item.image | img-filter")
               .categoryName {{item.title}}
+                p 全场2折起
           .noData(v-if="noDataShow.category") 暂无精选分类
           .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
         img.louceng(src="../../../../../assets/img/louceng2.png")
@@ -43,7 +44,7 @@
         category: {
           show: true,
           status: false,
-          height: '4.05rem',
+          height: '5.2rem',
           auto: 'none'
         },
         noDataShow: {
@@ -216,7 +217,7 @@
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
           this.brand.height = '5.72rem'
-          this.category.height = '4.05rem'
+          this.category.height = '5.2rem'
         })
       },
       dropCheck (index) {
@@ -234,7 +235,7 @@
           if (this.category.status) {
             this.category.height = this.category.auto
           } else {
-            this.category.height = '4.05rem'
+            this.category.height = '5.2rem'
           }
         }
       },
@@ -255,6 +256,9 @@
 </script>
 
 <style scoped>
+  /*.wrap{
+    background-color: #f2f2f2;
+  }*/
   .mescroll {
     position: fixed;
     top: 1.3rem;
@@ -264,6 +268,7 @@
   }
   .block {
     padding-top: .2rem;
+    background-color: #fff;
   }
   .blockTitle {
     display: flex;
@@ -283,7 +288,7 @@
     width: 2rem;
     height: 1rem;
     line-height: 1rem;
-    color: rgb(153,153,153);
+    color: #666;
     margin: 0 auto;
     font-size: .35rem;
   }
@@ -321,7 +326,7 @@
     width: 100%;
     height: 100%;
     border-radius: .13rem;
-    z-index: -1;
+    /*z-index: -1;*/
   }
   .brandName {
     font-size: .42rem;
@@ -332,6 +337,8 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    z-index: 1;
+    position: relative;
   }
   .categoryList {
     padding: 0 .26rem;
@@ -344,7 +351,7 @@
   .categoryItem {
     /*margin: 0 .8rem .26rem ;*/
     width: 1.46rem;
-    height: 1.9rem;
+    height: 2.45rem;
     overflow: hidden;
     position: relative;
     margin: 0 .43rem .2rem;
@@ -362,12 +369,17 @@
     bottom: 0;
     left: 0;
     text-align: center;
-    font-size: .3rem;
+    font-size: .32rem;
     color: #333;
     width: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+  .categoryName p{
+    margin-top: .02rem;
+    font-size: .29rem;
+    color: #666;
   }
   .louceng {
     margin-top: .26rem;
