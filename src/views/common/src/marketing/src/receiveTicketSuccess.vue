@@ -37,6 +37,7 @@
 </template>
 
 <script>
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "receiveTicketSuccess",
     data () {
@@ -54,6 +55,7 @@
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
+      this.loadShare()
     },
     methods: {
       //用户是否参加过

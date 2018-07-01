@@ -29,19 +29,20 @@
             img(src="../../../../../assets/img/06_user_invite_btn.png")
           .right(@click="$router.push('/home')")
             img(src="../../../../../assets/img/06_user_mall_btn.png")
-        .bottom(v-if="temp == 2", ref="bottom")
-          .assists
-            .logoN
-              .line
-              .titleN 我的助力团
-              .line
-            ul.listter
-              li(v-for="item in aGroup")
-                .headPic
-                  img(:src="item.helper_avatar")
-                .wordsR
-                  p {{item.helper_name}}
-                  p 已领{{item.bonus}}元工会福利券
+        .bottom(v-if="temp == 2")
+          .assists(ref="bottom")
+            .assistsWrapper
+              .logoN
+                .line
+                .titleN 我的助力团
+                .line
+              ul.listter
+                li(v-for="item in aGroup")
+                  .headPic
+                    img(:src="item.helper_avatar")
+                  .wordsR
+                    p {{item.helper_name}}
+                    p 已领{{item.bonus}}元工会福利券
         .btnN
           img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")

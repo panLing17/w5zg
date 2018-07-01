@@ -110,7 +110,13 @@
           }
         }).then(function (response) {
           if (response) {
-            _this.getTicket2()
+            if (response.data.data == 'link invalid') {
+              _this.$message.error('您的好友还未参加活动，不能帮TA助力哦~')
+              _this.$router.replace('/marketing/index')
+            } else {
+              _this.getTicket2()
+            }
+
           }
         })
       },
