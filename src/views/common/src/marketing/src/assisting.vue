@@ -41,7 +41,7 @@
                   img(:src="item.helper_avatar")
                 .wordsR
                   p {{item.helper_name}}
-                  p 已领500元工会福利券
+                  p 已领{{item.bonus}}元工会福利券
         .btnN
           img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")
@@ -81,7 +81,7 @@
       //保存unionId
       saveUnionId () {
         if (this.$route.query.unionId) {
-          localStorage.setItem('unionId')
+          localStorage.setItem('unionId', this.$route.query.unionId)
         }
       },
       /*
@@ -369,7 +369,7 @@
   }
   /*第一内容部分--开始*/
   .topLogo{
-    padding: .8rem .5rem 0;
+    padding: .5rem .5rem 0;
   }
   .topLogo img{
     width: 9rem;

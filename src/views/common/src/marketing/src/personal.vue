@@ -7,9 +7,9 @@
         img.contentCenterImg(src="../../../../../assets/img/13_helper_notice_bg.jpg")
         .temp2(v-if="temp==2")
           .info
-            img.avatar(:src="oOriginInfo.headimgurl")
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName {{oOriginInfo.nickname}}(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp2Desc
             p 已经为TA攒了片<span>{{randomText}}</span>啦~
             p 您还有3次领券机会，
@@ -18,9 +18,9 @@
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         .temp3(v-if="temp==3")
           .info
-            img.avatar(:src="oOriginInfo.headimgurl")
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName {{oOriginInfo.nickname}}(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp3Desc
             p 已经为TA攒了根鞋带啦~
             p 您的加油次数已达到上限！
@@ -34,9 +34,9 @@
             <!--img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_user_btn.png")-->
         .temp5(v-if="temp==5")
           .info
-            img.avatar(:src="oOriginInfo.headimgurl")
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName {{oOriginInfo.nickname}}(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp3Desc
             p 您的好友想要领价值1200元的耐克鞋
             p 快来帮TA免费拿吧！
@@ -44,9 +44,9 @@
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_help_btn.png")
         .temp6(v-if="temp==6")
           .info
-            img.avatar(:src="oOriginInfo.headimgurl")
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName {{oOriginInfo.nickname}}(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp3Desc
             p Sorry，
             p 您的加油次数已达到上限！
@@ -129,6 +129,10 @@
           }
         }).then(function (response) {
           if (response) {
+            if (response.data.data == 'OnePerson') {
+              self.$router.replace({path: '/marketing/assisting', query: {temp: 2}})
+              return
+            }
             self.bIsHelped = response.data.data
             self.isOutRule()
           }
@@ -139,13 +143,13 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'presentShoes/myInfo',
+          url: self.$apiApp + 'presentShoes/sharerInfo',
           params: {
-            unionId: localStorage.getItem('unionId')
+            sharerId: localStorage.getItem('originatorId')
           }
         }).then(function (response) {
           if (response) {
-            self.oOriginInfo = JSON.parse(response.data.data)
+            self.oOriginInfo = response.data.data
           }
         })
       },

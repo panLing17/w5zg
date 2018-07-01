@@ -136,7 +136,13 @@
           }
         }).then(function (response) {
           if (response) {
-            _this.joinActivity()
+            if (response.data.data == 'Already Bind') {
+              _this.$message.error('此微信号已绑定过手机号，请输入正确手机号！')
+              window.location.reload()
+            } else {
+              localStorage.setItem('phone', _this.phone)
+              _this.joinActivity()
+            }
           }
         })
       },

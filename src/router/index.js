@@ -274,6 +274,14 @@ const router = new Router ({
       }
     },
     {
+      path: '/marketing/lookHelp',
+      name: '查看助力',
+      component: Marketing.lookHelp,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/marketing/rankingList',
       name: '排行榜',
       component: Marketing.rankingList,
