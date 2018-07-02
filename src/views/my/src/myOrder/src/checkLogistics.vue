@@ -144,6 +144,7 @@
             }
           })
         },
+        //在无物流信息时执行
         secondRequest(){
           let self = this;
           self.$ajax({
