@@ -53,14 +53,14 @@
   import filtrate from './filtrate.vue'
   import {mapState} from 'vuex'
   export default {
-    name: "commodityList",
+    name: 'commodityList',
     components: {filtrate},
-    data(){
+    data () {
       return {
-        jumps:this.$route.query.jumps, //接收上个页面的参数判断是那个页面来的
-        message:this.$route.query.msg, //在输入框搜索的内容
-        saveMsg: "", //把每次搜索的关键字存储
-        filtrateFlag: true, //右侧筛选的显隐
+        jumps: this.$route.query.jumps, // 接收上个页面的参数判断是那个页面来的
+        message: this.$route.query.msg, // 在输入框搜索的内容
+        saveMsg: '', // 把每次搜索的关键字存储
+        filtrateFlag: true, // 右侧筛选的显隐
         mescroll: null,
         flags: false,
         check: true,
@@ -70,24 +70,24 @@
         change2: false,
         recommendGoods: [],
         style: false,
-        brandId: "", //品牌的id
-        minPrice: "", //开始价格区间
-        maxPrice: "", //结束价格区间
-        pickUps: "", //自提不自提
+        brandId: '', // 品牌的id
+        minPrice: '', // 开始价格区间
+        maxPrice: '', // 结束价格区间
+        pickUps: '', // 自提不自提
         checkFlag: false,
         noKey: true,
-        order: 0, //字段排序
-        keyWord: "", //关键字
-        sort: "", //正序倒序
-        maskFlag:false, //蒙板的显隐
-        goodsFlag:"", //商品列表展示的显隐
-        pages: 1, //商品展示页码
-        pageRows: 8, //商品展示每页的长度
-        flagNum: this.$route.query.flags, //判断是筛选还是url传来的
-        defaultRule: 1, //默认规则
+        order: 0, // 字段排序
+        keyWord: '', // 关键字
+        sort: '', // 正序倒序
+        maskFlag: false, // 蒙板的显隐
+        goodsFlag: '', // 商品列表展示的显隐
+        pages: 1, // 商品展示页码
+        pageRows: 8, // 商品展示每页的长度
+        flagNum: this.$route.query.flags, // 判断是筛选还是url传来的
+        defaultRule: 1 // 默认规则
       }
     },
-    computed: mapState(['location','position']),
+    computed: mapState(['location', 'position']),
     props: {
       type: {
         type: String,
@@ -98,320 +98,316 @@
         default: 'placeholder'
       }
     },
-    watch :{
+    watch: {
       '$route' (to, from) {
-        //console.log(from);
-        //console.log(this.$store.state.pageNums);
-        if (from.path == '/goodsDetailed') {
+        // console.log(from);
+        // console.log(this.$store.state.pageNums);
+        if (from.path === '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
+              this.mescroll.scrollTo(now.y, 0)
             }
           })
-        }  else if (from.path == '/home/searchHistory') {
-          this.mescroll.resetUpScroll( true );
+        } else if (from.path === '/home/searchHistory') {
+          this.mescroll.resetUpScroll(true)
         } else {
           if (this.$route.query.id) {
-            this.message = this.$store.state.keywordsL;
-          } else if (this.$route.query.flags == 1) {
-            this.message = this.$route.query.msg;
+            this.message = this.$store.state.keywordsL
+          } else if (this.$route.query.flags === 1) {
+            this.message = this.$route.query.msg
           }
-          if (this.$refs.oInput.value == this.$route.query.msg) {
-            this.mescroll.resetUpScroll( true );
-            this.mescroll.scrollTo(0, 0);
+          if (this.$refs.oInput.value === this.$route.query.msg) {
+            this.mescroll.resetUpScroll(true)
+            this.mescroll.scrollTo(0, 0)
           }
         }
       }
     },
-    destroyed (){
+    destroyed () {
 
     },
-    activated (){
+    activated () {
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
+          this.mescroll.scrollTo(now.y, 0)
         }
       })
       if (this.$route.query.id) {
-        this.message = this.$store.state.keywordsL;
-      } else if (this.$route.query.flags == 1) {
-        this.message = this.$route.query.msg;
+        this.message = this.$store.state.keywordsL
+      } else if (this.$route.query.flags === 1) {
+        this.message = this.$route.query.msg
       }
       // console.log(this.$refs.oInput.value);
       // console.log(this.$route.query.msg);
-      if (this.$refs.oInput.value == this.$route.query.msg) {
-        this.check = true;
-        this.checked = false;
-        this.change = false;
-        this.change1 = false;
-        this.change2 = false;
-        this.order = 0;
-        this.sort = "";
-        this.mescroll.resetUpScroll( true );
-        //this.mescroll.scrollTo(0, 0);
+      if (this.$refs.oInput.value === this.$route.query.msg) {
+        this.check = true
+        this.checked = false
+        this.change = false
+        this.change1 = false
+        this.change2 = false
+        this.order = 0
+        this.sort = ''
+        this.mescroll.resetUpScroll(true)
+        // this.mescroll.scrollTo(0, 0);
       }
     },
-    mounted(){
-      this.saveMsg = this.$route.query.msg;
-      this.flagNum = this.$route.query.flags;
-      //上拉加载
-      this.$mescrollInt("pageMescroll",this.upCallback,()=>{
+    mounted () {
+      this.saveMsg = this.$route.query.msg
+      this.flagNum = this.$route.query.flags
+      // 上拉加载
+      this.$mescrollInt('pageMescroll', this.upCallback, () => {
         this.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
-            }
-          })
-        }, (obj) => {
-          this.$store.commit('setPosition', {
-            path: this.$route.path,
-            y: obj.preScrollY
-          })
-      });
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0)
+          }
+        })
+      }, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn();
-      this.mescroll.destroy();
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
     },
-    methods:{
-      //当无订单时，将end去掉
-      emptys(){
-        var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
-         mescrollUpwarp.style.visibility = "hidden";
+    methods: {
+      // 当无订单时，将end去掉
+      emptys () {
+        var mescrollUpwarp = document.getElementsByClassName('mescroll-upwarp')[0]
+        mescrollUpwarp.style.visibility = 'hidden'
       },
-      //回退事件
-      backgo(){
-        this.$router.go(-1);
+      // 回退事件
+      backgo () {
+        this.$router.go(-1)
         this.$store.commit('setPosition', {
           path: this.$route.path,
           y: 0
         })
       },
-      //遮罩层出现后不让页面滑动
+      // 遮罩层出现后不让页面滑动
       notScroll (e) {
-        e.preventDefault();
+        e.preventDefault()
       },
-      //进入商品详情
-      goGoods(goodsId){
+      // 进入商品详情
+      goGoods (goodsId) {
         this.$router.push({
-          path:'/goodsDetailed',
-          query:{
-            id:goodsId
+          path: '/goodsDetailed',
+          query: {
+            id: goodsId
           }
         })
       },
-      //筛选左滑
-      leftScroll(){
-        this.mescroll.hideTopBtn();
-        this.maskFlag = true;
-        this.mescroll.lockDownScroll(true);
-        this.mescroll.lockUpScroll(true);
-        this.filtrateFlag = true;
-        var commodityList = document.getElementsByClassName("commodityList")[0];
-        commodityList.style.overflow = "hidden";
+      // 筛选左滑
+      leftScroll () {
+        this.mescroll.hideTopBtn()
+        this.maskFlag = true
+        this.mescroll.lockDownScroll(true)
+        this.mescroll.lockUpScroll(true)
+        this.filtrateFlag = true
+        var commodityList = document.getElementsByClassName('commodityList')[0]
+        commodityList.style.overflow = 'hidden'
       },
-      lefterBack(){
-        this.maskFlag = false;
-        this.mescroll.lockDownScroll(false);
-        this.mescroll.lockUpScroll(false);
-        this.filtrateFlag = false;
-        var commodityList = document.getElementsByClassName("commodityList")[0];
-        commodityList.style.overflow = "scroll";
+      lefterBack () {
+        this.maskFlag = false
+        this.mescroll.lockDownScroll(false)
+        this.mescroll.lockUpScroll(false)
+        this.filtrateFlag = false
+        var commodityList = document.getElementsByClassName('commodityList')[0]
+        commodityList.style.overflow = 'scroll'
       },
-      //从筛选传值过来
-      ievent(data){
-        this.flagNum = 2;
-        this.$store.commit('setKeyWords',data.brandName);
-        this.saveMsg = data.brandName;
-        this.maskFlag = false;
-        this.goodsFlag = true;
-        this.mescroll.lockDownScroll(false);
-        this.mescroll.lockUpScroll(false);
-        var commodityList = document.getElementsByClassName("commodityList")[0];
-        if (data.flag1 == true) {
-          commodityList.style.overflow = "scroll";
-          if (data.pickUps == "可自提") {
-            this.pickUps = 1;
+      // 从筛选传值过来
+      ievent (data) {
+        this.flagNum = 2
+        this.$store.commit('setKeyWords', data.brandName)
+        this.saveMsg = data.brandName
+        this.maskFlag = false
+        this.goodsFlag = true
+        this.mescroll.lockDownScroll(false)
+        this.mescroll.lockUpScroll(false)
+        var commodityList = document.getElementsByClassName('commodityList')[0]
+        if (data.flag1 === true) {
+          commodityList.style.overflow = 'scroll'
+          if (data.pickUps === '可自提') {
+            this.pickUps = 1
           }
-          if (data.pickUps == "不可自提") {
-            this.pickUps = 2;
+          if (data.pickUps === '不可自提') {
+            this.pickUps = 2
           }
-          this.brandId = data.brandId;
-          this.message = data.brandName;
-          this.maxPrice = data.maxPrice;
-          this.minPrice = data.minPrice;
-          this.checkFlag = true;
+          this.brandId = data.brandId
+          this.message = data.brandName
+          this.maxPrice = data.maxPrice
+          this.minPrice = data.minPrice
+          this.checkFlag = true
         }
-        if (data.flag1 == false) {
-          commodityList.style.overflow = "scroll";
-          if (data.pickUps == "可自提") {
-            this.pickUps = 1;
+        if (data.flag1 === false) {
+          commodityList.style.overflow = 'scroll'
+          if (data.pickUps === '可自提') {
+            this.pickUps = 1
           }
-          if (data.pickUps == "不可自提") {
-            this.pickUps = 2;
+          if (data.pickUps === '不可自提') {
+            this.pickUps = 2
           }
-          this.brandId = "",
-          this.maxPrice = data.maxPrice;
-          this.minPrice = data.minPrice;
-          this.checkFlag = true;
+          this.brandId = ''
+          this.maxPrice = data.maxPrice
+          this.minPrice = data.minPrice
+          this.checkFlag = true
         }
-        this.$router.replace({path:'/page/commodityList',query:{id:data.brandId,jumps:this.$route.query.jumps}});
-        this.mescroll.scrollTo(0,0);
-        this.mescroll.resetUpScroll( true );
+        this.$router.replace({path: '/page/commodityList', query: {id: data.brandId, jumps: this.$route.query.jumps}})
+        this.mescroll.scrollTo(0, 0)
+        this.mescroll.resetUpScroll(true)
       },
 
-      //综合排序
-      changes1:function(){
-        this.change1 = !this.change1;
-        this.change2 = false;
-        this.change = false;
-        this.check = true;
-        this.checked = false;
-        this.goodsFlag = false;
-        if (this.change1 == true){
-          this.order = 1;
-        } else{
-          this.order = "";
-        }
-        this.mescroll.resetUpScroll( true );
-      },
-      //销量排序
-      changes2:function(){
-        this.change2 = !this.change2;
-        this.change1 = false;
-        this.change = false;
-        this.check = true;
-        this.checked = false;
-        this.goodsFlag = false;
-        if (this.change2 == true) {
-          this.order = 2;
+      // 综合排序
+      changes1: function () {
+        this.change1 = !this.change1
+        this.change2 = false
+        this.change = false
+        this.check = true
+        this.checked = false
+        this.goodsFlag = false
+        if (this.change1 === true) {
+          this.order = 1
         } else {
-          this.order = "";
+          this.order = ''
         }
-        this.mescroll.resetUpScroll( true );
+        this.mescroll.resetUpScroll(true)
       },
-      exchange:function(){
-        this.goodsFlag = true;
-        this.flags = !this.flags;
-        this.style = !this.style;
-        var box = document.getElementById("box");
-        var classVal = box.getAttribute('class');
-        if (this.style == true) {
-          classVal = classVal.replace("goodsList","toggle");
-          box.setAttribute("class",classVal);
+      // 销量排序
+      changes2: function () {
+        this.change2 = !this.change2
+        this.change1 = false
+        this.change = false
+        this.check = true
+        this.checked = false
+        this.goodsFlag = false
+        if (this.change2 === true) {
+          this.order = 2
+        } else {
+          this.order = ''
         }
-        if (this.style == false) {
-          classVal = classVal.replace("toggle","goodsList");
-          box.setAttribute("class",classVal);
+        this.mescroll.resetUpScroll(true)
+      },
+      exchange: function () {
+        this.goodsFlag = true
+        this.flags = !this.flags
+        this.style = !this.style
+        var box = document.getElementById('box')
+        var classVal = box.getAttribute('class')
+        if (this.style === true) {
+          classVal = classVal.replace('goodsList', 'toggle')
+          box.setAttribute('class', classVal)
+        }
+        if (this.style === false) {
+          classVal = classVal.replace('toggle', 'goodsList')
+          box.setAttribute('class', classVal)
         }
       },
-      //价格排序
-      liftOrSort(){
-        this.checked = !this.checked;
-        this.check = !this.check;
-        this.check = this.checked;
-        this.change = true;
-        this.change1 = false;
-        this.change2 = false;
-        this.goodsFlag = false;
+      // 价格排序
+      liftOrSort () {
+        this.checked = !this.checked
+        this.check = !this.check
+        this.check = this.checked
+        this.change = true
+        this.change1 = false
+        this.change2 = false
+        this.goodsFlag = false
 
-        this.order = 3;
-        if (this.check == false) {
-          this.sort = 2;
+        this.order = 3
+        if (this.check === false) {
+          this.sort = 2
         }
-        if (this.check == true) {
-          this.sort = 1;
+        if (this.check === true) {
+          this.sort = 1
         }
-        this.mescroll.resetUpScroll( true );
+        this.mescroll.resetUpScroll(true)
       },
-      upCallback: function(page) {
-        let self = this;
-        this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if(page.num === 1) self.recommendGoods = []
+      upCallback: function (page) {
+        let self = this
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          if (page.num === 1) self.recommendGoods = []
           self.recommendGoods = self.recommendGoods.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
-        }, function() {
-          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr();
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
         })
       },
-      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        //this.$store.commit('setPage', pageNum);
-        let self = this;
+      getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
+        // this.$store.commit('setPage', pageNum);
+        let self = this
         self.$ajax({
-          method:"post",
-          url:self.$apiGoods + "goodsSearch/spus",
-          params:{
-            page: pageNum, //页码
-            rows: pageSize, //每页长度
-            carryType: self.pickUps, //自提不自提
-            startPrice: self.minPrice, //开始价格区间
-            endPrice: self.maxPrice, //结束价格区间
-            bi_id: self.brandId, //品牌的id
-            sortType: self.sort, //正序倒序
-            keywords: self.message, //关键字
-            sortFieldType: self.order, //字段排序
-            searchRuleConstant: self.defaultRule, //默认规则
-            city_no: 100100 //当前城市编号
+          method: 'post',
+          url: self.$apiGoods + 'goodsSearch/spus',
+          params: {
+            page: pageNum, // 页码
+            rows: pageSize, // 每页长度
+            carryType: self.pickUps, // 自提不自提
+            startPrice: self.minPrice, // 开始价格区间
+            endPrice: self.maxPrice, // 结束价格区间
+            bi_id: self.brandId, // 品牌的id
+            sortType: self.sort, // 正序倒序
+            keywords: self.message, // 关键字
+            sortFieldType: self.order, // 字段排序
+            searchRuleConstant: self.defaultRule, // 默认规则
+            city_no: 100100 // 当前城市编号
           }
-        }).then(function(response){
-          self.goodsFlag = true;
-          // if(response.data.data.length<=0){
-          //   self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message}});
-          // } else {
-            for (var i = 0; i < response.data.data.length; i++) {
-              if (response.data.data[i].carry_type == 1) {
-                response.data.data[i].carryFlag = true;
-              }
-              if (response.data.data[i].carry_type == 2) {
-                response.data.data[i].carryFlag = false;
-              }
+        }).then(function (response) {
+          self.goodsFlag = true
+          for (var i = 0; i < response.data.data.length; i++) {
+            if (response.data.data[i].carry_type === 1) {
+              response.data.data[i].carryFlag = true
             }
-            successCallback&&successCallback(response.data.data);//成功回调
+            if (response.data.data[i].carry_type === 2) {
+              response.data.data[i].carryFlag = false
+            }
+          }
+          successCallback && successCallback(response.data.data) // 成功回调
           // }
           if (self.recommendGoods.length === 0) {
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
+            self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
-        //this.$store.commit('setPage', pageNum);
-
+        // this.$store.commit('setPage', pageNum);
       },
 
-      //请求
-      request(){
-        let self = this;
+      // 请求
+      request () {
+        let self = this
         self.$ajax({
-          method:"post",
-          url:self.$apiGoods + "goodsSearch/spus",
-          params:{
-            page: self.pages, //页码
-            rows: self.pageRows, //每页长度
-            carryType: self.pickUps, //自提不自提
-            startPrice: self.minPrice, //开始价格区间
-            endPrice: self.maxPrice, //结束价格区间
-            bi_id: self.brandId, //品牌的id
-            sortType: self.sort, //正序倒序
-            keywords: self.message, //关键字
-            sortFieldType: self.order, //字段排序
-            searchRuleConstant: self.defaultRule, //默认规则
-            city_no: 100100 //当前城市编号
+          method: 'post',
+          url: self.$apiGoods + 'goodsSearch/spus',
+          params: {
+            page: self.pages, // 页码
+            rows: self.pageRows, // 每页长度
+            carryType: self.pickUps, // 自提不自提
+            startPrice: self.minPrice, // 开始价格区间
+            endPrice: self.maxPrice, // 结束价格区间
+            bi_id: self.brandId, // 品牌的id
+            sortType: self.sort, // 正序倒序
+            keywords: self.message, // 关键字
+            sortFieldType: self.order, // 字段排序
+            searchRuleConstant: self.defaultRule, // 默认规则
+            city_no: 100100 // 当前城市编号
           }
-        }).then(function(response){
-          //self.recommendGoods = response.data.data;//成功回调
-          self.recommendGoods = response.data.data;
-          if(self.recommendGoods.length<=0){
-            self.brandId = ""; //品牌的id
-            self.minPrice = ""; //开始价格区间
-            self.maxPrice = ""; //结束价格区间
-            self.pickUps = ""; //自提不自提
-            self.$router.push({path:'/home/searchHistory',query:{relNum:1,messages:self.message,jumps:self.jumps}});
-          } else{
-            self.goodsFlag = true;
+        }).then(function (response) {
+          // self.recommendGoods = response.data.data;//成功回调
+          self.recommendGoods = response.data.data
+          if (self.recommendGoods.length <= 0) {
+            self.brandId = '' // 品牌的id
+            self.minPrice = '' // 开始价格区间
+            self.maxPrice = '' // 结束价格区间
+            self.pickUps = '' // 自提不自提
+            self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
+          } else {
+            self.goodsFlag = true
             for (var i = 0; i < self.recommendGoods.length; i++) {
-              if(self.recommendGoods[i].carry_type == 1){
-                self.recommendGoods[i].carryFlag = true;
+              if (self.recommendGoods[i].carry_type === 1) {
+                self.recommendGoods[i].carryFlag = true
               }
-              if (self.recommendGoods[i].carry_type == 2) {
-                self.recommendGoods[i].carryFlag = false;
+              if (self.recommendGoods[i].carry_type === 2) {
+                self.recommendGoods[i].carryFlag = false
               }
             }
           }

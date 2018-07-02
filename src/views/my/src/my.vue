@@ -103,25 +103,25 @@
   import myGuide from './myGuide'
   import recommend from './recommend'
   export default {
-    name: "my",
-    data() {
-      return{
-        animateShow:"",
-        nameShow:"", //控制上滑时显示的用户名
+    name: 'my',
+    data () {
+      return {
+        animateShow: '',
+        nameShow: '', // 控制上滑时显示的用户名
         footmarkNum: 0,
         accoutBalance: 0,
-        name:this.$route.query.routeParams,
+        name: this.$route.query.routeParams,
         page: 1,
         // 切换动画hack
         positionFixed: false,
-        orderCount:{},
+        orderCount: {},
         netcardCount: 0,
-        loadingFlag:0,
-        imgFlag:true, //控制升级会员图片的显隐
+        loadingFlag: 0,
+        imgFlag: true // 控制升级会员图片的显隐
       }
     },
-    components:{myGuide, recommend},
-    computed: mapState(['userData','position']),
+    components: {myGuide, recommend},
+    computed: mapState(['userData', 'position']),
     created () {
       this.getOrderCount()
     },
@@ -132,23 +132,23 @@
       this.getNetcardsCount()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
+          this.mescroll.scrollTo(now.y, 0)
         }
       })
-      //判断页面是否向上滚动
-      //window.addEventListener('scroll',this.judgeScroll,true);
-      //改变下拉刷新的样式
-      //this.changeStyles();
+      // 判断页面是否向上滚动
+      // window.addEventListener('scroll',this.judgeScroll,true);
+      // 改变下拉刷新的样式
+      // this.changeStyles();
     },
     beforeRouteLeave (to, from, next) {
-      this.mescroll.hideTopBtn();
+      this.mescroll.hideTopBtn()
       next()
     },
-    mounted(){
-      this.$mescrollInt("myMescroll", this.upCallback, () => {
+    mounted () {
+      this.$mescrollInt('myMescroll', this.upCallback, () => {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
+            this.mescroll.scrollTo(now.y, 0)
           }
         })
       }, (obj) => {
@@ -160,53 +160,53 @@
       this.getUserData()
       this.getFootmarkNum()
       // 切换动画HACK
-      this.animateHack();
-      //判断页面是否向上滚动
-      //window.addEventListener('scroll',this.judgeScroll,true);
-      //改变下拉刷新的样式
-      //this.changeStyles();
-      //控制升级会员图片的切换
-      this.picShow();
+      this.animateHack()
+      // 判断页面是否向上滚动
+      // window.addEventListener('scroll',this.judgeScroll,true);
+      // 改变下拉刷新的样式
+      // this.changeStyles();
+      // 控制升级会员图片的切换
+      this.picShow()
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn();
-      this.mescroll.destroy();
-      //window.removeEventListener('scroll', this.judgeScroll);
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
+      // window.removeEventListener('scroll', this.judgeScroll);
     },
     methods: {
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
-        this.mescroll.lockUpScroll( isLock );
+        this.mescroll.lockUpScroll(isLock)
       },
-      //敬请期待
-      jingqingqidai(){
-        this.animateShow = true;
-        let self = this;
-        setTimeout(function(){
-          self.animateShow = false;
-        },1200);
+      // 敬请期待
+      jingqingqidai () {
+        this.animateShow = true
+        let self = this
+        setTimeout(function () {
+          self.animateShow = false
+        }, 1200)
       },
-      //控制升级会员图片的切换
-      picShow(){
-        let self = this;
-        setInterval(function(){
-          self.imgFlag = !self.imgFlag;
-        },500);
+      // 控制升级会员图片的切换
+      picShow () {
+        let self = this
+        setInterval(function () {
+          self.imgFlag = !self.imgFlag
+        }, 500)
       },
-      //改变下拉刷新的样式
-      changeStyles(){
-        var downwarp = document.getElementsByClassName("mescroll-downwarp")[0];
-        downwarp.style.backgroundColor = "rgb(244,0,87)";
-        downwarp.children[0].children[0].style.borderColor = "#fff";
-        downwarp.children[0].children[0].style.borderBottomColor = "transparent";
-        downwarp.children[0].children[1].style.color = "#fff";
+      // 改变下拉刷新的样式
+      changeStyles () {
+        var downwarp = document.getElementsByClassName('mescroll-downwarp')[0]
+        downwarp.style.backgroundColor = 'rgb(244,0,87)'
+        downwarp.children[0].children[0].style.borderColor = '#fff'
+        downwarp.children[0].children[0].style.borderBottomColor = 'transparent'
+        downwarp.children[0].children[1].style.color = '#fff'
       },
-      //判断页面是否向上滚动
-      judgeScroll(){
-        if (this.mescroll.getScrollTop()>0) {
-          this.nameShow = true;
+      // 判断页面是否向上滚动
+      judgeScroll () {
+        if (this.mescroll.getScrollTop() > 0) {
+          this.nameShow = true
         } else {
-          this.nameShow = false;
+          this.nameShow = false
         }
       },
       // 获取订单各状态数量
@@ -219,7 +219,7 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             _this.orderCount = response.data.data
-          }else {
+          } else {
             _this.$message.error(response.data.msg)
           }
         })
@@ -227,33 +227,33 @@
       // 小c获取现金券未使用数量
       getNetcardsCount () {
         if (localStorage.getItem('member_type') === '091') {
-          let _this = this;
+          let _this = this
           this.$ajax({
             method: 'get',
             url: this.$apiTransaction + 'netcard/netcards',
-            params: {status:1}
+            params: {status: 1}
           }).then(function (response) {
             if (response.data.code === '081') {
-              _this.netcardCount = response.data.data.length;
+              _this.netcardCount = response.data.data.length
             }
           })
         }
       },
       /* 切换动画修复 */
       animateHack () {
-        setTimeout(()=>{
+        setTimeout(() => {
           this.positionFixed = true
-        },500)
+        }, 500)
       },
       /* 获取用户信息 */
-      getUserData:function(){
-        let self = this;
+      getUserData: function () {
+        let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'member/currentMember',
           params: {}
         }).then(function (response) {
-          self.$store.commit('userDataChange',response.data.data)
+          self.$store.commit('userDataChange', response.data.data)
           localStorage.setItem('member_type', response.data.data.member_type)
           if (response.data.data.member_type === '092') {
             self.getUserInfo()
@@ -265,13 +265,13 @@
             } else {
               self.$store.commit('setShowRegisterTicket', true)
             }
-          }else {
+          } else {
             self.$store.commit('setShowRegisterTicket', false)
           }
         })
       },
-      getUserInfo:function(){
-        let self = this;
+      getUserInfo: function () {
+        let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'member/info',
@@ -280,12 +280,12 @@
           self.accoutBalance = response.data.data.accoutBalance
         })
       },
-      getFootmarkNum:function(){
-        let self = this;
+      getFootmarkNum: function () {
+        let self = this
         // 发送ajax请求校验手机号重复
         self.$ajax({
           method: 'POST',
-          url: self.$apiGoods+ 'logGoodsBrowse/count',
+          url: self.$apiGoods + 'logGoodsBrowse/count',
           params: {}
         }).then(function (response) {
           if (response.data.optSuc) {
@@ -293,36 +293,31 @@
           }
         })
       },
-      routergoSet:function(){
-        this.$router.push({
-           name: '我的设置',
-           query: {
-              routeParams: this.name
-           }
-        });
+      routergoSet: function () {
+        this.$router.push({name: '我的设置', query: {routeParams: this.name}})
       },
-      upCallback: function(page) {
-        let self = this;
-        this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          self.$refs.recommend.more(curPageData,page.num,page.size)
+      upCallback: function (page) {
+        let self = this
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          self.$refs.recommend.more(curPageData, page.num, page.size)
           self.mescroll.endSuccess(curPageData.length)
-        }, function() {
-          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr();
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
         })
       },
-      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        let self = this;
+      getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
+        let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
+          url: self.$apiGoods + 'goodsSearch/goodsRecommendationList',
           params: {
             page: pageNum,
             rows: pageSize
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          successCallback&&successCallback(response.data.data);//成功回调
+          successCallback && successCallback(response.data.data) // 成功回调
         })
       },
       // 前往银行卡
@@ -515,6 +510,7 @@
 	}
   .myOrderForm ul.bottom li{
     position: relative;
+    flex: none;
   }
   .myOrderForm ul.bottom li img{
     width: .8rem;

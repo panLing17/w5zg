@@ -29,7 +29,7 @@
 
 <script>
   export default {
-    name: "foot-mark",
+    name: 'foot-mark',
     data () {
       return {
         footMarkData: [],
@@ -45,8 +45,8 @@
       this.$mescrollInt('footMescroll', this.upCallback)
       this.hideStyles()
     },
-    methods:{
-      hideStyles(){
+    methods: {
+      hideStyles () {
         this.$refs.conts.children[1].style.display = 'none'
       },
       getData () {
@@ -67,8 +67,8 @@
       upCallback: function (page) {
         let self = this
         this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          //if (page.num === 1) self.pageName = []
-          //self.pageName = self.pageName.concat(curPageData)
+          // if (page.num === 1) self.pageName = []
+          // self.pageName = self.pageName.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function () {
           // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -77,15 +77,21 @@
       },
       getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
         successCallback && successCallback({}) // 成功回调
-      },
+      }
     }
   }
 </script>
 
 <style scoped>
-  .footMarkBox {
-    min-height: 100vh;
+  #footMescroll{
+    position: fixed;
+    top: 1.28rem;
+    bottom: 0;
+    height: auto;
     background-color: rgb(242,242,242);
+    padding-bottom: 1.5rem;
+  }
+  .footMarkBox {
     position: relative;
     z-index: 100;
   }
