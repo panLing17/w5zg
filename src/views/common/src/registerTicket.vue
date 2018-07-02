@@ -6,7 +6,7 @@
       .topCenter(slot="center", style="color: #964b00") 新人福利
       .topRight(slot="right")
     .contentWrapper
-      img.top(src="../../../assets/img/ad2.png")
+      img.top(src="../../../assets/img/ad2.jpg")
       .btn(@click="goNext")
       .bottomWrapper
         .dec 仅限新注册的APP会员，优惠券在登录后自动发放。请在“我的——现金券”中查看您的奖品。
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import shareImg from '../../../assets/img/ad2.png'
+  import shareImg from '../../../assets/img/ad2.jpg'
   export default {
     name: "registerTicket",
     data () {
