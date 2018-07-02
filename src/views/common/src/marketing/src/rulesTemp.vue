@@ -56,6 +56,7 @@
     overflow: scroll;
     background-color: #fff;
     padding-bottom: 1.2rem;
+    height: 10rem;
   }
   .cont{
     background-color: #fff;

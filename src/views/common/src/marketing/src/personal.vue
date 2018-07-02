@@ -88,7 +88,7 @@
         this.$router.replace({path: '/marketing/assisting', query: {temp: 2}})
         return
       }
-      localStorage.setItem('originatorId', null)
+      localStorage.removeItem("originatorId")
       this.isHelped()
       this.getOriginInfo()
     },

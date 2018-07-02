@@ -1,5 +1,5 @@
 <template lang="pug">
-  .wrapAssisting
+  .wrapAssisting(ref="wrapAssisting")
     .cont
       .topLogo
         img(src="../../../../../assets/img/user_title.png" @click.prevent="")
@@ -77,6 +77,9 @@
     },
     mounted () {
       document.title = "送耐克活动";
+      this.scroll3 = new BScroll(this.$refs.wrapAssisting, {
+        click: true
+      })
     },
     methods: {
       //保存unionId
@@ -301,7 +304,7 @@
             } else if (response.data.data == 'yes'){
 
               if (localStorage.getItem('originatorId')) {
-                localStorage.setItem('originatorId', null)
+                localStorage.removeItem("originatorId")
               }
 
               self.temp = 2
@@ -315,7 +318,7 @@
                 self.bindAccount()
               } else {
                 if (localStorage.getItem('originatorId')) {
-                  localStorage.setItem('originatorId', null)
+                  localStorage.removeItem("originatorId")
                 }
                 self.$router.replace('/marketing/noAttended')
               }
@@ -351,7 +354,7 @@
         }).then(function (response) {
           if (response) {
             if (localStorage.getItem('originatorId')) {
-              localStorage.setItem('originatorId', null)
+              localStorage.removeItem("originatorId")
             }
             _this.temp = 2
             _this.getGroup()
@@ -381,9 +384,10 @@
 <style scoped>
   .wrapAssisting{
     background-color: #ff3050;
+    height: 100vh;
   }
   .cont{
-    min-height: 100vh;
+
   }
   /*第一内容部分--开始*/
   .topLogo{

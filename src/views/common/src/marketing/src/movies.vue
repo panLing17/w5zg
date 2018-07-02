@@ -121,7 +121,7 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data != 'null') {
+            if (response.data.data != '用户不存在') {
               localStorage.setItem('sharerId', response.data.data)
             }
             callback && callback(response.data.data)
