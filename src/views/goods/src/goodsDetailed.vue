@@ -33,12 +33,12 @@
             .label {{goodsData.retail_interval>goodsData.counter_interval? '专柜价':'专柜折后价'}}
             .text <span>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
+            .label 现金券抵扣
+            .text 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
+        //ul.saveMoneyBottom
+          li.gray
             .label 专柜价购买
             .text 返现<span>{{makeMoney.directEconomyPrice ? makeMoney.directEconomyPrice : 0}}</span>元
-        ul.saveMoneyBottom
-          li.gray
-            .label 现金券购买
-            .text 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
           li.gray
             .label 通用券购买
             .text 返现<span>{{makeMoney.useTicketEconomyPricce ? makeMoney.useTicketEconomyPricce : 0}}</span>元
@@ -70,14 +70,14 @@
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .myPrice(@click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
         .left 余额
-          span 现金券 / 通用券 / 使用说明
+          span 现金券　通用券　使用说明
         img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left 规格
           span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
         img(src="../../../assets/img/right.png").right
-      dis-type(@selectType="selectDis", ref="disType", style="margin-top:.2rem")
-      .distribution(@click="selectCityShow")
+      dis-type(@selectType="selectDis", :hasGoods="maxStoreNum>0 ? '有货' : '无货'",ref="disType")
+      //.distribution(@click="selectCityShow")
         .top
           .left 地址
           .right
@@ -1054,7 +1054,7 @@
     width: 100%;
     display: flex;
     margin-top: .2rem;
-    margin-bottom: .2rem;
+
   }
   .saveMoney> .saveMoneyBottom{
     padding-left: .2rem;

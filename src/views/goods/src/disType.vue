@@ -2,9 +2,11 @@
   .citySelectBox
     .main
       .title 配送:
+        h2 选择配送方式
       ul
         li(@click="selected(0)", :class="{checked:nowType === 0}") <span>荐</span>专柜自提
         li(@click="selected(1)", :class="{checked:nowType === 1}") 快递配送
+      span {{hasGoods}}
 </template>
 
 <script>
@@ -20,6 +22,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      hasGoods: {
+        type: String,
+        default: ''
       }
     },
     methods:{
@@ -42,23 +48,37 @@
     align-items: center;
     padding: 0 .2rem;
   }
+  .main>span{
+    width: 1rem;
+    font-size: .35rem;
+    color: rgb(246,0,88);
+    font-weight: 600;
+  }
   .main>.title{
-    width: 2rem;
+    width: 3.5rem;
     font-size: .35rem;
     color: #aaa;
+    display: flex;
+  }
+  .main>.title h2{
+    color: #000;
+    margin-left: .2rem;
+    font-size: .35rem;
+    font-weight: 500;
   }
   .main ul{
-    width: 100%;
+    flex-grow: 1;
     height: 1.2rem;
     padding: 0 .2rem;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
   }
   .main ul li{
     height: .6rem;
     font-size: .3rem;
     font-weight: 600;
-    width: 2.5rem;
+    width: 1.6rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,8 +106,8 @@
     border-radius: .3rem;
     background-color: #aaa ;
     color: white;
-    right: -.25rem;
-    top: -.25rem;
+    left: -.4rem;
+    top: 0;
   }
   .checked {
     border:solid 1px rgb(252,128,172) !important;
