@@ -166,14 +166,14 @@
             this.getSharerId(function (data) {
               if (data != 'null') {
                 _this.$initShare({
-                  sharePhoto: _this.getLocationHref() + '/' + shareImg.substr(1),
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
                   shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
                   shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
                   link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
                 })
               } else {
                 _this.$initShare({
-                  sharePhoto: _this.getLocationHref() + '/' + shareImg.substr(1),
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
                   shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
                   shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
                   link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
@@ -182,7 +182,7 @@
             })
           } else {
             this.$initShare({
-              sharePhoto: this.getLocationHref() + '/' + shareImg.substr(1),
+              sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
               shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
               shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
               link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
@@ -190,7 +190,7 @@
           }
         } else {
           this.$initShare({
-            sharePhoto: this.getLocationHref() + '/' + shareImg.substr(1),
+            sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
             shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
             shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
             link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
@@ -217,22 +217,22 @@
       },
       //活动是否开启
       isStart () {
-        this.authority()
-        // let self = this
-        // self.$ajax({
-        //   method: 'get',
-        //   url: self.$apiApp + 'presentShoes/isStart',
-        //   params: {}
-        // }).then(function (response) {
-        //   if (response) {
-        //     if (response.data.data == 'no') {
-        //       self.temp = 1
-        //     } else {
-        //       self.authority()
-        //     }
-        //   }
-        //
-        // })
+        // this.authority()
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isStart',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no') {
+              self.temp = 1
+            } else {
+              self.authority()
+            }
+          }
+
+        })
       },
       /*
       * 判断来者身份,originatorId 发起人ID   selfId 被分享者ID

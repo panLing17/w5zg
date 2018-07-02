@@ -31,7 +31,9 @@
       }
     },
     mounted () {
-      this.scroll2 = new BScroll(this.$refs.wrapCont)
+      // this.scroll2 = new BScroll(this.$refs.wrapCont, {
+      //   click: true
+      // })
     },
     methods: {
       close () {
@@ -49,14 +51,14 @@
     right: 0;
     bottom: 0;
     background-color: rgba(0,0,0,.6);
-    padding: .9rem .5rem 0;
+    padding: .5rem .5rem 0;
     height: 100vh;
   }
   .wrapCont{
     overflow: scroll;
     background-color: #fff;
-    padding-bottom: 1.2rem;
-    height: 10rem;
+    padding-bottom: .5rem;
+    height: 80%;
   }
   .cont{
     background-color: #fff;
