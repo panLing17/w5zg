@@ -30,19 +30,19 @@
 
 <script>
   export default {
-    name: "page",
-    data(){
+    name: 'page',
+    data () {
       return {
-        goodsId: "",
+        goodsId: '',
         images: 123,
-        flag:false,
-        wordsShow:true,
-        num:0,
-        cityName:this.$route.query.routeParams,
-        pageName:[],
-        productList:[],
-        loadingFlag:0,
-        rightShowFlag:"", //控制右侧内容的显隐
+        flag: false,
+        wordsShow: true,
+        num: 0,
+        cityName: this.$route.query.routeParams,
+        pageName: [],
+        productList: [],
+        loadingFlag: 0,
+        rightShowFlag: '' // 控制右侧内容的显隐
       }
     },
     activated () {
@@ -52,142 +52,140 @@
       this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
-    mounted(){
-      //判断显示城市的字数
-      this.judgeCityNum();
-      //一级分类
-      this.request();
-      //判断显示当前城市
-      this.judgeCity();
-
-
+    mounted () {
+      // 判断显示城市的字数
+      this.judgeCityNum()
+      // 一级分类
+      this.request()
+      // 判断显示当前城市
+      this.judgeCity()
       this.$mescrollInt('pagesLMescroll', this.upCallbackL)
       this.$mescrollInt('pagesRMescroll', this.upCallbackR)
-      this.hideStyles();
+      this.hideStyles()
     },
-    methods:{
-      hideStyles(){
-        this.$refs.lefters.children[2].style.display = 'none';
-        this.$refs.righters.children[1].style.display = 'none';
+    methods: {
+      hideStyles () {
+        this.$refs.lefters.children[2].style.display = 'none'
+        this.$refs.righters.children[1].style.display = 'none'
       },
-      //判断显示城市的字数
-      judgeCityNum(){
-        var citys = document.getElementsByClassName("city")[0];
-        if (citys.innerText.length == 2) {
-          citys.style.fontSize = .4 + "rem";
+      // 判断显示城市的字数
+      judgeCityNum () {
+        var citys = document.getElementsByClassName('city')[0]
+        if (citys.innerText.length === 2) {
+          citys.style.fontSize = 0.4 + 'rem'
         }
-        if (citys.innerText.length == 3) {
-          citys.style.fontSize = .2 + "rem";
+        if (citys.innerText.length === 3) {
+          citys.style.fontSize = 0.2 + 'rem'
         }
-        if (citys.innerText.length == 4) {
-          citys.style.fontSize = .35 + "rem";
+        if (citys.innerText.length === 4) {
+          citys.style.fontSize = 0.35 + 'rem'
         }
       },
-      //判断显示当前的城市
-      judgeCity(){
+      // 判断显示当前的城市
+      judgeCity () {
         if (this.$route.query.routeParams) {
-          this.cityName = this.$route.query.routeParams;
-        } else{
-          this.cityName = "南京";
+          this.cityName = this.$route.query.routeParams
+        } else {
+          this.cityName = '南京'
         }
       },
 
-      goToCitySearch:function(){
+      goToCitySearch: function () {
         this.$router.push({
-           name: '城市搜索',
-           query: {
-              routeParams: 2
-           }
-        });
-      },
-      //扫描
-      scan(){
-        let self = this
-        let _this = this
-         wx.scanQRCode({
-          desc: 'scanQRCode desc',
-          needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
-          success: function (res) {
-            // alert(res.resultStr)
-            // let id = _this.GetQueryString(res.resultStr, 'containerId')
-            // _this.$ajax({
-            //   method: 'post',
-            //   url: 'sweep/sweepResult',
-            //   params: {
-            //     containerId: id
-            //   },
-            //   headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-            // }).then(function (response) {
-            //   response.data.code = response.data.code.toString()
-            //   if (response.data.code === '100') {
-            //     _this.$message.success('扫码成功')
-            //   }
-            // })
-          },
-          error: function(res){
-            if(res.errMsg.indexOf('function_not_exist') > 0){
-
-            }
+          name: '城市搜索',
+          query: {
+            routeParams: 2
           }
         })
       },
+      // 扫描
+      scan () {
+        // let self = this
+        // let _this = this
+        // wx.scanQRCode({
+        //   desc: 'scanQRCode desc',
+        //   needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+        //   scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
+        //   success: function (res) {
+        //     // alert(res.resultStr)
+        //     // let id = _this.GetQueryString(res.resultStr, 'containerId')
+        //     // _this.$ajax({
+        //     //   method: 'post',
+        //     //   url: 'sweep/sweepResult',
+        //     //   params: {
+        //     //     containerId: id
+        //     //   },
+        //     //   headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        //     // }).then(function (response) {
+        //     //   response.data.code = response.data.code.toString()
+        //     //   if (response.data.code === '100') {
+        //     //     _this.$message.success('扫码成功')
+        //     //   }
+        //     // })
+        //   },
+        //   error: function (res) {
+        //     if (res.errMsg.indexOf('function_not_exist') > 0) {
+        //
+        //     }
+        //   }
+        // })
+      },
 
-      //第一个二级分类
-      one(id){
-        let self =this;
+      // 第一个二级分类
+      one (id) {
+        let self = this
         self.$ajax({
-          method:"post",
-          url:this.$apiGoods + "goodsClass/class/firstId",
-          params:{firstId:id}
-        }).then(function(res){
-          self.rightShowFlag = true;
-          self.productList = res.data.data;
+          method: 'post',
+          url: this.$apiGoods + 'goodsClass/class/firstId',
+          params: {firstId: id}
+        }).then(function (res) {
+          self.rightShowFlag = true
+          self.productList = res.data.data
           self.loadingFlag += 1
         })
       },
-      //点击左侧一级分类切换右边二三级
-      tab(item,index,id){
+      // 点击左侧一级分类切换右边二三级
+      tab (item, index, id) {
         // if (item == "品牌") {
         //   this.flag = true;
         //   this.wordsShow = false;
         // }else{
-          this.flag = false;
-          this.wordsShow = true;
+        this.flag = false
+        this.wordsShow = true
         // }
-        this.num = index;
-        this.rightShowFlag = false;
-        let self =this;
+        this.num = index
+        this.rightShowFlag = false
+        let self = this
         self.$ajax({
-          method:"post",
-          url:this.$apiGoods + "goodsClass/class/firstId",
-          params:{firstId:id}
-        }).then(function(res){
-          self.rightShowFlag = true;
-          self.productList = res.data.data;
+          method: 'post',
+          url: this.$apiGoods + 'goodsClass/class/firstId',
+          params: {firstId: id}
+        }).then(function (res) {
+          self.rightShowFlag = true
+          self.productList = res.data.data
         })
       },
 
-      //展示左侧商品导航
-      request(){
-        let self = this;
+      // 展示左侧商品导航
+      request () {
+        let self = this
         self.$ajax({
-          method:"post",
-          url:this.$apiGoods + "goodsClass/class/hierarchy",
-          params:{hierarchy:1}
-        }).then(function(res){
-          self.pageName = res.data.data;
-          self.goodsName = res.data.data[0].gc_id;
-          self.one(res.data.data[0].gc_id);
+          method: 'post',
+          url: this.$apiGoods + 'goodsClass/class/hierarchy',
+          params: {hierarchy: 1}
+        }).then(function (res) {
+          self.pageName = res.data.data
+          self.goodsName = res.data.data[0].gc_id
+          self.one(res.data.data[0].gc_id)
           self.loadingFlag += 1
-        });
+        })
       },
 
       upCallbackR: function (page) {
         let self = this
         this.getListDataFromNetR(page.num, page.size, function (curPageData) {
-          //if (page.num === 1) self.productList = []
-          //self.productList = self.productList.concat(curPageData)
+          // if (page.num === 1) self.productList = []
+          // self.productList = self.productList.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function () {
           // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -197,8 +195,8 @@
       upCallbackL: function (page) {
         let self = this
         this.getListDataFromNetL(page.num, page.size, function (curPageData) {
-          //if (page.num === 1) self.pageName = []
-          //self.pageName = self.pageName.concat(curPageData)
+          // if (page.num === 1) self.pageName = []
+          // self.pageName = self.pageName.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function () {
           // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;

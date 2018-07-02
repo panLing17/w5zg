@@ -7,14 +7,14 @@
       .topRight(slot="right")
     .mescroll#twoLevelMescroll
       .contentWrapper
-        .block     
+        .block
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
             li.brandItem(v-for="(item, index) in brandList", :key="index", @click="toNext(0, index)")
               img.brandImg(:src="item.image | img-filter")
               .brandName {{item.title}}
           .noData(v-if="noDataShow.brand") 暂无大牌推荐
           .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多品牌
-        .block       
+        .block
           ul.categoryList(:style="{'max-height': category.height}", ref="category")
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
               img.categoryImg(:src="item.image | img-filter")
@@ -31,7 +31,7 @@
 <script>
   import recommend from '../../recommend'
   export default {
-    name: "twoLevel",
+    name: 'twoLevel',
     components: { recommend },
     data () {
       return {
@@ -44,7 +44,7 @@
         category: {
           show: true,
           status: false,
-          height: '5.2rem',
+          height: '5.4rem',
           auto: 'none'
         },
         noDataShow: {
@@ -56,9 +56,9 @@
         categoryList: []
       }
     },
-    beforeRouteEnter (to, from , next) {
+    beforeRouteEnter (to, from, next) {
       to.meta.keepAlive = false
-      next();
+      next()
     },
     beforeRouteLeave (to, from, next) {
       to.meta.keepAlive = true
@@ -71,70 +71,70 @@
       })
     },
     activated () {
-      if (this.parentId == this.$route.query.id || !this.$route.query.id) {
+      if (this.parentId === this.$route.query.id || !this.$route.query.id) {
         let _this = this
         this.$store.state.position.forEach((now) => {
           if (now.path === '/twoLevel') {
-            _this.mescroll.scrollTo(now.y, 0);
+            _this.mescroll.scrollTo(now.y, 0)
           }
         })
       } else {
         this.parentId = this.$route.query.id
-        this.mescroll.resetUpScroll();
+        this.mescroll.resetUpScroll()
       }
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn();
+      this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
     mounted () {
-      this.$mescrollInt("twoLevelMescroll",this.upCallback,() => {}, () => {});
+      this.$mescrollInt('twoLevelMescroll', this.upCallback, () => {}, () => {})
       this.getBrandList()
       this.getCategoryList()
     },
     methods: {
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
-        this.mescroll.lockUpScroll( isLock );
+        this.mescroll.lockUpScroll(isLock)
       },
       toNext (status, index) {
-        let obj;
+        let obj
         if (status === 0) {
           obj = this.brandList[index]
-        } else if(status === 1) {
+        } else if (status === 1) {
           obj = this.categoryList[index]
         }
         switch (obj.url_type) {
           // 跳外链
-          case '143': window.location.href = obj.url; break;
+          case '143': window.location.href = obj.url; break
           // 跳3级页面模板1 362代表从2级跳3级
-          case '145': this.$router.push({ path: '/home/sports',query:{parentType: '362',actId:obj.id,title: obj.title}}); break;
+          case '145': this.$router.push({path: '/home/sports', query: {parentType: '362', actId: obj.id, title: obj.title}}); break
           // 跳商品详情
-          case '141': this.$router.push({ path: '/goodsDetailed', query: { id: obj.relate_id }}); break;
+          case '141': this.$router.push({path: '/goodsDetailed', query: { id: obj.relate_id }}); break
           // 跳3级页面模板2
-          case '149': this.$router.push({ path: '/activity', query: { actId: obj.id, title: obj.title, parentType: '362'}}); break;
+          case '149': this.$router.push({path: '/activity', query: {actId: obj.id, title: obj.title, parentType: '362'}}); break
         }
       },
-      upCallback: function(page) {
-        let self = this;
-        this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          if (page.num === 1 && curPageData.length === 0 ) {
+      upCallback: function (page) {
+        let self = this
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          if (page.num === 1 && curPageData.length === 0) {
             self.noDataShow.goods = true
-          }else {
+          } else {
             self.noDataShow.goods = false
           }
-          self.$refs.recommend.more(curPageData,page.num,page.size)
+          self.$refs.recommend.more(curPageData, page.num, page.size)
           self.mescroll.endSuccess(curPageData.length)
-        }, function() {
-          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr();
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
         })
       },
-      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+      getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
         let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiApp +  'acactivitydetail/spus',
+          url: self.$apiApp + 'acactivitydetail/spus',
           params: {
             page: pageNum,
             rows: pageSize,
@@ -145,17 +145,17 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             if (response.data.data && response.data.data.rows) {
-              successCallback&&successCallback(response.data.data.rows);
-            }else {
-              successCallback&&successCallback([]);
+              successCallback && successCallback(response.data.data.rows)
+            } else {
+              successCallback && successCallback([])
             }
           } else {
-            self.mescroll.endErr();
+            self.mescroll.endErr()
           }
         })
       },
       getBrandList () {
-        let _this = this;
+        let _this = this
         this.$ajax({
           url: this.$apiApp + 'acActivityContent/acActivityContentList',
           methods: 'get',
@@ -166,7 +166,7 @@
           }
         }).then((response) => {
           if (response) {
-            _this.brandList = response.data.data;
+            _this.brandList = response.data.data
             if (_this.brandList.length <= 0) {
               _this.noDataShow.brand = true
             } else {
@@ -175,7 +175,7 @@
             if (_this.brandList.length <= 9) {
               _this.brand.show = false
             } else {
-              _this.$nextTick(()=> {
+              _this.$nextTick(() => {
                 _this.getHeight()
               })
             }
@@ -183,7 +183,7 @@
         })
       },
       getCategoryList () {
-        let _this = this;
+        let _this = this
         this.$ajax({
           url: this.$apiApp + 'acActivityContent/acActivityContentList',
           methods: 'get',
@@ -194,7 +194,7 @@
           }
         }).then((response) => {
           if (response) {
-            _this.categoryList = response.data.data;
+            _this.categoryList = response.data.data
             if (_this.categoryList.length <= 0) {
               _this.noDataShow.category = true
             } else {
@@ -203,7 +203,7 @@
             if (_this.categoryList.length <= 10) {
               _this.category.show = false
             } else {
-              _this.$nextTick(()=> {
+              _this.$nextTick(() => {
                 _this.getHeight()
               })
             }
@@ -213,11 +213,11 @@
       getHeight () {
         this.brand.height = 'none'
         this.category.height = 'none'
-        this.$nextTick(()=>{
+        this.$nextTick(() => {
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
           this.brand.height = '5.72rem'
-          this.category.height = '5.2rem'
+          this.category.height = '5.4rem'
         })
       },
       dropCheck (index) {
@@ -235,12 +235,12 @@
           if (this.category.status) {
             this.category.height = this.category.auto
           } else {
-            this.category.height = '5.2rem'
+            this.category.height = '5.4rem'
           }
         }
       },
       back () {
-        if (window.history.length<=1) {
+        if (window.history.length <= 1) {
           this.$router.push('/home')
         } else {
           this.$router.go(-1)
@@ -267,8 +267,9 @@
     height: auto;
   }
   .block {
-    padding-top: .2rem;
+    padding: .2rem 0;
     background-color: #fff;
+    border-bottom: 1px solid #f2f2f2;
   }
   .blockTitle {
     display: flex;
@@ -286,10 +287,9 @@
   .more {
     flex: none;
     width: 2rem;
-    height: 1rem;
-    line-height: 1rem;
     color: #666;
     margin: 0 auto;
+    padding: .2rem 0 .1rem;
     font-size: .35rem;
   }
   .more.down {
@@ -341,7 +341,7 @@
     position: relative;
   }
   .categoryList {
-    padding: 0 .26rem;
+    padding: .2rem .26rem 0;
     display: flex;
     /*justify-content: space-between;*/
     flex-wrap: wrap;
