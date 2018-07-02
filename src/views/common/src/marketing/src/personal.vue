@@ -4,57 +4,53 @@
       .contentTop
         img.contentTopImg(src="../../../../../assets/img/01_index_1.png")
       .contentCenter(:class="{'margin-1': temp==1 || temp==5 }")
-        img.contentCenterImg(src="../../../../../assets/img/13_helper_notice_bg.png")
-        .temp1(v-if="temp==1")
-          .temp1Desc 您还没参加领鞋活动哦
-          .temp1Btn
-            img.temp1BtnImg(src="../../../../../assets/img/06_user_error_btn.png")
+        img.contentCenterImg(src="../../../../../assets/img/13_helper_notice_bg.jpg")
         .temp2(v-if="temp==2")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp2Desc
-            p 已经为TA助力过啦~
+            p 已经为TA攒了片<span>{{randomText}}</span>啦~
             p 您还有3次领券机会，
-            p 快去帮助其他小伙伴领券吧！
-          .temp2Btn
+            p 快去给其他小伙伴加油抢鞋吧！
+          .temp2Btn(@click="$router.push('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         .temp3(v-if="temp==3")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp3Desc
-            p 已经为TA助力过啦~
-            p 您的助力次数已达到上限！
-          .temp2Btn
+            p 已经为TA攒了根鞋带啦~
+            p 您的加油次数已达到上限！
+          .temp2Btn(@click="$router.push('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
-        .temp4(v-if="temp==4")
-          .temp4Desc
-            p 您已参加免费领鞋活动，
-            p 不能帮其他小伙伴领券啦～
-          .temp2Btn
-            img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_user_btn.png")
+        <!--.temp4(v-if="temp==4")-->
+          <!--.temp4Desc-->
+            <!--p 您已参加免费领鞋活动，-->
+            <!--p 不能帮其他小伙伴领券啦～-->
+          <!--.temp2Btn-->
+            <!--img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_user_btn.png")-->
         .temp5(v-if="temp==5")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp3Desc
-            p 您的好友想要领1200元的耐克鞋
+            p 您的好友想要领价值1200元的耐克鞋
             p 快来帮TA免费拿吧！
-          .temp2Btn
+          .temp2Btn(@click="$router.push({path: '/marketing/receiveTicket', query: {show_index: 4}})")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_help_btn.png")
         .temp6(v-if="temp==6")
           .info
-            img.avatar
+            img.avatar(:src="oOriginInfo.avatar")
             .infoDesc 发起人：
-            .infoName 张三(微信名)
+            .infoName {{oOriginInfo.name}}(微信名)
           .temp3Desc
             p Sorry，
-            p 您的助力次数已达到上限！
-          .temp2Btn
+            p 您的加油次数已达到上限！
+          .temp2Btn(@click="$router.push('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
       .contentBottom
         .temp2Bottom(v-if="temp==2 || temp==3 || temp==4 || temp==6")
@@ -64,9 +60,9 @@
 </template>
 
 <script>
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   /*
   * temp 模板类型
-  *   1：未参加用户-误点个人中心(默认)
   *   2：a-绑定-未达上限-普通用户
   *   3：b-绑定-已达上限-普通用户
   *   4：c-好友是发起人
@@ -77,11 +73,152 @@
     name: "personal",
     data () {
       return {
-        temp: 1
+        temp: 0,
+        oOriginInfo: {},
+        randomText: '',
+        bIsHelped: '',
+        bIsOutRule: ''
       }
     },
+    created () {
+      this.isHelped()
+      this.getOriginInfo()
+    },
     mounted () {
-      document.title = "个人中心"
+      document.title = "送耐克活动"
+      this.loadShare()
+    },
+    methods: {
+      loadShare () {
+        let _this = this
+        if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+            this.getSharerId(function (data) {
+              if (data != '用户不存在') {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                })
+              } else {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                })
+              }
+            })
+          } else {
+            this.$initShare({
+              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+            })
+          }
+        } else {
+          this.$initShare({
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+          })
+        }
+      },
+      getSharerId (callback){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/queryMemberIdByMobile',
+          params: {
+            mobile: localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data != '用户不存在') {
+              localStorage.setItem('sharerId', response.data.data)
+            }
+            callback && callback(response.data.data)
+          }
+        })
+      },
+      //是否达到助力上限
+      isOutRule () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isOutRule',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.bIsOutRule = response.data.data
+            if (self.bIsOutRule=='yes') {
+              if (self.bIsHelped == 'yes') {
+                self.temp = 3
+              } else {
+                self.temp = 6
+              }
+            } else {
+
+              if (self.bIsHelped == 'yes') {
+                self.getRandomText()
+                self.temp = 2
+              } else {
+                self.temp = 5
+              }
+            }
+          }
+        })
+      },
+      //是否给好友助力过
+      isHelped () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isHelped',
+          params: {
+            unionId: localStorage.getItem('unionId'),
+            sharerId: localStorage.getItem('originatorId')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'OnePerson') {
+              self.$router.replace({path: '/marketing/assisting', query: {temp: 2}})
+              return
+            }
+            self.bIsHelped = response.data.data
+            self.isOutRule()
+          }
+        })
+      },
+      //获取发起人的头像、昵称
+      getOriginInfo () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/sharerInfo',
+          params: {
+            sharerId: localStorage.getItem('originatorId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.oOriginInfo = response.data.data
+          }
+        })
+      },
+      //获取随机字符串
+      getRandomText () {
+          let Range = 4;
+          let Rand = Math.random();
+          let num = Math.round(Rand * Range);
+          let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
+          this.randomText = aText[num]
+
+      }
     }
   }
 </script>
@@ -146,6 +283,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    flex-wrap: nowrap;
   }
   .avatar {
     width: 1.33rem;
@@ -161,6 +300,10 @@
   }
   .infoName {
     margin-left: 0;
+    max-width: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .temp2Desc, .temp3Desc, .temp4Desc {
     text-align: center;
@@ -168,6 +311,10 @@
     color: #333;
     margin-top: .38rem;
     line-height: 1.5;
+  }
+  .temp2Desc p span {
+    color: #ff314f;
+    font-weight: 400;
   }
   .temp2BtnImg {
     width: 5rem;

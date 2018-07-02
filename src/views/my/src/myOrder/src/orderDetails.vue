@@ -223,6 +223,10 @@
         this.mescroll.destroy();
       },
       methods:{
+        // 锁定或者解锁上拉加载
+        lockUpDown (isLock) {
+          this.mescroll.lockUpScroll( isLock );
+        },
         //判断此时账号是B端还是C端
         judgeBOrC(){
           let self = this;

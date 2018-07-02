@@ -15,7 +15,7 @@
       .left 门店自提
       .right {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
         //img(src="../../../assets/img/next@2x.png")
-    .bottom(v-else)
+    //.bottom(v-else)
       .left 运费
       .right
         span {{data.freight}}元

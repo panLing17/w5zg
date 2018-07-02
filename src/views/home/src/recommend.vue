@@ -293,7 +293,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .tagType>li:nth-child(-n+8){
+  .tagType>li:nth-child(-n+6){
     background-color: #E2EFFF;
   }
   .tagType>li{

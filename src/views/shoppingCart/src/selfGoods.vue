@@ -14,12 +14,13 @@
                 .text
                   .name {{i.gi_name}}
                   .spec
-                    span(v-for="item in i.specVOList") {{item.gspec_value}}
+                    span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
+                    img(src="../../../assets/img/ic_page_xljt@2x.png")
+                  w-counter.counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                 .price
                   span {{i.now_price | price-filter}}
               .mainRight
                 img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
-                p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
                 w-checkbox(v-model="i.checked", @change="selectedChange")
@@ -217,8 +218,22 @@
     -webkit-box-orient: vertical;
   }
   .info .text .spec {
-    margin-top: .1rem;
+    display: flex;
+    float: left;
+    justify-content: center;
+    align-items: center;
+    padding: .05rem .2rem;
+    margin-top: .2rem;
     color: #999;
+    background-color: #eee;
+  }
+  .info .text .spec img{
+    width: .2rem;
+    margin-left: .15rem;
+  }
+  .info .text .counter{
+    float: right;
+    margin-top: .1rem;
   }
   .price{
     display: flex;

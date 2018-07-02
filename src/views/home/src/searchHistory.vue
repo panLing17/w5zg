@@ -28,11 +28,10 @@
           transition(name="slide-fade")
             ul.cont(v-show="showDiscover")
               li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
-        transition(name="slide-fade")
-          .result(v-show="resultFlag")
-            .words 没有搜索到
-              span.strong 此类
-              span 商品，及相关商品
+        .result(v-show="resultFlag")
+          .words 没有搜索到
+            span.strong 此类
+            span 商品，及相关商品
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(background="white", ref="recommend")
@@ -110,6 +109,9 @@
       //显示搜索结果
       this.resultShow();
       console.log(this.$route.query.jumps);
+      console.log(this.$route.query.relNum);
+      console.log(this.searchFlag);
+      console.log(this.resultFlag);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();

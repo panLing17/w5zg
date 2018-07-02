@@ -18,6 +18,25 @@
           .price(v-else) {{0 | price-filter}}
           .store 库存{{realGoodsData.storage_num}}
           .size 选择 颜色 尺寸
+        .express
+          h1 配送方式
+          .buttonTab
+            button(@click="changeExpress('专柜自提')", :class="{checked:expressType === '专柜自提'}") 专柜提货
+            button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
+        .address
+          h1
+           span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
+           span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
+          p(@click="changeLocation")
+            span(v-if="locationOrAddress !== 'location'")
+              img(src="../../../assets/img/location.png")
+              i(v-if="giveGoodsAddress.city_name") {{giveGoodsAddress.city_name}}{{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
+              i(v-else) 请选择地址
+            span(v-else)
+              img(src="../../../assets/img/location.png")
+              i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
+              i(v-else) 请选择地址
+            img(src="../../../assets/img/more@2x.png")
         ul.spec
           li(v-for="item in spec")
             .title {{item.specName}}
@@ -25,17 +44,15 @@
               li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index}", @click="item.valueIndex=index;getStoreNum()") {{i}}
               p(style="clear:both")
         .count
-          span 数量
+          span 购买数量
           w-counter(v-model="content", :min="1")
-    .buttons(v-if="show")
-      .left(@click="buy", v-if="false") 加入购物车
-      .right(@click="confirm", v-if="onlySelectSpec") 确认选择
-      .right(@click="buy", v-else) 确定
+        .bottomButton
+          .right(@click="confirm") 确定
 </template>
 
 <script>
   import {mapState} from 'vuex'
-
+  import {bus} from '../../../bus'
   export default {
     name: "city-select",
     data () {
@@ -44,12 +61,20 @@
         moveY: '',
         smallPhotoFlag: false,
         content: 1,
+        expressType: 0,
         realGoodsData: {},
+        // 当前该显示的地址信息
+        locationOrAddress: 'location'
       }
     },
     props: {
       photos: Array,
       spec: Array,
+      // 配送类型
+      expressType:{
+        type: String,
+        default: '专柜自提'
+      },
       onlySelectSpec: {
         type: Boolean,
         default: false
@@ -66,12 +91,44 @@
         obj=JSON.parse(JSON.stringify(this.photos))
         return obj
       },
-      ...mapState(['userData'])
+      // 定位地址城市名称
+      locationCityName() {
+        return this.location.city.name
+      },
+      // 收货地址城市名称
+      addressCityName() {
+        return this.giveGoodsAddress.city_name
+      },
+      ...mapState(['userData','giveGoodsAddress','location'])
+    },
+    watch:{
+      // 若定位城市变化，则显示定位相关地址信息
+      locationCityName() {
+        this.locationOrAddress = 'location'
+      },
+      // 若定用户地址市变化，则显示用户地址相关地址信息
+      addressCityName() {
+        this.locationOrAddress = 'address'
+      }
     },
     mounted () {
       this.getStoreNum()
     },
     methods:{
+      // 更改配送方式
+      changeExpress (data) {
+        this.$parent.disTypeName = data
+        // 触发选择配送方式组件
+        if(data==='专柜自提'){
+          this.$parent.selectDis(0)
+        } else {
+          this.$parent.selectDis(1)
+        }
+      },
+      // 更改地址
+      changeLocation () {
+        this.$parent.selectCityShow()
+      },
       notScroll (e) {
         e.preventDefault()
       },
@@ -225,9 +282,9 @@
     z-index: 102;
     overflow-y: auto;
   }
-  .buttons {
+  .bottomButton {
     position: fixed;
-    z-index: 103;
+    z-index: 102;
     bottom: 0;
     left: 0;
     width: 100%;
@@ -235,19 +292,19 @@
     display: flex;
     border: solid 1px rgb(244,0,87);
   }
-  .buttons div{
+  .bottomButton div{
     display: flex;
     justify-content: center;
     align-items: center;
   }
-  .buttons .left{
+  .bottomButton .left{
     flex-grow: 1;
     height: 100%;
     background: white;
     font-size: .4rem;
     color: rgb(244,0,87);
   }
-  .buttons .right{
+  .bottomButton .right{
     flex-grow: 1;
     height: 100%;
     background: rgb(244,0,87);
@@ -356,5 +413,65 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  /* 配送方式 */
+  .express {
+    margin-top: .4rem;
+    padding: 0 .2rem;
+  }
+  .express>h1{
+    font-size: .42rem;
+    margin-bottom: .2rem;
+  }
+  .express .buttonTab{
+
+  }
+  .express .buttonTab>button{
+    border: solid 1px #ccc;
+    background: none;
+    color: #888;
+    padding: .15rem .4rem;
+    border-radius: 5px;
+    margin-right: .3rem;
+  }
+  .checked {
+    color: white !important;
+    border: none !important;
+    background: rgb(246,0,88) !important;
+  }
+  /* 配送地址 */
+  .address {
+    margin-top: .4rem;
+    padding: 0 .2rem;
+  }
+  .address>h1{
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    font-size: .42rem;
+    margin-bottom: .2rem;
+  }
+  .address>h1 span:last-child{
+    font-size: .2rem;
+    color: #ccc;
+    margin-left: .3rem;
+  }
+  .address>p{
+    border-bottom: solid 1px #eee;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .address span{
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .address img:first-child{
+    margin-right: .2rem;
+  }
+  .address img {
+    height: .5rem;
   }
 </style>

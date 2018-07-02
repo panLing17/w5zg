@@ -242,6 +242,22 @@ const router = new Router ({
       }
     },
     {
+      path: '/marketing/bindMobile',
+      name: '绑定手机号',
+      component: Marketing.bindMobile,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/noAttended',
+      name: '未参加个人中心',
+      component: Marketing.noAttended,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/marketing/assisting',
       name: '助力活动',
       component: Marketing.assisting,
@@ -253,6 +269,14 @@ const router = new Router ({
       path: '/marketing/personal',
       name: '个人中心',
       component: Marketing.personal,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/marketing/lookHelp',
+      name: '查看助力',
+      component: Marketing.lookHelp,
       meta: {
         keepAlive: true
       }
@@ -388,11 +412,17 @@ const router = new Router ({
           path: '/page',
           name: '分类',
           component: Page.index,
+          meta: {
+            keepAlive: false
+          },
           children: [
             {
               path: '/',
               name: '分类',
-              component: Page.page
+              component: Page.page,
+              meta: {
+                keepAlive: false
+              },
             },
             {
               path: '/page/commodityList',
@@ -827,6 +857,9 @@ const router = new Router ({
 })
 // 全局前置守卫
 router.beforeEach ((to, from, next) => {
+  // 百度统计每个URL的访问量
+  _hmt.push(['_trackPageview', to.path])
+
   // app交互
   if (typeof w5zgApp !== 'undefined') {
     w5zgApp.page(JSON.stringify({

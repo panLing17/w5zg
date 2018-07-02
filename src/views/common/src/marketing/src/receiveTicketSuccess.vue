@@ -22,6 +22,7 @@
         .template3(v-if="showIndex==2")
           .template2ImgWrapper
             img.template2Img(src="../../../../../assets/img/nike4.png")
+            .price ￥{{price}}
           .descWrapper
             .desc1.tamp3Desc1 已经为TA攒了片<strong>{{randomText}}</strong>啦~
             .desc4 额外赠送
@@ -29,22 +30,24 @@
               span 已发放至您的手机账号
           .desc3.small 免费领取
             strong.strong1 1200元耐克鞋
-          .nextBtn
+          .nextBtn(@click="isPartake")
             img.nextImg(src="../../../../../assets/img/nike6.png")
-          .nextBtn.next
+          .nextBtn.next(@click="$router.push('/home')")
             img.nextImg(src="../../../../../assets/img/nike7.png")
 </template>
 
 <script>
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
-    name: "receiveTicket",
+    name: "receiveTicketSuccess",
     data () {
       return {
-        showIndex: 1,
+        showIndex: 2,
         price: '',
         sessionId:'',
         phone:'',
-        W5MALLTOKEN:''
+        W5MALLTOKEN:'',
+        randomText: ''
       }
     },
     created () {
@@ -52,21 +55,111 @@
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
+      this.loadShare()
     },
     methods: {
+      //用户是否参加过
+      isPartake () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isJoined',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no') {
+              self.joinActivity()
+            } else if (response.data.data == 'yes'){
+              self.$router.push({path: '/marketing/assisting', query:{temp: 2}})
+            } else if (response.data.data == 'no auth') {
+              self.getWXUrl()
+            } else if (response.data.data == 'no binding') {
+              self.bindAccount()
+            }
+          }
+        })
+      },
+      //参加活动
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/joinActivity',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.$router.push({path: '/marketing/assisting', query: {temp: 2}})
+          }
+        })
+      },
       loadShare () {
-        this.$initShare({
-          sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-          shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-          shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-          link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+        let _this = this
+        if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+            this.getSharerId(function (data) {
+              if (data != '用户不存在') {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                })
+              } else {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                })
+              }
+            })
+          } else {
+            this.$initShare({
+              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+            })
+          }
+        } else {
+          this.$initShare({
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+          })
+        }
+      },
+      getSharerId (callback){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/queryMemberIdByMobile',
+          params: {
+            mobile: localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data != '用户不存在') {
+              localStorage.setItem('sharerId', response.data.data)
+            }
+            callback && callback(response.data.data)
+          }
         })
       },
       getData () {
+        if (this.$route.query.show_index) {
+          this.getRandomText()
+          this.showIndex = this.$route.query.show_index;
+        }
         this.price = this.$route.query.price
         this.sessionId = this.$route.query.sessionId
         this.phone = this.$route.query.phone,
-          this.W5MALLTOKEN = this.$route.query.W5MALLTOKEN
+        this.W5MALLTOKEN = this.$route.query.W5MALLTOKEN
       },
       sendEnrollSmsByAfs () {
         let _this = this
@@ -86,13 +179,11 @@
 
       },
       getRandomText () {
-        if (this.showIndex==3) {
-          let Range = 4;
-          let Rand = Math.random();
-          let num = Math.round(Rand * Range);
-          let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
-          this.randomText = aText[num]
-        }
+        let Range = 4;
+        let Rand = Math.random();
+        let num = Math.round(Rand * Range);
+        let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
+        this.randomText = aText[num]
       }
 
     }

@@ -28,7 +28,7 @@
     },
     beforeRouteEnter (to, from , next) {
       to.meta.keepAlive = false
-      next();
+      next()
     },
     created () {
 
@@ -135,6 +135,7 @@
     line-height: 1.2rem;
     display: flex;
     min-width: 100%;
+    position: relative;
   }
   .tabItem {
     flex: 1;

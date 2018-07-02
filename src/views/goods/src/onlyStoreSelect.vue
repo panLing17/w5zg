@@ -3,14 +3,23 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-show="show")
-        .mescroll(id="storeSelect")
-          .title
-            span 配送至
-            img(src="../../../assets/img/cancle@3x.png", @click="close")
-          ul.list
-            li(v-for="item in storeList", @click="selectOver(item.bs_id,item.bs_name)") {{item.bs_address}}
-            li(v-if="storeList.length === 0") 该城市无可选门店
+      .main(v-if="show")
+        .title
+          span 选择门店
+        ul.list
+          li.city(v-for="item in storeList")
+            h1 {{item.cityName}}
+            ul
+              li(@click="bsId=i.bs_id", v-for="i in item.storeList")
+                .text
+                  h2 {{i.bs_name}}
+                  p {{i.bs_address}}
+                    span(v-for="tags in i.bs_type_name.split('&')") 可{{tags}}
+                .icon
+                  img(src="../../../assets/img/now@2x.png", v-if="bsId === i.bs_id")
+                  img(src="../../../assets/img/past@2x.png", v-else)
+        p(v-if="storeList.length<1").notFindStore 该商品无可选门店或未登录
+        button.ok(@click="selectOver") 确 认
 </template>
 
 <script>
@@ -18,19 +27,8 @@
     name: "store-select",
     data () {
       return {
-        // 当前选择的类型，0为选择省，1为市，2为区
-        selectType: 0,
-        provinceName: '请选择',
-        cityName: '请选择',
-        areaName: '请选择',
-        // 选中的省编码
-        proNumber: '',
-        // 选中的市编码
-        cityNumber: '',
-        // 选中的区编码
-        areaNumber: '',
-        provinceList: [],
-        cityList: [],
+        // 当前选中的地址的id
+        bsId: '',
         storeList: []
       }
     },
@@ -41,31 +39,18 @@
       }
     },
     watch: {
-      show (val) {
-        if (val) {
+      show () {
+        if (this.show) {
           this.storeList = []
           this.getStore()
-          // mescroll初始化
-          this.$mescrollInt("storeSelect",this.upCallback)
-        } else {
-          this.mescroll.hideTopBtn();
-          this.mescroll.destroy()
         }
       }
     },
     mounted () {
     },
     methods:{
-      upCallback: function(page) {
-        let self = this;
-        // self.mescroll.endSuccess(1)
-        this.mescroll.endErr()
-      },
       close () {
         this.$emit('close')
-      },
-      typeClick (type) {
-        this.selectType = type
       },
       tab (num) {
         this.selectType = num
@@ -82,34 +67,62 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiGoods + 'goods/store',
+          url: self.$apiGoods + 'goods/queryStore',
           params: {
             gskuId: self.$store.state.skuId,
-            gspuId: self.$route.query.id,
-            provinceNo: self.$store.state.location.province.id ,
-            cityNo: self.$store.state.location.city.id
+            marketId:0,
+            cityNo: self.$store.state.location.city.id,
+            storeType: 1
           },
         }).then(function (response) {
-          self.storeList = response.data.data.storeList
-          self.selectType = 2
+          self.storeList = response.data.data
+
+        })
+      },
+      addBespeak () {
+        if (!this.bsId) {
+          this.$message.warning('请选择门店')
+          return
+        }
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/addTryOn',
+          params: {
+            gspuId: self.$route.query.id,
+            storeId: self.bsId
+          },
+        }).then(function (response) {
+          self.$message.success(response.data.msg)
+          self.close()
         })
       },
       selectOver (number, storeName) {
+        let data
+        this.storeList.forEach((now)=>{
+          now.storeList.forEach((sonNow)=>{
+            if (sonNow.bs_id === this.bsId) {
+              console.log(sonNow)
+              data = {
+                id: sonNow.bs_city_no,
+                name: sonNow.bs_name
+              }
+            }
+          })
+        })
         // 事件派发，将省市区名字以及编号返回
-        let data = {
-          id: number,
-          name: storeName
-        }
         let l = this.$store.state.location
         l.store = data
         this.$store.commit('transferGive',l)
         this.$emit('change', data)
+        this.close()
       }
     }
   }
 </script>
 
 <style scoped>
+
   .citySelectBox {
 
   }
@@ -127,7 +140,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 30%;
+    height: 70%;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -140,11 +153,19 @@
     height: 1rem;
     font-size: .4rem;
     position: relative;
+    border-bottom: solid 1px #eee;
   }
-  .title img{
+  .title .right{
     position: absolute;
     right: .2rem;
-    width: .4rem;
+    color: #666666;
+    font-size: .4rem;
+    display: flex;
+    align-items: center;
+  }
+  .title .right img{
+    height: .45rem;
+    margin-right: .15rem;
   }
   .tab{
     display: flex;
@@ -169,9 +190,65 @@
     width: 10rem;
     height: 4rem;
     overflow-y: auto;
+    padding: 0 .4rem;
   }
-  .list li{
-    border-top: solid 1px #eee;
+  .list .city {
+    border-bottom: solid 1px #eee;
+  }
+  .city>h1{
+    text-align: left;
+    font-size: .4rem;
+  }
+  .city>ul>li{
+    display: flex ;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .2rem;
+  }
+  .icon{
+    width: .45rem;
+  }
+  .icon img{
+    width: 100%;
+  }
+  .text{
+    max-width: 8rem;
+  }
+  .text h2{
+    font-size: .35rem;
+    font-weight: 500;
+    text-align: left;
+    line-height: .5rem;
+    color: #222;
+  }
+  .text p{
+    font-size: .35rem;
+    line-height: .5rem;
+    text-align: left;
+    color: #aaa;
+  }
+  .text p span{
+    padding: 1px 3px;
+    background-color: rgba(245,0,87,.1);
+    border: solid 1px rgba(245,3,87,1);
+    color: rgb(245,0,87);
+    margin-left: .2rem;
+    border-radius: 3px;
+  }
+  .notFindStore {
+    color: #aaaaaa;
+    text-align: center;
+  }
+  .ok {
+    width: 100%;
+    height: 1rem;
+    background-color: rgb(245,0,87);
+    border: none;
+    color: white;
+    font-size: .4rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
   }
   .slider {
     height: 1px;

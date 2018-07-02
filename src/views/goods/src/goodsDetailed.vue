@@ -76,8 +76,8 @@
         .left 规格
           span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
         img(src="../../../assets/img/right.png").right
-      dis-type(@selectType="selectDis", style="margin-top:.2rem")
-      .distribution(@click="selectCity = true")
+      dis-type(@selectType="selectDis", ref="disType", style="margin-top:.2rem")
+      .distribution(@click="selectCityShow")
         .top
           .left 地址
           .right
@@ -90,10 +90,10 @@
           .hour(v-if="disTypeName === '专柜自提'") 预计{{getGoodsDate}}小时后到货
           .hour(v-else) 预计24小时后发货，请以实际快递为准
       // 改动后的邮费
-      <!--.numberBox(v-if="disTypeName !== '专柜自提'")-->
-        <!--ul.number-->
-          <!--//li 邮费 包邮-->
-          <!--li 邮费 {{freight}}元-->
+      .numberBox(v-if="disTypeName !== '专柜自提'")
+        ul.number
+          //li 邮费 包邮
+          li 邮费 {{freight}}元
       .promise
         img(src="../../../assets/img/ic_good_detail_1.png")
         img(src="../../../assets/img/ic_good_detail_2.png")
@@ -117,21 +117,24 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
+      select-size(v-if="selectSizeShow", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
-    onlyStoreSelect(:show="onlyStoreSelect", @change="onlyStoreChange", @close="onlyStoreSelect = false")
+    onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false")
     bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
+    // 选择收货地址
+    location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
     // 新手教程
     goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
 </template>
 
 <script>
+  import locationSelect from './locationSelect'
   import selectSize from './selectSize'
   import disType from './disType'
   import citySelect from './citySelect'
@@ -166,6 +169,10 @@
         selectStoreFlag: false,
         shoppingCartFlag: false,
         selectShare: false,
+        // 选择收货地址
+        locationFlag: false,
+        // 收货地址数据
+        locationList: [],
         // 仅选择门店开关
         onlyStoreSelect: false,
         // 仅选择城市开关
@@ -215,9 +222,9 @@
       tong () {
         return parseInt(this.goodsData.counter_interval)
       },*/
-      ...mapState(['location', 'userData','skuId'])
+      ...mapState(['location', 'userData','skuId', 'transfer'])
     },
-    components: {selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
+    components: {locationSelect, selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
       if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
@@ -334,9 +341,50 @@
       }
     },
     methods:{
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
+      selectCityOpen(){
+        this.selectCity = true
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll( isLock );
+      },
+      selectCityShow () {
+        //this.selectCity = true
+        if (this.disTypeName === '专柜自提') {
+          this.onlyStoreSelect = true
+        } else {
+          this.locationFlag = true
+          let self = this
+          this.$ajax({
+            method: 'get',
+            url: self.$apiMember + 'receivingAddress/addresses',
+            params: {
+              cityNo: self.$store.state.location.city.id
+            }
+          }).then(function (response) {
+            if (response.data.data.length>0) {
+              self.locationList = response.data.data
+            }
+          })
+        }
+
+
+        // this.selectCity = true
+      },
+      // 关闭收货地址
+      locationSelectClose () {
+        this.locationFlag = false
+      },
+      // 选择收货地址后
+      locationChange () {
+        // 重新渲染选择规格组件，触发库存等数据的请求
+        this.selectSizeShow = false
+        setTimeout(()=>{
+          this.selectSizeShow = true
+        },50)
       },
       scrollTo(h,t){
         this.mescroll.scrollTo( h, t );
@@ -529,6 +577,8 @@
       cityChange (data) {
         this.$store.commit('getLocation',data)
         this.selectCity = false
+        // 关闭选择收货地址
+        this.locationFlag = false
         // 重新渲染选择规格组件，触发库存等数据的请求
         this.selectSizeShow = false
         setTimeout(()=>{
@@ -556,7 +606,13 @@
         if (this.selectedSpec.length>0) {
           // 根据配送类型进行操作
           if (this.disTypeName==='专柜自提') {
-            this.onlyStoreSelect = true
+
+            // 根据是否有城市判断是否选择过地址
+            if (this.transfer.city) {
+              this.onlyStoreChange()
+            } else {
+              this.$message.warning('请选择收货/自提地址')
+            }
           } else {
             // 为配送订单直接进入下一步
             this.expressNext()
@@ -589,10 +645,19 @@
         if (this.selectedSpec.length>0) {
           // 根据配送类型进行操作
           if (this.disTypeName==='专柜自提') {
-            this.onlyStoreSelect = true
+            // 根据是否有城市判断是否选择过地址
+            if (this.transfer.city) {
+              this.onlyStoreChange()
+            } else {
+              this.$message.warning('请选择收货/自提地址')
+            }
           } else {
-            // 为配送订单直接进入下一步
-            this.expressNext()
+            // 为配送订单并且已选地址直接进入下一步
+            console.log(this.$store.state.giveGoodsAddress)
+
+              this.expressNext()
+
+
           }
         } else {
           this.selectFlag = true
@@ -601,6 +666,64 @@
         }
       },
       // 单独选择门店后
+      /*onlyStoreChange(data) {
+        // 如果操作来自购买按钮
+        if (this.ofBuy) {
+          /!* let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiTransaction + 'order/submitNowCarryOrder',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (response) {
+            response.data.data.forEach((now,index)=>{
+              now.valueIndex = 0
+            })
+            self.spec = response.data.data
+          }) *!/
+          // 规格
+          let spec = []
+          this.spec.forEach((now) => {
+            spec.push(now.specValue[now.valueIndex])
+          })
+          // 订单页需要展示及用到的数据
+          let orderData = [{
+            skuId: this.$store.state.skuId,
+            storeName: this.$store.state.location.store.name,
+            storeLocation: this.$store.state.location,
+            photo: this.banner[0].gi_img_url,
+            spec: spec,
+            number: this.content,
+            goodsName: this.goodsData.gi_name,
+            price: this.price,
+            freight: this.goodsData.goi_freight
+          }]
+          // 传入中转
+          this.$store.commit('transferGive', orderData)
+          this.$router.push({path: '/confirmOrder', query: {since: 'true', type: 'direct'}})
+        }
+        if (this.shoppingCartFlag) {
+          // 如果操作来自添加购物车按钮
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/shoppingCart/add',
+            params: {
+              gskuId: self.$store.state.skuId,
+              deliveryWays: 168,
+              province: self.$store.state.location.province.id,
+              city: self.$store.state.location.city.id,
+              storeId: self.$store.state.location.store.id,
+              goodsNum: self.content
+            }
+          }).then(function (response) {
+            // 关闭选择
+            self.onlyStoreSelect = false
+            self.$message.success('添加购物车成功')
+          })
+        }
+      },*/
       onlyStoreChange (data) {
         // 如果操作来自购买按钮
         if (this.ofBuy) {
@@ -773,6 +896,7 @@
       },
       // 选择配送类型
       selectDis (data) {
+        this.$refs.disType.nowType = data
         if (data === 1) {
           // this.selectCity = true
           this.disTypeName = '快递配送'

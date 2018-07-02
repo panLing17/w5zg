@@ -58,6 +58,7 @@
       }
     },
     created () {
+      this.isStart()
       this.saveUrl()
       this.judeg()
 
@@ -67,16 +68,111 @@
       this.loadShare()
     },
     methods: {
+      isStart () {
+        //微信测试环境
+        if (this.$route.query.sharerId || localStorage.getItem('sharerId')) {
+          if (this.isWeiXin()) {
+            localStorage.setItem('originatorId', this.$route.query.sharerId)
+            this.getWXUrl()
+          } else {
+            this.$message.error('请在微信中打开！')
+            this.$router.push('/home')
+          }
+        }
 
-      loadShare () {
-        console.log(shareImg.substr(1))
-        this.$initShare({
-          sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-          shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-          shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-          link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
-        })
+        // 模拟环境
+        // localStorage.setItem('originatorId', this.$route.query.sharerId)
+        // this.$router.push('/marketing/assisting')
+
+        //正式环境
+        // let self = this
+        // self.$ajax({
+        //   method: 'get',
+        //   url: self.$apiApp + 'presentShoes/isStart',
+        //   params: {}
+        // }).then(function (response) {
+        //   if (response) {
+        //     if (response.data.data == 'yes') {
+        //       if (self.$route.query.sharerId || localStorage.getItem('sharerId')) {
+        //         if (self.isWeiXin()) {
+      //             localStorage.setItem('originatorId', self.$route.query.sharerId)
+        //           self.getWXUrl()
+        //         } else {
+        //           self.$message.error('请在微信中打开！')
+        //           self.$router.push('/home')
+        //         }
+        //       }
+        //
+        //     }
+        //   }
+        // })
       },
+      //是否是微信环境
+      isWeiXin() {
+        let ua = window.navigator.userAgent.toLowerCase()
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+          return true
+        } else {
+          return false
+        }
+      },
+      //获取微信授权URL
+      getWXUrl () {
+        if (!localStorage.getItem('unionId') || localStorage.getItem('unionId')==='undefined' || localStorage.getItem('unionId') == null) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+            params: {}
+          }).then(function (response) {
+            if (response) {
+              window.location.href = response.data.data
+            }
+          })
+        } else {
+          this.$router.push('/marketing/assisting')
+        }
+      },
+      // 分享
+      loadShare () {
+        let _this = this
+        if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+            this.getSharerId(function (data) {
+              if (data != '用户不存在') {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                })
+              } else {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                })
+              }
+            })
+          } else {
+            this.$initShare({
+              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+            })
+          }
+        } else {
+          this.$initShare({
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+          })
+        }
+      },
+      //验证是否是已报名用户
       judeg () {
         if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
           let self = this
@@ -93,25 +189,51 @@
               }
             }
           })
+
+          if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+            this.getSharerId()
+          }
         }
       },
+      //获取sharerId
+      getSharerId (callback){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/queryMemberIdByMobile',
+          params: {
+            mobile: localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data != '用户不存在') {
+              localStorage.setItem('sharerId', response.data.data)
+            }
+            callback && callback(response.data.data)
+          }
+        })
+      },
+      //保存URL
       saveUrl () {
         if (this.$route.query.redirect_url) {
           localStorage.setItem('redirect_url', this.$route.query.redirect_url)
         }
 
       },
+      //打开弹窗
       showPop (index) {
         this.temp = index;
         this.popShow = true;
       },
+      //上面按钮判断走向
       toNext1 () {
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')
         } else {
-          this.$router.push('/marketing/assisting')
+          this.getWXUrl()
         }
       },
+      //下面按钮判断走向
       toNext2 () {
         if (!this.isPartake) {
           this.$router.push('/marketing/movies')

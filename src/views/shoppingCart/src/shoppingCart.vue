@@ -1,10 +1,9 @@
 <template lang="pug">
   div
-    nav-bar(background="white")
+    nav-bar(background="rgb(247,0,87)" color="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/location.png", style="height:.4rem; margin-right:.1rem")
-        span {{location.city.name}}
-      .topCenter(slot="center") 购物车
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBack()")
+      .topCenter(slot="center", style="color:white") 购物车
       .topRight(slot="right")
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
       .cartTypeTab
@@ -16,6 +15,7 @@
             p 快递配送
             span(class="animated", :class="{swing:flag}") {{shoppingCartGoodsNum.sendNum}}
         p(:style="{left:nowTab*50+'%'}")
+          span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
           router-view(style="min-height:calc(100vh - 6rem)", @clear="getGoodsNum")
@@ -311,6 +311,7 @@
 
   .cartTypeTab li span {
     margin-left: .1rem;
+    margin-bottom: .2rem;
     padding: 0 .15rem;
     border-radius: .2rem;
     color: white;
@@ -320,13 +321,18 @@
 
   .cartTypeTab > p {
     width: 50%;
+    display: flex;
+    justify-content: center;
     height: 2px;
-    background-color: rgb(244, 0, 84);
     position: absolute;
     bottom: 0;
     transition: left .5s;
   }
-
+  .cartTypeTab>p> .side{
+    background-color: rgb(244, 0, 84);
+    width: 60%;
+    height: 100%;
+  }
   .tabChecked {
     color: rgb(244, 0, 84);
   }
