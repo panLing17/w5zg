@@ -100,8 +100,6 @@
     },
     watch: {
       '$route' (to, from) {
-        // console.log(from);
-        // console.log(this.$store.state.pageNums);
         if (from.path === '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
@@ -335,7 +333,6 @@
         })
       },
       getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
-        // this.$store.commit('setPage', pageNum);
         let self = this
         self.$ajax({
           method: 'post',
@@ -369,7 +366,6 @@
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
-        // this.$store.commit('setPage', pageNum);
       },
 
       // 请求

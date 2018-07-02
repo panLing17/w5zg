@@ -184,7 +184,6 @@
 
     },
     activated () {
-      console.log(this.orderId != this.$route.query.orderId)
       if (this.orderId != this.$route.query.orderId) {
         this.orderId = this.$route.query.orderId
         this.mescroll.scrollTo(0, 0)
@@ -201,11 +200,7 @@
       // 判断用户身份
       this.judgeBOrC()
       this.$mescrollInt('orderMescroll', this.upCallback, () => {
-        // this.position.forEach((now) => {
-        //   if (now.path === this.$route.path) {
-        //     this.mescroll.scrollTo(now.y, 0);
-        //   }
-        // })
+
       }, (obj) => {
         this.$store.commit('setPosition', {
           path: this.$route.path,

@@ -1,7 +1,7 @@
 <template lang="pug">
   .wrapToggle
     .brand(@click="backLastPage()")
-      img(src="../../../assets/img/backBtn.png") 
+      img(src="../../../assets/img/backBtn.png")
       span 品牌
     p.hot 热门
     .brandList
@@ -14,8 +14,8 @@
         li.viewMore(@click="viewMore(key,$event,oIndex)" v-if="key.list.length>10") {{key.words}}
     ul.letter(v-show="false")
       li #
-      li(v-for="(item,index) in letter" @click="goAnchorz('#anchorz-'+index)") {{item}} 
-      li #             
+      li(v-for="(item,index) in letter" @click="goAnchorz('#anchorz-'+index)") {{item}}
+      li #
 </template>
 
 <script>
@@ -95,14 +95,14 @@
             let data = {
               flag : true
             };
-            this.$emit('ievent',data); 
+            this.$emit('ievent',data);
           },
           goAnchorz:function(selector) {
             var anchor = this.$el.querySelector(selector);
             var heightTop = document.documentElement.scrollTop || document.body.scrollTop;
             heightTop = anchor.offsetTop - 60;
           },
-          viewMore:function(key,e,oIndex){  
+          viewMore:function(key,e,oIndex){
             if(e.target.innerText == "收起更多"){
               if (key.list.length>=9) {
                 this.num = 9;
@@ -134,7 +134,7 @@
                       };
                       self.letterBrandList[j].list.push(datas);
                     }
-                  } 
+                  }
                 }
               }
             })
@@ -148,12 +148,11 @@
               params:{},
             }).then(function(res){
               self.brandList = res.data.data;
-            });  
+            });
           },
 
           //选择字母列表品牌名
           selects(e,id){
-            console.log(id);
             this.brandNameId = id;
             let data = {
               flag2:true,
@@ -183,7 +182,7 @@
 .brand span{
   margin-left: 2.3rem;
 }
-.brand img{ 
+.brand img{
   width: .7rem;
   vertical-align: middle;
 }

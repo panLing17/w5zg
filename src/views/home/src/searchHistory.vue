@@ -108,10 +108,6 @@
       this.historys();
       //显示搜索结果
       this.resultShow();
-      console.log(this.$route.query.jumps);
-      console.log(this.$route.query.relNum);
-      console.log(this.searchFlag);
-      console.log(this.resultFlag);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
