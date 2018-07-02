@@ -7,7 +7,7 @@
         h1 活动7月3日开始
         p
         p 邀请好友关注“万物直供商城”,一起免费领鞋吧~
-      .goShopping(v-if="temp == 1", @click="$router.push('/home')")
+      .goShopping(v-if="temp == 1", @click="$router.replace('/home')")
         img(src="../../../../../assets/img/user_not_started_btn.png" @click.prevent="")
       .rule(v-if="temp == 1")
         .ruleTitle 活动规则
@@ -27,7 +27,7 @@
         .bottommer
           .left(@click="shareFlag = 1")
             img(src="../../../../../assets/img/06_user_invite_btn.png")
-          .right(@click="$router.push('/home')")
+          .right(@click="$router.replace('/home')")
             img(src="../../../../../assets/img/06_user_mall_btn.png")
         .bottom(v-if="temp == 2")
           .assists(ref="bottom")
@@ -46,7 +46,7 @@
         .btnN
           img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")
-      rules-temp(v-if="ruleFlag === 0", @closeBtn="ruleFlag = 1")
+      rules-temp(v-show="ruleFlag === 0", @closeBtn="ruleFlag = 1")
     .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
       img(src="../../../../../assets/img/arrow.png")
       p 点击右上角
@@ -71,12 +71,12 @@
       }
     },
     created () {
+      this.loadShare()
       this.saveUnionId()
       this.whereFrom()
     },
     mounted () {
       document.title = "送耐克活动";
-      this.loadShare()
     },
     methods: {
       //保存unionId
@@ -145,42 +145,52 @@
           }
         })
       },
-      //分享
+      getLocationHref () {
+        let href1 = window.location.href.split('/#')
+        let href2 = window.location.href.split('/?')
+        if (href1.length <= 1) {
+          return href2[0]
+        } else {
+          return href1[0]
+        }
+      },
+      // 分享
       loadShare () {
+        console.log(this.getLocationHref())
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
           if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
             this.getSharerId(function (data) {
-              if (data != '用户不存在') {
+              if (data != 'null') {
                 _this.$initShare({
-                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.substr(1),
                   shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
                   shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                  link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
                 })
               } else {
                 _this.$initShare({
-                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.substr(1),
                   shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
                   shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                  link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
                 })
               }
             })
           } else {
             this.$initShare({
-              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              sharePhoto: this.getLocationHref() + '/' + shareImg.substr(1),
               shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
               shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+              link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
             })
           }
         } else {
           this.$initShare({
-            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            sharePhoto: this.getLocationHref() + '/' + shareImg.substr(1),
             shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
             shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+            link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
           })
         }
       },
@@ -195,7 +205,7 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data != '用户不存在') {
+            if (response.data.data != 'null') {
               localStorage.setItem('sharerId', response.data.data)
             }
             callback && callback(response.data.data)
@@ -247,7 +257,7 @@
           } else {
             if (phone && phone.length === 11) {
               this.getSharerId (function (data) {
-                if (data != '用户不存在') {
+                if (data != 'null') {
                   if (data == originatorId) {
                     _this.isPartake()
                   } else {
@@ -267,14 +277,10 @@
           } else {
             if (phone && phone.length === 11) {
               this.getSharerId (function (data) {
-                if (data != '用户不存在') {
-                  _this.isPartake()
-                } else {
-                  // _this.$router.replace('/marketing/index')
-                }
+                _this.isPartake()
               })
             } else {
-              // _this.$router.replace('/marketing/index')
+              this.isPartake()
             }
           }
         }
@@ -293,6 +299,11 @@
             if (response.data.data == 'no') {
               self.$router.replace('/marketing/noAttended')
             } else if (response.data.data == 'yes'){
+
+              if (localStorage.getItem('originatorId')) {
+                localStorage.setItem('originatorId', null)
+              }
+
               self.temp = 2
               self.getGroup()
               self.getMyInfo()
@@ -303,6 +314,9 @@
               if (localStorage.getItem('phone') && localStorage.getItem('phone').length == 11) {
                 self.bindAccount()
               } else {
+                if (localStorage.getItem('originatorId')) {
+                  localStorage.setItem('originatorId', null)
+                }
                 self.$router.replace('/marketing/noAttended')
               }
             }
@@ -336,6 +350,9 @@
           }
         }).then(function (response) {
           if (response) {
+            if (localStorage.getItem('originatorId')) {
+              localStorage.setItem('originatorId', null)
+            }
             _this.temp = 2
             _this.getGroup()
             _this.getMyInfo()
