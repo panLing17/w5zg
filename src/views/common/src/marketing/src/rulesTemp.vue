@@ -58,7 +58,7 @@
     overflow: scroll;
     background-color: #fff;
     padding-bottom: .5rem;
-    height: 80%;
+    height: 83%;
   }
   .cont{
     background-color: #fff;

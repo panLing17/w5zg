@@ -110,12 +110,26 @@
         }).then(function (response) {
           if (response) {
             if (response.data.data == 'Already Bind') {
-              _this.$message.error('此微信号已绑定过手机号，请输入正确手机号！')
-              window.location.reload()
+              _this.joinActivity()
             } else {
               localStorage.setItem('phone', _this.phone)
               _this.helpActivity()
             }
+          }
+        })
+      },
+      //参加活动
+      joinActivity () {
+        let _this = this
+        this.$ajax({
+          method: 'get',
+          url: _this.$apiApp + 'presentShoes/joinActivity',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.helpActivity()
           }
         })
       },
