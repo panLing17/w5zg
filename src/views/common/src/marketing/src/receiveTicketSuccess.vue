@@ -37,6 +37,7 @@
 </template>
 
 <script>
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "receiveTicketSuccess",
     data () {
@@ -54,6 +55,7 @@
     },
     mounted () {
       document.title = '领取工会福利券和耐克鞋';
+      this.loadShare()
     },
     methods: {
       //用户是否参加过
@@ -70,7 +72,7 @@
             if (response.data.data == 'no') {
               self.joinActivity()
             } else if (response.data.data == 'yes'){
-              self.$router.push({path: 'marketing/assisting', query:{temp: 2}})
+              self.$router.push({path: '/marketing/assisting', query:{temp: 2}})
             } else if (response.data.data == 'no auth') {
               self.getWXUrl()
             } else if (response.data.data == 'no binding') {
@@ -177,13 +179,11 @@
 
       },
       getRandomText () {
-        if (this.showIndex==3) {
-          let Range = 4;
-          let Rand = Math.random();
-          let num = Math.round(Rand * Range);
-          let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
-          this.randomText = aText[num]
-        }
+        let Range = 4;
+        let Rand = Math.random();
+        let num = Math.round(Rand * Range);
+        let aText = ['鞋垫','鞋带','鞋舌','鞋帮','耐克标']
+        this.randomText = aText[num]
       }
 
     }

@@ -130,7 +130,6 @@
             }
           })
         } else {
-          console.log('有unionId')
           this.$router.push('/marketing/assisting')
         }
       },

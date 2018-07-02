@@ -12,11 +12,69 @@
 </template>
 
 <script>
-
+  import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "noAttended",
     mounted () {
-      document.title = "个人中心"
+      document.title = "送耐克活动"
+      this.loadShare()
+    },
+    methods: {
+      loadShare () {
+        let _this = this
+        if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
+            this.getSharerId(function (data) {
+              if (data != '用户不存在') {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                })
+              } else {
+                _this.$initShare({
+                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                })
+              }
+            })
+          } else {
+            this.$initShare({
+              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+            })
+          }
+        } else {
+          this.$initShare({
+            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
+            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
+            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+          })
+        }
+      },
+      getSharerId (callback){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'member/queryMemberIdByMobile',
+          params: {
+            mobile: localStorage.getItem('phone')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data != '用户不存在') {
+              localStorage.setItem('sharerId', response.data.data)
+            }
+            callback && callback(response.data.data)
+          }
+        })
+      }
     }
   }
 </script>

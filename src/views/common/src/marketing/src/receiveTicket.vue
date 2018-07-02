@@ -88,8 +88,13 @@
           }
         }).then(function (response) {
           if (response) {
-            localStorage.setItem('phone', _this.phone)
-            _this.helpActivity()
+            if (response.data.data == 'Already Bind') {
+              _this.$message.error('此微信号已绑定过手机号，请输入正确手机号！')
+              window.location.reload()
+            } else {
+              localStorage.setItem('phone', _this.phone)
+              _this.helpActivity()
+            }
           }
         })
       },
@@ -105,7 +110,13 @@
           }
         }).then(function (response) {
           if (response) {
-            _this.getTicket2()
+            if (response.data.data == 'link invalid') {
+              _this.$message.error('您的好友还未参加活动，不能帮TA助力哦~')
+              _this.$router.replace('/marketing/index')
+            } else {
+              _this.getTicket2()
+            }
+
           }
         })
       },
@@ -143,7 +154,7 @@
             }
           }).catch(function (reason) {
             _this.loadingFlag = false
-            // _this.$message.error('系统出错~')
+
 
           });
         }
@@ -362,6 +373,10 @@
       getData () {
         if (this.$route.query.show_index) {
           this.showIndex = this.$route.query.show_index;
+          if (this.showIndex == 4 && localStorage.getItem('phone') && localStorage.getItem('phone').length==11) {
+            this.isLoginFlag = true
+            this.phone = localStorage.getItem('phone')
+          }
         }
       },
       isLogin () {
@@ -393,33 +408,26 @@
           }
         }
 
-        this.isJoinActivity(this.phone, function (flag) {
-          if (flag == 1) {
-            if (_this.showIndex == 1) {
-              localStorage.setItem('phone', _this.phone)
-              _this.$message.warning('您已经报名过活动！')
-              _this.$router.replace('/marketing/index')
-            } else if(_this.showIndex == 4) {
+        if (this.showIndex == 4) {
+          if (localStorage.getItem('phone') && localStorage.getItem('phone').length == 11) {
+            this.bindAccount()
+          } else {
+            this.popShow = true
+          }
+
+        } else if (this.showIndex == 1) {
+          this.isJoinActivity(this.phone, function (flag) {
+            if (flag == 1) {
+                localStorage.setItem('phone', _this.phone)
+                _this.$message.warning('您已经报名过活动！')
+                _this.$router.replace('/marketing/index')
+            }else if (flag == 0) {
               _this.popShow = true
             }
-          }else if (flag == 0) {
-            _this.popShow = true
-          }
-        })
+          })
+        }
 
 
-        // if (this.scFlag){
-        //   if (this.sendCodeFlag) {
-        //     this.popShow = true
-        //   } else {
-        //     this.sendCode(function () {
-        //       _this.popShow = true
-        //     })
-        //   }
-        // }else {
-        //   this.$message.warning('请点击获取验证码按钮')
-        //   return
-        // }
       },
       getTicket () {
         if (this.loadingFlag === false) {
@@ -459,7 +467,6 @@
             }
           }).catch(function (reason) {
             _this.loadingFlag = false
-            // _this.$message.error('系统出错~')
 
           });
         }
