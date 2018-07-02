@@ -367,7 +367,6 @@
       _initSc () {
         let _this = this
         this.$nextTick(()=>{
-          // if (this.showIndex == 1 || this.showIndex == 4) {
           var ic = new smartCaptcha({
             renderTo: '#sc',
             width: '5.5rem',
@@ -398,7 +397,6 @@
             },
           });
           ic.init();
-          // }
         })
       },
       openTips () {
