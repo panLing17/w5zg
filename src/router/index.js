@@ -573,18 +573,15 @@ const router = new Router ({
             {
               path: '/my/orderManage',
               name: '订单管理',
-              component: MyOrder.orderManage,
-              meta: {
-                keepAlive: false
-              }
+              component: MyOrder.orderManage
+              // meta: {
+              //   keepAlive: false
+              // }
             },
             {
               path: '/my/orderDetails',
               name: '订单详情',
-              component: MyOrder.orderDetails,
-              meta: {
-                keepAlive: false
-              }
+              component: MyOrder.orderDetails
             },
             {
               path: '/my/checkLogistics',
