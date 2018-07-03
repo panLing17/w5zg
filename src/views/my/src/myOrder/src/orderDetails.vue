@@ -132,50 +132,50 @@
     components:{recommend},
     data(){
       return{
-        shopFlag:"", //门店联系人，联系方式显隐
-        pickUpNums:"", //提货码
-        whiteBarFlag:true, //最下方的白条的显隐
-        pickUpNoFlag:"", //提货码的显隐
-        freight:"", //运费
-        orderInfoStatus:"", //订单状态
-        totalOrderNum:this.$route.query.orderNo, //总订单编号
-        totalNumber:this.$route.query.totalNum, //从上个页面传来的商品总量
-        moreBtnFlag:"", //更多功能按钮的显隐
-        moreBtnCont:"申请退款", //更多功能按钮
-        freightFlag:"", //判断是否自提后是否显示运费
-        deliveryFlag:"", //判断是否自提
-        morethenFlag:true, //判断更多的显隐
-        btnSFlag:true, //判断第二个按钮的显隐
-        btnFFlag:true, //判断第一个按钮的显隐
-        btnS:"", //更多旁边第二个按钮
-        btnF:"", //更多旁边第一个按钮
-        color:"", //颜色或者容量
-        size:"", //大小或者体积
-        receiveTime:"", //签收时间
-        sendTime:"", //发货时间
-        payTime:"", //付款时间
-        createTime:"", //下单时间
-        countDowns:"", //倒计时
-        address:"", //地址
-        payPrice:"", //实付金额
-        totalPrice:"", //总金额
-        deductionCard:"", //现金券
-        presentPrice:"", //返现通用券
-        deductionTicket:"", //通用券抵扣
-        recipients:"", //收件人
+        shopFlag: "", //门店联系人，联系方式显隐
+        pickUpNums: "", //提货码
+        whiteBarFlag: true, //最下方的白条的显隐
+        pickUpNoFlag: "", //提货码的显隐
+        freight: "", //运费
+        orderInfoStatus: "", //订单状态
+        totalOrderNum: this.$route.query.orderNo, //总订单编号
+        totalNumber: this.$route.query.totalNum, //从上个页面传来的商品总量
+        moreBtnFlag: "", //更多功能按钮的显隐
+        moreBtnCont: "申请退款", //更多功能按钮
+        freightFlag: "", //判断是否自提后是否显示运费
+        deliveryFlag: "", //判断是否自提
+        morethenFlag: true, //判断更多的显隐
+        btnSFlag: true, //判断第二个按钮的显隐
+        btnFFlag: true, //判断第一个按钮的显隐
+        btnS: "", //更多旁边第二个按钮
+        btnF: "", //更多旁边第一个按钮
+        color: "", //颜色或者容量
+        size: "", //大小或者体积
+        receiveTime: "", //签收时间
+        sendTime: "", //发货时间
+        payTime: "", //付款时间
+        createTime: "", //下单时间
+        countDowns: "", //倒计时
+        address: "", //地址
+        payPrice: "", //实付金额
+        totalPrice: "", //总金额
+        deductionCard: "", //现金券
+        presentPrice: "", //返现通用券
+        deductionTicket: "", //通用券抵扣
+        recipients: "", //收件人
         phone: "", //收件人手机号
-        orderId:this.$route.query.orderId, //从订单管理传来的商品id
-        leftBtn:"", //订单最下面的左边按钮
-        rightBtn:"", //订单最下面的右边按钮
-        leftBtnFlag:"", //判断订单最下面左边按钮的显隐
-        showFlag:true,
-        flag:"",
+        orderId: this.$route.query.orderId, //从订单管理传来的商品id
+        leftBtn: "", //订单最下面的左边按钮
+        rightBtn: "", //订单最下面的右边按钮
+        leftBtnFlag: "", //判断订单最下面左边按钮的显隐
+        showFlag: true,
+        flag: "",
         recommendGoods: [],
-        orderDetails:[],
-        TotalOrderId:"", //总的订单id
-        BOrC:"", //判断用户身份
-        linkMan:"", //门店联系人
-        linkPhone:"", //门店联系人电话
+        orderDetails: [],
+        TotalOrderId: "", //总的订单id
+        BOrC: "", //判断用户身份
+        linkMan: "", //门店联系人
+        linkPhone: "", //门店联系人电话
         delivery_ways: ''
       }
     },

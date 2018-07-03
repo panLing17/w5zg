@@ -100,7 +100,6 @@
     },
     watch: {
       '$route' (to, from) {
-        console.log(to,from)
         if (from.path === '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
@@ -149,9 +148,6 @@
       }
     },
     mounted () {
-      console.log(this.$route.query.msg)
-      this.saveMsg = this.$route.query.msg
-      this.flagNum = this.$route.query.flags
       // 上拉加载
       this.$mescrollInt('pageMescroll', this.upCallback, () => {
         // this.position.forEach((now) => {
@@ -388,7 +384,6 @@
             city_no: 100100 // 当前城市编号
           }
         }).then(function (response) {
-          // self.recommendGoods = response.data.data;//成功回调
           self.recommendGoods = response.data.data
           if (self.recommendGoods.length <= 0) {
             self.brandId = '' // 品牌的id
