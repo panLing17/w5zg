@@ -93,6 +93,10 @@
           imgaDom.style.width = '100%'
           imgaDom.src = process.env.IMG_URL + now.gi_image_url + '?x-oss-process=style/compress'
           box.appendChild(imgaDom)
+          // 图片出错也计数
+          imgaDom.onerror = ()=>{
+            num += 1
+          }
           imgaDom.onload = () => {
             if (leftH > rightH) {
               this.listData.right.push(now)

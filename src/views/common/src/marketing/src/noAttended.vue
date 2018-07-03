@@ -6,7 +6,7 @@
       .contentCenter
         img.contentCenterImg(src="../../../../../assets/img/06_user_error_btn2.jpg")
         .temp1
-          .temp1Desc 您还没参加领鞋活动哦
+          .temp1Desc {{text}}
           .temp1Btn(@click="$router.push('/marketing/bindMobile')")
             img.temp1BtnImg(src="../../../../../assets/img/06_user_error_btn.png")
 </template>
@@ -15,9 +15,20 @@
   import shareImg from '../../../../../assets/img/applogo@2x.png'
   export default {
     name: "noAttended",
+    data () {
+      return {
+        text: '您还没参加领鞋活动哦'
+      }
+    },
+    created () {
+      if (localStorage.getItem('sharerId')) {
+        this.text = '活动已开启，点击按钮领鞋'
+      }
+      this.loadShare()
+    },
     mounted () {
       document.title = "送耐克活动"
-      this.loadShare()
+
     },
     methods: {
       getLocationHref () {
@@ -39,15 +50,15 @@
               if (data != 'null') {
                 _this.$initShare({
                   sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
                   link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
                 })
               } else {
                 _this.$initShare({
                   sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
                   link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
                 })
               }
@@ -55,16 +66,16 @@
           } else {
             this.$initShare({
               sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+              shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+              shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
               link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
             })
           }
         } else {
           this.$initShare({
             sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
+            shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+            shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
             link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
           })
         }
@@ -81,6 +92,7 @@
           if (response) {
             if (response.data.data != 'null') {
               localStorage.setItem('sharerId', response.data.data)
+              self.text = '活动已开启，点击按钮领鞋'
             }
             callback && callback(response.data.data)
           }

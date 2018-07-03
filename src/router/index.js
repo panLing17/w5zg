@@ -574,9 +574,6 @@ const router = new Router ({
               path: '/my/orderManage',
               name: '订单管理',
               component: MyOrder.orderManage
-              // meta: {
-              //   keepAlive: false
-              // }
             },
             {
               path: '/my/orderDetails',
@@ -855,7 +852,16 @@ const router = new Router ({
 // 全局前置守卫
 router.beforeEach ((to, from, next) => {
   // 百度统计每个URL的访问量
-  _hmt.push(['_trackPageview', to.path])
+  if (to.path == '/marketing/receiveTicket') {
+    if (to.query.show_index == 4) {
+      _hmt.push(['_trackPageview', to.path +'2'])
+    } else {
+      _hmt.push(['_trackPageview', to.path +'1'])
+    }
+  } else {
+    _hmt.push(['_trackPageview', to.path])
+  }
+
 
   // app交互
   if (typeof w5zgApp !== 'undefined') {
