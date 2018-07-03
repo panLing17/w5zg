@@ -52,7 +52,6 @@
       },
       locationSelected (item) {
         this.close()
-        console.log(item)
         let {
           city_name,
           county_name,
