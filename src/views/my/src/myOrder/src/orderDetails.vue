@@ -128,54 +128,54 @@
   import {mapState} from 'vuex'
   import recommend from './recommend'
   export default {
-    name: "orderDetails",
+    name: 'orderDetails',
     components:{recommend},
     data(){
       return{
-        shopFlag: "", //门店联系人，联系方式显隐
-        pickUpNums: "", //提货码
+        shopFlag: '', //门店联系人，联系方式显隐
+        pickUpNums: '', //提货码
         whiteBarFlag: true, //最下方的白条的显隐
-        pickUpNoFlag: "", //提货码的显隐
-        freight: "", //运费
-        orderInfoStatus: "", //订单状态
+        pickUpNoFlag: '', //提货码的显隐
+        freight: '', //运费
+        orderInfoStatus: '', //订单状态
         totalOrderNum: this.$route.query.orderNo, //总订单编号
         totalNumber: this.$route.query.totalNum, //从上个页面传来的商品总量
-        moreBtnFlag: "", //更多功能按钮的显隐
-        moreBtnCont: "申请退款", //更多功能按钮
-        freightFlag: "", //判断是否自提后是否显示运费
-        deliveryFlag: "", //判断是否自提
+        moreBtnFlag: '', //更多功能按钮的显隐
+        moreBtnCont: '申请退款', //更多功能按钮
+        freightFlag: '', //判断是否自提后是否显示运费
+        deliveryFlag: '', //判断是否自提
         morethenFlag: true, //判断更多的显隐
         btnSFlag: true, //判断第二个按钮的显隐
         btnFFlag: true, //判断第一个按钮的显隐
-        btnS: "", //更多旁边第二个按钮
-        btnF: "", //更多旁边第一个按钮
-        color: "", //颜色或者容量
-        size: "", //大小或者体积
-        receiveTime: "", //签收时间
-        sendTime: "", //发货时间
-        payTime: "", //付款时间
-        createTime: "", //下单时间
-        countDowns: "", //倒计时
-        address: "", //地址
-        payPrice: "", //实付金额
-        totalPrice: "", //总金额
-        deductionCard: "", //现金券
-        presentPrice: "", //返现通用券
-        deductionTicket: "", //通用券抵扣
-        recipients: "", //收件人
-        phone: "", //收件人手机号
+        btnS: '', //更多旁边第二个按钮
+        btnF: '', //更多旁边第一个按钮
+        color: '', //颜色或者容量
+        size: '', //大小或者体积
+        receiveTime: '', //签收时间
+        sendTime: '', //发货时间
+        payTime: '', //付款时间
+        createTime: '', //下单时间
+        countDowns: '', //倒计时
+        address: '', //地址
+        payPrice: '', //实付金额
+        totalPrice: '', //总金额
+        deductionCard: '', //现金券
+        presentPrice: '', //返现通用券
+        deductionTicket: '', //通用券抵扣
+        recipients: '', //收件人
+        phone: '', //收件人手机号
         orderId: this.$route.query.orderId, //从订单管理传来的商品id
-        leftBtn: "", //订单最下面的左边按钮
-        rightBtn: "", //订单最下面的右边按钮
-        leftBtnFlag: "", //判断订单最下面左边按钮的显隐
+        leftBtn: '', //订单最下面的左边按钮
+        rightBtn: '', //订单最下面的右边按钮
+        leftBtnFlag: '', //判断订单最下面左边按钮的显隐
         showFlag: true,
-        flag: "",
+        flag: '',
         recommendGoods: [],
         orderDetails: [],
-        TotalOrderId: "", //总的订单id
-        BOrC: "", //判断用户身份
-        linkMan: "", //门店联系人
-        linkPhone: "", //门店联系人电话
+        TotalOrderId: '', //总的订单id
+        BOrC: '', //判断用户身份
+        linkMan: '', //门店联系人
+        linkPhone: '', //门店联系人电话
         delivery_ways: ''
       }
     },
@@ -226,9 +226,9 @@
       judgeBOrC () {
         let self = this;
         self.$ajax({
-          method:"get",
-          url:self.$apiMember + 'member/currentMember',
-          params:{}
+          method: 'get',
+          url: self.$apiMember + 'member/currentMember',
+          params: {}
         }).then(function(res){
           self.BOrC = res.data.data.member_type;
         })
@@ -305,21 +305,21 @@
       },
       //更多展示功能按钮
       moreShow(e){
-        if (e.target.children[0].style.display == "" || e.target.children[0].style.display == "none") {
-          e.target.children[0].style.display = "block";
+        if (e.target.children[0].style.display === '' || e.target.children[0].style.display === 'none') {
+          e.target.children[0].style.display = 'block';
         } else {
-          e.target.children[0].style.display = "none";
+          e.target.children[0].style.display = 'none';
         }
-        if (e.target.children[0].style.display = "block") {
-          var wrapNav = document.getElementsByClassName("wrapNav")[0];
-          wrapNav.addEventListener("click",function(){
-            e.target.children[0].style.display = "none";
+        if (e.target.children[0].style.display = 'block') {
+          let wrapNav = document.getElementsByClassName('wrapNav')[0];
+          wrapNav.addEventListener('click',function(){
+            e.target.children[0].style.display = 'none';
           },true);
         }
       },
       //点击更多后展示的按钮
       judgeMoreBtn(e,item,items){
-        if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
+        if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
           let tempArr =[];
           items.forEach((items)=>{
             tempArr.push(items);
@@ -339,10 +339,10 @@
       orderDetailShow(){
         let self = this;
         self.$ajax({
-          method:"post",
-          url:self.$apiTransaction + "order/detail",
-          params:{
-            orderTotalId:self.orderId
+          method: 'post',
+          url: self.$apiTransaction + "order/detail",
+          params: {
+            orderTotalId: self.orderId
           }
         }).then(function(res){
           self.delivery_ways = res.data.data[0].delivery_ways;
@@ -365,37 +365,37 @@
           self.TotalOrderId = res.data.data[0].total_order_id;
           //判断是否自提
           //自提
-          if (res.data.data[0].delivery_ways == "自提") {
+          if (res.data.data[0].delivery_ways === '自提') {
             self.flag = true; //显示提货人
             self.deliveryFlag = false;
             self.freightFlag = false;
-            self.delivery_ways = "自提";
+            self.delivery_ways = '自提';
           }
           //配送
-          if (res.data.data[0].delivery_ways == "快递配送") {
+          if (res.data.data[0].delivery_ways === '快递配送') {
             self.flag = false; //显示收货人
             self.deliveryFlag = true;
             self.freightFlag = true;
-            self.delivery_ways = "快递配送";
+            self.delivery_ways = '快递配送';
           }
 
           //判断货物状态来决定
-          var arrays = res.data.data[0].orderInfo;
-          for (var i = 0; i < arrays.length; i++) {
-            if (arrays[i].orderInfo_status == "（退货）售后") {
+          let arrays = res.data.data[0].orderInfo;
+          for (let i = 0; i < arrays.length; i++) {
+            if (arrays[i].orderInfo_status === '（退货）售后') {
               //arrays[j].refund_status
               arrays[i].morethenFlag = false;
               arrays[i].moreBtnFlag =false;
               arrays[i].btnSFlag = false;
               arrays[i].btnFFlag = true;
-              arrays[i].btnS = "取消申请";
-              self.leftBtn = "取消申请";
-              self.rightBtn = "取消申请";
+              arrays[i].btnS = '取消申请';
+              self.leftBtn = '取消申请';
+              self.rightBtn = '取消申请';
               arrays[i].orderInfoStatus = arrays[i].orderInfo_status;
-              var mArr = arrays[i].orderDetail;
-              for (var j = 0; j < mArr.length; j++) {
+              let mArr = arrays[i].orderDetail;
+              for (let j = 0; j < mArr.length; j++) {
                 if (mArr.length>1) {
-                  if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
+                  if(mArr[j].refund_status == null || mArr[j].refund_status === '审核拒绝' || mArr[j].refund_status === '退货退款已取消'){
                     arrays[i].btnF = "申请退款";
                     break;
                   } else {

@@ -169,7 +169,7 @@
     methods: {
       // 当无订单时，将end去掉
       emptys () {
-        var mescrollUpwarp = document.getElementsByClassName('mescroll-upwarp')[0]
+        let mescrollUpwarp = document.getElementsByClassName('mescroll-upwarp')[0]
         mescrollUpwarp.style.visibility = 'hidden'
       },
       // 回退事件
@@ -200,7 +200,7 @@
         this.mescroll.lockDownScroll(true)
         this.mescroll.lockUpScroll(true)
         this.filtrateFlag = true
-        var commodityList = document.getElementsByClassName('commodityList')[0]
+        let commodityList = document.getElementsByClassName('commodityList')[0]
         commodityList.style.overflow = 'hidden'
       },
       lefterBack () {
@@ -208,7 +208,7 @@
         this.mescroll.lockDownScroll(false)
         this.mescroll.lockUpScroll(false)
         this.filtrateFlag = false
-        var commodityList = document.getElementsByClassName('commodityList')[0]
+        let commodityList = document.getElementsByClassName('commodityList')[0]
         commodityList.style.overflow = 'scroll'
       },
       // 从筛选传值过来
@@ -220,7 +220,7 @@
         this.goodsFlag = true
         this.mescroll.lockDownScroll(false)
         this.mescroll.lockUpScroll(false)
-        var commodityList = document.getElementsByClassName('commodityList')[0]
+        let commodityList = document.getElementsByClassName('commodityList')[0]
         if (data.flag1 === true) {
           commodityList.style.overflow = 'scroll'
           if (data.pickUps === '可自提') {
@@ -287,8 +287,8 @@
         this.goodsFlag = true
         this.flags = !this.flags
         this.style = !this.style
-        var box = document.getElementById('box')
-        var classVal = box.getAttribute('class')
+        let box = document.getElementById('box')
+        let classVal = box.getAttribute('class')
         if (this.style == true) {
           classVal = classVal.replace('goodsList', 'toggle')
           box.setAttribute('class', classVal)
@@ -348,7 +348,7 @@
           }
         }).then(function (response) {
           self.goodsFlag = true
-          for (var i = 0; i < response.data.data.length; i++) {
+          for (let i = 0; i < response.data.data.length; i++) {
             if (response.data.data[i].carry_type === 1) {
               response.data.data[i].carryFlag = true
             }
@@ -393,7 +393,7 @@
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           } else {
             self.goodsFlag = true
-            for (var i = 0; i < self.recommendGoods.length; i++) {
+            for (let i = 0; i < self.recommendGoods.length; i++) {
               if (self.recommendGoods[i].carry_type === 1) {
                 self.recommendGoods[i].carryFlag = true
               }
