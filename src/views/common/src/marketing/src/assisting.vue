@@ -1,5 +1,5 @@
 <template lang="pug">
-  .wrapAssisting
+  .wrapAssisting(ref="wrapAssisting")
     .cont
       .topLogo
         img(src="../../../../../assets/img/user_title.png" @click.prevent="")
@@ -7,7 +7,7 @@
         h1 活动7月3日开始
         p
         p 邀请好友关注“万物直供商城”,一起免费领鞋吧~
-      .goShopping(v-if="temp == 1", @click="$router.push('/home')")
+      .goShopping(v-if="temp == 1", @click="$router.replace('/home')")
         img(src="../../../../../assets/img/user_not_started_btn.png" @click.prevent="")
       .rule(v-if="temp == 1")
         .ruleTitle 活动规则
@@ -24,10 +24,12 @@
         .middler
           p 奔跑值
           p {{iHelpActivity}}
+        .desc(v-if="desc==1") 奔跑值<span>满20</span>才有机会哦!再接再厉吧！
+        .desc(v-if="desc==2") 奔跑值越高机会越大，继续加油哦！
         .bottommer
           .left(@click="shareFlag = 1")
             img(src="../../../../../assets/img/06_user_invite_btn.png")
-          .right(@click="$router.push('/home')")
+          .right(@click="$router.replace('/home')")
             img(src="../../../../../assets/img/06_user_mall_btn.png")
         .bottom(v-if="temp == 2")
           .assists(ref="bottom")
@@ -46,7 +48,7 @@
         .btnN
           img(:src="bIsLast=='no'?require('../../../../../assets/img/06_user_24h_btn_n.png'):require('../../../../../assets/img/06_user_24h_btn_y.png')")
     transition(name="fade")
-      rules-temp(v-if="ruleFlag === 0", @closeBtn="ruleFlag = 1")
+      rules-temp(v-show="ruleFlag === 0", @closeBtn="ruleFlag = 1")
     .shareFriend(v-if="shareFlag == 1" @click="shareFlag = 0")
       img(src="../../../../../assets/img/arrow.png")
       p 点击右上角
@@ -67,16 +69,20 @@
         aGroup: [],
         oMyInfo: {},
         bIsLast: '',
-        iHelpActivity: 0
+        iHelpActivity: 0,
+        desc: 1
       }
     },
     created () {
+      this.loadShare()
       this.saveUnionId()
       this.whereFrom()
     },
     mounted () {
       document.title = "送耐克活动";
-      this.loadShare()
+      this.scroll3 = new BScroll(this.$refs.wrapAssisting, {
+        click: true
+      })
     },
     methods: {
       //保存unionId
@@ -109,9 +115,13 @@
           if (response) {
             self.aGroup = response.data.data
             self.iHelpActivity = response.data.data.length
+            if (self.iHelpActivity >= 20) {
+              self.desc = 2
+            }
             self.$nextTick(()=>{
               self.scroll = new BScroll(self.$refs.bottom, {
-                click: true
+                click: true,
+                stopPropagation: true
               })
             })
           }
@@ -145,42 +155,52 @@
           }
         })
       },
-      //分享
+      getLocationHref () {
+        let href1 = window.location.href.split('/#')
+        let href2 = window.location.href.split('/?')
+        if (href1.length <= 1) {
+          return href2[0]
+        } else {
+          return href1[0]
+        }
+      },
+      // 分享
       loadShare () {
+        console.log(this.getLocationHref())
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
           if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
             this.getSharerId(function (data) {
-              if (data != '用户不存在') {
+              if (data != 'null') {
                 _this.$initShare({
-                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+                  link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
                 })
               } else {
                 _this.$initShare({
-                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+                  link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
                 })
               }
             })
           } else {
             this.$initShare({
-              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+              sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+              shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+              shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+              link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
             })
           }
         } else {
           this.$initShare({
-            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+            sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+            shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+            shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+            link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
           })
         }
       },
@@ -195,7 +215,7 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data != '用户不存在') {
+            if (response.data.data != 'null') {
               localStorage.setItem('sharerId', response.data.data)
             }
             callback && callback(response.data.data)
@@ -204,22 +224,22 @@
       },
       //活动是否开启
       isStart () {
-        this.authority()
-        // let self = this
-        // self.$ajax({
-        //   method: 'get',
-        //   url: self.$apiApp + 'presentShoes/isStart',
-        //   params: {}
-        // }).then(function (response) {
-        //   if (response) {
-        //     if (response.data.data == 'no') {
-        //       self.temp = 1
-        //     } else {
-        //       self.authority()
-        //     }
-        //   }
-        //
-        // })
+        // this.authority()
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/isStart',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no') {
+              self.temp = 1
+            } else {
+              self.authority()
+            }
+          }
+
+        })
       },
       /*
       * 判断来者身份,originatorId 发起人ID   selfId 被分享者ID
@@ -247,7 +267,7 @@
           } else {
             if (phone && phone.length === 11) {
               this.getSharerId (function (data) {
-                if (data != '用户不存在') {
+                if (data != 'null') {
                   if (data == originatorId) {
                     _this.isPartake()
                   } else {
@@ -267,14 +287,10 @@
           } else {
             if (phone && phone.length === 11) {
               this.getSharerId (function (data) {
-                if (data != '用户不存在') {
-                  _this.isPartake()
-                } else {
-                  // _this.$router.replace('/marketing/index')
-                }
+                _this.isPartake()
               })
             } else {
-              // _this.$router.replace('/marketing/index')
+              this.isPartake()
             }
           }
         }
@@ -293,6 +309,11 @@
             if (response.data.data == 'no') {
               self.$router.replace('/marketing/noAttended')
             } else if (response.data.data == 'yes'){
+
+              if (localStorage.getItem('originatorId')) {
+                localStorage.removeItem("originatorId")
+              }
+
               self.temp = 2
               self.getGroup()
               self.getMyInfo()
@@ -303,6 +324,9 @@
               if (localStorage.getItem('phone') && localStorage.getItem('phone').length == 11) {
                 self.bindAccount()
               } else {
+                if (localStorage.getItem('originatorId')) {
+                  localStorage.removeItem("originatorId")
+                }
                 self.$router.replace('/marketing/noAttended')
               }
             }
@@ -336,6 +360,9 @@
           }
         }).then(function (response) {
           if (response) {
+            if (localStorage.getItem('originatorId')) {
+              localStorage.removeItem("originatorId")
+            }
             _this.temp = 2
             _this.getGroup()
             _this.getMyInfo()
@@ -364,9 +391,10 @@
 <style scoped>
   .wrapAssisting{
     background-color: #ff3050;
+    height: 100vh;
   }
   .cont{
-    min-height: 100vh;
+
   }
   /*第一内容部分--开始*/
   .topLogo{
@@ -603,5 +631,15 @@
   }
   img {
     pointer-events: none;
+  }
+  .desc {
+    text-align: center;
+    color: #fff;
+    font-size: .4rem;
+    letter-spacing: .05rem;
+  }
+  .desc span {
+    color: #ffe277;
+    font-weight: bold;
   }
 </style>

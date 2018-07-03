@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus")
+          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus" ref="mMessage")
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
@@ -108,10 +108,6 @@
       this.historys();
       //显示搜索结果
       this.resultShow();
-      console.log(this.$route.query.jumps);
-      console.log(this.$route.query.relNum);
-      console.log(this.searchFlag);
-      console.log(this.resultFlag);
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -145,6 +141,8 @@
       //搜索商品去商品展示页
       searchGoods(){
         let self = this;
+        console.log(self.$refs.mMessage.value)
+        self.msg = self.$refs.mMessage.value
         self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flags:1,jumps:self.jumps}});
       },
       //历史搜索

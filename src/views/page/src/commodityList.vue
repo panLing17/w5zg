@@ -100,23 +100,20 @@
     },
     watch: {
       '$route' (to, from) {
-        // console.log(from);
-        // console.log(this.$store.state.pageNums);
+        console.log(to,from)
         if (from.path === '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
               this.mescroll.scrollTo(now.y, 0)
             }
           })
-        } else if (from.path === '/home/searchHistory') {
-          this.mescroll.resetUpScroll(true)
         } else {
           if (this.$route.query.id) {
             this.message = this.$store.state.keywordsL
-          } else if (this.$route.query.flags === 1) {
+          } else if (this.$route.query.flags == 1) {
             this.message = this.$route.query.msg
           }
-          if (this.$refs.oInput.value === this.$route.query.msg) {
+          if (this.$refs.oInput.value == this.$route.query.msg) {
             this.mescroll.resetUpScroll(true)
             this.mescroll.scrollTo(0, 0)
           }
@@ -127,6 +124,8 @@
 
     },
     activated () {
+      console.log(this.$route.query.msg)
+      console.log(this.$refs.oInput.value)
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0)
@@ -134,12 +133,10 @@
       })
       if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL
-      } else if (this.$route.query.flags === 1) {
+      } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg
       }
-      // console.log(this.$refs.oInput.value);
-      // console.log(this.$route.query.msg);
-      if (this.$refs.oInput.value === this.$route.query.msg) {
+      if (this.$refs.oInput.value == this.$route.query.msg) {
         this.check = true
         this.checked = false
         this.change = false
@@ -148,19 +145,20 @@
         this.order = 0
         this.sort = ''
         this.mescroll.resetUpScroll(true)
-        // this.mescroll.scrollTo(0, 0);
+        this.mescroll.scrollTo(0, 0)
       }
     },
     mounted () {
+      console.log(this.$route.query.msg)
       this.saveMsg = this.$route.query.msg
       this.flagNum = this.$route.query.flags
       // 上拉加载
       this.$mescrollInt('pageMescroll', this.upCallback, () => {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
+        // this.position.forEach((now) => {
+        //   if (now.path === this.$route.path) {
+        //     this.mescroll.scrollTo(now.y, 0)
+        //   }
+        // })
       }, (obj) => {
         this.$store.commit('setPosition', {
           path: this.$route.path,
@@ -241,12 +239,12 @@
           this.minPrice = data.minPrice
           this.checkFlag = true
         }
-        if (data.flag1 === false) {
+        if (data.flag1 == false) {
           commodityList.style.overflow = 'scroll'
-          if (data.pickUps === '可自提') {
+          if (data.pickUps == '可自提') {
             this.pickUps = 1
           }
-          if (data.pickUps === '不可自提') {
+          if (data.pickUps == '不可自提') {
             this.pickUps = 2
           }
           this.brandId = ''
@@ -267,7 +265,7 @@
         this.check = true
         this.checked = false
         this.goodsFlag = false
-        if (this.change1 === true) {
+        if (this.change1 == true) {
           this.order = 1
         } else {
           this.order = ''
@@ -282,7 +280,7 @@
         this.check = true
         this.checked = false
         this.goodsFlag = false
-        if (this.change2 === true) {
+        if (this.change2 == true) {
           this.order = 2
         } else {
           this.order = ''
@@ -295,11 +293,11 @@
         this.style = !this.style
         var box = document.getElementById('box')
         var classVal = box.getAttribute('class')
-        if (this.style === true) {
+        if (this.style == true) {
           classVal = classVal.replace('goodsList', 'toggle')
           box.setAttribute('class', classVal)
         }
-        if (this.style === false) {
+        if (this.style == false) {
           classVal = classVal.replace('toggle', 'goodsList')
           box.setAttribute('class', classVal)
         }
@@ -315,10 +313,10 @@
         this.goodsFlag = false
 
         this.order = 3
-        if (this.check === false) {
+        if (this.check == false) {
           this.sort = 2
         }
-        if (this.check === true) {
+        if (this.check == true) {
           this.sort = 1
         }
         this.mescroll.resetUpScroll(true)
@@ -335,7 +333,6 @@
         })
       },
       getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
-        // this.$store.commit('setPage', pageNum);
         let self = this
         self.$ajax({
           method: 'post',
@@ -369,7 +366,6 @@
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
-        // this.$store.commit('setPage', pageNum);
       },
 
       // 请求

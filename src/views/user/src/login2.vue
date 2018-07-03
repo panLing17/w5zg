@@ -315,6 +315,13 @@
             li.inputItem {{codeItem[2]}}
             li.inputItem {{codeItem[3]}}
           input.trueInput(ref="trueInput", @input="writeCode", v-model="code")
+    <!--transition(name="fade")-->
+      <!--.popWrapper(v-show="popShow.code")-->
+        <!--.close(@click.stop="hidePop")-->
+        <!--.popContent-->
+          <!--#sc-->
+        <!--.inputWrapper-->
+          <!--input.codeInput(type="text", v-model="code", @input="writeCode")-->
 </template>
 
 <script>
@@ -354,8 +361,44 @@
       this.getToken()
     },
     mounted () {
+      // this._initSc()
     },
     methods: {
+      _initSc () {
+        let _this = this
+        this.$nextTick(()=>{
+          var ic = new smartCaptcha({
+            renderTo: '#sc',
+            width: '5.5rem',
+            height: '1rem',
+            default_txt: '获取验证码',
+            success_txt: '获取成功，请查收短信',
+            fail_txt: '获取失败，请在此点击按钮刷新',
+            scaning_txt: '验证码发送中',
+            success: function(data) {
+
+              _this.$ajax({
+                method: 'post',
+                url: _this.$apiMember + 'afs/afsValidateWeb',
+                params: {
+                  sessionId: data.sessionId,
+                  sig: data.sig,
+                  token: NVC_Opt.token,
+                  scene: NVC_Opt.scene,
+                  W5MALLTOKEN: _this.W5MALLTOKEN
+                }
+              }).then(function (response) {
+                if (response) {
+                  _this.scFlag = true
+                  _this.sessionId = data.sessionId
+                  _this.sendCode()
+                }
+              })
+            },
+          });
+          ic.init();
+        })
+      },
       openTips () {
         this.popShow.tips=true
         this.$nextTick(()=>{
@@ -763,5 +806,9 @@
   .title2 {
     font-weight: bold;
     margin-right: .1rem;
+  }
+  #sc {
+    margin: .1rem auto 0;
+    width: 5.5rem;
   }
 </style>

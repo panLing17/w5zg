@@ -20,11 +20,11 @@
         .support 支持自提
           ul
             li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}
-    transition(name="slide-fade")        
+    transition(name="slide-fade")
       .button(v-show="downList")#hideBtn
         .reset(@click="reset()") 重置
         .affirm(@click="hide()") 确认
-    transition(name="slide-fade") 
+    transition(name="slide-fade")
       .wrapAllBrand(v-show="allBrandFlag")
         allBrand(@searchBrand="searchBrand" @searchBrandHot="searchBrandHot" @backLast="backLast")
 </template>
@@ -81,19 +81,15 @@
           focusHide(){
             var originalHeight=document.documentElement.clientHeight || document.body.clientHeight;
             var hideBtn = document.getElementById("hideBtn");
-            console.log(originalHeight);
             window.onresize=function(){
                 var resizeHeight=document.documentElement.clientHeight || document.body.clientHeight;
-                console.log(resizeHeight);
-                console.log(resizeHeight<originalHeight);
-                console.log(this.focusHideFlag);
                 //软键盘弹起与隐藏  都会引起窗口的高度发生变化
                 if(resizeHeight<originalHeight){ //resizeHeight<originalHeight证明窗口被挤压了
                   hideBtn.style.display = "none";
                 } else{
                   hideBtn.style.display = "flex";
                 }
-            } 
+            }
           },
           //加载品牌名
           brandNames(){
@@ -117,7 +113,7 @@
             this.brandNameId = id;
             this.showBrand = false;
             this.onlyBrandName = e.target.innerText;
-          },          
+          },
           //点击价格区间
           checks(index,e){
             this.num2 = index;
@@ -173,7 +169,6 @@
                 brandName: this.onlyBrandName
               };
             }
-            console.log(this.brandNameId);
             this.$emit('ievent',data);
           },
           down(){

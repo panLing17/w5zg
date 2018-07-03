@@ -12,9 +12,9 @@
             .infoName {{oOriginInfo.name}}(微信名)
           .temp2Desc
             p 已经为TA攒了片<span>{{randomText}}</span>啦~
-            p 您还有3次领券机会，
+            p 您还有{{count}}次领券机会，
             p 快去给其他小伙伴加油抢鞋吧！
-          .temp2Btn(@click="$router.push('/marketing/index')")
+          .temp2Btn(@click="$router.replace('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         .temp3(v-if="temp==3")
           .info
@@ -24,7 +24,7 @@
           .temp3Desc
             p 已经为TA攒了根鞋带啦~
             p 您的加油次数已达到上限！
-          .temp2Btn(@click="$router.push('/marketing/index')")
+          .temp2Btn(@click="$router.replace('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
         <!--.temp4(v-if="temp==4")-->
           <!--.temp4Desc-->
@@ -40,7 +40,7 @@
           .temp3Desc
             p 您的好友想要领价值1200元的耐克鞋
             p 快来帮TA免费拿吧！
-          .temp2Btn(@click="$router.push({path: '/marketing/receiveTicket', query: {show_index: 4}})")
+          .temp2Btn(@click="$router.replace({path: '/marketing/receiveTicket', query: {show_index: 4, originatorId: sOriginatorId}})")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_help_btn.png")
         .temp6(v-if="temp==6")
           .info
@@ -50,12 +50,12 @@
           .temp3Desc
             p Sorry，
             p 您的加油次数已达到上限！
-          .temp2Btn(@click="$router.push('/marketing/index')")
+          .temp2Btn(@click="$router.replace('/marketing/index')")
             img.temp2BtnImg(src="../../../../../assets/img/13_helper_notice_join_btn.png")
       .contentBottom
         .temp2Bottom(v-if="temp==2 || temp==3 || temp==4 || temp==6")
           .temp2BottomDesc 或者还可以先逛逛商城，使用工会福利现金券
-          .temp2BottomBtn(@click="$router.push('/home')")
+          .temp2BottomBtn(@click="$router.replace('/home')")
             img.temp2BottomBtnImg(src="../../../../../assets/img/06_user_not_started_btn.png")
 </template>
 
@@ -77,10 +77,18 @@
         oOriginInfo: {},
         randomText: '',
         bIsHelped: '',
-        bIsOutRule: ''
+        bIsOutRule: '',
+        sOriginatorId: '',
+        count: 0
       }
     },
     created () {
+      this.sOriginatorId = localStorage.getItem('originatorId')
+      if (!this.sOriginatorId) {
+        this.$router.replace({path: '/marketing/assisting', query: {temp: 2}})
+        return
+      }
+      localStorage.removeItem("originatorId")
       this.isHelped()
       this.getOriginInfo()
     },
@@ -89,41 +97,52 @@
       this.loadShare()
     },
     methods: {
+      getLocationHref () {
+        let href1 = window.location.href.split('/#')
+        let href2 = window.location.href.split('/?')
+        if (href1.length <= 1) {
+          return href2[0]
+        } else {
+          return href1[0]
+        }
+      },
+      // 分享
       loadShare () {
+        console.log(this.getLocationHref())
         let _this = this
         if (localStorage.getItem('sharerId') == 'undefined' || !localStorage.getItem('sharerId')) {
           if (localStorage.getItem('phone') && localStorage.getItem('phone').length === 11) {
             this.getSharerId(function (data) {
-              if (data != '用户不存在') {
+              if (data != 'null') {
                 _this.$initShare({
-                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+                  link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
                 })
               } else {
                 _this.$initShare({
-                  sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-                  shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-                  shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-                  link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+                  sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+                  link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
                 })
               }
             })
           } else {
             this.$initShare({
-              sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-              shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-              shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-              link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
+              sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+              shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+              shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+              link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
             })
           }
         } else {
           this.$initShare({
-            sharePhoto: 'http://www.w5zg.cn/' + shareImg.substr(1),
-            shareTitle: '震惊！5000元工会福利券和1万双耐克鞋等您领取',
-            shareDesc: '金陵晚报/现代快报/万物直供联合举办！300大品牌商共同补贴工会福利事业',
-            link: ('http://www.w5zg.cn/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
+            sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+            shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+            shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
+            link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
           })
         }
       },
@@ -137,7 +156,7 @@
           }
         }).then(function (response) {
           if (response) {
-            if (response.data.data != '用户不存在') {
+            if (response.data.data != 'null') {
               localStorage.setItem('sharerId', response.data.data)
             }
             callback && callback(response.data.data)
@@ -166,11 +185,27 @@
 
               if (self.bIsHelped == 'yes') {
                 self.getRandomText()
-                self.temp = 2
+                self.getResidueDegree()
               } else {
                 self.temp = 5
               }
             }
+          }
+        })
+      },
+      //获取还有几次领券机会
+      getResidueDegree () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'presentShoes/residueDegree',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            self.count = response.data.data
+            self.temp = 2
           }
         })
       },
@@ -182,7 +217,7 @@
           url: self.$apiApp + 'presentShoes/isHelped',
           params: {
             unionId: localStorage.getItem('unionId'),
-            sharerId: localStorage.getItem('originatorId')
+            sharerId: this.sOriginatorId
           }
         }).then(function (response) {
           if (response) {
@@ -202,11 +237,15 @@
           method: 'get',
           url: self.$apiApp + 'presentShoes/sharerInfo',
           params: {
-            sharerId: localStorage.getItem('originatorId')
+            sharerId: this.sOriginatorId
           }
         }).then(function (response) {
           if (response) {
-            self.oOriginInfo = response.data.data
+            if (response.data.data == 'null') {
+              self.$router.replace({path: '/marketing/assisting', query: {temp: 2}})
+            } else {
+              self.oOriginInfo = response.data.data
+            }
           }
         })
       },
@@ -235,6 +274,7 @@
   }
   .contentTop {
     font-size: 0;
+    margin-top: -.3rem;
   }
   .contentTopImg {
     width: 100%;

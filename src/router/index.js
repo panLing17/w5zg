@@ -281,30 +281,30 @@ const router = new Router ({
         keepAlive: true
       }
     },
-    {
-      path: '/marketing/rankingList',
-      name: '排行榜',
-      component: Marketing.rankingList,
-      meta: {
-        keepAlive: true
-      }
-    },
-    {
-      path: '/marketing/prizeResult',
-      name: '获奖结果',
-      component: Marketing.prizeResult,
-      meta: {
-        keepAlive: true
-      }
-    },
-    {
-      path: '/marketing/selectSize',
-      name: '选择尺码',
-      component: Marketing.selectSize,
-      meta: {
-        keepAlive: true
-      }
-    },
+    // {
+    //   path: '/marketing/rankingList',
+    //   name: '排行榜',
+    //   component: Marketing.rankingList,
+    //   meta: {
+    //     keepAlive: true
+    //   }
+    // },
+    // {
+    //   path: '/marketing/prizeResult',
+    //   name: '获奖结果',
+    //   component: Marketing.prizeResult,
+    //   meta: {
+    //     keepAlive: true
+    //   }
+    // },
+    // {
+    //   path: '/marketing/selectSize',
+    //   name: '选择尺码',
+    //   component: Marketing.selectSize,
+    //   meta: {
+    //     keepAlive: true
+    //   }
+    // },
     {
       path: '/',
       name: '应用',
@@ -573,18 +573,12 @@ const router = new Router ({
             {
               path: '/my/orderManage',
               name: '订单管理',
-              component: MyOrder.orderManage,
-              meta: {
-                keepAlive: false
-              }
+              component: MyOrder.orderManage
             },
             {
               path: '/my/orderDetails',
               name: '订单详情',
-              component: MyOrder.orderDetails,
-              meta: {
-                keepAlive: false
-              }
+              component: MyOrder.orderDetails
             },
             {
               path: '/my/checkLogistics',
@@ -858,7 +852,16 @@ const router = new Router ({
 // 全局前置守卫
 router.beforeEach ((to, from, next) => {
   // 百度统计每个URL的访问量
-  _hmt.push(['_trackPageview', to.path])
+  if (to.path == '/marketing/receiveTicket') {
+    if (to.query.show_index == 4) {
+      _hmt.push(['_trackPageview', to.path +'2'])
+    } else {
+      _hmt.push(['_trackPageview', to.path +'1'])
+    }
+  } else {
+    _hmt.push(['_trackPageview', to.path])
+  }
+
 
   // app交互
   if (typeof w5zgApp !== 'undefined') {
