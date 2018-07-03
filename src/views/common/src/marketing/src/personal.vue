@@ -116,14 +116,14 @@
               if (data != 'null') {
                 _this.$initShare({
                   sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现报名人数不足，快参加！',
                   shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
                   link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + data).replace(/\?*#/, "?#")
                 })
               } else {
                 _this.$initShare({
                   sharePhoto: _this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+                  shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现报名人数不足，快参加！',
                   shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
                   link: (_this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
                 })
@@ -132,7 +132,7 @@
           } else {
             this.$initShare({
               sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-              shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+              shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现报名人数不足，快参加！',
               shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
               link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url')).replace(/\?*#/, "?#")
             })
@@ -140,7 +140,7 @@
         } else {
           this.$initShare({
             sharePhoto: this.getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-            shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现仅2千多人报名，快参加！',
+            shareTitle: '我已领500元福利券，1万双耐克鞋免费送！现报名人数不足，快参加！',
             shareDesc: '金陵晚报、现代快报、万物直供共同发起【送1万双耐克鞋】活动',
             link: (this.getLocationHref() + '/#/marketing/index?redirect_url='+localStorage.getItem('redirect_url') + '&sharerId=' + localStorage.getItem('sharerId')).replace(/\?*#/, "?#")
           })
