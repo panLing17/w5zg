@@ -10,7 +10,7 @@
     .allBrandList
       ul(v-for="(key,value,oIndex) in letterBrandList")
         li.letters(:id="'anchorz-'+oIndex" v-if="key.list.length>0") {{value}}
-        li.letterBrands(v-for="(item,index) in key.list" v-if="index<=num" @click="selects($event,item.id)") {{item.name}}
+        li.letterBrands(v-for="(item,index) in key.list" v-if="key.num == null?index<=9:index<=key.num" @click="selects($event,item.id)") {{item.name}}
         li.viewMore(@click="viewMore(key,$event,oIndex)" v-if="key.list.length>10") {{key.words}}
     ul.letter(v-show="false")
       li #
@@ -103,16 +103,18 @@
             heightTop = anchor.offsetTop - 60;
           },
           viewMore:function(key,e,oIndex){
+            console.log(key.list.length)
+            console.log(oIndex)
             if(e.target.innerText == "收起更多"){
               if (key.list.length>=9) {
-                this.num = 9;
+                key.num = 9;
               } else{
-                this.num = key.list.length;
+                key.num = key.list.length;
               }
               key.words = "查看更多";
             }
             if(e.target.innerText == "查看更多") {
-              this.num = key.list.length;
+              key.num = key.list.length;
               key.words = "收起更多";
             }
           },
