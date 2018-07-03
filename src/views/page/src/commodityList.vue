@@ -100,21 +100,20 @@
     },
     watch: {
       '$route' (to, from) {
+        console.log(to,from)
         if (from.path === '/goodsDetailed') {
           this.position.forEach((now) => {
             if (now.path === this.$route.path) {
               this.mescroll.scrollTo(now.y, 0)
             }
           })
-        } else if (from.path === '/home/searchHistory') {
-          this.mescroll.resetUpScroll(true)
         } else {
           if (this.$route.query.id) {
             this.message = this.$store.state.keywordsL
-          } else if (this.$route.query.flags === 1) {
+          } else if (this.$route.query.flags == 1) {
             this.message = this.$route.query.msg
           }
-          if (this.$refs.oInput.value === this.$route.query.msg) {
+          if (this.$refs.oInput.value == this.$route.query.msg) {
             this.mescroll.resetUpScroll(true)
             this.mescroll.scrollTo(0, 0)
           }
@@ -125,6 +124,8 @@
 
     },
     activated () {
+      console.log(this.$route.query.msg)
+      console.log(this.$refs.oInput.value)
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0)
@@ -135,8 +136,6 @@
       } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg
       }
-      // console.log(this.$refs.oInput.value);
-      // console.log(this.$route.query.msg);
       if (this.$refs.oInput.value == this.$route.query.msg) {
         this.check = true
         this.checked = false
@@ -146,19 +145,20 @@
         this.order = 0
         this.sort = ''
         this.mescroll.resetUpScroll(true)
-        // this.mescroll.scrollTo(0, 0);
+        this.mescroll.scrollTo(0, 0)
       }
     },
     mounted () {
+      console.log(this.$route.query.msg)
       this.saveMsg = this.$route.query.msg
       this.flagNum = this.$route.query.flags
       // 上拉加载
       this.$mescrollInt('pageMescroll', this.upCallback, () => {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
+        // this.position.forEach((now) => {
+        //   if (now.path === this.$route.path) {
+        //     this.mescroll.scrollTo(now.y, 0)
+        //   }
+        // })
       }, (obj) => {
         this.$store.commit('setPosition', {
           path: this.$route.path,
