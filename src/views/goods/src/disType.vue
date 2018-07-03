@@ -4,19 +4,26 @@
       .title 配送:
         h2 选择配送方式
       ul
-        li(@click="selected(0)", :class="{checked:nowType === 0}") <span>荐</span>专柜自提
+        li(@click="selected(0)", :class="{checked:nowType === 0, greyWhite:lock}") <span>荐</span>专柜自提
         li(@click="selected(1)", :class="{checked:nowType === 1}") 快递配送
       span {{hasGoods}}
+    .address(v-if="nowType === 0") {{transfer.store ? transfer.store.name : '请选择商品规格与配送方式'}}
+    .address(v-else) {{giveGoodsAddress.city_name ? giveGoodsAddress.city_name + giveGoodsAddress.county_name + giveGoodsAddress.ra_detailed_addr: '请选择商品规格与配送方式'}}
+
 </template>
 
 <script>
   import {bus} from '../../../bus'
+  import {mapState} from 'vuex'
   export default {
     name: "city-select",
     data () {
       return {
         nowType: 0
       }
+    },
+    computed:{
+      ...mapState(['transfer','giveGoodsAddress'])
     },
     props: {
       show: {
@@ -26,10 +33,26 @@
       hasGoods: {
         type: String,
         default: ''
+      },
+      lock:{
+        type: Boolean,
+        default: true
+      }
+    },
+    watch:{
+      lock () {
+        if (this.lock) {
+          this.nowType = 1
+        } else {
+          this.nowType = 0
+        }
       }
     },
     methods:{
       selected (num) {
+        if(this.lock && num === 0){
+          return
+        }
         this.nowType = num
         this.$emit('selectType',num)
         bus.$emit('selectType', num)
@@ -104,7 +127,7 @@
     justify-content: center;
     align-items: center;
     border-radius: .3rem;
-    background-color: #aaa ;
+    background-color: #bdbdbd;
     color: white;
     left: -.4rem;
     top: 0;
@@ -115,5 +138,19 @@
   }
   .checked>span{
     background-color: rgb(247,0,87) !important;
+  }
+  /* 灰的发白 */
+  .greyWhite {
+    color: #e8e5e2 !important;
+    border:solid 1px #e8e5e2 !important;
+  }
+  .address {
+    background-color: white;
+    text-align: right;
+    color: #999;
+    padding: 0 .2rem .2rem .2rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>

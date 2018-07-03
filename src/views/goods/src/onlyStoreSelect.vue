@@ -23,6 +23,7 @@
 </template>
 
 <script>
+  import {bus} from '../../../bus'
   export default {
     name: "store-select",
     data () {
@@ -102,9 +103,9 @@
         this.storeList.forEach((now)=>{
           now.storeList.forEach((sonNow)=>{
             if (sonNow.bs_id === this.bsId) {
-              console.log(sonNow)
               data = {
-                id: sonNow.bs_city_no,
+                // id: sonNow.bs_city_no,
+                id: sonNow.bs_id,
                 name: sonNow.bs_name
               }
             }

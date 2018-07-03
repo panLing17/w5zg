@@ -10,20 +10,20 @@
               .img
                 img(:src="i.logo | img-filter")
                 p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
-              .info
+              .info(@click.stop="")
                 .text
                   .name {{i.gi_name}}
                   .spec
                     span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
                     img(src="../../../assets/img/ic_page_xljt@2x.png")
-                  w-counter.counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
+                  w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                 .price
                   span {{i.now_price | price-filter}}
               .mainRight
-                img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
+                //img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
             .main(v-else, key="change")
               .checkbox
-                w-checkbox(v-model="i.checked", @change="selectedChange")
+                w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange")
               .img
                 img(:src="i.logo | img-filter")
               .specChange

@@ -1,6 +1,9 @@
 <template lang="pug">
   .wrapPublicNum
     .cont1(v-if="temp==2")
+      .message(@click="$router.push('/home')")
+        p 活动已开启，只能在微信端参加
+        p 点击返回APP
       .qrCode
         img(src="../../../../../assets/img/qRcode.png")
       .words
@@ -46,12 +49,18 @@
       },
       created(){
         this.isWeiXin()
+        this.getData()
       },
       mounted(){
         document.title = "关注公众号";
         this.loadShare()
       },
       methods:{
+        getData () {
+          if (this.$route.query.temp == 2) {
+            this.temp = 2
+          }
+        },
         isWeiXin() {
           let ua = window.navigator.userAgent.toLowerCase()
           if (ua.match(/MicroMessenger/i) == 'micromessenger') {

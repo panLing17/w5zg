@@ -28,11 +28,15 @@
            span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
            span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
           p(@click="changeLocation")
-            span(v-if="locationOrAddress !== 'location'")
+            span(v-if="expressType === '专柜自提'")
+              img(src="../../../assets/img/location.png")
+              i(v-if="transfer.store") {{transfer.store.name}}
+              i(v-else) 请选择商品规格与配送方式
+            span(v-if="locationOrAddress !== 'location' && expressType !== '专柜自提'")
               img(src="../../../assets/img/location.png")
               i(v-if="giveGoodsAddress.city_name") {{giveGoodsAddress.city_name}}{{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
               i(v-else) 请选择地址
-            span(v-else)
+            span(v-if="locationOrAddress === 'location' && expressType !== '专柜自提'")
               img(src="../../../assets/img/location.png")
               i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
               i(v-else) 请选择地址
@@ -61,7 +65,6 @@
         moveY: '',
         smallPhotoFlag: false,
         content: 1,
-        expressType: 0,
         realGoodsData: {},
         // 当前该显示的地址信息
         locationOrAddress: 'location'
@@ -82,6 +85,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      lock: {
+        type: Boolean,
+        default: true
       }
     },
     computed:{
@@ -99,7 +106,7 @@
       addressCityName() {
         return this.giveGoodsAddress.city_name
       },
-      ...mapState(['userData','giveGoodsAddress','location'])
+      ...mapState(['userData','giveGoodsAddress','location', 'transfer'])
     },
     watch:{
       // 若定位城市变化，则显示定位相关地址信息
@@ -109,17 +116,70 @@
       // 若定用户地址市变化，则显示用户地址相关地址信息
       addressCityName() {
         this.locationOrAddress = 'address'
+      },
+      show(e){
+        if (e) {
+          this.getLocation()
+          console.log(this.transfer.store.name)
+        }
       }
     },
     mounted () {
       this.getStoreNum()
     },
     methods:{
+      getLocation () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'receivingAddress/addresses',
+          params: {
+            cityNo: self.$store.state.location.city.id
+          }
+        }).then(function (response) {
+          if (response.data.data.length > 0) {
+            self.locationList = response.data.data
+            self.locationList.forEach((now) => {
+              if (now.ra_default === '011') {
+                console.log(now)
+                let {
+                  city_name,
+                  county_name,
+                  province_name,
+                  ra_city,
+                  ra_county,
+                  ra_province
+                } = now
+                let location = {
+                  province: {
+                    name: province_name,
+                    id: ra_province
+                  },
+                  city: {
+                    name: city_name,
+                    id: ra_city
+                  },
+                  area: {
+                    name: county_name,
+                    id: ra_county
+                  }
+                }
+                self.$store.commit('getLocation', location)
+                // 延时赋值收货地址，防止选择城市处同时监听到两个变化
+                setTimeout(() => {
+                  self.$store.commit('giveGoodsAddressChange', now)
+                }, 500)
+                self.$emit('selected')
+              }
+            })
+          }
+        })
+      },
       // 更改配送方式
       changeExpress (data) {
         this.$parent.disTypeName = data
         // 触发选择配送方式组件
-        if(data==='专柜自提'){
+        if(data==='专柜自提'&& !this.lock){
           this.$parent.selectDis(0)
         } else {
           this.$parent.selectDis(1)
@@ -148,7 +208,6 @@
           })
         })
         if (this.realGoodsData.storage_num>0 && this.realGoodsData.storage_num >= this.content) {
-          // 此条为了恢复屏幕触摸事件
           this.$emit('confirm', data)
         } else {
           this.$message.error('商品库存不足')
