@@ -1,6 +1,6 @@
 <template lang="pug">
   .wrapRulesTemp
-    .wrapCont(ref="wrapCont")
+    .wrapCont(@touchmove.stop="")
       .wrapContWrapper
         .cont1.cont
           .titleN 活动规则
@@ -57,8 +57,8 @@
   .wrapCont{
     overflow: scroll;
     background-color: #fff;
-    padding-bottom: .5rem;
-    height: 83%;
+    /*padding-bottom: .5rem;*/
+    height: 85%;
   }
   .cont{
     background-color: #fff;
