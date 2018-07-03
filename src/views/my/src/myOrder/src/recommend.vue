@@ -293,7 +293,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .tagType>li:nth-child(-n+6){
+  .tagType>li:nth-child(-n+9){
     background-color: #E2EFFF;
   }
   .tagType>li{
@@ -301,7 +301,7 @@
     text-align: center;
     padding: .1rem .2rem;
     background-color: white;
-    color: #aaaaaa;
+    color: #666;
     float: left;
     margin-bottom: .2rem;
     border-radius: .2rem;

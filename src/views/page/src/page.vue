@@ -146,13 +146,8 @@
       },
       // 点击左侧一级分类切换右边二三级
       tab (item, index, id) {
-        // if (item == "品牌") {
-        //   this.flag = true;
-        //   this.wordsShow = false;
-        // }else{
         this.flag = false
         this.wordsShow = true
-        // }
         this.num = index
         this.rightShowFlag = false
         let self = this
@@ -214,19 +209,6 @@
 </script>
 
 <style scoped>
-  /*#pagesRMescroll,
-  #pagesLMescroll{
-    position: fixed;
-    top: 1.28rem;
-    bottom: 1.6rem;
-    padding-bottom: 3rem;
-  }
-  #pagesLMescroll{
-    left: 0;
-  }
-  #pagesRMescroll{
-    right: 0;
-  }*/
   /*品牌名的页面--开始*/
   .styles .title{
     background-color: rgb(242,242,242);

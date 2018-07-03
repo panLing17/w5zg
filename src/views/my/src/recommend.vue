@@ -18,7 +18,7 @@
           .tagTitle
             .text 细分
             .line
-          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
+          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
     ul.goodsList.right(:style="{background:background}", ref="right")
       li(v-for="item in listData.right")
         // 正常商品布局
@@ -37,7 +37,7 @@
           .tagTitle
             .text 细分
             .line
-          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
+          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
     div(style="clear:both")
 </template>
 
@@ -293,15 +293,15 @@
     justify-content: space-between;
     flex-wrap: wrap;
   }
-  .tagType>li:nth-child(-n+6){
-    background-color: #E2EFFF;
+  .tagTypeChecked{
+    background-color: #E2EFFF !important;
   }
   .tagType>li{
     width: 47.5%;
     text-align: center;
     padding: .1rem .2rem;
     background-color: white;
-    color: #aaaaaa;
+    color: #666;
     float: left;
     margin-bottom: .2rem;
     border-radius: .2rem;
