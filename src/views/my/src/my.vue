@@ -195,20 +195,20 @@
       },
       // 改变下拉刷新的样式
       changeStyles () {
-        var downwarp = document.getElementsByClassName('mescroll-downwarp')[0]
+        let downwarp = document.getElementsByClassName('mescroll-downwarp')[0]
         downwarp.style.backgroundColor = 'rgb(244,0,87)'
         downwarp.children[0].children[0].style.borderColor = '#fff'
         downwarp.children[0].children[0].style.borderBottomColor = 'transparent'
         downwarp.children[0].children[1].style.color = '#fff'
       },
       // 判断页面是否向上滚动
-      judgeScroll () {
-        if (this.mescroll.getScrollTop() > 0) {
-          this.nameShow = true
-        } else {
-          this.nameShow = false
-        }
-      },
+      // judgeScroll () {
+      //   if (this.mescroll.getScrollTop() > 0) {
+      //     this.nameShow = true
+      //   } else {
+      //     this.nameShow = false
+      //   }
+      // },
       // 获取订单各状态数量
       getOrderCount () {
         let _this = this

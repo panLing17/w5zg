@@ -21,12 +21,12 @@
               img(:src="item.gcGoodsSkuVO.gi_image_url | img-filter" @click.prevent="")
             .right
               .up <span v-if="item.gcGoodsSkuVO.carry_type==1">专柜提货</span> {{item.gcGoodsSkuVO.gi_name}}
-              .down 
+              .down
                 .lefter
                   .realPay <span>实付</span> {{item.gcGoodsSkuVO.direct_supply_price | price-filter}}
                   .shoppePrice <span>专柜价</span> {{item.gcGoodsSkuVO.counter_interval | price-filter}}
                 .righter
-                  img(src="../../../assets/img/shoppingcartR.png" v-if="false")  
+                  img(src="../../../assets/img/shoppingcartR.png" v-if="false")
           .bottommer
             .left
               img(src="../../../assets/img/didian.png")
@@ -43,12 +43,12 @@
               img(src="")
             .right
               .up <span>专柜提货</span> 大卫杜夫 冷水神秘水女士淡香水 50ml
-              .down 
+              .down
                 .lefter
                   .realPay <span>实付</span> ￥699
                   .shoppePrice <span>专柜价</span> ￥2000
                 .righter
-                  img(src="../../../assets/img/shoppingcartR.png" v-if="false")  
+                  img(src="../../../assets/img/shoppingcartR.png" v-if="false")
           .bottommer
             .left
               img(src="../../../assets/img/didian.png")
@@ -62,7 +62,7 @@
       recommend#dataId(ref="recommend")
     .deleteBtn(v-if="false")
       .left
-        w-checkbox 
+        w-checkbox
         p 全选
       .right
         .btn 删除
@@ -72,49 +72,53 @@
   import {mapState} from 'vuex'
   import recommend from './recommend'
   export default {
-      name: "reservations",
-      components:{recommend},
-      data(){
-        return{
-          listLength:"", //预约数组的长度
-          contLists:[], //预约的数组
-          invalid:[{},{}], //失效的数组
-        }
-      },
-      computed: mapState(['position']),
-      created(){
+    name: "reservations",
+    components:{recommend},
+    data(){
+      return{
+        listLength:"", //预约数组的长度
+        contLists:[], //预约的数组
+        invalid:[{},{}], //失效的数组
+      }
+    },
+    computed: mapState(['position']),
+    created(){
 
-      },
-      activated () {
-        this.showList();
+    },
+    activated () {
+      this.showList();
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
+    },
+    mounted(){
+      this.showList();
+      this.$mescrollInt("reservationsMescroll", this.upCallback, () => {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);
           }
         })
+      }, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy();
+    },
+    methods:{
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll(isLock)
       },
-      mounted(){
-        this.showList();
-        this.$mescrollInt("reservationsMescroll", this.upCallback, () => {
-          this.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
-            }
-          })
-        }, (obj) => {
-          this.$store.commit('setPosition', {
-            path: this.$route.path,
-            y: obj.preScrollY
-          })
-        })  
-      },
-      beforeDestroy () {
-        this.mescroll.hideTopBtn();
-        this.mescroll.destroy();
-      },
-      methods:{
-       //列表展示
-       showList(){
+     //列表展示
+      showList(){
         let self = this;
         self.$ajax({
           method:"post",
@@ -128,34 +132,34 @@
           self.listLength = res.data.data.length;
           self.contLists = res.data.data;
         })
-       },
+      },
 
-        upCallback: function(page) {
-          let self = this;
-          this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            self.$refs.recommend.more(curPageData,page.num,page.size)
-            self.mescroll.endSuccess(curPageData.length)
-          }, function() {
-            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-            self.mescroll.endErr();
-          })
-        },
-        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-          let self = this;
-          self.$ajax({
-            method: 'post',
-            url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
-            params: {
-              page: pageNum,
-              rows: pageSize
-            },
-            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-          }).then(function (response) {
-            successCallback&&successCallback(response.data.data);//成功回调
-          })
-        },
+      upCallback: function(page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function(curPageData) {
+          self.$refs.recommend.more(curPageData,page.num,page.size)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function() {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+        let self = this;
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data);//成功回调
+        })
+      },
 
-      } 
+      }
     }
 </script>
 

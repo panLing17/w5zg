@@ -76,9 +76,9 @@
           //返回上一页
           backLastPage(){
             let data = {
-              back:"yes"
+              back: 'yes'
             }
-            this.$emit("backLast",data);
+            this.$emit('backLast', data);
           },
           //选择热门品牌
           check(index,e,id){
@@ -98,14 +98,14 @@
             this.$emit('ievent',data);
           },
           goAnchorz:function(selector) {
-            var anchor = this.$el.querySelector(selector);
-            var heightTop = document.documentElement.scrollTop || document.body.scrollTop;
+            let anchor = this.$el.querySelector(selector);
+            let heightTop = document.documentElement.scrollTop || document.body.scrollTop;
             heightTop = anchor.offsetTop - 60;
           },
           viewMore:function(key,e,oIndex){
             console.log(key.list.length)
             console.log(oIndex)
-            if(e.target.innerText == "收起更多"){
+            if(e.target.innerText === '收起更多'){
               if (key.list.length>=9) {
                 key.num = 9;
               } else{
@@ -113,7 +113,7 @@
               }
               key.words = "查看更多";
             }
-            if(e.target.innerText == "查看更多") {
+            if(e.target.innerText === '查看更多') {
               key.num = key.list.length;
               key.words = "收起更多";
             }
@@ -125,12 +125,12 @@
               url:self.$apiGoods + "goods/brand/all",
               params:{},
             }).then(function(res){
-              for (var key in res.data.data) {
-                var arrList = res.data.data[key];
-                for (var j in self.letterBrandList) {
-                  for (var i = 0; i < arrList.length; i++) {
+              for (let key in res.data.data) {
+                let arrList = res.data.data[key];
+                for (let j in self.letterBrandList) {
+                  for (let i = 0; i < arrList.length; i++) {
                     if (arrList[i].bi_initial == j) {
-                      var datas = {
+                      let datas = {
                         name: arrList[i].bi_name,
                         id: arrList[i].bi_id
                       };
