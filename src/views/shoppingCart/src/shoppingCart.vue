@@ -349,7 +349,7 @@
 
   /* 华丽的分割线 */
   .title {
-    height: .8rem;
+    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;

@@ -395,7 +395,7 @@
   /*批量删除--结束*/
   /*推荐--开始*/
   .title{
-    height: .8rem;
+    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
@@ -403,7 +403,6 @@
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
-    margin-bottom: .2rem;
   }
   .title img{
     width: 55%;
