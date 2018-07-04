@@ -93,22 +93,18 @@
           if (response) {
             if (response.data.data == 'yes') {
               if (self.$route.query.sharerId || localStorage.getItem('sharerId')) {
-                if (self.isWeiXin()) {
-                  if (typeof w5zgApp !== 'undefined') {
-                    self.$router.push({path: '/marketing/publicNum', query: {temp: 2}})
-                  } else {
-                    localStorage.setItem('originatorId', self.$route.query.sharerId)
-                    self.getWXUrl()
-                  }
+                //判断是否在安卓环境
+                if (typeof w5zgApp !== 'undefined') {
+                  self.$router.push({path: '/marketing/publicNum', query: {temp: 2}})
+                  return
+                }
 
+                if (self.isWeiXin()) {
+                  localStorage.setItem('originatorId', self.$route.query.sharerId)
+                  self.getWXUrl()
                 } else {
-                  //判断是否在安卓环境
-                  if (typeof w5zgApp !== 'undefined') {
-                    self.$router.push({path: '/marketing/publicNum', query: {temp: 2}})
-                  } else {
-                    self.$message.error('请在微信中打开！')
-                    self.$router.push('/home')
-                  }
+                  self.$message.error('请在微信中打开！')
+                  self.$router.push('/home')
                 }
               }
 

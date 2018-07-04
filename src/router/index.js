@@ -854,15 +854,15 @@ router.beforeEach ((to, from, next) => {
   // 百度统计每个URL的访问量
   if (to.path == '/marketing/receiveTicket') {
     if (to.query.show_index == 4) {
-      _hmt.push(['_trackPageview', to.path +'2'])
+      _hmt.push(['_trackPageview', to.path +'/2'])
     } else {
-      _hmt.push(['_trackPageview', to.path +'1'])
+      _hmt.push(['_trackPageview', to.path +'/1'])
     }
   } else if (to.path == '/marketing/receiveTicketSuccess'){
     if (to.query.show_index == 2) {
-      _hmt.push(['_trackPageview', to.path +'2'])
+      _hmt.push(['_trackPageview', to.path +'/2'])
     } else {
-      _hmt.push(['_trackPageview', to.path +'1'])
+      _hmt.push(['_trackPageview', to.path +'/1'])
     }
   } else {
     _hmt.push(['_trackPageview', to.path])
