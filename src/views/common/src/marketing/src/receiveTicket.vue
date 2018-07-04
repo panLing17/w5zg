@@ -118,6 +118,44 @@
           }
         })
       },
+      //根据UnionId查找手机号
+      queryMobileByUnionId () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'member/queryMobileByUnionId',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no auth') {
+              _this.getWXUrl()
+            } else if (response.data.data == 'no binding') {
+              _this.$message.warning('请输入手机号！')
+              _this.isLoginFlag = false
+            } else {
+              _this.phone = response.data.data
+              localStorage.setItem('phone', response.data.data)
+              _this.helpActivity()
+            }
+          }
+        })
+      },
+      //获取微信授权
+      getWXUrl () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            window.location.href = response.data.data
+          }
+        })
+
+      },
       //参加活动
       joinActivity () {
         let _this = this
@@ -474,7 +512,11 @@
             }
           } else {
             if (this.isPartakeFlag) {
-              this.helpActivity()
+              if (this.phone.length === 11) {
+                this.bindAccount()
+              } else {
+                this.queryMobileByUnionId()
+              }
             } else {
               this.popShow = true
             }
