@@ -513,7 +513,7 @@
           } else {
             if (this.isPartakeFlag) {
               if (this.phone.length === 11) {
-                this.bindAccount()
+                this.popShow = true
               } else {
                 this.queryMobileByUnionId()
               }
