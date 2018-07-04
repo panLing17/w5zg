@@ -858,6 +858,12 @@ router.beforeEach ((to, from, next) => {
     } else {
       _hmt.push(['_trackPageview', to.path +'1'])
     }
+  } else if (to.path == '/marketing/receiveTicketSuccess'){
+    if (to.query.show_index == 2) {
+      _hmt.push(['_trackPageview', to.path +'2'])
+    } else {
+      _hmt.push(['_trackPageview', to.path +'1'])
+    }
   } else {
     _hmt.push(['_trackPageview', to.path])
   }

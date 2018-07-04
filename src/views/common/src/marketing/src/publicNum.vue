@@ -3,7 +3,8 @@
     .cont1(v-if="temp==2")
       .message(@click="$router.push('/home')")
         p 活动已开启，只能在微信端参加
-        p 点击返回APP
+        p
+          img.backImg(src="../../../../../assets/img/backAPP.png")
       .qrCode
         img(src="../../../../../assets/img/qRcode.png")
       .words
@@ -149,7 +150,7 @@
     min-height: 100vh;
     background: url('../../../../../assets/img/backgrounds.png') no-repeat;
     background-size: 100%;
-    padding-top: 3rem;
+    padding-top: 2rem;
   }
   .cont2{
     width: 100%;
@@ -244,5 +245,8 @@
     text-align: center;
     line-height: 1.5;
     font-size: .4rem;
+  }
+  .backImg {
+    width: 5rem;
   }
 </style>

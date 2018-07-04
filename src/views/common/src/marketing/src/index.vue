@@ -22,7 +22,7 @@
             .right 本活动送1万双耐克鞋，限3万人报名，按领券数量排名，前1万人每人立得1双价值1200元耐克。
           .info
             .left 2)
-            .right 即日起开始报名；活动起始时间：7月3日-10日
+            .right 即日起开始报名；活动起始时间：7月3日-15日
           .info
             .left 3)
             .right 领取时间：7月20日-7月27日，早9:00-18:00
@@ -94,8 +94,13 @@
             if (response.data.data == 'yes') {
               if (self.$route.query.sharerId || localStorage.getItem('sharerId')) {
                 if (self.isWeiXin()) {
-                  localStorage.setItem('originatorId', self.$route.query.sharerId)
-                  self.getWXUrl()
+                  if (typeof w5zgApp !== 'undefined') {
+                    self.$router.push({path: '/marketing/publicNum', query: {temp: 2}})
+                  } else {
+                    localStorage.setItem('originatorId', self.$route.query.sharerId)
+                    self.getWXUrl()
+                  }
+
                 } else {
                   //判断是否在安卓环境
                   if (typeof w5zgApp !== 'undefined') {
