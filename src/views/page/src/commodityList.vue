@@ -84,7 +84,7 @@
         pages: 1, // 商品展示页码
         pageRows: 8, // 商品展示每页的长度
         flagNum: this.$route.query.flags, // 判断是筛选还是url传来的
-        defaultRule: 1 // 默认规则
+        defaultRule: 1, // 默认规则
       }
     },
     computed: mapState(['location', 'position']),
@@ -359,6 +359,11 @@
           successCallback && successCallback(response.data.data) // 成功回调
           // }
           if (self.recommendGoods.length === 0) {
+            self.brandId = '' // 品牌的id
+            self.minPrice = '' // 开始价格区间
+            self.maxPrice = '' // 结束价格区间
+            self.pickUps = '' // 自提不自提
+            self.rReset = 'no' // 重置筛选
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
@@ -390,6 +395,7 @@
             self.minPrice = '' // 开始价格区间
             self.maxPrice = '' // 结束价格区间
             self.pickUps = '' // 自提不自提
+            self.rReset = 'no' // 重置筛选
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           } else {
             self.goodsFlag = true

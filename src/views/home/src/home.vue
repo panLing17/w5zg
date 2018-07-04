@@ -515,8 +515,8 @@
   }
 
   .title2 {
-    background: url("../../../assets/img/louceng2.png") no-repeat top left;
-    background-size: 100% 100%;
+    background: url("../../../assets/img/louceng2.png") no-repeat center;
+    background-size: 50% 80%;
   }
 
   .line {

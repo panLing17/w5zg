@@ -93,11 +93,11 @@
       //this.searchDiscover();
       //商品推荐
       this.$mescrollInt("historyMescroll",this.upCallback,()=>{
-         this.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
-            }
-          })
+         // this.position.forEach((now) => {
+         //    if (now.path === this.$route.path) {
+         //      this.mescroll.scrollTo(now.y, 0);
+         //    }
+         //  })
         }, (obj) => {
           this.$store.commit('setPosition', {
             path: this.$route.path,
@@ -125,7 +125,11 @@
         } else if (this.$route.query.jumps == 'home'){
           this.$router.push('/home');
         } else {
-          this.$router.go(-1);
+          if (this.$route.query.relNum == 1) {
+            this.$router.push('/home');
+          } else {
+            this.$router.go(-1);
+          }
         }
       },
       //显示搜索结果

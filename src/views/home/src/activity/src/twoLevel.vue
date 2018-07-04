@@ -38,7 +38,7 @@
         brand: {
           show: true,
           status: false,
-          height: '5.72rem',
+          height: '5.67rem',
           auto: 'none'
         },
         category: {
@@ -200,7 +200,7 @@
             } else {
               _this.noDataShow.category = false
             }
-            if (_this.categoryList.length <= 10) {
+            if (_this.categoryList.length <= 8) {
               _this.category.show = false
             } else {
               _this.$nextTick(() => {
@@ -216,7 +216,7 @@
         this.$nextTick(() => {
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
-          this.brand.height = '5.72rem'
+          this.brand.height = '5.67rem'
           this.category.height = '5.4rem'
         })
       },
@@ -226,7 +226,7 @@
           if (this.brand.status) {
             this.brand.height = this.brand.auto
           } else {
-            this.brand.height = '5.72rem'
+            this.brand.height = '5.67rem'
           }
         }
 
@@ -302,22 +302,20 @@
   }
   .brandList {
     display: flex;
-    /*justify-content: space-between;*/
     flex-wrap: wrap;
     overflow: hidden;
     transition: all 0.5s;
+    padding-left: .1rem;
   }
   .brandItem {
     width: 3.28rem;
     height: 1.86rem;
     position: relative;
-    border: 1px solid #fff;
     box-sizing: border-box;
     overflow: hidden;
-    margin-bottom: .05rem;
   }
   .brandItem:nth-child(3n-1) {
-    margin: 0 .06rem;
+
   }
   .brandImg {
     position: absolute;
@@ -325,7 +323,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: .13rem;
     /*z-index: -1;*/
   }
   .brandName {
@@ -382,8 +379,9 @@
     color: #666;
   }
   .louceng {
-    margin-top: .26rem;
-    width: 100%;
+    display: block;
+    margin: .26rem auto .16rem;
+    width: 50%;
     pointer-events: none;
   }
   .noData {

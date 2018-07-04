@@ -2,7 +2,7 @@
   div
     nav-bar(background="rgb(247,0,87)" color="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBack()")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBack()" v-if="false")
       .topCenter(slot="center", style="color:white") 购物车
       .topRight(slot="right")
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
@@ -349,7 +349,7 @@
 
   /* 华丽的分割线 */
   .title {
-    height: .8rem;
+    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
