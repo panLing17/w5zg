@@ -125,7 +125,11 @@
         } else if (this.$route.query.jumps == 'home'){
           this.$router.push('/home');
         } else {
-          this.$router.go(-1);
+          if (this.$route.query.relNum == 1) {
+            this.$router.push('/home');
+          } else {
+            this.$router.go(-1);
+          }
         }
       },
       //显示搜索结果

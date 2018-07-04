@@ -200,7 +200,7 @@
             } else {
               _this.noDataShow.category = false
             }
-            if (_this.categoryList.length <= 10) {
+            if (_this.categoryList.length <= 8) {
               _this.category.show = false
             } else {
               _this.$nextTick(() => {
