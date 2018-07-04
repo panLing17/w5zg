@@ -93,11 +93,11 @@
       //this.searchDiscover();
       //商品推荐
       this.$mescrollInt("historyMescroll",this.upCallback,()=>{
-         this.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0);
-            }
-          })
+         // this.position.forEach((now) => {
+         //    if (now.path === this.$route.path) {
+         //      this.mescroll.scrollTo(now.y, 0);
+         //    }
+         //  })
         }, (obj) => {
           this.$store.commit('setPosition', {
             path: this.$route.path,

@@ -42,7 +42,7 @@
           },
           message: {
             type: String,
-            default: ""
+            default: ''
           }
         },
         data(){
@@ -71,10 +71,8 @@
           this.brandNames();
           this.focusHide();
         },
-        destroyed (){
-          this.num1 = '';
-          this.num2 = '';
-          this.num3 = '';
+        beforeDestroy (){
+
         },
         methods:{
           //手机软键盘弹出时触发
@@ -170,6 +168,9 @@
               };
             }
             this.$emit('ievent',data);
+            this.num1 = null;
+            this.num2 = null;
+            this.num3 = null;
           },
           down(){
             this.allBrandFlag = true;

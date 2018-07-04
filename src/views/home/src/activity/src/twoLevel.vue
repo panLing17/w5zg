@@ -306,18 +306,19 @@
     flex-wrap: wrap;
     overflow: hidden;
     transition: all 0.5s;
+    padding-left: .1rem;
   }
   .brandItem {
     width: 3.28rem;
     height: 1.86rem;
     position: relative;
-    border: 1px solid #fff;
+    /*border: 1px solid #fff;*/
     box-sizing: border-box;
     overflow: hidden;
     margin-bottom: .05rem;
   }
   .brandItem:nth-child(3n-1) {
-    margin: 0 .06rem;
+    /*margin: 0 .06rem;*/
   }
   .brandImg {
     position: absolute;
@@ -382,8 +383,9 @@
     color: #666;
   }
   .louceng {
-    margin-top: .26rem;
-    width: 100%;
+    display: block;
+    margin: .26rem auto .16rem;
+    width: 50%;
     pointer-events: none;
   }
   .noData {

@@ -142,13 +142,14 @@
     background-color: white;
   }
   .main{
-    height: 2.2rem;
+    /*height: 2.2rem;*/
     display: flex;
     padding-top: .2rem;
+    align-items: center;
   }
   .main .checkbox {
     padding-right: .2rem;
-    height: 100%;
+    /*height: 100%;*/
     display: flex;
     align-items: center;
   }
