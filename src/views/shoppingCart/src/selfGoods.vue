@@ -219,13 +219,22 @@
   }
   .info .text .spec {
     display: flex;
+    position: relative;
     float: left;
-    justify-content: center;
+    max-width: 3rem;
+    overflow: hidden;
+
+
+
     align-items: center;
     padding: .05rem .2rem;
     margin-top: .2rem;
     color: #999;
     background-color: #eee;
+  }
+  .info .text .spec span{
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .info .text .spec img{
     width: .2rem;

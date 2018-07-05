@@ -2,7 +2,7 @@
   div
     nav-bar(background="rgb(247,0,87)" color="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBack()")
+        img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="goBack()")
       .topCenter(slot="center", style="color:white") 购物车
       .topRight(slot="right")
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
@@ -126,6 +126,9 @@
       this.$store.commit('computedPriceChange', 0)
     },
     methods: {
+      goBack () {
+        this.$router.go(-1)
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll( isLock );
