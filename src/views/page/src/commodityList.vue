@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backgo()")
       .topCenter(slot="center")
         .searchInput
-          input(type="text", placeholder="请输入商品名称", @focus="$router.push({path:'/home/searchHistory',query:{changeFocus:true,messages:message,jumps:jumps}})" v-model="message" ref="oInput")
+          input(type="text", placeholder="请输入商品名称", @click="$router.push({path:'/home/searchHistory',query:{changeFocus:true,messages:message,jumps:jumps}})", v-model="message", ref="oInput", readonly, UNSELECTABLE='on')
           img(src="../../../assets/img/searchInput搜索图标@2x.png")
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")

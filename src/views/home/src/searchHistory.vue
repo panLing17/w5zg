@@ -113,10 +113,15 @@
       this.resultShow()
     },
     beforeDestroy () {
+      this.guangbiao()
       this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
     methods: {
+      //去掉输入框中的光标
+      guangbiao () {
+        this.$refs.mMessage.setAttribute("UNSELECTABLE", "on");
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -306,7 +311,7 @@
   font-size: .3rem;
   margin-left: .4rem;
   background-color: rgb(238,238,238);
-  vertical-align: middle;
+  /*vertical-align: middle;*/
 }
 /*搜索框样式--结束*/
 /*历史搜索--开始*/
