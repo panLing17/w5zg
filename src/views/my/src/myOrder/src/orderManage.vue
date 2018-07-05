@@ -105,7 +105,7 @@
               y: obj.preScrollY
             })
         });
-        
+
         //this.request();
 
       },
@@ -255,7 +255,7 @@
                   } else{
                     self.$message.success('删除成功！');
                   }
-                  
+
                 })
               },
               noConfirm: () => {
@@ -553,7 +553,8 @@
     margin-right: .3rem;
   }
   .center .goodsDetails{
-    width: 100%;
+    width: 0;
+    flex-grow: 1;
     padding-left: .2rem;
   }
   .center .goodsExplain{

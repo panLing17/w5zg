@@ -6,7 +6,7 @@
       .topCenter(slot="center")
         .searchInput
           img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoodsName()")
-          input(:type="type", placeholder="请输入订单商品名称" v-model="msg" @keyup.enter="searchGoodsName()")
+          input(type="text", placeholder="请输入订单商品名称", v-model="msg", @keyup.enter="searchGoodsName()", v-focus="true")
           .clear(@click="clearName()" v-if="msg.length>0") x
       .topRight(slot="right")
         .topRight(slot="right" @click="backTo()") 取消
@@ -92,6 +92,16 @@
         }
       },
       computed: mapState(['position']),
+      directives: {
+        focus: {
+          inserted: function (el, {value}) {
+            console.log(el,{value})
+            if (value) {
+              el.focus()
+            }
+          }
+        }
+      },
       created(){
 
       },
