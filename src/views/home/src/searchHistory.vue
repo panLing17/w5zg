@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type", placeholder="请输入商品名称", @focus="handFocus", v-model="msg", @keyup.enter="searchGoods()", v-focus="true", ref="mMessage")
+          input(type="text", placeholder="请输入商品名称", @focus="handFocus", v-model="msg", @keyup.enter="searchGoods()", v-focus="true", ref="mMessage")
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
@@ -63,8 +63,6 @@
     computed: mapState(['position']),
     watch: {
       '$route' (to,from) {
-        console.log(to)
-        console.log(from)
         if (from.path === '/page/commodityList' || from.path === '/home' || from.path === '/page') {
           this.$refs.mMessage.focus()
         }
@@ -81,14 +79,7 @@
       }
     },
     props: {
-      type: {
-        type: String,
-        default: 'text'
-      },
-      placeholder: {
-        type: String,
-        default: 'placeholder'
-      }
+
     },
     activated () {
       this.msg = this.$route.query.messages
@@ -163,7 +154,7 @@
         self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flags:1,jumps:self.jumps}})
       },
       //历史搜索
-      historys(){
+      historys () {
         let self =this
         self.$ajax({
           method: 'post',
@@ -179,7 +170,7 @@
         })
       },
       //搜索发现
-      searchDiscover(){
+      searchDiscover () {
         let self = this
         self.$ajax({
           method: 'post',
@@ -221,7 +212,7 @@
 
       },
 
-      toggle: function(){
+      toggle: function() {
         this.showDiscover = !this.showDiscover
         this.$store.commit('getSearchDiscover', this.showDiscover)
         if (this.showDiscover == true) {
@@ -229,14 +220,14 @@
         }
       },
 
-      change1: function(item,index){
+      change1: function(item,index) {
         this.selected1 = index
         this.selected2 = null
         this.msg = item
         this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}})
       },
 
-      change2: function(item,index){
+      change2: function(item,index) {
         this.selected2 = index
         this.selected1 = null
         this.msg = item
@@ -253,7 +244,7 @@
           self.mescroll.endErr()
         })
       },
-      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
+      getListDataFromNet (pageNum,pageSize,successCallback,errorCallback) {
         let self = this
         self.$ajax({
           method: 'post',
