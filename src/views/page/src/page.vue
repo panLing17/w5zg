@@ -7,7 +7,7 @@
       .topCenter(slot="center")
         .searchInput
           img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
-          input(type="text", placeholder="请输入商品名称", @click="$router.push({path:'/home/searchHistory',query:{jumps:'page'}})", readonly, UNSELECTABLE='on')
+          input(type="text", placeholder="请输入商品名称", @click="$router.push({path:'/home/searchHistory',query:{jumps:'page'}})", readonly, unselectable='on')
           img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")

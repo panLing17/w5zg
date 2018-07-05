@@ -65,6 +65,7 @@
       '$route' (to,from) {
         if (from.path === '/page/commodityList' || from.path === '/home' || from.path === '/page') {
           this.$refs.mMessage.focus()
+          this.guangbiao2()
         }
       }
     },
@@ -91,7 +92,12 @@
         }
       })
     },
+    beforeRouteLeave (to, from, next) {
+      this.guangbiao()
+      next()
+    },
     mounted(){
+
       //搜索发现
       //this.searchDiscover();
       //商品推荐
@@ -113,14 +119,20 @@
       this.resultShow()
     },
     beforeDestroy () {
-      this.guangbiao()
+      this.guangbiao2()
       this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
     methods: {
       //去掉输入框中的光标
       guangbiao () {
-        this.$refs.mMessage.setAttribute("UNSELECTABLE", "on");
+        this.$refs.mMessage.setAttribute('unselectable', 'on')
+        this.$refs.mMessage.setAttribute('readonly', 'readonly')
+      },
+      // 恢复输入框的光标
+      guangbiao2 () {
+        this.$refs.mMessage.removeAttribute('unselectable')
+        this.$refs.mMessage.removeAttribute('readonly')
       },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
