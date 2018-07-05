@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
       .topCenter(slot="center")
         .searchInput
-          input(:type="type",placeholder="请输入商品名称" @focus="handFocus" v-model="msg" @keyup.enter="searchGoods()" autofocus="autofocus" ref="mMessage")
+          input(:type="type", placeholder="请输入商品名称", @focus="handFocus", v-model="msg", @keyup.enter="searchGoods()", v-focus="true", ref="mMessage")
           img(src="../../../assets/img/searchInput搜索图标@2x.png" @click="searchGoods()")
       .topRight(slot="right" @click="backRouter()") 取消
     .searchHistory.mescroll#historyMescroll
@@ -42,29 +42,41 @@
   import recommend from './recommend'
   export default {
     name: 'searchHistory',
-    components:{recommend},
+    components: {recommend},
     data () {
       return {
-        searchFlag:'', //历史搜索,搜索发现显隐
-        resultFlag:'', //搜索结果的显隐
-        recommendGoods:[], //推荐的数组
-        selected1:null,
-        selected2:null,
-        flag:true,
-        show:true,
-        hide:false,
-        showDiscover:this.$store.state.searchFlag, //搜索发现的显隐
-        record1:[],
-        record2:[],
-        msg:this.$route.query.messages,
-        jumps:this.$route.query.jumps, //判断是那个页面来的
+        searchFlag: '', //历史搜索,搜索发现显隐
+        resultFlag: '', //搜索结果的显隐
+        recommendGoods: [], //推荐的数组
+        selected1: null,
+        selected2: null,
+        flag: true,
+        show: true,
+        hide: false,
+        showDiscover: this.$store.state.searchFlag, //搜索发现的显隐
+        record1: [],
+        record2: [],
+        msg: this.$route.query.messages,
+        jumps: this.$route.query.jumps, //判断是那个页面来的
       }
     },
     computed: mapState(['position']),
-    directives:{
-      focus:{
-        inserted:function(el){
-          el.focus()
+    watch: {
+      '$route' (to,from) {
+        console.log(to)
+        console.log(from)
+        if (from.path === '/page/commodityList' || from.path === '/home' || from.path === '/page') {
+          this.$refs.mMessage.focus()
+        }
+      }
+    },
+    directives: {
+      focus: {
+        inserted: function (el, {value}) {
+          console.log(el,{value})
+          if (value) {
+            el.focus()
+          }
         }
       }
     },
@@ -79,12 +91,12 @@
       }
     },
     activated () {
-      this.msg = this.$route.query.messages;
+      this.msg = this.$route.query.messages
       //显示搜索结果
-      this.resultShow();
+      this.resultShow()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
+          this.mescroll.scrollTo(now.y, 0)
         }
       })
     },
@@ -105,99 +117,100 @@
           })
       });
       //历史搜索
-      this.historys();
+      this.historys()
       //显示搜索结果
-      this.resultShow();
+      this.resultShow()
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn();
-      this.mescroll.destroy();
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
     },
     methods: {
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
-        this.mescroll.lockUpScroll( isLock );
+        this.mescroll.lockUpScroll(isLock)
       },
       //判断回退事件
       backRouter(){
         if (this.$route.query.jumps == 'page') {
-          this.$router.push('/page');
+          this.$router.push('/page')
         } else if (this.$route.query.jumps == 'home'){
-          this.$router.push('/home');
+          this.$router.push('/home')
         } else {
           if (this.$route.query.relNum == 1) {
-            this.$router.push('/home');
+            this.$router.push('/home')
           } else {
-            this.$router.go(-1);
+            this.$router.go(-1)
           }
         }
       },
       //显示搜索结果
-      resultShow(){
+      resultShow () {
         if (this.$route.query.relNum == 1) {
-          this.searchFlag = false;
-          this.resultFlag = true;
-        } else{
-          this.searchFlag = true;
-          this.resultFlag = false;
+          this.searchFlag = false
+          this.resultFlag = true
+        } else {
+          this.searchFlag = true
+          this.resultFlag = false
         }
       },
       //搜索商品去商品展示页
-      searchGoods(){
-        let self = this;
+      searchGoods () {
+        this.$refs.mMessage.blur()
+        let self = this
         console.log(self.$refs.mMessage.value)
         self.msg = self.$refs.mMessage.value
-        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flags:1,jumps:self.jumps}});
+        self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flags:1,jumps:self.jumps}})
       },
       //历史搜索
       historys(){
-        let self =this;
+        let self =this
         self.$ajax({
-          method:"post",
-          url:self.$apiGoods + "goodsSearch/queryGoodsHistoryList",
-          params:{}
+          method: 'post',
+          url: self.$apiGoods + 'goodsSearch/queryGoodsHistoryList',
+          params: {}
         }).then(function(res){
-          self.record1 = res.data.data;
+          self.record1 = res.data.data
           if (self.record1.length == 0) {
-            self.flag = false;
+            self.flag = false
           } else{
-            self.flag = true;
+            self.flag = true
           }
         })
       },
       //搜索发现
       searchDiscover(){
-        let self = this;
+        let self = this
         self.$ajax({
-          method:"post",
-          url:self.$apiGoods + "goodsSearch/searchDiscovery",
-          params:{}
+          method: 'post',
+          url: self.$apiGoods + 'goodsSearch/searchDiscovery',
+          params: {}
         }).then(function(res){
-          self.record2 = res.data.data;
+          self.record2 = res.data.data
         })
       },
 
       handFocus () {
-        this.$emit('focus', this.msg);
-        this.searchFlag = true;
-        this.resultFlag = false;
+        this.$emit('focus', this.msg)
+        this.searchFlag = true
+        this.resultFlag = false
       },
 
       //清除历史搜索记录
-      clearHistory(){
+      clearHistory () {
         if (this.flag != false) {
           this.$confirm({
             title: '确认',
             message: '真的要这样做吗',
             confirm: () => {
-              this.flag = false;
-              let self = this;
+              this.flag = false
+              let self = this
               self.$ajax({
-                method:"post",
-                url:self.$apiGoods + "goodsSearch/deleteGoodsHistoryList",
-                params:{}
+                method: 'post',
+                url: self.$apiGoods + 'goodsSearch/deleteGoodsHistoryList',
+                params: {}
               }).then(function(res){
-                this.historys();
+                this.historys()
               })
             },
             noConfirm: () => {
@@ -208,50 +221,50 @@
 
       },
 
-      toggle:function(){
-        this.showDiscover = !this.showDiscover;
-        this.$store.commit('getSearchDiscover', this.showDiscover);
+      toggle: function(){
+        this.showDiscover = !this.showDiscover
+        this.$store.commit('getSearchDiscover', this.showDiscover)
         if (this.showDiscover == true) {
-          this.searchDiscover();
+          this.searchDiscover()
         }
       },
 
       change1: function(item,index){
-        this.selected1 = index;
-        this.selected2 = null;
-        this.msg = item;
-        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}});
+        this.selected1 = index
+        this.selected2 = null
+        this.msg = item
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}})
       },
 
       change2: function(item,index){
-        this.selected2 = index;
-        this.selected1 = null;
-        this.msg = item;
-        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}});
+        this.selected2 = index
+        this.selected1 = null
+        this.msg = item
+        this.$router.push({path:'/page/commodityList',query:{msg:this.msg,flags:1,jumps:this.jumps}})
       },
 
       upCallback: function(page) {
-        let self = this;
+        let self = this
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
           self.$refs.recommend.more(curPageData,page.num,page.size)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr();
+          self.mescroll.endErr()
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
         let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          url: self.$apiGoods +  'goodsSearch/goodsRecommendationList',
           params: {
             page: pageNum,
             rows: pageSize
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
-          successCallback&&successCallback(response.data.data);//成功回调
+          successCallback&&successCallback(response.data.data)//成功回调
         })
       }
 
