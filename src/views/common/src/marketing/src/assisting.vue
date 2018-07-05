@@ -319,6 +319,9 @@
               self.getMyInfo()
               self.isLast()
             } else if (response.data.data == 'no auth') {
+              if (localStorage.getItem('unionId')) {
+                localStorage.removeItem("unionId")
+              }
               self.getWXUrl()
             } else if (response.data.data == 'no binding') {
               if (localStorage.getItem('phone') && localStorage.getItem('phone').length == 11) {

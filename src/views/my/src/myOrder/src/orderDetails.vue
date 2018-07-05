@@ -1085,13 +1085,14 @@
   /*订单编号--结束*/
   /*我的推荐--开始*/
   .title{
-    height: .8rem;
+    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
+    padding: .2rem 0;
   }
   .title img{
     width: 55%;

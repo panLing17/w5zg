@@ -138,7 +138,7 @@
             if (res.data.data.result.deliverystatus == 4) {
               self.goodsStatus = "派送失败";
             }
-            console.log(res.data.data.result == "") 
+            console.log(res.data.data.result == "")
             if (res.data.data.result == "") {
               self.goodsStatus = "暂无信息";
             }
@@ -365,7 +365,7 @@
   /*点击收起下拉--结束*/
   /*我的推荐--开始*/
   .title{
-    height: .8rem;
+    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;

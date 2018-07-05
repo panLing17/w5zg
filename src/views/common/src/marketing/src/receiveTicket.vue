@@ -118,6 +118,44 @@
           }
         })
       },
+      //根据UnionId查找手机号
+      queryMobileByUnionId () {
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'member/queryMobileByUnionId',
+          params: {
+            unionId: localStorage.getItem('unionId')
+          }
+        }).then(function (response) {
+          if (response) {
+            if (response.data.data == 'no auth') {
+              _this.getWXUrl()
+            } else if (response.data.data == 'no binding') {
+              _this.$message.warning('请输入手机号！')
+              _this.isLoginFlag = false
+            } else {
+              _this.phone = response.data.data
+              localStorage.setItem('phone', response.data.data)
+              _this.helpActivity()
+            }
+          }
+        })
+      },
+      //获取微信授权
+      getWXUrl () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiTransaction + 'oauth2/wechat/createCodeUrl',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            window.location.href = response.data.data
+          }
+        })
+
+      },
       //参加活动
       joinActivity () {
         let _this = this
@@ -135,29 +173,35 @@
       },
       //助力
       helpActivity () {
-        let _this = this
-        this.$ajax({
-          method: 'get',
-          url: _this.$apiApp + 'presentShoes/helpActivity',
-          params: {
-            unionId: localStorage.getItem('unionId'),
-            sharerId : this.$route.query.originatorId
-          }
-        }).then(function (response) {
-          if (response) {
-            if (response.data.data == 'link invalid') {
-              _this.$message.error('您的好友还未参加活动，不能帮TA助力哦~')
-              _this.$router.replace('/marketing/index')
-            } else {
-              _this.getTicket2()
-            }
-
-          }
-        })
-      },
-      getTicket2 () {
         if (this.loadingFlag === false) {
           this.loadingFlag = true
+          let _this = this
+          this.$ajax({
+            method: 'get',
+            url: _this.$apiApp + 'presentShoes/helpActivity',
+            params: {
+              unionId: localStorage.getItem('unionId'),
+              sharerId : this.$route.query.originatorId
+            }
+          }).then(function (response) {
+            if (response) {
+              if (response.data.data == 'link invalid') {
+                _this.loadingFlag = false
+                _this.$message.error('您的好友还未参加活动，不能帮TA助力哦~')
+                _this.$router.replace('/marketing/index')
+              } else {
+                _this.getTicket2()
+              }
+
+            }
+          }).catch(function (reason) {
+            _this.loadingFlag = false
+          });
+        }
+
+      },
+      getTicket2 () {
+        if (this.loadingFlag === true) {
           let _this = this;
           this.$ajax({
             method: 'get',
@@ -190,7 +234,6 @@
             }
           }).catch(function (reason) {
             _this.loadingFlag = false
-
 
           });
         }
@@ -467,9 +510,16 @@
             } else {
               this.bindAccount()
             }
-
           } else {
-            this.popShow = true
+            if (this.isPartakeFlag) {
+              if (this.phone.length === 11) {
+                this.popShow = true
+              } else {
+                this.queryMobileByUnionId()
+              }
+            } else {
+              this.popShow = true
+            }
           }
 
         } else if (this.showIndex == 1) {

@@ -228,8 +228,8 @@
     padding-bottom: .2rem;
   }
   .topper .left{
-    /*width: 2.8rem;
-    height: 2.8rem;*/
+    /*width: 2.8rem;*/
+    /*height: 2.8rem;*/
   }
   .topper .left img{
     width: 2.8rem;
@@ -237,6 +237,8 @@
   }
   .topper .right{
     padding-left: .3rem;
+    width: 0;
+    flex-grow: 1;
   }
   .topper .right .up{
     font-size: .36rem;
@@ -393,7 +395,7 @@
   /*批量删除--结束*/
   /*推荐--开始*/
   .title{
-    height: .8rem;
+    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
@@ -401,7 +403,6 @@
     justify-content: center;
     align-items: center;
     margin-top: 1rem;
-    margin-bottom: .2rem;
   }
   .title img{
     width: 55%;

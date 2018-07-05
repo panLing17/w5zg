@@ -42,7 +42,7 @@
     name: "receiveTicketSuccess",
     data () {
       return {
-        showIndex: 2,
+        showIndex: 1,
         price: '',
         sessionId:'',
         phone:'',
