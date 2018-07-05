@@ -12,7 +12,7 @@
           img(:src="goodsPics | img-filter")
         .goodsExplain
           .words {{goodsStatus}}
-          .express {{goodsStatus!='暂无信息'?CourierName:CourierName2}}： {{goodsStatus!='暂无信息'?number:number2}}
+          .express(v-if="companyFlag") {{goodsStatus!='暂无信息'?CourierName:CourierName2}}： {{goodsStatus!='暂无信息'?number:number2}}
           .contactWay(v-if="false") 官方联系: {{phone}}
     .logisticsAddress
       img(src="../../../../../assets/img/citySearch@2x.png")
@@ -47,6 +47,7 @@
       components:{recommend},
       data(){
         return{
+          companyFlag:"", // 物流公司名称显隐
           logisticsFlag:"", //物流信息显隐
           recommendFlag:true, //判断推荐的显隐
           goodsPics:this.$route.query.goodsPic, //商品的图片
@@ -118,9 +119,14 @@
             url:self.$apiMember + "orderLogistics/info",
             params:{orderId:self.sonOrder,orderType:self.ordertype}
           }).then(function(res){
-            if (res.data.data.status === "205") {
+            self.companyFlag = true;
+            if (res.data.data.status == "205") {
               self.logisticsFlag = true;
               self.secondRequest();
+            }
+            if (res.data.data.status == "201") {
+              self.logisticsFlag = true;
+              self.companyFlag = false;
             }
             self.CourierName = res.data.data.result.expName;
             self.number = res.data.data.result.number;
