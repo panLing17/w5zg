@@ -755,7 +755,6 @@
         if (this.shoppingCartFlag) {
           // 如果操作来自添加购物车按钮
           let self = this
-          alert(self.$store.state.location.store.id)
           this.$ajax({
             method: 'post',
             url: self.$apiGoods+ 'goods/shoppingCart/add',
@@ -809,6 +808,7 @@
             })
           })
           let self = this
+          console.log(specData)
           this.$ajax({
             method: 'post',
             url: self.$apiGoods + 'goods/sku/detail',

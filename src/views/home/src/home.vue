@@ -516,7 +516,7 @@
 
   .title2 {
     background: url("../../../assets/img/louceng2.png") no-repeat center;
-    background-size: 50% 80%;
+    background-size: 50% 75%;
   }
 
   .line {
