@@ -72,7 +72,6 @@
     directives: {
       focus: {
         inserted: function (el, {value}) {
-          console.log(el,{value})
           if (value) {
             el.focus()
           }
@@ -166,7 +165,6 @@
       searchGoods () {
         this.$refs.mMessage.blur()
         let self = this
-        console.log(self.$refs.mMessage.value)
         self.msg = self.$refs.mMessage.value
         self.$router.push({path:'/page/commodityList',query:{msg:self.msg,flags:1,jumps:self.jumps}})
       },
