@@ -456,6 +456,7 @@
     padding: .2rem .3rem;
     border:  solid 1px pink;
     margin-left: .4rem;
+    margin-bottom: .4rem;
     border-radius: .2rem;
     transition: background-color .3s, color .3s;
   }

@@ -355,7 +355,7 @@
             gskuId: self.$store.state.skuId,
             marketId:0,
             cityNo: self.$store.state.location.city.id,
-            storeType: 1
+            storeType: 2
           },
         }).then(function (response) {
           console.log(response.data.data)

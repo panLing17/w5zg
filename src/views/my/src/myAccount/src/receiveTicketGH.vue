@@ -27,11 +27,17 @@
           a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8") 下载万物直供APP（苹果版）
           .dec.first 点击下载“万物直供”APP
           .dec 或者进入应用商店搜索“万物直供”下载
+      .agreementBtn(@click="$refs.agreement.mShow()") 《万物直供用户协议》
+      agreement(ref="agreement")
 </template>
 
 <script>
+  import Agreement from '@/views/common/src/agreement'
   export default {
     name: "receiveTicket",
+    components: {
+      Agreement
+    },
     data () {
       return {
         phone: '',
@@ -307,5 +313,15 @@
     font-size: .53rem;
     color: #c82c26;
     line-height: 1.5;
+  }
+  .agreementBtn {
+    position: absolute;
+    bottom: .5rem;
+    left: 0;
+    width: 100%;
+    color: #fff;
+    font-size: .4rem;
+    text-align: center;
+    z-index: 150;
   }
 </style>
