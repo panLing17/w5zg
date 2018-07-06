@@ -15,7 +15,7 @@
             li(@click="$router.push('/my/settings')")
               img(:src="userData.mi_head_sculpture | img-filter")
           ul.userName
-            li {{userData.mi_nickname? userData.mi_nickname: '万物直供'}}
+            li(@click="$router.push('/my/settings')") {{userData.mi_nickname? userData.mi_nickname: '万物直供'}}
           ul.balance(v-if="userData.member_type === '092'")
             li 余额:
             li {{accoutBalance}}
