@@ -1,7 +1,7 @@
 <template lang="pug">
   .wrapPublicNum
     .cont1(v-if="temp==2")
-      .message(@click="$router.push('/home')")
+      .message(@click="goHome")
         p 活动已开启，只能在微信端参加
         p
           img.backImg(src="../../../../../assets/img/backAPP.png")
@@ -57,6 +57,23 @@
         this.loadShare()
       },
       methods:{
+        goHome () {
+          if (typeof w5zgApp !== 'undefined') {
+            this.$router.push('/home')
+          } else {
+            window.location.href = this.getLocationHref() + '/#/home'
+          }
+
+        },
+        getLocationHref () {
+          let href1 = window.location.href.split('/#')
+          let href2 = window.location.href.split('/?')
+          if (href1.length <= 1) {
+            return href2[0]
+          } else {
+            return href1[0]
+          }
+        },
         getData () {
           if (this.$route.query.temp == 2) {
             this.temp = 2

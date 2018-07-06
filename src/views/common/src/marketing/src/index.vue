@@ -98,6 +98,11 @@
                   self.$router.push({path: '/marketing/publicNum', query: {temp: 2}})
                   return
                 }
+                //判断是否在app中打开
+                if (self.openInWebview()) {
+                  self.$router.push({path: '/marketing/publicNum', query: {temp: 2}})
+                  return
+                }
 
                 if (self.isWeiXin()) {
                   localStorage.setItem('originatorId', self.$route.query.sharerId)
@@ -111,6 +116,25 @@
             }
           }
         })
+      },
+      //判断是否在app中打开
+      openInWebview () {
+        var ua = navigator.userAgent.toLowerCase()
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') { // 微信浏览器判断
+          return false
+        } else if (ua.match(/QQ/i) == 'qq') { // QQ浏览器判断
+          return false
+        } else if (ua.match(/WeiBo/i) == "weibo") {
+          return false
+        } else {
+          if (ua.match(/Android/i) != null) {
+            return ua.match(/browser/i) == null
+          } else if (ua.match(/iPhone/i) != null) {
+            return ua.match(/safari/i) == null
+          } else {
+            return (ua.match(/macintosh/i) == null && ua.match(/windows/i) == null)
+          }
+        }
       },
       //是否是微信环境
       isWeiXin() {
