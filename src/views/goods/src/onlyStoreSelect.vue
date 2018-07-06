@@ -14,7 +14,7 @@
                 .text
                   h2 {{i.bs_name}}
                   p {{i.bs_address}}
-                    span(v-for="tags in i.bs_type_name.split('&')") 可{{tags}}
+                    //span(v-for="tags in i.bs_type_name.split('&')") 可{{tags}}
                 .icon
                   img(src="../../../assets/img/now@2x.png", v-if="bsId === i.bs_id")
                   img(src="../../../assets/img/past@2x.png", v-else)
@@ -73,7 +73,7 @@
             gskuId: self.$store.state.skuId,
             marketId:0,
             cityNo: self.$store.state.location.city.id,
-            storeType: 1
+            storeType: 2
           },
         }).then(function (response) {
           self.storeList = response.data.data
