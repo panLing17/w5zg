@@ -185,7 +185,6 @@
     },
     watch: {
       '$route' (to, from) {
-        console.log(from.path)
         if (from.path == '/my/returnDetails') {
           this.orderDetailShow()
         }
@@ -631,6 +630,7 @@
         }
         //进入到申请退货页面
         if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
+          //判断是否超过7天退货
           let self = this;
           self.$ajax({
             method: "post",
@@ -663,8 +663,6 @@
         }
       },
       judgeBtnS(e,item,items){
-        console.log(item.order_id)
-        this.judgeRefund(item.order_id)
         //进入到申请退货页面
         if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
           let tempArr = [];

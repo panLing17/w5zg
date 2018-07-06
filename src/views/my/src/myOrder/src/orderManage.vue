@@ -250,7 +250,6 @@
                   }
                 }).then(function(res){
                   self.request();
-                  console.log(res)
                   if (res == undefined) {
                     self.$message.error('此商品存在退货情况！')
                   } else{
