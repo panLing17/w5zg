@@ -552,6 +552,9 @@
     width: 2.5rem;
     border-radius: .2rem;
   }
+  .center .image img:nth-child(n+2){
+    margin-left: .2rem;
+  }
   .center .goodsDetails{
     width: 0;
     flex-grow: 1;
