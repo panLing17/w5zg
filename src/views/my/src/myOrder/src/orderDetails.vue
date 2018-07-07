@@ -52,11 +52,11 @@
           .wrapFreight
             span(v-if="delivery_ways === '快递配送'") 运费：{{item.freight | price-filter}}
           .wrapBtn
-            .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
+            .moreThen(v-if="item.morethenFlag" @click="moreShow($event)") 更多
               .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
                 .triangle
-            .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
-            .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
+            .btnF.btn(v-if="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请' && tuihuo !== 'hide'" @click.stop="judgeBtnF($event,item,item.orderDetail)" ref="btnfs") {{item.btnF}}
+            .btnS.btn(v-if="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
         transition(name="slide-fade")
           .pickUpNum(v-show="pickUpNoFlag")
             .alertFrame
@@ -176,7 +176,9 @@
         BOrC: '', //判断用户身份
         linkMan: '', //门店联系人
         linkPhone: '', //门店联系人电话
-        delivery_ways: ''
+        delivery_ways: '',
+        sonId: '', //子订单id
+        tuihuo: ''
       }
     },
     computed: mapState(['position']),
@@ -218,12 +220,32 @@
       // this.countDown(1800);
       // 判断最下方的两个按钮都隐藏时下方的白条消失
       // this.judgeWhiteBar();
+      //this.judgeRefund()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
     methods: {
+      // 判断是否超过7天退货中
+      judgeRefund () {
+        let self = this;
+        self.$ajax({
+          method: "post",
+          url: self.$apiTransaction + "goodsRejected/rejectAble",
+          params: {
+            orderId: self.sonId
+          }
+        }).then(function (res) {
+          console.log(res)
+          if (res) {
+            self.tuihuo = 'show'
+          } else {
+            self.tuihuo = 'hide'
+          }
+          console.log(self.tuihuo)
+        })
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -386,8 +408,10 @@
           }
 
           //判断货物状态来决定
-          let arrays = res.data.data[0].orderInfo;
+          let arrays = self.orderDetails;
           for (let i = 0; i < arrays.length; i++) {
+            self.sonId = arrays[i].order_id;
+            self.judgeRefund();
             if (arrays[i].orderInfo_status === '（退货）售后') {
               //arrays[j].refund_status
               arrays[i].morethenFlag = false;
@@ -565,6 +589,7 @@
               self.leftBtn = '批量退款';
               self.rightBtn = '再次购买';
               arrays[i].orderInfoStatus = arrays[i].orderInfo_status;
+
               let mArr = arrays[i].orderDetail;
               for (let j = 0; j < mArr.length; j++) {
                 if (mArr.length>1) {
@@ -582,6 +607,7 @@
                   }
                 }
               }
+
             }
 
             if (arrays[i].orderInfo_status === '已取消') {
@@ -600,24 +626,7 @@
 
         })
       },
-      // 判断是否超过7天退货中
-      judgeRefund (sonId, btnFlag) {
-        let self = this;
-        self.$ajax({
-          method: "post",
-          url: self.$apiTransaction + "goodsRejected/rejectAble",
-          params: {
-            orderId: sonId
-          }
-        }).then(function (res) {
-          if (res == undefined) {
-            btnFlag = false
-            self.$message.error('此订单已经超过7天退货期限！')
-          } else {
-            btnFlag = true
-          }
-        })
-      },
+
       //按照按钮上的文字跳转页面
       judgeBtnF(e,item,items){
         //此功能还没有
@@ -630,33 +639,20 @@
         }
         //进入到申请退货页面
         if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
-          //判断是否超过7天退货
-          let self = this;
-          self.$ajax({
-            method: "post",
-            url: self.$apiTransaction + "goodsRejected/rejectAble",
-            params: {
-              orderId: item.order_id
-            }
-          }).then(function (res) {
-            if (res == undefined) {
-              self.$message.error('此订单已经超过7天退货期限！')
-            } else {
-              let tempArr = [];
-              items.forEach((items)=>{
-                tempArr.push(items);
-              });
-              if (tempArr.length > 1) {
-                tempArr.push(self.delivery_ways);
-                self.$store.commit('getReturnGoods', tempArr);
-                self.$router.push({path:'/my/applyAfterSale'});
-              }else if(tempArr.length === 1) {
-                tempArr[0].delivery_ways = self.delivery_ways;
-                self.$store.commit('getReturnGoods', tempArr[0]);
-                self.$router.push({path:'/my/refundReturn'});
-              }
-            }
-          })
+          console.log(1)
+          let tempArr = [];
+          items.forEach((items)=>{
+            tempArr.push(items);
+          });
+          if (tempArr.length > 1) {
+            tempArr.push(this.delivery_ways);
+            this.$store.commit('getReturnGoods', tempArr);
+            this.$router.push({path:'/my/applyAfterSale'});
+          }else if(tempArr.length === 1) {
+            tempArr[0].delivery_ways = this.delivery_ways;
+            this.$store.commit('getReturnGoods', tempArr[0]);
+            this.$router.push({path:'/my/refundReturn'});
+          }
         }
         if (e.target.innerHTML === '取消订单'){
 
