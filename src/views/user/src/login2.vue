@@ -40,7 +40,7 @@
       .popWrapper(v-show="popShow.code")
         .close(@click.stop="hidePop")
         .popContent
-          #sc
+          #sc(v-if="showSC")
 </template>
 
 <script>
@@ -79,8 +79,9 @@
         },
         scFlag: false,
         sessionId: '',
-        sendCodeFlag: false
-
+        sendCodeFlag: false,
+        showSC: true,
+        timer: null
       }
     },
     created () {
@@ -126,7 +127,7 @@
           ic.init();
         })
       },
-      sendCodeAjax (callback) {
+      sendCodeAjax () {
         let _this = this
         this.$ajax({
           method: 'post',
@@ -140,7 +141,25 @@
           _this.popShow.code = false
           if (response) {
             _this.sendCodeFlag = true
-            callback && callback()
+            //倒计时
+            _this.showSC = false
+            let count = 60
+            _this.codeBtn.bg = '#ccc'
+            _this.codeBtn.text = count + 's'
+            _this.timer = setInterval(()=>{
+              count--
+              if (count <= 0) {
+                _this.codeBtn.text = '获取验证码'
+                _this.codeBtn.bg = 'rgb(245,0,87)'
+                _this.showSC = true
+                _this.scFlag = false
+                _this._initSc()
+                clearInterval(_this.timer)
+              } else {
+                _this.codeBtn.text = count + 's'
+              }
+
+            }, 1000)
           }
         })
       },
@@ -166,10 +185,6 @@
         }
         if (this.form.code.trim().length!=6) {
           this.$message.error('请输入正确手机验证码！');
-          return
-        }
-        if (!this.scFlag) {
-          this.$message.error('请点击获取验证码按钮！');
           return
         }
         if (!this.loginFlag) {
@@ -267,7 +282,10 @@
           this.$message.error('手机号码格式不正确！');
           return;
         }
-        this.popShow.code = true
+        if (this.showSC) {
+          this.popShow.code = true
+        }
+
         // this.codeFocus()
 
       },
