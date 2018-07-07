@@ -237,13 +237,12 @@
             orderId: self.sonId
           }
         }).then(function (res) {
-          console.log(res)
-          if (res) {
+          let rej = res.data.data[0].rejected
+          if (rej === 'yes') {
             self.tuihuo = 'show'
           } else {
             self.tuihuo = 'hide'
           }
-          console.log(self.tuihuo)
         })
       },
       // 锁定或者解锁上拉加载
@@ -639,7 +638,6 @@
         }
         //进入到申请退货页面
         if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
-          console.log(1)
           let tempArr = [];
           items.forEach((items)=>{
             tempArr.push(items);
