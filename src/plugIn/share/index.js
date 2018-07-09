@@ -9,30 +9,37 @@ export default{
 
 // 微信sdk注册
 function wxConfig(vm, options) {
-  vm.$ajax({
-    method: 'get',
-    url: vm.$apiTransaction + 'thirdPay/sao',
-    params: {
-      url: window.location.href.split('#')[0]
-    },
-    headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-  }).then(function (response) {
-    wx.config({
-      debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-      appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
-      timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
-      nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
-      signature: response.data.data.signature,// 必填，签名，见附录1
-      jsApiList: ['scanQRCode', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-    })
+  if (!vm.$global.isGetSDK) {
+    vm.$ajax({
+      method: 'get',
+      url: vm.$apiTransaction + 'thirdPay/sao',
+      params: {
+        url: window.location.href.split('#')[0]
+      },
+      headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+    }).then(function (response) {
+      wx.config({
+        debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: response.data.data.appId, // 必填，企业号的唯一标识，此处填写企业号corpid
+        timestamp: response.data.data.timestamp, // 必填，生成签名的时间戳
+        nonceStr: response.data.data.nonceStr, // 必填，生成签名的随机串
+        signature: response.data.data.signature,// 必填，签名，见附录1
+        jsApiList: ['scanQRCode', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+      })
 
-    wx.ready(()=>{
-      wxShare(options)
-      friendShare(options)
-      qqShare(options)
+      wx.ready(() => {
+        vm.$global.isGetSDK = true
+        wxShare(options)
+        friendShare(options)
+        qqShare(options)
 
+      })
     })
-  })
+  } else {
+    wxShare(options)
+    friendShare(options)
+    qqShare(options)
+  }
 }
 
 // 分享到qq
@@ -65,7 +72,7 @@ function wxShare (options) {
   if (options.link) {
     link = options.link
   } else {
-    link = window.location.href.replace(/\?*#/, "?#")
+    link = window.location.href.replace(/\?.*#/, "#")
   }
   wx.onMenuShareAppMessage({
     title: options.shareTitle, // 分享标题

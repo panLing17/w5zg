@@ -17,3 +17,9 @@ global.$code = function (e) {
     return '错误码不存在'
   }
 }
+
+//全局变量
+Vue.prototype.$global = {
+  //分享接口是否调过
+  isGetSDK: false
+}
