@@ -13,7 +13,7 @@
           span X{{data.number}}
     .bottom(v-if="since === 'true'")
       .left 门店自提
-      .right {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
+      //.right {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
         //img(src="../../../assets/img/next@2x.png")
     //.bottom(v-else)
       .left 运费
@@ -49,7 +49,8 @@
   }
 
   .main {
-    height: 2rem;
+    height: 2.2rem;
+    padding-bottom: .3rem;
     display: flex;
   }
 
@@ -91,7 +92,6 @@
   }
   .bottom {
     width: 100%;
-    margin-top: .3rem;
     display: flex;
     justify-content: space-between;
     align-items: center;

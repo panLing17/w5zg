@@ -738,7 +738,7 @@
           // 订单页需要展示及用到的数据
           let orderData = [{
             skuId: this.$store.state.skuId,
-            storeName: this.$store.state.location.store.name,
+            storeName: this.transfer.store.name,
             storeLocation: this.$store.state.location,
             photo: this.banner[0].gi_img_url,
             spec: spec,
@@ -881,7 +881,6 @@
           if (this.selectedSpec.length>0) {
             // 根据配送类型进行操作
             if (this.disTypeName==='专柜自提') {
-
               // 根据是否有城市判断是否选择过地址
               if (this.transfer.store) {
                 this.selectFlag = false
