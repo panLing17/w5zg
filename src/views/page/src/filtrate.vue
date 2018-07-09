@@ -21,7 +21,7 @@
           ul
             li(v-for="(item,index) in support" :class="{active:num3 == index}" @click="toggle(index,$event)") {{item}}
     transition(name="slide-fade")
-      .button(v-show="downList")#hideBtn
+      .button(v-show="downList" ref="hideBtns")#hideBtn
         .reset(@click="reset()") 重置
         .affirm(@click="hide()") 确认
     transition(name="slide-fade")
@@ -77,15 +77,18 @@
         methods:{
           //手机软键盘弹出时触发
           focusHide(){
-            var originalHeight=document.documentElement.clientHeight || document.body.clientHeight;
-            var hideBtn = document.getElementById("hideBtn");
+            let originalHeight=document.documentElement.clientHeight || document.body.clientHeight;
+            //let hideBtn = document.getElementById("hideBtn");
+            let self = this;
             window.onresize=function(){
-                var resizeHeight=document.documentElement.clientHeight || document.body.clientHeight;
+                let resizeHeight=document.documentElement.clientHeight || document.body.clientHeight;
                 //软键盘弹起与隐藏  都会引起窗口的高度发生变化
-                if(resizeHeight<originalHeight){ //resizeHeight<originalHeight证明窗口被挤压了
-                  hideBtn.style.display = "none";
-                } else{
-                  hideBtn.style.display = "flex";
+                if (resizeHeight<originalHeight) { //resizeHeight<originalHeight证明窗口被挤压了
+                  //hideBtn.style.display = "none";
+                  self.$refs.hideBtns.style.display = 'none';
+                } else {
+                  //hideBtn.style.display = "flex";
+                  self.$refs.hideBtns.style.display = 'flex';
                 }
             }
           },
@@ -171,6 +174,7 @@
             this.num1 = null;
             this.num2 = null;
             this.num3 = null;
+            this.showBrand = true;
           },
           down(){
             this.allBrandFlag = true;

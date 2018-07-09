@@ -107,13 +107,14 @@
             }
           })
         } else {
+          console.log(1)
           if (this.$route.query.id) {
             this.message = this.$store.state.keywordsL
           } else if (this.$route.query.flags == 1) {
             this.message = this.$route.query.msg
           }
           if (this.$refs.oInput.value == this.$route.query.msg) {
-            this.mescroll.resetUpScroll(true)
+            //this.mescroll.resetUpScroll(true)
             this.mescroll.scrollTo(0, 0)
           }
         }
