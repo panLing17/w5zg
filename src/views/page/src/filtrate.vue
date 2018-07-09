@@ -47,23 +47,23 @@
         },
         data(){
           return{
-            focusHideFlag:true, //控制底部按钮显隐
-            showBrand:true, //判断是显示一个还是多个品牌名
-            onlyBrandName:"", //只显示一个品牌名
-            allBrandFlag:false,
-            brandNameId:"",
-            minVal:"",
-            maxVal:"",
-            pickUp:"",
-            downList:true,
-            brandName:false,
-            num:9,
-            num1:null,
-            num2:null,
-            num3:null,
-            brandList:["阿迪达斯","耐克","金利来","丹尼尔·惠灵顿","阿迪达斯","耐克","金利来","丹尼尔·惠灵顿"],
-            price:["0~500","500~1000","1000~2000","2000~5000","5000以上"],
-            support:["可自提","不可自提"]
+            focusHideFlag: true, //控制底部按钮显隐
+            showBrand: true, //判断是显示一个还是多个品牌名
+            onlyBrandName: '', //只显示一个品牌名
+            allBrandFlag: false,
+            brandNameId: '',
+            minVal: '',
+            maxVal: '',
+            pickUp: '',
+            downList: true,
+            brandName: false,
+            num: 9,
+            num1: null,
+            num2: null,
+            num3: null,
+            brandList: ["阿迪达斯","耐克","金利来","丹尼尔·惠灵顿","阿迪达斯","耐克","金利来","丹尼尔·惠灵顿"],
+            price: ["0~500","500~1000","1000~2000","2000~5000","5000以上"],
+            support: ["可自提","不可自提"]
           }
         },
         mounted(){
@@ -118,13 +118,13 @@
           //点击价格区间
           checks(index,e){
             this.num2 = index;
-            var rel = e.target.innerText.split("~");
-            var min = document.getElementsByClassName("min")[0];
-            var max = document.getElementsByClassName("max")[0];
+            let rel = e.target.innerText.split("~");
+            let min = document.getElementsByClassName("min")[0];
+            let max = document.getElementsByClassName("max")[0];
             min.value = parseInt(rel[0]);
             this.minVal = min.value;
             if (isNaN(parseInt(rel[1]))) {
-              max.value = "";
+              max.value = '';
               this.maxVal = max.value;
             } else {
               max.value = parseInt(rel[1]);
@@ -141,14 +141,14 @@
             this.num2 = null;
             this.num3 = null;
             this.showBrand = true;
-            var min = document.getElementsByClassName("min")[0];
-            var max = document.getElementsByClassName("max")[0];
-            min.value = "";
-            max.value = "";
+            let min = document.getElementsByClassName('min')[0];
+            let max = document.getElementsByClassName('max')[0];
+            min.value = '';
+            max.value = '';
             this.minVal = min.value;
             this.maxVal = max.value;
-            this.pickUp = "";
-            this.brandNameId = "";
+            this.pickUp = '';
+            this.brandNameId = '';
           },
           //点击确认提交
           hide(){

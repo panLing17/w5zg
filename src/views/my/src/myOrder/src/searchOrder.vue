@@ -67,7 +67,6 @@
       data(){
         return{
           recommendFlag:true, //判断推荐的显隐
-
           showRel:"", //判断搜索的结果有无来让其显隐
           showOrder:false, //让搜索出来的结果订单的列表显隐
           nameShowFlag:false, //让用户搜索后的名称显示在输入框
@@ -95,7 +94,6 @@
       directives: {
         focus: {
           inserted: function (el, {value}) {
-            console.log(el,{value})
             if (value) {
               el.focus()
             }
@@ -226,7 +224,6 @@
                 url:self.$apiTransaction + "orderSearchRecord/delOrderSearch",
                 params:{},
                 headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-
               }).then(function(res){
                 self.searchHistory();
               })

@@ -107,7 +107,6 @@
             }
           })
         } else {
-          console.log(1)
           if (this.$route.query.id) {
             this.message = this.$store.state.keywordsL
           } else if (this.$route.query.flags == 1) {
@@ -124,8 +123,8 @@
 
     },
     activated () {
-      console.log(this.$route.query.msg)
-      console.log(this.$refs.oInput.value)
+      //console.log(this.$route.query.msg)
+      //console.log(this.$refs.oInput.value)
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0)

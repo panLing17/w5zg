@@ -144,7 +144,6 @@
             if (res.data.data.result.deliverystatus == 4) {
               self.goodsStatus = "派送失败";
             }
-            console.log(res.data.data.result == "")
             if (res.data.data.result == "") {
               self.goodsStatus = "暂无信息";
             }
@@ -158,7 +157,6 @@
             url:self.$apiMember + "orderLogistics/info/common",
             params:{orderId:self.sonOrder,orderType:self.ordertype}
           }).then(function(res){
-            console.log(res.data.data);
             self.CourierName2 = res.data.data.ul_company_name;
             self.number2 = res.data.data.ul_number;
           })
