@@ -122,7 +122,7 @@
           // mescroll初始化
           this.getLocation()
           this.$mescrollInt("selectSize",this.upCallback)
-
+          this.mescroll.setBounce(false)
           setTimeout(()=>{
             this.mescroll.hideUpScroll()
           },500)
