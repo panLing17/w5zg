@@ -2,8 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import 'babel-polyfill'
 // 取消点击事件300毫秒延迟
-import FastClick from 'fastclick'
-FastClick.attach(document.body);
+// import FastClick from 'fastclick'
+// FastClick.attach(document.body);
 import store from './vuex/store'
 // 路由
 import router from './router'

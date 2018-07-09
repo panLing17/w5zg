@@ -34,6 +34,8 @@ import Acitivity from '../views/home/src/activity/index'
 //耐克鞋活动
 import Marketing from '../views/common/src/marketing/index'
 
+import shareImg from '../assets/img/applogo@2x.png'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -935,4 +937,24 @@ router.beforeEach ((to, from, next) => {
   }
   next()
 })
+
+//全局后置守卫
+router.afterEach((to, from) => {
+  new Vue().$initShare({
+    sharePhoto: getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
+    shareTitle: '万物直供商城正品保障',
+    shareDesc: '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买',
+    link: getLocationHref() + '/#' + to.fullPath
+  })
+})
+
+function getLocationHref () {
+  let href1 = window.location.href.split('/#')
+  let href2 = window.location.href.split('/?')
+  if (href1.length <= 1) {
+    return href2[0]
+  } else {
+    return href1[0]
+  }
+}
 export default router

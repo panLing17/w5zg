@@ -104,7 +104,7 @@
     },
     activated () {
       // 首页分享
-      this.loadShare()
+      // this.loadShare()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -139,14 +139,16 @@
         })
       })
 
+      // 获取所有活动
+      this.getAllActivity()
       // 获取banner
-      this.getBanner()
+      // this.getBanner()
       // 获取新闻
-      this.getNews()
+      // this.getNews()
       // 获取活动
-      this.getCtivity()
+      // this.getCtivity()
       // 获取分类
-      this.getHotButton()
+      // this.getHotButton()
       // 动画hack
       this.animateHack()
       //判断显示当前的城市
@@ -154,13 +156,28 @@
       //判断显示城市的字数
       this.judgeCityNum()
       // 首页分享
-      this.loadShare()
+      // this.loadShare()
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      //一次性获取所有活动数据
+      getAllActivity () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'index/queryIndexData',
+          params: {},
+        }).then(function (response) {
+          self.banner = response.data.data.bannerList
+          self.news = response.data.data.headlineList
+          self.activityGoods = response.data.data.fourActList
+          self.hotButton = response.data.data.tenActList
+          self.loadingFlag = 4
+        })
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll( isLock );

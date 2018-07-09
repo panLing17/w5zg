@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show", @touchstart="touchStart", @touchmove="touchMove")
+      .main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
         .photosBox()
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
             li(v-for="item in list")
@@ -119,8 +119,17 @@
       },
       show(e){
         if (e) {
+          // mescroll初始化
           this.getLocation()
-          console.log(this.transfer.store.name)
+          this.$mescrollInt("selectSize",this.upCallback)
+
+          setTimeout(()=>{
+            this.mescroll.hideUpScroll()
+          },500)
+          this.mescroll.lockDownScroll(true)
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy()
         }
       }
     },
@@ -128,6 +137,10 @@
       this.getStoreNum()
     },
     methods:{
+      upCallback: function(page) {
+        let self = this;
+        self.mescroll.endSuccess(1)
+      },
       getLocation () {
         let self = this
         this.$ajax({
@@ -141,7 +154,6 @@
             self.locationList = response.data.data
             self.locationList.forEach((now) => {
               if (now.ra_default === '011') {
-                console.log(now)
                 let {
                   city_name,
                   county_name,
@@ -308,7 +320,6 @@
               this.list.push(now)
             }
           })
-          console.log(obj)
         }
       }
     }
