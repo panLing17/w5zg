@@ -401,7 +401,7 @@
     width: 2rem !important;
   }
   .photos li{
-    transition: width 1s, height 1s;
+    /*transition: width .3s, height .3s;*/
     height: 5rem;
     width: 5rem;
     border-radius: .3rem;
@@ -422,7 +422,7 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    transition: width .9s, left .9s, top .9s;
+    /*transition: width .2s, left .2s, top .2s;*/
   }
   .goodsData .price{
     font-size: .5rem;
