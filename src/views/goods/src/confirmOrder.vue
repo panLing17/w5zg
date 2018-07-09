@@ -34,7 +34,7 @@
         .goodsNum 共计{{content}}件商品，运费{{allFreight}}
         .price
           span 合计
-          p {{computedPriceText | price-filter}}
+          p {{price | price-filter}}
       ul.switchList
         li
           .left 现金券
