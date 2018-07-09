@@ -90,6 +90,11 @@
     mounted () {
       this._initSc()
     },
+    beforeDestroy () {
+      if (this.timer) {
+        clearInterval(this.timer)
+      }
+    },
     methods: {
       _initSc () {
         let _this = this
@@ -146,15 +151,18 @@
             let count = 60
             _this.codeBtn.bg = '#ccc'
             _this.codeBtn.text = count + 's'
+            if (_this.timer) {
+              clearInterval(_this.timer)
+            }
             _this.timer = setInterval(()=>{
               count--
               if (count <= 0) {
+                clearInterval(_this.timer)
                 _this.codeBtn.text = '获取验证码'
                 _this.codeBtn.bg = 'rgb(245,0,87)'
                 _this.showSC = true
                 _this.scFlag = false
                 _this._initSc()
-                clearInterval(_this.timer)
               } else {
                 _this.codeBtn.text = count + 's'
               }
