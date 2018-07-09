@@ -6,7 +6,7 @@
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
-    .orderDetails.mescroll#orderMescroll
+    .orderDetails.mescroll#orderMescroll(ref="orderDetailss")
       .topStatus(v-if="false") {{countDowns}}
       .goodsReceipt(v-if="deliveryFlag")
         .consignee
@@ -50,13 +50,13 @@
                   .cartPrice 专柜价: {{items.sale_price | price-filter}}
         .wrapDownner
           .wrapFreight
-            span(v-if="delivery_ways=='快递配送'") 运费：{{item.freight | price-filter}}
+            span(v-if="delivery_ways === '快递配送'") 运费：{{item.freight | price-filter}}
           .wrapBtn
-            .moreThen(v-show="item.morethenFlag" @click="moreShow($event)") 更多
+            .moreThen(v-if="item.morethenFlag" @click="moreShow($event)") 更多
               .moreBtn.btn(@click.stop="judgeMoreBtn($event,item,item.orderDetail)") {{moreBtnCont}}
                 .triangle
-            .btnF.btn(v-show="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请'" @click.stop="judgeBtnF($event,item,item.orderDetail)") {{item.btnF}}
-            .btnS.btn(v-show="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
+            .btnF.btn(v-if="item.btnF !== '删除订单' && item.btnF !== '提醒发货' && item.btnF !== '取消订单' && item.btnF !== '取消申请' && tuihuo !== 'hide'" @click.stop="judgeBtnF($event,item,item.orderDetail)" ref="btnfs") {{item.btnF}}
+            .btnS.btn(v-if="item.btnS !== '再次购买' && item.btnS !== '支付' && item.btnS !== '提醒发货' && item.btnS !== '取消申请'" @click.stop="judgeBtnS($event,item,item.orderDetail)" :class="{btnStyle:item.btnS =='提货码'}") {{item.btnS}}
         transition(name="slide-fade")
           .pickUpNum(v-show="pickUpNoFlag")
             .alertFrame
@@ -120,8 +120,8 @@
       recommend#dataId(ref="recommend")
       .bottomPlaceholder
     .fixedBtn(v-show="whiteBarFlag")
-      .leftBtn(v-show="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
-      .rightBtn(@click="jumpToRight($event)" v-show="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货' && rightBtn !== '申请退款' && rightBtn !== '批量退款' && rightBtn !== '取消申请'") {{rightBtn}}
+      .leftBtn(v-if="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
+      .rightBtn(@click="jumpToRight($event)", ref="rightBtns", v-if="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货' && rightBtn !== '申请退款' && rightBtn !== '批量退款' && rightBtn !== '取消申请'") {{rightBtn}}
 </template>
 
 <script>
@@ -176,12 +176,21 @@
         BOrC: '', //判断用户身份
         linkMan: '', //门店联系人
         linkPhone: '', //门店联系人电话
-        delivery_ways: ''
+        delivery_ways: '',
+        sonId: '', //子订单id
+        tuihuo: ''
       }
     },
     computed: mapState(['position']),
     created () {
 
+    },
+    watch: {
+      '$route' (to, from) {
+        if (from.path == '/my/returnDetails') {
+          this.orderDetailShow()
+        }
+      }
     },
     activated () {
       if (this.orderId != this.$route.query.orderId) {
@@ -207,17 +216,35 @@
           y: obj.preScrollY
         })
       })
-      // this.judgeState(); // 判断状态
       this.orderDetailShow() // 订单详情展示
       // this.countDown(1800);
       // 判断最下方的两个按钮都隐藏时下方的白条消失
       // this.judgeWhiteBar();
+      //this.judgeRefund()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
       this.mescroll.destroy()
     },
     methods: {
+      // 判断是否超过7天退货中
+      judgeRefund () {
+        let self = this;
+        self.$ajax({
+          method: "post",
+          url: self.$apiTransaction + "goodsRejected/rejectAble",
+          params: {
+            orderId: self.sonId
+          }
+        }).then(function (res) {
+          let rej = res.data.data[0].rejected
+          if (rej === 'yes') {
+            self.tuihuo = 'show'
+          } else {
+            self.tuihuo = 'hide'
+          }
+        })
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -260,20 +287,20 @@
         }
       },
       //订单最下面的左边按钮
-      jumpToLeft(e){
-        if (e.target.innerHTML == "删除订单") {
+      jumpToLeft (e) {
+        if (e.target.innerHTML === '删除订单') {
 
         }
-        if (e.target.innerHTML == "取消订单") {
+        if (e.target.innerHTML === '取消订单') {
           this.$confirm({
             title: '确认',
             message: '真的要这样做吗',
             confirm: () => {
               let self = this;
               self.$ajax({
-                method:"patch",
-                url:self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
-                params:{}
+                method: "patch",
+                url: self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
+                params: {}
               }).then(function(res){
                 self.$router.go(-1);
               })
@@ -284,13 +311,13 @@
           })
 
         }
-        if (e.target.innerHTML == "批量退款") {
+        if (e.target.innerHTML === '批量退款') {
 
         }
       },
       //订单最下面的右边按钮
-      jumpToRight(e){
-        if (e.target.innerHTML == "支付") {
+      jumpToRight (e) {
+        if (e.target.innerHTML === '支付') {
           this.$router.push({
             path:'/payment',
             query:{
@@ -299,12 +326,12 @@
             }
           })
         }
-        if (e.target.innerHTML == "申请退款") {
+        if (e.target.innerHTML === '申请退款') {
 
         }
       },
       //更多展示功能按钮
-      moreShow(e){
+      moreShow (e) {
         if (e.target.children[0].style.display === '' || e.target.children[0].style.display === 'none') {
           e.target.children[0].style.display = 'block';
         } else {
@@ -318,7 +345,7 @@
         }
       },
       //点击更多后展示的按钮
-      judgeMoreBtn(e,item,items){
+      judgeMoreBtn (e,item,items) {
         if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
           let tempArr =[];
           items.forEach((items)=>{
@@ -336,10 +363,10 @@
         }
       },
       //订单详情展示
-      orderDetailShow(){
+      orderDetailShow () {
         let self = this;
         self.$ajax({
-          method: 'post',
+          method: "post",
           url: self.$apiTransaction + "order/detail",
           params: {
             orderTotalId: self.orderId
@@ -380,8 +407,10 @@
           }
 
           //判断货物状态来决定
-          let arrays = res.data.data[0].orderInfo;
+          let arrays = self.orderDetails;
           for (let i = 0; i < arrays.length; i++) {
+            self.sonId = arrays[i].order_id;
+            self.judgeRefund();
             if (arrays[i].orderInfo_status === '（退货）售后') {
               //arrays[j].refund_status
               arrays[i].morethenFlag = false;
@@ -402,7 +431,7 @@
                     arrays[i].btnF = "取消申请";
                   }
                 } else if(mArr.length == 1){
-                  if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
+                  if(mArr[j].refund_status != null && mArr[j].refund_status !== "审核拒绝" && mArr[j].refund_status !== "退货退款已取消"){
                     arrays[i].btnF = "取消申请";
                   } else {
                     arrays[i].btnF = "申请退款";
@@ -410,83 +439,83 @@
                 }
               }
             }
-            if(arrays[i].orderInfo_status == "待付款"){
+            if(arrays[i].orderInfo_status === '待付款'){
               arrays[i].morethenFlag = false;
               arrays[i].moreBtnFlag =false;
               arrays[i].btnSFlag = false;
               arrays[i].btnFFlag = false;
-              arrays[i].btnF = "取消订单";
-              arrays[i].btnS = "支付";
+              arrays[i].btnF = '取消订单';
+              arrays[i].btnS = '支付';
               self.leftBtnFlag = true;
-              self.leftBtn = "取消订单";
-              self.rightBtn = "支付";
+              self.leftBtn = '取消订单';
+              self.rightBtn = '支付';
               arrays[i].orderInfoStatus = arrays[i].orderInfo_status;
             }
-            if (arrays[i].orderInfo_status == "待发货/待备货") {
-              if (res.data.data[0].delivery_ways == "快递配送"){
+            if (arrays[i].orderInfo_status === '待发货/待备货') {
+              if (res.data.data[0].delivery_ways === '快递配送'){
                 arrays[i].morethenFlag = false;
                 arrays[i].moreBtnFlag =false;
                 arrays[i].btnSFlag = true;
                 arrays[i].btnFFlag = true;
                 // arrays[i].btnF = "申请退款";
-                arrays[i].btnS = "提醒发货";
+                arrays[i].btnS = '提醒发货';
                 self.leftBtnFlag = true;
-                self.leftBtn = "批量退款";
-                self.rightBtn = "提醒发货";
-                arrays[i].orderInfoStatus = "待发货";
-                var mArr = arrays[i].orderDetail;
-                for (var j = 0; j < mArr.length; j++) {
+                self.leftBtn = '批量退款';
+                self.rightBtn = '提醒发货';
+                arrays[i].orderInfoStatus = '待发货';
+                let mArr = arrays[i].orderDetail;
+                for (let j = 0; j < mArr.length; j++) {
                   if (mArr.length>1) {
-                    if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
-                      arrays[i].btnF = "申请退款";
+                    if(mArr[j].refund_status == null || mArr[j].refund_status === '审核拒绝' || mArr[j].refund_status === '退货退款已取消'){
+                      arrays[i].btnF = '申请退款';
                       break;
                     } else {
-                      arrays[i].btnF = "取消申请";
+                      arrays[i].btnF = '取消申请';
                     }
                   } else if(mArr.length == 1){
-                    if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
-                      arrays[i].btnF = "取消申请";
+                    if(mArr[j].refund_status != null && mArr[j].refund_status !== '审核拒绝' && mArr[j].refund_status !== '退货退款已取消'){
+                      arrays[i].btnF = '取消申请';
                     } else {
-                      arrays[i].btnF = "申请退款";
+                      arrays[i].btnF = '申请退款';
                     }
                   }
                 }
               }
-              if (res.data.data[0].delivery_ways == "自提"){
+              if (res.data.data[0].delivery_ways === '自提'){
                 arrays[i].shopFlag = false;
                 arrays[i].morethenFlag = false;
                 arrays[i].moreBtnFlag =false;
                 arrays[i].btnSFlag = true;
                 arrays[i].btnFFlag = true;
-                arrays[i].btnF = "申请退款";
-                arrays[i].btnS = "提醒发货";
+                arrays[i].btnF = '申请退款';
+                arrays[i].btnS = '提醒发货';
 
                 self.leftBtnFlag = false;
-                self.leftBtn = "批量退款";
-                self.rightBtn = "申请退款";
-                arrays[i].orderInfoStatus = "待备货";
-                var mArr = arrays[i].orderDetail;
-                for (var j = 0; j < mArr.length; j++) {
+                self.leftBtn = '批量退款';
+                self.rightBtn = '申请退款';
+                arrays[i].orderInfoStatus = '待备货';
+                let mArr = arrays[i].orderDetail;
+                for (let j = 0; j < mArr.length; j++) {
                   if (mArr.length>1) {
-                    if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
-                      arrays[i].btnF = "申请退款";
+                    if(mArr[j].refund_status == null || mArr[j].refund_status === '审核拒绝' || mArr[j].refund_status === '退货退款已取消'){
+                      arrays[i].btnF = '申请退款';
                       break;
                     } else {
-                      arrays[i].btnF = "取消申请";
+                      arrays[i].btnF = '取消申请';
                     }
                   } else if(mArr.length == 1){
-                    if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
-                      arrays[i].btnF = "取消申请";
+                    if(mArr[j].refund_status != null && mArr[j].refund_status !== '审核拒绝' && mArr[j].refund_status !== '退货退款已取消'){
+                      arrays[i].btnF = '取消申请';
                     } else {
-                      arrays[i].btnF = "申请退款";
+                      arrays[i].btnF = '申请退款';
                     }
                   }
                 }
               }
             }
 
-            if (arrays[i].orderInfo_status == "待收货/待提货") {
-              if (res.data.data[0].delivery_ways == "快递配送") {
+            if (arrays[i].orderInfo_status === '待收货/待提货') {
+              if (res.data.data[0].delivery_ways === '快递配送') {
                 arrays[i].moreBtnFlag =false;
                 arrays[i].btnSFlag = true;
                 arrays[i].btnFFlag = true;
@@ -495,20 +524,17 @@
                 self.leftBtnFlag = true;
                 self.leftBtn = "批量退款";
                 self.rightBtn = "确认收货";
-                var rightBtn = document.getElementsByClassName("rightBtn")[0];
-                rightBtn.style.background = "white";
-                rightBtn.style.color = "rgb(244,0,87)";
                 arrays[i].orderInfoStatus = "待收货";
-                var mArr = arrays[i].orderDetail;
-                for (var j = 0; j < mArr.length; j++) {
+                let mArr = arrays[i].orderDetail;
+                for (let j = 0; j < mArr.length; j++) {
                   if (mArr.length>1) {
-                    if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
+                    if (mArr[j].refund_status == null || mArr[j].refund_status === '审核拒绝' || mArr[j].refund_status === '退货退款已取消') {
                       arrays[i].morethenFlag = true;
                     } else {
                       arrays[i].morethenFlag = false;
                     }
-                  } else if(mArr.length == 1){
-                    if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
+                  } else if (mArr.length == 1) {
+                    if (mArr[j].refund_status != null && mArr[j].refund_status !== '审核拒绝' && mArr[j].refund_status !== '退货退款已取消') {
                       arrays[i].morethenFlag = false;
                     } else {
                       arrays[i].morethenFlag = true;
@@ -516,102 +542,102 @@
                   }
                 }
               }
-              if (res.data.data[0].delivery_ways == "自提") {
+              if (res.data.data[0].delivery_ways === '自提') {
                 arrays[i].shopFlag = true;
                 arrays[i].morethenFlag = false;
                 arrays[i].moreBtnFlag =false;
                 arrays[i].btnSFlag = true;
                 arrays[i].btnFFlag = true;
-                arrays[i].btnF = "申请退款";
-                arrays[i].btnS = "提货码";
+                arrays[i].btnF = '申请退款';
+                arrays[i].btnS = '提货码';
 
                 self.leftBtnFlag = true;
-                self.leftBtn = "批量退款";
-                self.rightBtn = "再次购买";
-                var rightBtn = document.getElementsByClassName("rightBtn")[0];
-                rightBtn.style.background = "white";
-                rightBtn.style.color = "rgb(244,0,87)";
+                self.leftBtn = '批量退款';
+                self.rightBtn = '再次购买';
                 arrays[i].orderInfoStatus = "待提货";
-                var mArr = arrays[i].orderDetail;
-                for (var j = 0; j < mArr.length; j++) {
+                let mArr = arrays[i].orderDetail;
+                for (let j = 0; j < mArr.length; j++) {
                   self.linkMan = mArr[j].bs_linkman;
                   self.linkPhone = mArr[j].bs_phone;
                   if (mArr.length>1) {
-                    if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
-                      arrays[i].btnF = "申请退款";
+                    if(mArr[j].refund_status == null || mArr[j].refund_status === '审核拒绝' || mArr[j].refund_status === '退货退款已取消'){
+                      arrays[i].btnF = '申请退款';
                       break;
                     } else {
-                      arrays[i].btnF = "取消申请";
+                      arrays[i].btnF = '取消申请';
                     }
                   } else if(mArr.length == 1){
-                    if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
-                      arrays[i].btnF = "取消申请";
+                    if(mArr[j].refund_status != null && mArr[j].refund_status !== '审核拒绝' && mArr[j].refund_status !== '退货退款已取消'){
+                      arrays[i].btnF = '取消申请';
                     } else {
-                      arrays[i].btnF = "申请退款";
+                      arrays[i].btnF = '申请退款';
                     }
                   }
                 }
 
               }
             }
-            if (arrays[i].orderInfo_status == "已完成") {
+            if (arrays[i].orderInfo_status === '已完成') {
               arrays[i].morethenFlag = false;
               arrays[i].moreBtnFlag =false;
               arrays[i].btnSFlag = true;
               arrays[i].btnFFlag = true;
               // arrays[i].btnF = "申请退货";
-              arrays[i].btnS = "再次购买";
+              arrays[i].btnS = '再次购买';
               self.leftBtnFlag = true;
-              self.leftBtn = "批量退款";
-              self.rightBtn = "再次购买";
+              self.leftBtn = '批量退款';
+              self.rightBtn = '再次购买';
               arrays[i].orderInfoStatus = arrays[i].orderInfo_status;
-              var mArr = arrays[i].orderDetail;
-              for (var j = 0; j < mArr.length; j++) {
+
+              let mArr = arrays[i].orderDetail;
+              for (let j = 0; j < mArr.length; j++) {
                 if (mArr.length>1) {
-                  if(mArr[j].refund_status == null || mArr[j].refund_status == "审核拒绝" || mArr[j].refund_status == "退货退款已取消"){
-                    arrays[i].btnF = "申请退货";
+                  if(mArr[j].refund_status == null || mArr[j].refund_status === '审核拒绝' || mArr[j].refund_status === '退货退款已取消'){
+                    arrays[i].btnF = '申请退货';
                     break;
                   } else {
-                    arrays[i].btnF = "取消申请";
+                    arrays[i].btnF = '取消申请';
                   }
                 } else if(mArr.length == 1){
-                  if(mArr[j].refund_status != null && mArr[j].refund_status != "审核拒绝" && mArr[j].refund_status != "退货退款已取消"){
-                    arrays[i].btnF = "取消申请";
+                  if(mArr[j].refund_status != null && mArr[j].refund_status !== '审核拒绝' && mArr[j].refund_status !== '退货退款已取消'){
+                    arrays[i].btnF = '取消申请';
                   } else {
-                    arrays[i].btnF = "申请退货";
+                    arrays[i].btnF = '申请退货';
                   }
                 }
               }
+
             }
 
-            if (arrays[i].orderInfo_status == "已取消") {
+            if (arrays[i].orderInfo_status === '已取消') {
               arrays[i].morethenFlag = false;
               arrays[i].moreBtnFlag =false;
               arrays[i].btnSFlag = true;
               arrays[i].btnFFlag = true;
-              arrays[i].btnF = "删除订单";
-              arrays[i].btnS = "再次购买";
+              arrays[i].btnF = '删除订单';
+              arrays[i].btnS = '再次购买';
               self.leftBtnFlag = true;
-              self.leftBtn = "删除订单";
-              self.rightBtn = "再次购买";
+              self.leftBtn = '删除订单';
+              self.rightBtn = '再次购买';
               arrays[i].orderInfoStatus = arrays[i].orderInfo_status;
             }
           }
 
         })
       },
+
       //按照按钮上的文字跳转页面
       judgeBtnF(e,item,items){
         //此功能还没有
-        if (e.target.innerHTML == "再次购买") {
+        if (e.target.innerHTML === '再次购买') {
 
         }
         //点击查看物流信息
-        if (e.target.innerHTML == "物流信息") {
+        if (e.target.innerHTML === '物流信息') {
           this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:item.orderDetail[0].logo}});
         }
         //进入到申请退货页面
-        if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
+        if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
           let tempArr = [];
           items.forEach((items)=>{
             tempArr.push(items);
@@ -626,13 +652,13 @@
             this.$router.push({path:'/my/refundReturn'});
           }
         }
-        if (e.target.innerHTML == "取消订单"){
+        if (e.target.innerHTML === '取消订单'){
 
         }
       },
       judgeBtnS(e,item,items){
         //进入到申请退货页面
-        if (e.target.innerText == "申请退货" || e.target.innerText == "申请退款"){
+        if (e.target.innerText === '申请退货' || e.target.innerText === '申请退款'){
           let tempArr = [];
           items.forEach((items)=>{
             tempArr.push(items);
@@ -648,40 +674,39 @@
           }
         }
         //支付
-        if (e.target.innerHTML == "支付") {
+        if (e.target.innerHTML === '支付') {
 
         }
         //点击查看物流信息
-        if (e.target.innerHTML == "物流信息") {
+        if (e.target.innerHTML === '物流信息') {
           this.$router.push({path:'/my/checkLogistics',query:{orderId:item.order_id,address:this.address,goodsPic:item.orderDetail[0].logo}});
         }
         //没有
-        if (e.target.innerHTML == "提醒发货") {
+        if (e.target.innerHTML === '提醒发货') {
 
         }
         //点击弹出一个框显示提货码
-        if (e.target.innerHTML == "提货码") {
+        if (e.target.innerHTML === '提货码') {
           this.pickUpNoFlag = true;
           this.pickUpNums = item.pick_up_no;
-          var orderDetails = document.getElementsByClassName("orderDetails")[0];
-          orderDetails.style.overflow = "hidden";
+          this.$refs.orderDetailss.style.overflow = 'hidden';
           this.mescroll.hideTopBtn();
         }
         //此功能未开放
-        if (e.target.innerHTML == "再次购买") {
+        if (e.target.innerHTML === '再次购买') {
 
         }
         //点击完了跳到订单列表
-        if (e.target.innerHTML == "确认收货") {
+        if (e.target.innerHTML === '确认收货') {
           this.$confirm({
             title: '确认',
             message: '真的要这样做吗',
             confirm: () => {
               let self = this;
               self.$ajax({
-                method:"patch",
-                url:self.$apiTransaction + "order/confirmTakeGood/"+item.order_id,
-                params:{}
+                method: "patch",
+                url: self.$apiTransaction + "order/confirmTakeGood/"+item.order_id,
+                params: {}
               }).then(function(res){
                 self.$router.push('/my/orderManage');
               })
@@ -696,19 +721,7 @@
 
       pickUpNoFinish(){
         this.pickUpNoFlag = false;
-        var orderDetails = document.getElementsByClassName("orderDetails")[0];
-        orderDetails.style.overflow = "auto";
-      },
-      judgeState(){
-        var states = this.$route.query.state;
-        if (states == "待发货/待备货") {
-          this.leftBtn = "批量退款";
-          this.rightBtn = "提醒发货";
-          this.showFlag = true;
-          var rightBtns = document.getElementsByClassName("rightBtn")[0];
-          rightBtns.style.backgroundColor = "white";
-          rightBtns.style.color = "rgb(244,0,87)";
-        }
+        this.$refs.orderDetailss.style.overflow = 'auto';
       },
 
       copyText (val) {
@@ -887,12 +900,16 @@
   .center .wrapGoods{
     display: flex;
   }
+  .center .image{
+    width: 2.5rem;
+  }
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
   }
   .center .goodsDetails{
-    width: 100%;
+    width: 0;
+    flex-grow: 1;
     margin-left: .3rem;
   }
   .center .goodsDetails .wrapAttr{
@@ -960,6 +977,7 @@
     /*padding: .2rem .3rem .2rem 0;*/
     display: flex;
     justify-content: flex-end;
+    align-items: center;
   }
   .wrapBtn .btn{
     width: 1.8rem;

@@ -104,7 +104,7 @@
     },
     activated () {
       // 首页分享
-      this.loadShare()
+      // this.loadShare()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -154,7 +154,7 @@
       //判断显示城市的字数
       this.judgeCityNum()
       // 首页分享
-      this.loadShare()
+      // this.loadShare()
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();

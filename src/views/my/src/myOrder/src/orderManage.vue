@@ -250,8 +250,8 @@
                   }
                 }).then(function(res){
                   self.request();
-                  if (res.msg === '订单状态异常') {
-                    // self.$message.warning('此商品存在退货情况！')
+                  if (res == undefined) {
+                    self.$message.error('此商品存在退货情况！')
                   } else{
                     self.$message.success('删除成功！');
                   }
@@ -536,6 +536,7 @@
     white-space: nowrap;
     overflow-x:auto;
     display: flex;
+    align-items: center;
   }
   .centerZ{
     background-color: #fff;
@@ -545,12 +546,14 @@
     display: flex;
   }
   .center .image{
-
+    width: 2.5rem;
   }
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
-    margin-right: .3rem;
+  }
+  .center .image img:nth-child(n+2){
+    margin-left: .2rem;
   }
   .center .goodsDetails{
     width: 0;
