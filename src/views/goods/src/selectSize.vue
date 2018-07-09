@@ -120,7 +120,6 @@
       show(e){
         if (e) {
           this.getLocation()
-          console.log(this.transfer.store.name)
         }
       }
     },
@@ -141,7 +140,6 @@
             self.locationList = response.data.data
             self.locationList.forEach((now) => {
               if (now.ra_default === '011') {
-                console.log(now)
                 let {
                   city_name,
                   county_name,
@@ -308,7 +306,6 @@
               this.list.push(now)
             }
           })
-          console.log(obj)
         }
       }
     }

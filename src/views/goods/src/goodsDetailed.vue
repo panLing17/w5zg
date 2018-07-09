@@ -311,13 +311,13 @@
       skuId (val) {
         if (val) {
           this.getMakeMoney (val)
-          this.getDate(val)
+          /*this.getDate(val)*/
           // 计算运费
-          this.getFreight()
+          // this.getFreight()
         }
       },
       location () {
-        this.getFreight()
+        //this.getFreight()
       },
       $route () {
         // 重新初始化data数据
@@ -358,7 +358,6 @@
             storeType: 2
           },
         }).then(function (response) {
-          console.log(response.data.data)
           if(response.data.data.length<1){
             self.disableCabinet = true
             self.disTypeName = '快递配送'
@@ -484,7 +483,7 @@
         this.goodsData.counter_interval = data.counter_price
         this.goodsData.retail_interval = data.retail_price
         // 计算运费
-        this.getFreight()
+        // this.getFreight()
         // this.freight = data.goi_freight
         // 根据用户类型为确认订单页价格赋值
         if (this.userData.member_type === '092') {
@@ -523,7 +522,7 @@
         })
       },
       // 获取到货日期
-      getDate (id) {
+      /*getDate (id) {
         if (id === undefined) {
           return
         }
@@ -535,7 +534,7 @@
         }).then(function (response) {
           self.getGoodsDate = response.data.data
         })
-      },
+      },*/
       // 获取商品详情
       getGoodsDetailed () {
         let self = this
@@ -763,7 +762,7 @@
               deliveryWays: 168,
               province: self.$store.state.location.province.id,
               city: self.$store.state.location.city.id,
-              storeId: self.$store.state.location.store.id,
+              storeId: self.transfer.store.id,
               goodsNum: self.content
             }
           }).then(function (response) {
@@ -808,7 +807,6 @@
             })
           })
           let self = this
-          console.log(specData)
           this.$ajax({
             method: 'post',
             url: self.$apiGoods + 'goods/sku/detail',
