@@ -25,7 +25,8 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p {{goodsData.direct_supply_price | price-filter}}
+          p(v-if="initPriceFlag") {{goodsData.direct_supply_price | price-filter}}
+          p(v-else) {{goodsData.direct_supply_interval | price-filter}}
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         ul.saveMoneyTop
@@ -74,7 +75,7 @@
         img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left 规格
-          span(v-for="item1 in selectedSpec") {{item1.gspec_value}}
+          span(v-for="item1 in selectedSpec", v-if="!initPriceFlag") {{item1.gspec_value}}
         img(src="../../../assets/img/right.png").right
       dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'",ref="disType")
       //.distribution(@click="selectCityShow")
@@ -162,6 +163,8 @@
         // 到货日期
         getGoodsDate: '',
         // 当前规格运费
+        // 首次进入展示的商品最低价
+        initPriceFlag: true,
         freight: 0,
         selectFlag: false,
         selectSizeShow: false,
@@ -308,6 +311,10 @@
       this.mescroll.destroy()
     },
     watch: {
+      // 只要呼出过选择规格页面，就不再显示一开始的金额，而是根据sku详情
+      selectFlag () {
+        this.initPriceFlag = false
+      },
       skuId (val) {
         if (val) {
           this.getMakeMoney (val)
