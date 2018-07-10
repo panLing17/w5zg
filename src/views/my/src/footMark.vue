@@ -87,7 +87,8 @@
     position: fixed;
     top: 1.28rem;
     bottom: 0;
-    height: auto;
+    width: 100%;
+    height: 100vh;
     background-color: rgb(242,242,242);
     padding-bottom: 1.5rem;
   }
