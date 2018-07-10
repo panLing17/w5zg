@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-if="show")
+      .main.mescroll#locationSelect(v-show="show")
         .title
           span 选择收货地址
           img(src="../../../assets/img/cancle@3x.png", @click="close")
@@ -43,7 +43,26 @@
     mounted () {
 
     },
+    watch:{
+      show (val) {
+        if (val) {
+          // mescroll初始化
+          this.$mescrollInt("locationSelect",this.upCallback)
+          this.mescroll.lockDownScroll(true)
+          setTimeout(()=>{
+            this.mescroll.hideUpScroll()
+          },500)
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy()
+        }
+      }
+    },
     methods:{
+      upCallback: function(page) {
+        let self = this;
+        self.mescroll.endSuccess(1)
+      },
       close () {
         this.$emit('close')
       },
