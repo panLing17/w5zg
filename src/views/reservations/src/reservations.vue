@@ -228,8 +228,8 @@
     padding-bottom: .2rem;
   }
   .topper .left{
-    /*width: 2.8rem;*/
-    /*height: 2.8rem;*/
+    width: 2.8rem;
+    height: 2.8rem;
   }
   .topper .left img{
     width: 2.8rem;
