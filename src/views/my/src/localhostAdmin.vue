@@ -1,5 +1,5 @@
 <template lang="pug">
-  .localhostSelectBox
+  .localhostSelectBox.mescroll#localhostAdmin
     nav-bar(background="white")
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
@@ -35,8 +35,18 @@
     },
     mounted () {
       this.getData()
+      // mescroll初始化
+      this.$mescrollInt("localhostAdmin",this.upCallback)
+      this.mescroll.lockDownScroll(true)
+      setTimeout(()=>{
+        this.mescroll.hideUpScroll()
+      },500)
     },
     methods:{
+      upCallback: function(page) {
+        let self = this;
+        self.mescroll.endSuccess(1)
+      },
       defaultChange (selected,index,id) {
         // 假改
         this.list.forEach((now)=>{
