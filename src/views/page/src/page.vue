@@ -70,7 +70,7 @@
       },
       // 判断显示城市的字数
       judgeCityNum () {
-        var citys = document.getElementsByClassName('city')[0]
+        let citys = document.getElementsByClassName('city')[0]
         if (citys.innerText.length === 2) {
           citys.style.fontSize = 0.4 + 'rem'
         }

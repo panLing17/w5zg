@@ -92,6 +92,10 @@
     background-color: rgb(242,242,242);
     padding-bottom: 3rem;
   }
+  .content{
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
   .footMarkBox {
     position: relative;
     z-index: 100;
