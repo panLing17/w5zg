@@ -90,7 +90,7 @@
     width: 100%;
     height: 100vh;
     background-color: rgb(242,242,242);
-    padding-bottom: 1.5rem;
+    padding-bottom: 3rem;
   }
   .footMarkBox {
     position: relative;
