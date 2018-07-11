@@ -28,6 +28,8 @@ const state = {
   },
   // skuId(规格ID)
   skuId: '',
+  // sku logo图
+  skuImg: '',
   // 购物车商品数量
   shoppingCartGoodsNum: {
     carryNum:0,
@@ -89,6 +91,9 @@ const mutations = {
   },
   getSkuId (state, data) {
     state.skuId = data
+  },
+  skuImgSave (state, data) {
+    state.skuImg = data
   },
   shoppingCartGoodsNumChange (state, data) {
     if (data.hasOwnProperty('carryNum')) {
