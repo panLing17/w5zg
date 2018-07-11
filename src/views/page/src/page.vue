@@ -335,6 +335,9 @@
     -webkit-overflow-scrolling: touch;
     padding-bottom: 3rem;
   }
+  .content .left ul{
+    min-height: calc(100% + 1px);
+  }
   .content .left ul li{
     background-color: rgb(242,242,242);
     width: 100%;
