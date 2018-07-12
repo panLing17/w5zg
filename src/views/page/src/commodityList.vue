@@ -139,7 +139,7 @@
         this.check = true
         this.checked = false
         this.change = false
-        this.change1 = false
+        this.change1 = true
         this.change2 = false
         this.order = 0
         this.sort = ''
@@ -148,6 +148,7 @@
       }
     },
     mounted () {
+      this.change1 = true
       // 上拉加载
       this.$mescrollInt('pageMescroll', this.upCallback, () => {
         // this.position.forEach((now) => {
@@ -262,7 +263,7 @@
         this.checked = false
         this.goodsFlag = false
         if (this.change1 == true) {
-          this.order = 1
+          this.order = 0
         } else {
           this.order = ''
         }

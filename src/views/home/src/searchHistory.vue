@@ -82,6 +82,9 @@
 
     },
     activated () {
+      //历史搜索
+      this.historys()
+      this.selected1 = null
       this.msg = this.$route.query.messages
       //显示搜索结果
       this.resultShow()
@@ -96,7 +99,6 @@
       next()
     },
     mounted(){
-
       //搜索发现
       //this.searchDiscover();
       //商品推荐

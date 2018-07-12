@@ -70,7 +70,7 @@
       },
       // 判断显示城市的字数
       judgeCityNum () {
-        var citys = document.getElementsByClassName('city')[0]
+        let citys = document.getElementsByClassName('city')[0]
         if (citys.innerText.length === 2) {
           citys.style.fontSize = 0.4 + 'rem'
         }
@@ -334,6 +334,9 @@
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 3rem;
+  }
+  .content .left ul{
+    min-height: calc(100% + 1px);
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
