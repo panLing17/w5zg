@@ -368,7 +368,11 @@
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
-      },
+      }
+
+
+
+
 
     }
   }
