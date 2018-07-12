@@ -368,49 +368,12 @@
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
-      },
-
-      // 请求
-      request () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goodsSearch/spus',
-          params: {
-            page: self.pages, // 页码
-            rows: self.pageRows, // 每页长度
-            carryType: self.pickUps, // 自提不自提
-            startPrice: self.minPrice, // 开始价格区间
-            endPrice: self.maxPrice, // 结束价格区间
-            bi_id: self.brandId, // 品牌的id
-            sortType: self.sort, // 正序倒序
-            keywords: self.message, // 关键字
-            sortFieldType: self.order, // 字段排序
-            searchRuleConstant: self.defaultRule, // 默认规则
-            city_no: 100100 // 当前城市编号
-          }
-        }).then(function (response) {
-          self.recommendGoods = response.data.data
-          if (self.recommendGoods.length <= 0) {
-            self.brandId = '' // 品牌的id
-            self.minPrice = '' // 开始价格区间
-            self.maxPrice = '' // 结束价格区间
-            self.pickUps = '' // 自提不自提
-            self.rReset = 'no' // 重置筛选
-            self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
-          } else {
-            self.goodsFlag = true
-            for (let i = 0; i < self.recommendGoods.length; i++) {
-              if (self.recommendGoods[i].carry_type === 1) {
-                self.recommendGoods[i].carryFlag = true
-              }
-              if (self.recommendGoods[i].carry_type === 2) {
-                self.recommendGoods[i].carryFlag = false
-              }
-            }
-          }
-        })
       }
+
+
+
+
+
     }
   }
 </script>
