@@ -115,7 +115,7 @@
         }
       })
     },
-    beforeDestroy() {
+    deactivated() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
       // 清除勾选信息

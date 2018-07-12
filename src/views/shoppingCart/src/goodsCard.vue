@@ -106,6 +106,8 @@
       },
       // 商品数量变化
       countChange (cartId,skuId,num) {
+        // 计算价格
+        this.selectChange()
         let self = this
         self.$ajax({
           method: 'post',

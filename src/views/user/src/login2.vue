@@ -105,7 +105,7 @@
             height: '1rem',
             default_txt: '获取验证码',
             success_txt: '获取成功，请查收短信',
-            fail_txt: '获取失败，请在此点击按钮刷新',
+            fail_txt: '点击按钮刷新',
             scaning_txt: '验证码发送中',
             success: function(data) {
               if (!_this.scFlag) {

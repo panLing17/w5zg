@@ -252,6 +252,8 @@
             gc:JSON.stringify(specData)
           }
         }).then(function (response) {
+          // 将sku图片存入store
+          self.$store.commit('skuImgSave', response.data.data.logo)
           // 根据sku切换展示图片
           let skuGoodsData = self.list[0]
           skuGoodsData.gi_img_url = response.data.data.logo
