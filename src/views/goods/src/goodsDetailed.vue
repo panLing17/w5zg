@@ -25,7 +25,7 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p(v-if="initPriceFlag") {{goodsData.direct_supply_price | price-filter}}
+          p(v-if="initPriceFlag") {{goodsData.cost_price | price-filter}}
           p(v-else) {{goodsData.direct_supply_interval | price-filter}}
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
