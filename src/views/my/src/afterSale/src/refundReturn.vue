@@ -198,7 +198,6 @@
       },
       // 获取图片数组
       getImageArr (arr) {
-        console.log(arr)
         this.imageArr = ''
         this.imageArr = arr.join('&')
         // this.imageArr = this.imageArr.substring(0,this.imageArr.length-1)
