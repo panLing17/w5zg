@@ -145,7 +145,14 @@
           params: {firstId: id}
         }).then(function (res) {
           self.productList = res.data.data
-          self.$nextTick(() => {
+          self.timer && clearTimeout(self.timer)
+          let s
+          if (id == 127) {
+            s = 700
+          } else {
+            s = 20
+          }
+          self.timer =setTimeout(() => {
             if (!self.rScroll) {
               self.rScroll = new BScroll(self.$refs.righters, {
                 click: true,
@@ -163,8 +170,7 @@
                 })
               })
             }
-          })
-
+          },s)
         })
       },
       // 点击左侧一级分类切换右边二三级
