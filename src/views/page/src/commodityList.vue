@@ -514,22 +514,17 @@
     background: rgb(242,242,242);
   }
   .goodsList li{
-    /*border-radius: 5px;*/
     width: calc((100% - 6px)/2);
-    /*height: 7rem;*/
     margin-bottom: 6px;
     background-color: #fff;
   }
   .goodsList li img{
     width: 100%;
     height: 4.5rem;
-    /*border-top-left-radius: 5px;*/
-    /*border-top-right-radius: 5px;*/
   }
   .goodsList li .wrapWords{
     width: 100%;
-    padding: .1rem .1rem 0;
-    /*height: 30%;*/
+    padding: .1rem .2rem 0;
   }
   .text{
     line-height: 18px;
