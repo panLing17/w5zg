@@ -139,7 +139,7 @@
         this.check = true
         this.checked = false
         this.change = false
-        this.change1 = false
+        this.change1 = true
         this.change2 = false
         this.order = 0
         this.sort = ''
@@ -148,6 +148,7 @@
       }
     },
     mounted () {
+      this.change1 = true
       // 上拉加载
       this.$mescrollInt('pageMescroll', this.upCallback, () => {
         // this.position.forEach((now) => {
@@ -262,7 +263,7 @@
         this.checked = false
         this.goodsFlag = false
         if (this.change1 == true) {
-          this.order = 1
+          this.order = 0
         } else {
           this.order = ''
         }
@@ -367,49 +368,12 @@
             self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           }
         })
-      },
-
-      // 请求
-      request () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goodsSearch/spus',
-          params: {
-            page: self.pages, // 页码
-            rows: self.pageRows, // 每页长度
-            carryType: self.pickUps, // 自提不自提
-            startPrice: self.minPrice, // 开始价格区间
-            endPrice: self.maxPrice, // 结束价格区间
-            bi_id: self.brandId, // 品牌的id
-            sortType: self.sort, // 正序倒序
-            keywords: self.message, // 关键字
-            sortFieldType: self.order, // 字段排序
-            searchRuleConstant: self.defaultRule, // 默认规则
-            city_no: 100100 // 当前城市编号
-          }
-        }).then(function (response) {
-          self.recommendGoods = response.data.data
-          if (self.recommendGoods.length <= 0) {
-            self.brandId = '' // 品牌的id
-            self.minPrice = '' // 开始价格区间
-            self.maxPrice = '' // 结束价格区间
-            self.pickUps = '' // 自提不自提
-            self.rReset = 'no' // 重置筛选
-            self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
-          } else {
-            self.goodsFlag = true
-            for (let i = 0; i < self.recommendGoods.length; i++) {
-              if (self.recommendGoods[i].carry_type === 1) {
-                self.recommendGoods[i].carryFlag = true
-              }
-              if (self.recommendGoods[i].carry_type === 2) {
-                self.recommendGoods[i].carryFlag = false
-              }
-            }
-          }
-        })
       }
+
+
+
+
+
     }
   }
 </script>
@@ -546,26 +510,21 @@
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding: .2rem;
+    padding-bottom: .2rem;
     background: rgb(242,242,242);
   }
   .goodsList li{
-    border-radius: 5px;
-    width: 48.7%;
-    /*height: 7rem;*/
-    margin-bottom: .25rem;
+    width: calc((100% - 6px)/2);
+    margin-bottom: 6px;
     background-color: #fff;
   }
   .goodsList li img{
     width: 100%;
     height: 4.5rem;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
   }
   .goodsList li .wrapWords{
     width: 100%;
-    padding: .1rem .1rem 0;
-    /*height: 30%;*/
+    padding: .1rem .2rem 0;
   }
   .text{
     line-height: 18px;
@@ -648,10 +607,8 @@
   }
   .toggle .wrapWords .price{
     width: 100%;
-    /*margin: .2rem 0;*/
     padding-top: .4rem;
     color: rgb(246,0,87);
-    /*font-weight: 600;*/
     font-size: .4rem;
     display: flex;
     /*justify-content: space-between;*/

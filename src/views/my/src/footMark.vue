@@ -6,19 +6,20 @@
       .topCenter(slot="center") 足迹
       .topRight(slot="right")
     .content(ref="conts").mescroll#footMescroll
-      .date(v-for="item in footMarkData")
-        .title  {{item.create_time}}
-        ul
-          li(v-for="i in item.goods_info", @click="goGoods(i.gspu_id)")
-            img(:src="i.gi_image_url | img-filter")
-            .text
-              .price
-                span {{i.price | price-filter}}
-                span(@click.stop="show = true", v-show="false")
-                  i
-                  i
-                  i
-          p(style="clear:both")
+      .wrapSon
+        .date(v-for="item in footMarkData")
+          .title  {{item.create_time}}
+          ul
+            li(v-for="i in item.goods_info", @click="goGoods(i.gspu_id)")
+              img(:src="i.gi_image_url | img-filter")
+              .text
+                .price
+                  span {{i.price | price-filter}}
+                  span(@click.stop="show = true", v-show="false")
+                    i
+                    i
+                    i
+            p(style="clear:both")
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .seleteBg(v-if="show", @click="show = false")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
@@ -47,7 +48,7 @@
     },
     methods: {
       hideStyles () {
-        this.$refs.conts.children[1].style.display = 'none'
+        this.$refs.conts.children[2].style.display = 'none'
       },
       getData () {
         let self = this
@@ -87,9 +88,16 @@
     position: fixed;
     top: 1.28rem;
     bottom: 0;
-    height: auto;
+    width: 100%;
+    height: 100vh;
     background-color: rgb(242,242,242);
-    padding-bottom: 1.5rem;
+    padding-bottom: 3rem;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  .wrapSon{
+    width: 100%;
+    min-height: calc(100% + 1px);
   }
   .footMarkBox {
     position: relative;

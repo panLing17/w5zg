@@ -19,7 +19,7 @@
             li.categoryItem(v-for="(item, index) in categoryList", :key="index", @click="toNext(1, index)")
               img.categoryImg(:src="item.image | img-filter")
               .categoryName {{item.title}}
-                p 全场2折起
+                <!--p 全场2折起-->
           .noData(v-if="noDataShow.category") 暂无精选分类
           .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
         img.louceng(src="../../../../../assets/img/louceng2.png")
@@ -44,7 +44,7 @@
         category: {
           show: true,
           status: false,
-          height: '5.4rem',
+          height: '4.03rem',
           auto: 'none'
         },
         noDataShow: {
@@ -217,7 +217,7 @@
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
           this.brand.height = '5.67rem'
-          this.category.height = '5.4rem'
+          this.category.height = '4.03rem'
         })
       },
       dropCheck (index) {
@@ -235,7 +235,7 @@
           if (this.category.status) {
             this.category.height = this.category.auto
           } else {
-            this.category.height = '5.4rem'
+            this.category.height = '4.03rem'
           }
         }
       },
@@ -348,7 +348,7 @@
   .categoryItem {
     /*margin: 0 .8rem .26rem ;*/
     width: 1.46rem;
-    height: 2.45rem;
+    height: 1.8rem;
     overflow: hidden;
     position: relative;
     margin: 0 .43rem .2rem;

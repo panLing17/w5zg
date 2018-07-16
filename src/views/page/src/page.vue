@@ -12,23 +12,25 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
     .page
-      .content(v-loading="loadingFlag<2")
-        .left(ref='lefters').mescroll#pagesLMescroll
-          ul
-            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-        .right(:class="{styles:flag}" ref='righters').mescroll#pagesRMescroll
-          ul.tabs(v-for="(item,index) in productList" v-if="rightShowFlag")
-            li.tabsList
-              .title
-                span.point(v-show="wordsShow")
-                span.letter {{item.gc_name}}
-              ul.listOfGoods
-                li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
-                  img(:src="items.gc_icon | img-filter")
-                  .words(v-show="wordsShow") {{items.gc_name}}
+      .content
+        .left(ref='lefters')
+            ul
+              li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
+        .right(:class="{styles:flag}" ref='righters')
+            ul.tabs
+              li.tabsList(v-for="(item,index) in productList")
+                .title
+                  span.point(v-show="wordsShow")
+                  span.letter {{item.gc_name}}
+                ul.listOfGoods
+                  li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+                    img(:src="items.gc_icon | img-filter")
+                    .words(v-show="wordsShow") {{items.gc_name}}
 </template>
 
 <script>
+  import BScroll from 'better-scroll'
+  import {mapState} from 'vuex'
   export default {
     name: 'page',
     data () {
@@ -42,15 +44,16 @@
         pageName: [],
         productList: [],
         loadingFlag: 0,
-        rightShowFlag: '' // 控制右侧内容的显隐
+        rightShowFlag: '', // 控制右侧内容的显隐
+        tabNums: ''
       }
     },
+    computed: mapState(['position']),
     activated () {
 
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn()
-      this.mescroll.destroy()
+
     },
     mounted () {
       // 判断显示城市的字数
@@ -59,18 +62,20 @@
       this.request()
       // 判断显示当前城市
       this.judgeCity()
-      this.$mescrollInt('pagesLMescroll', this.upCallbackL)
-      this.$mescrollInt('pagesRMescroll', this.upCallbackR)
-      this.hideStyles()
     },
     methods: {
-      hideStyles () {
-        this.$refs.lefters.children[2].style.display = 'none'
-        this.$refs.righters.children[1].style.display = 'none'
+      keepState () {
+        console.log(this.$route.query.tabNum)
+        if (this.$route.query.tabNum == undefined) {
+          this.secondLevel(this.pageName[0].gc_id)
+        } else {
+          this.num = this.$route.query.tabNum
+          this.secondLevel(this.pageName[this.num].gc_id)
+        }
       },
       // 判断显示城市的字数
       judgeCityNum () {
-        var citys = document.getElementsByClassName('city')[0]
+        let citys = document.getElementsByClassName('city')[0]
         if (citys.innerText.length === 2) {
           citys.style.fontSize = 0.4 + 'rem'
         }
@@ -131,17 +136,41 @@
         // })
       },
 
-      // 第一个二级分类
-      one (id) {
+      // 请求右边二三级分类
+      secondLevel (id) {
         let self = this
         self.$ajax({
           method: 'post',
           url: this.$apiGoods + 'goodsClass/class/firstId',
           params: {firstId: id}
         }).then(function (res) {
-          self.rightShowFlag = true
           self.productList = res.data.data
-          self.loadingFlag += 1
+          self.timer && clearTimeout(self.timer)
+          let s
+          if (id == 127) {
+            s = 700
+          } else {
+            s = 20
+          }
+          self.timer =setTimeout(() => {
+            if (!self.rScroll) {
+              self.rScroll = new BScroll(self.$refs.righters, {
+                click: true,
+                probeType: 3
+              })
+              self.$store.state.position.forEach((now) => {
+                if (now.path === self.$route.path + '2') {
+                  self.rScroll.scrollTo(0, now.y, 0);
+                }
+              })
+              self.rScroll.on('scroll', function (pos) {
+                self.$store.commit('setPosition', {
+                  path: self.$route.path + '2',
+                  y: pos.y
+                })
+              })
+            }
+          },s)
         })
       },
       // 点击左侧一级分类切换右边二三级
@@ -149,16 +178,9 @@
         this.flag = false
         this.wordsShow = true
         this.num = index
-        this.rightShowFlag = false
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: this.$apiGoods + 'goodsClass/class/firstId',
-          params: {firstId: id}
-        }).then(function (res) {
-          self.rightShowFlag = true
-          self.productList = res.data.data
-        })
+        this.$router.replace({path:'/page',query:{tabNum:index}})
+        this.secondLevel(id)
+        this.rScroll.scrollTo(0, 0, 0);
       },
 
       // 展示左侧商品导航
@@ -170,40 +192,30 @@
           params: {hierarchy: 1}
         }).then(function (res) {
           self.pageName = res.data.data
-          self.goodsName = res.data.data[0].gc_id
-          self.one(res.data.data[0].gc_id)
-          self.loadingFlag += 1
+          self.$nextTick(() => {
+            if (!self.lScroll)  {
+              self.lScroll = new BScroll(self.$refs.lefters, {
+                click: true,
+                probeType: 3
+              })
+              self.$store.state.position.forEach((now) => {
+                if (now.path === self.$route.path + '1') {
+                  self.lScroll.scrollTo(0, now.y, 0);
+                }
+              })
+              self.lScroll.on('scroll', function (pos) {
+                self.$store.commit('setPosition', {
+                  path: self.$route.path + '1',
+                  y: pos.y
+                })
+              })
+            }
+          })
+          // 第一个二级分类
+          self.keepState()
         })
-      },
-
-      upCallbackR: function (page) {
-        let self = this
-        this.getListDataFromNetR(page.num, page.size, function (curPageData) {
-          // if (page.num === 1) self.productList = []
-          // self.productList = self.productList.concat(curPageData)
-          self.mescroll.endSuccess(curPageData.length)
-        }, function () {
-          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr()
-        })
-      },
-      upCallbackL: function (page) {
-        let self = this
-        this.getListDataFromNetL(page.num, page.size, function (curPageData) {
-          // if (page.num === 1) self.pageName = []
-          // self.pageName = self.pageName.concat(curPageData)
-          self.mescroll.endSuccess(curPageData.length)
-        }, function () {
-          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr()
-        })
-      },
-      getListDataFromNetR (pageNum, pageSize, successCallback, errorCallback) {
-        successCallback && successCallback({}) // 成功回调
-      },
-      getListDataFromNetL (pageNum, pageSize, successCallback, errorCallback) {
-        successCallback && successCallback({}) // 成功回调
       }
+
     }
   }
 </script>
@@ -331,8 +343,9 @@
     height: 100%;
     float: left;
     background-color: rgb(242,242,242);
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
+  }
+  .content .left ul{
+    min-height: calc(100% + 1px);
     padding-bottom: 3rem;
   }
   .content .left ul li{
@@ -353,12 +366,11 @@
     height: 100%;
     background-color: #fff;
     float: left;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 3rem;
   }
   .right ul.tabs{
+    min-height: calc(100% + 1px);
     padding-top: .45rem;
+    padding-bottom: 3rem;
   }
   .right ul.tabs .title{
     font-size: .4rem;

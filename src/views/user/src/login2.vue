@@ -101,11 +101,11 @@
         this.$nextTick(()=>{
           var ic = new smartCaptcha({
             renderTo: '#sc',
-            width: '6.5rem',
+            width: '299',
             height: '1rem',
             default_txt: '获取验证码',
             success_txt: '获取成功，请查收短信',
-            fail_txt: '获取失败，请在此点击按钮刷新',
+            fail_txt: '点击按钮刷新',
             scaning_txt: '验证码发送中',
             success: function(data) {
               if (!_this.scFlag) {
@@ -392,8 +392,9 @@
     z-index: 10;
   }
   .popWrapper {
-    width: 8rem;
-    border-radius: .21rem;
+    /*width: 8rem;*/
+    width: 300px;
+    /*border-radius: .21rem;*/
     position: absolute;
     top: 3rem;
     left: 50%;
@@ -532,7 +533,8 @@
   }
   #sc {
     margin: .1rem auto 0;
-    width: 6.5rem;
+    /*width: 7.5rem;*/
+    width: 299px;
   }
   input  {
     -webkit-appearance: none;

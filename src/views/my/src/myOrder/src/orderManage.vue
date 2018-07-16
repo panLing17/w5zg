@@ -116,7 +116,7 @@
       methods:{
         //当无订单时，将end去掉
         emptys(){
-          var mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
+          let mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
            mescrollUpwarp.style.visibility = "hidden";
         },
         //回退判断
@@ -514,8 +514,8 @@
     background-color: #fff;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 0 .3rem;
-    line-height: .8rem;
   }
   .top .left{
     color: rgb(51,51,51);

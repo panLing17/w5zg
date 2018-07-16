@@ -12,6 +12,7 @@
           input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
           .text 南京工会送您现金券，购物更省钱！
+          .agreementBtn(@click="$refs.agreement.mShow()") 《万物直供用户协议》
       .successWrapper(v-if="showSuccess")
         .topWrapper
           .success(v-if="getSuccess")
@@ -27,7 +28,6 @@
           a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8") 下载万物直供APP（苹果版）
           .dec.first 点击下载“万物直供”APP
           .dec 或者进入应用商店搜索“万物直供”下载
-      .agreementBtn(@click="$refs.agreement.mShow()") 《万物直供用户协议》
       agreement(ref="agreement")
 </template>
 
@@ -316,7 +316,7 @@
   }
   .agreementBtn {
     position: absolute;
-    bottom: .5rem;
+    top: 4.5rem;
     left: 0;
     width: 100%;
     color: #fff;
