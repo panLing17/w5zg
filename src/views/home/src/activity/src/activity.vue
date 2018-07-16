@@ -7,7 +7,7 @@
       .topRight(slot="right")
     .tabListWrapper(ref="tabWrapper")
       ul.tabList
-        li.tabItem(v-for="(item, index) in tabList", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
+        li.tabItem(v-for="(item, index) in tabList", ref="tab", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
     .mescroll#activityMescroll
       .contentWrapper
         router-view
@@ -63,7 +63,16 @@
         }
       },
       tabCheck (index) {
-        this.tabActive = index;
+        let currentX = this.tabScroll.x
+        let targetX = (index * 94) - 94
+        if (currentX > -targetX) {
+          // 说明点的右边
+          this.tabScroll && this.tabScroll.scrollToElement.call(this.tabScroll, this.$refs.tab[index-2], 500)
+        } else {
+          //点的左边
+          this.tabScroll && this.tabScroll.scrollToElement.call(this.tabScroll, this.$refs.tab[index-1], 500)
+        }
+        this.tabActive = index
         this.$router.replace({path: '', query: {id:this.tabList[index].id, title: this.$route.query.title, actId: this.$route.query.actId,  parentType: this.$route.query.parentType}})
       },
       getTabList (id) {
@@ -83,6 +92,7 @@
               click: true,
               scrollX: true
             })
+
           })
           if (!id) {
             _this.$router.replace({path: '', query: {id:_this.tabList[0].id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
@@ -124,10 +134,7 @@
     min-height: 100vh;
   }
   .tabListWrapper {
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
+    position: relative;
   }
   .tabList {
     float: left;
@@ -140,7 +147,7 @@
   .tabItem {
     flex: 1;
     /*padding: 0 .2rem;*/
-    min-width: 2.5rem;
+    min-width: 94px;
     text-align: center;
     font-size: .4rem;
     color: #333;
@@ -165,5 +172,21 @@
   }
   .contentWrapper {
     border-top: .26rem solid #f3f3f3;
+  }
+  .tabContent {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  .positionBtnWrapper {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .leftBtn, .rightBtn {
+    height: 1.2rem;
+    width: 94px;
   }
 </style>
