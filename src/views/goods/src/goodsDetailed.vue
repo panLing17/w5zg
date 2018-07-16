@@ -25,17 +25,18 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p(v-if="initPriceFlag") {{goodsData.cost_price | price-filter}}
+          p(v-if="initPriceFlag") {{goodsData.direct_supply_price | price-filter}}
           p(v-else) {{goodsData.direct_supply_interval | price-filter}}
-          .salePrice 统一零售价：<span>{{goodsData.retail_interval}}</span>
+          .salePrice 统一零售价：<span v-if="initPriceFlag">{{goodsData.retail_price}}</span><span v-else>{{goodsData.retail_interval}}</span>
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         ul.saveMoneyTop
           li.red
             .label {{goodsData.retail_interval>goodsData.counter_interval? '专柜价':'专柜折后价'}}
-            .text <span>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
+            .text <span v-if="initPriceFlag">{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 现金券抵扣
-            .text 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
+            .text(v-if="initPriceFlag") 省<span>{{goodsData.counter_price-goodsData.direct_supply_price}}</span>元
+            .text(v-else) 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
         //ul.saveMoneyBottom
           li.gray
             .label 专柜价购买
@@ -156,6 +157,8 @@
     name: "goods-detailed",
     data () {
       return {
+        // 真正存在的规格组合（置灰用）
+        relSpecData: [],
         // 禁止选择专柜自提
         disableCabinet: false,
         // 能省多少钱
@@ -294,7 +297,9 @@
       this.getGoodsDetailed()
       this.getGoodsDesc()
       this.getBanner()
-      this.getSpec()
+      this.getRelSpec().then((d)=>{
+        this.getSpec(d)
+      })
       // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
       if(this.skuId){
         this.$store.commit('getSkuId','')
@@ -304,7 +309,6 @@
       // this.getMakeMoney(sku)
       // mescroll初始化
       this.$mescrollInt("goodsDetailMescroll",this.upCallback, ()=>{}, ()=>{})
-
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn()
@@ -336,7 +340,9 @@
         this.getGoodsDetailed()
         this.getGoodsDesc()
         this.getBanner()
-        this.getSpec()
+        this.getRelSpec().then((d)=>{
+          this.getSpec(d)
+        })
         // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
         if(this.skuId){
           this.$store.commit('getSkuId','')
@@ -352,6 +358,23 @@
       }
     },
     methods:{
+      // 获取实际存在规格（置灰）
+      getRelSpec () {
+        let p = new Promise((resolve)=>{
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/spu/findSkuStatus',
+            params: {
+              gspuId: self.$route.query.id
+            },
+          }).then(function (response) {
+            self.relSpecData = response.data.data
+            resolve(response.data.data)
+          })
+        })
+        return p
+      },
       // 检测是否可自提
       checkStore () {
         let self = this
@@ -585,8 +608,80 @@
           self.isShare()
         })
       },
+      // 分配哪些规格置灰
+      specGray (sepc, relSpec, checkedSpec) {
+        // 置灰后的spec
+        let newSpec = []
+        // spec现有规格，selSpec真实存在的规格，checkedSpec当前选中规格
+        let hasSpec = [] //实际存在的spec集合
+
+        relSpec.forEach((now)=>{
+          let flag = 0
+          if (!$isContained(now,checkedSpec)) {
+            flag += 1
+          }
+          // 为小于两个长度差证明跟选中规格完全匹配
+          if(flag < now.length-checkedSpec.length) {
+            hasSpec.push(now)
+          }
+        })
+        // 如果用户只选中一个规格，那么同级规格全部可选
+        if (checkedSpec.length === 1) {
+          sepc.forEach((now)=>{
+            now.hasSpec = []
+            // 如果当前条目包含已选规格，则整条都加入可选列表
+            if ($isContained(now.specValue,checkedSpec)) {
+              now.hasSpec = now.specValue
+            // 如果不包含则正常匹配
+            } else {
+              now.specValue.forEach((sonNow)=>{
+                hasSpec.forEach((three)=>{
+                  three.forEach((four)=>{
+                    if(sonNow === four) {
+                      now.hasSpec.push(four)
+                    }
+                  })
+                })
+              })
+            }
+            // 去重
+            let removal = []
+            now.hasSpec.forEach((now)=>{
+              if (removal.indexOf(now)===-1) {
+                removal.push(now)
+              }
+            })
+            now.hasSpec = removal
+          })
+        }
+        // 如果是复合选择，那么完全按照组合表执行
+        if (checkedSpec.length > 1) {
+          sepc.forEach((now)=>{
+            now.hasSpec = []
+            now.specValue.forEach((sonNow)=>{
+              hasSpec.forEach((three)=>{
+                three.forEach((four)=>{
+                  if(sonNow === four) {
+                    now.hasSpec.push(four)
+                  }
+                })
+              })
+            })
+            // 去重
+            let removal = []
+            now.hasSpec.forEach((now)=>{
+              if (removal.indexOf(now)===-1) {
+                removal.push(now)
+              }
+            })
+            now.hasSpec = removal
+          })
+        }
+        console.log(sepc)
+        return sepc
+      },
       // 获取规格
-      getSpec () {
+      getSpec (data) {
         let self = this
         this.$ajax({
           method: 'post',
@@ -595,8 +690,9 @@
             gspuId: self.$route.query.id
           }
         }).then(function (response) {
+          self.specGray(response.data.data, data, [response.data.data[0].specValue[1]])
           response.data.data.forEach((now,index)=>{
-            now.valueIndex = 0
+            now.valueIndex = -1
           })
           self.spec = response.data.data
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
