@@ -62,6 +62,10 @@
       this.request()
       // 判断显示当前城市
       this.judgeCity()
+
+      window.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+      });
     },
     methods: {
       keepState () {
@@ -144,15 +148,9 @@
           url: this.$apiGoods + 'goodsClass/class/firstId',
           params: {firstId: id}
         }).then(function (res) {
-          self.productList = res.data.data
-          self.timer && clearTimeout(self.timer)
-          let s
-          if (id == 127) {
-            s = 700
-          } else {
-            s = 20
-          }
-          self.timer =setTimeout(() => {
+          //self.productList = res.data.data
+          self.$nextTick(() => {
+            self.productList = res.data.data
             if (!self.rScroll) {
               self.rScroll = new BScroll(self.$refs.righters, {
                 click: true,
@@ -170,7 +168,8 @@
                 })
               })
             }
-          },s)
+          })
+
         })
       },
       // 点击左侧一级分类切换右边二三级
@@ -343,6 +342,7 @@
     height: 100%;
     float: left;
     background-color: rgb(242,242,242);
+    touch-action: none;
   }
   .content .left ul{
     min-height: calc(100% + 1px);
@@ -366,6 +366,7 @@
     height: 100%;
     background-color: #fff;
     float: left;
+    touch-action: none;
   }
   .right ul.tabs{
     min-height: calc(100% + 1px);
