@@ -12,20 +12,20 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
     .page
-      .content
+      .content(v-loading="loadingFlag < 2")
         .left(ref='lefters')
             ul
               li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-        .right(:class="{styles:flag}" ref='righters')
+        .right(ref='righters')
             ul.tabs
               li.tabsList(v-for="(item,index) in productList")
                 .title
-                  span.point(v-show="wordsShow")
+                  span.point
                   span.letter {{item.gc_name}}
                 ul.listOfGoods
                   li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
                     img(:src="items.gc_icon | img-filter")
-                    .words(v-show="wordsShow") {{items.gc_name}}
+                    .words {{items.gc_name}}
 </template>
 
 <script>
@@ -52,6 +52,9 @@
     activated () {
 
     },
+    created () {
+      this.request()
+    },
     beforeDestroy () {
 
     },
@@ -59,13 +62,12 @@
       // 判断显示城市的字数
       this.judgeCityNum()
       // 一级分类
-      this.request()
+      //this.request()
       // 判断显示当前城市
       this.judgeCity()
     },
     methods: {
       keepState () {
-        console.log(this.$route.query.tabNum)
         if (this.$route.query.tabNum == undefined) {
           this.secondLevel(this.pageName[0].gc_id)
         } else {
@@ -145,42 +147,41 @@
           params: {firstId: id}
         }).then(function (res) {
           self.productList = res.data.data
-          self.timer && clearTimeout(self.timer)
-          let s
-          if (id == 127) {
-            s = 700
-          } else {
-            s = 20
-          }
-          self.timer =setTimeout(() => {
-            if (!self.rScroll) {
-              self.rScroll = new BScroll(self.$refs.righters, {
-                click: true,
-                probeType: 3
-              })
-              self.$store.state.position.forEach((now) => {
-                if (now.path === self.$route.path + '2') {
-                  self.rScroll.scrollTo(0, now.y, 0);
-                }
-              })
-              self.rScroll.on('scroll', function (pos) {
-                self.$store.commit('setPosition', {
-                  path: self.$route.path + '2',
-                  y: pos.y
+          self.$nextTick(() => {
+            // setTimeout(function () {
+              self.productList = res.data.data
+                if (!self.rScroll) {
+                  self.rScroll = new BScroll(self.$refs.righters, {
+                    click: true,
+                    probeType: 3
                 })
-              })
-            }
-          },s)
+                self.$store.state.position.forEach((now) => {
+                  if (now.path === self.$route.path + '2') {
+                    self.rScroll.scrollTo(0, now.y, 0);
+                  }
+                })
+                self.rScroll.on('scroll', function (pos) {
+                  self.$store.commit('setPosition', {
+                    path: self.$route.path + '2',
+                    y: pos.y
+                  })
+                })
+              }
+              self.loadingFlag += 1
+            // },1)
+
+          })
+
         })
       },
       // 点击左侧一级分类切换右边二三级
       tab (item, index, id) {
-        this.flag = false
-        this.wordsShow = true
+        //this.flag = false
+        //this.wordsShow = true
         this.num = index
         this.$router.replace({path:'/page',query:{tabNum:index}})
         this.secondLevel(id)
-        this.rScroll.scrollTo(0, 0, 0);
+        this.rScroll.scrollTo(0, 0);
       },
 
       // 展示左侧商品导航
@@ -210,7 +211,9 @@
                 })
               })
             }
+            self.loadingFlag += 1
           })
+
           // 第一个二级分类
           self.keepState()
         })
@@ -346,7 +349,7 @@
   }
   .content .left ul{
     min-height: calc(100% + 1px);
-    padding-bottom: 3rem;
+    padding-bottom: 1.5rem;
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
@@ -370,7 +373,7 @@
   .right ul.tabs{
     min-height: calc(100% + 1px);
     padding-top: .45rem;
-    padding-bottom: 3rem;
+    padding-bottom: 1.5rem;
   }
   .right ul.tabs .title{
     font-size: .4rem;
