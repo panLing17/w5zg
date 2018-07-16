@@ -192,7 +192,7 @@
   }
 
   .goodsList {
-    width: calc(50% - .1rem);
+    width: calc(50% - .0666rem);
     background: rgb(242, 242, 242);
   }
 
@@ -202,7 +202,7 @@
     border-radius: 5px;
     overflow: hidden;
     width: 100%;
-    margin-bottom: .2rem;
+    margin-bottom: .133rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
