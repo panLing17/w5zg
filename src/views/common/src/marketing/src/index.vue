@@ -58,10 +58,11 @@
       }
     },
     created () {
-      this.loadShare()
-      this.saveUrl()
-      this.judeg()
-      this.isStart()
+      this.$router.replace('/marketing/assisting')
+      // this.loadShare()
+      // this.saveUrl()
+      // this.judeg()
+      // this.isStart()
     },
     mounted () {
       document.title = '送耐克活动';

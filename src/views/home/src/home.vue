@@ -50,7 +50,7 @@
         span(:class="{play:animateShow}") 请
         span(:class="{play:animateShow}") 期
         span(:class="{play:animateShow}") 待
-    home-guide
+    //home-guide
 </template>
 <script>
   import hotButton from './hotButton'

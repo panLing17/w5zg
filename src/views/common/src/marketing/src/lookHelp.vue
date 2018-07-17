@@ -6,7 +6,8 @@
   export default {
     name: "lookHelp",
     created (){
-      this.getWXUrl()
+      this.$router.replace('/marketing/assisting')
+      // this.getWXUrl()
     },
     methods: {
       getWXUrl () {
