@@ -196,7 +196,7 @@
   }
 
   .goodsList {
-    width: calc(50% - 3px);
+    width: calc(50% - .08rem);
     background: rgb(242, 242, 242);
   }
 

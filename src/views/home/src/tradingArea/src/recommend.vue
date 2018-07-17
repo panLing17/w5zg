@@ -183,7 +183,7 @@
   }
 
   .goodsList {
-    width: calc(50% - 3px);
+    width: calc(50% - .08rem);
     background: #fff;
   }
 
