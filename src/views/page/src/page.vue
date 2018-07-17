@@ -14,11 +14,9 @@
     .page
       .content(v-loading="loadingFlag < 2")
         .left(ref='lefters')
-          div
             ul
               li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
         .right(ref='righters')
-          div
             ul.tabs
               li.tabsList(v-for="(item,index) in productList")
                 .title
@@ -157,7 +155,6 @@
           }
           self.timer && clearTimeout(self.timer)
           self.timer = setTimeout(function () {
-            //self.productList = res.data.data
             if (!self.rScroll) {
               self.rScroll = new BScroll(self.$refs.righters, {
                 click: true,
@@ -175,8 +172,9 @@
                 })
               })
             }
+            self.loadingFlag += 1
           },s)
-          self.loadingFlag += 1
+
         })
       },
       // 点击左侧一级分类切换右边二三级
@@ -353,7 +351,7 @@
     background-color: rgb(242,242,242);
   }
   .content .left ul{
-    min-height: calc(100% + 1px);
+    /*height: calc(100% + 1px);*/
     /*height: 100%;*/
     padding-bottom: 3rem;
   }
@@ -377,10 +375,10 @@
     float: left;
   }
   .right ul.tabs{
-    min-height: calc(100% + 1rem);
+    min-height: calc(100% + 1px);
     /*height: 100%;*/
     padding-top: .45rem;
-    padding-bottom: 3rem;
+    padding-bottom: 4rem;
   }
   .right ul.tabs .title{
     font-size: .4rem;
