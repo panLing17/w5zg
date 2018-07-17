@@ -189,7 +189,7 @@
   }
 
   .goodsList {
-    width: calc(50% - .04rem);
+    width: calc(50% - .08rem);
     background: rgb(242, 242, 242);
   }
 
