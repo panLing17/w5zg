@@ -5,14 +5,20 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 更换手机号
       .topRight(slot="right")
-    .form
-      w-input(label="新手机号：", label-width="2.5rem", placeholder="请输入新手机号", v-model="form.mobile",  required, @w-blur="checkPhoneRepeat", :error="phoneError")
-      w-input(v-model="form.gCode", label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, required, button-cover,:error="gCodeError", @input="checkCode")
-        img.valiImg(slot="button", @click="getPicCode", :src="url")
-      w-input(v-model="form.vcode", label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", :error="checkCodeError", input-button=true, required, button-cover)
-        .inputButton(slot="button", @click="getPhoneCode", v-show="sendMsg" ,:class="{inputButtonGray:sendMsgStatus}") 获取验证码
-        .inputButton(slot="button", v-show="!sendMsg",style="background-color:gray") {{countDown}}
-      button.regButton(@click="nextStep",:class="{regButtonGray:nextStepStatus}") 提交
+    .content
+      .form
+        .inputWrapper
+          .phoneIcon
+            img.icon(src="../../../assets/img/forget2.png")
+          input.input(type="number", placeholder="请输入手机号", v-model="form.phone")
+        .validateWrapper
+          #sc(v-if="showSc")
+          .timer(v-show="!showSc") {{timerText}}
+        .inputWrapper
+          .phoneIcon
+            img.icon(src="../../../assets/img/forget1.png")
+          input.input(type="text", placeholder="请输入验证码", v-model="form.code")
+      .rightBtn(@click="right") 提交
 </template>
 
 <script>
@@ -20,141 +26,158 @@
     name: 'changeMobile2',
     data () {
       return {
-        phoneError: '',
-        gCodeError: '',
-        checkCodeError: '',
-        sendMsg: true,
-        version: 1,
-        countDown: 60,
-        sendMsgStatus: true,
-        nextStepStatus: true,
-        passwordType: 'password',
-        url: this.$apiMember + 'member/picCode/150/75/60',
+        scFlag: false,
+        sessionId: '',
+        sendCodeFlag: false,
+        showSc: true,
+        status: true,
+        timerText: '',
         form: {
-          mobile: '',
-          gCode: '',
-          vcode: '',
-          type: '1'
-        },
-        phoneFlag: false
+          phone: '',
+          code: ''
+        }
       }
     },
+    mounted () {
+      this._initSc()
+    },
     methods: {
-      getPicCode() {
-        this.version += 1
-        this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version
-      },
-      checkPhoneRepeat() {
+      right () {
+        if (!/^1[0-9]{10}$/.test(this.form.phone)) {
+          this.$message.error('手机号码格式不正确！')
+          return
+        }
         let self = this
-        let reg = /^1[0-9]{10}$/;
-        if (self.form.mobile == '') {
-          self.phoneError = ''
-          return
-        }
+        this._checkPhone((flag) =>{
+          if (flag) {
+            if (this.form.code.length!=6) {
+              this.$message.error('手机验证码格式不正确！')
+              return
+            }
 
-        if(!reg.test(self.form.mobile)){
-          self.phoneError = $code('261')
-          return
-        }else{
-          self.phoneError = ''
-        }
-
-        // 发送ajax请求校验手机号重复
+            if (!this.status) {
+              return
+            }
+            this.status = false
+            self.$ajax({
+              method: 'post',
+              url: self.$apiMember + 'asec/changeMobile',
+              params: self.form
+            }).then(function (response) {
+              self.status = true
+              if (response && response.data.optSuc) {
+                self.$message.success('修改成功')
+                self.getUserData()
+                // 成功跳转页面
+                self.$router.push({path: '/my/accountSafety'})
+              }
+            })
+          }
+        })
+      },
+      _checkPhone (callback) {
+        let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'member/mobile/isExist',
-          params: self.form
-        }).then(function (response) {
-          // 提示用户信息
-          if (response && response.data.optSuc) {
-            self.phoneFlag = true
-            if (self.phoneFlag && self.form.gCode.trim().length === 4) {
-              self.sendMsgStatus = false
-            } else {
-              self.sendMsgStatus = true
-            }
+          params: {
+            mobile: this.form.phone,
+            type: '1'
           }
+        }).then(function (response) {
+          callback && callback(Boolean(response.data.data))
+        }).catch(function () {
+          callback && callback(false)
         })
       },
-      checkCode () {
-        if (this.phoneFlag && this.form.gCode.trim().length === 4) {
-          this.sendMsgStatus = false
-        } else {
-          this.sendMsgStatus = true
-        }
-      },
-      getPhoneCode() {
-        // 发送验证码
-        let self = this
-        // if (self.form.mobile == '' || self.form.gCode == '') {
-        //   self.phoneError = ''
-        //   self.gCodeError = ''
-        //   return
-        // }
-
-        if(self.sendMsgStatus){
-          return
-        }
-        this.sendMsgStatus = true
-        self.$ajax({
-          method: 'post',
-          url: self.$apiMember + 'sms/sendCode',
-          params: self.form
-        }).then(function (response) {
-          if (response && response.data.optSuc) {
-            self.nextStepStatus = false
-            // 成功则开始读秒
-            self.sendMsg = false
-            let interval = window.setInterval(function () {
-              if ((self.countDown--) <= 0) {
-                self.countDown = 60
-                self.sendMsg = true
-                self.sendMsgStatus = false
-                window.clearInterval(interval)
+      _initSc () {
+        let _this = this
+        this.$nextTick(()=>{
+          var ic = new smartCaptcha({
+            renderTo: '#sc',
+            width: '9.2rem',
+            height: '1.17rem',
+            default_txt: '获取验证码',
+            success_txt: '获取成功，请查收短信',
+            fail_txt: '点击按钮刷新',
+            scaning_txt: '验证码发送中',
+            success: function(data) {
+              if (!_this.scFlag) {
+                _this.$ajax({
+                  method: 'post',
+                  url: _this.$apiMember + 'afs/afsValidateWeb',
+                  params: {
+                    sessionId: data.sessionId,
+                    sig: data.sig,
+                    token: NVC_Opt.token,
+                    scene: NVC_Opt.scene
+                  }
+                }).then(function (response) {
+                  if (response) {
+                    _this.scFlag = true
+                    _this.sessionId = data.sessionId
+                    _this.sendCodeAjax()
+                  }
+                })
               }
-            }, 1000)
-          }else{
-            self.getPicCode()
-            self.sendMsgStatus = false
-          }
+            }
+          });
+          ic.init();
         })
       },
-      /* 获取用户信息 */
-      getUserData:function(){
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'member/currentMember',
-          params: {}
-        }).then(function (response) {
-          self.$store.commit('userDataChange',response.data.data)
-          if (response.data.data.member_type === '092') {
-            self.getUserInfo()
-          }
-        })
-      },
-      nextStep() {
-        let self = this
-        if (self.form.mobile == '' || self.form.vcode == '' || self.nextStepStatus) {
-          self.phoneError = ''
-          self.checkCodeError = ''
+      sendCodeAjax () {
+        if (!/^1[0-9]{10}$/.test(this.userData.mi_phone)) {
+          this.$message.error('手机号码格式不正确！')
+          this.scFlag = false
+          this.showSc = false
+          this.$nextTick(() => {
+            this.showSc = true
+            this._initSc()
+          })
           return
         }
-        self.nextStepStatus = true
-        self.$ajax({
-          method: 'post',
-          url: self.$apiMember + 'asec/changeMobile',
-          params: self.form
-        }).then(function (response) {
-          if (response && response.data.optSuc) {
-            self.$message.success('修改成功')
-            self.getUserData()
-            // 成功跳转页面
-            self.$router.push({path: '/my/accountSafety'})
+        this._checkPhone((flag) => {
+          console.log(typeof flag)
+          if (flag) {
+            let _this = this
+            this.$ajax({
+              method: 'post',
+              url: _this.$apiMember + 'sms/sendCodeByAfs',
+              params: {
+                sessionId: this.sessionId,
+                mobile : this.form.phone
+              }
+            }).then(function (response) {
+              if (response) {
+                _this.showSc = false
+                _this.sendCodeFlag = true
+                let count = 60
+                _this.timerText = count + 's'
+                _this.timer && clearInterval(_this.timer)
+                _this.timer = setInterval(()=>{
+                  count--
+                  if (count <= 0) {
+                    clearInterval(_this.timer)
+                    _this.showSc = true
+                    _this.scFlag = false
+                    _this._initSc()
+                  } else {
+                    _this.timerText = count + 's'
+                  }
+
+                }, 1000)
+              }
+            })
           } else {
-            self.nextStepStatus = false
+            this.scFlag = false
+            this.showSc = false
+            this.$nextTick(() => {
+              this.showSc = true
+              this._initSc()
+            })
           }
         })
+
       }
     }
   }
@@ -165,42 +188,60 @@
     min-height: 100vh;
     background: rgb(242,242,242);
   }
-  .form{
-    margin-top: 1.3rem;
+  input::placeholder{
+    color: rgb(153,153,153);
+  }
+  input  {
+    -webkit-appearance: none;
+  }
+  .form {
+    padding: .53rem .4rem .26rem;
+  }
+  .inputWrapper {
+    height: 1.17rem;
+    background-color: #fff;
     display: flex;
-    flex-direction: column;
     align-items: center;
+    padding: 0 .13rem 0;
+    margin-bottom: .26rem;
   }
-  .inputButton{
-    width: 2rem;
-    height: .9rem;
-    border-radius: 1rem;
-    background: rgb(245,0,87);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .icon {
+    width: .64rem;
   }
-  .inputButtonGray {
-    background: rgb(192, 192, 192) !important;
+  .phoneIcon {
+    flex: none;
   }
-  .regButton {
-    margin-top: 1rem;
-    width: 7rem;
-    height: 1rem;
-    background-color: rgb(245,0,87);
-    color: white;
-    font-size: .4rem;
+  .input {
+    flex: 1;
+    height: 100%;
     border: none;
     outline: none;
+    margin-left: .13rem;
+    font-size: 13px;
+    color: #333;
+  }
+  .validateWrapper {
+    margin-bottom: 0.26rem;
+  }
+  #sc {
+    width: 9.2rem;
+    margin: 0;
+  }
+  .timer {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    line-height: 1.17rem;
+  }
+  .rightBtn {
+    width: 6.9rem;
+    height: 1rem;
+    color: #fff;
+    background-color: rgb(245,0,87);
+    font-size: 14px;
+    margin: 0 auto;
     border-radius: .5rem;
-  }
-
-  .regButtonGray {
-    background-color: rgb(192, 192, 192) !important;
-  }
-
-  .valiImg {
-    width: 2rem
+    text-align: center;
+    line-height: 1rem;
   }
 </style>
