@@ -14,9 +14,11 @@
     .page
       .content(v-loading="loadingFlag < 2")
         .left(ref='lefters')
+          div
             ul
               li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
         .right(ref='righters')
+          div
             ul.tabs
               li.tabsList(v-for="(item,index) in productList")
                 .title
@@ -53,7 +55,7 @@
 
     },
     created () {
-      this.request()
+      //this.request()
     },
     beforeDestroy () {
 
@@ -62,7 +64,7 @@
       // 判断显示城市的字数
       this.judgeCityNum()
       // 一级分类
-      //this.request()
+      this.request()
       // 判断显示当前城市
       this.judgeCity()
     },
@@ -147,31 +149,34 @@
           params: {firstId: id}
         }).then(function (res) {
           self.productList = res.data.data
-          self.$nextTick(() => {
-            // setTimeout(function () {
-              self.productList = res.data.data
-                if (!self.rScroll) {
-                  self.rScroll = new BScroll(self.$refs.righters, {
-                    click: true,
-                    probeType: 3
+          let s
+          if (id == 127) {
+            s = 700
+          } else {
+            s = 30
+          }
+          self.timer && clearTimeout(self.timer)
+          self.timer = setTimeout(function () {
+            //self.productList = res.data.data
+            if (!self.rScroll) {
+              self.rScroll = new BScroll(self.$refs.righters, {
+                click: true,
+                probeType: 3
+              })
+              self.$store.state.position.forEach((now) => {
+                if (now.path === self.$route.path + '2') {
+                  self.rScroll.scrollTo(0, now.y, 0);
+                }
+              })
+              self.rScroll.on('touchEnd', function (pos) {
+                self.$store.commit('setPosition', {
+                  path: self.$route.path + '2',
+                  y: pos.y
                 })
-                self.$store.state.position.forEach((now) => {
-                  if (now.path === self.$route.path + '2') {
-                    self.rScroll.scrollTo(0, now.y, 0);
-                  }
-                })
-                self.rScroll.on('scroll', function (pos) {
-                  self.$store.commit('setPosition', {
-                    path: self.$route.path + '2',
-                    y: pos.y
-                  })
-                })
-              }
-              self.loadingFlag += 1
-            // },1)
-
-          })
-
+              })
+            }
+          },s)
+          self.loadingFlag += 1
         })
       },
       // 点击左侧一级分类切换右边二三级
@@ -343,13 +348,14 @@
   }
   .content .left{
     width: 21%;
-    height: 100%;
+    height: 100vh;
     float: left;
     background-color: rgb(242,242,242);
   }
   .content .left ul{
     min-height: calc(100% + 1px);
-    padding-bottom: 1.5rem;
+    /*height: 100%;*/
+    padding-bottom: 3rem;
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
@@ -366,14 +372,15 @@
   /*中间内容右边--开始*/
   .content .right{
     width: 79%;
-    height: 100%;
+    height: 100vh;
     background-color: #fff;
     float: left;
   }
   .right ul.tabs{
-    min-height: calc(100% + 1px);
+    min-height: calc(100% + 1rem);
+    /*height: 100%;*/
     padding-top: .45rem;
-    padding-bottom: 1.5rem;
+    padding-bottom: 3rem;
   }
   .right ul.tabs .title{
     font-size: .4rem;
