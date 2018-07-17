@@ -32,11 +32,11 @@
         <!--li.left 申请商户资质-->
         <!--li.right-->
           <!--img(src="../../../assets/img/next@2x.png")-->
-    .feedback
-      ul.wrap(@click="$router.push('/my/feedback')")
-        li.left 意见反馈
-        li.right
-          img(src="../../../assets/img/next@2x.png")
+    <!--.feedback-->
+      <!--ul.wrap(@click="$router.push('/my/feedback')")-->
+        <!--li.left 意见反馈-->
+        <!--li.right-->
+          <!--img(src="../../../assets/img/next@2x.png")-->
     .aboutUs
       ul.wrap(@click="$router.push('/my/aboutUs')")
         li.left 关于我们
