@@ -53,7 +53,7 @@
 
     },
     created () {
-      this.request()
+      //this.request()
     },
     beforeDestroy () {
 
@@ -62,7 +62,7 @@
       // 判断显示城市的字数
       this.judgeCityNum()
       // 一级分类
-      //this.request()
+      this.request()
       // 判断显示当前城市
       this.judgeCity()
     },
@@ -147,30 +147,33 @@
           params: {firstId: id}
         }).then(function (res) {
           self.productList = res.data.data
-          self.$nextTick(() => {
-            // setTimeout(function () {
-              self.productList = res.data.data
-                if (!self.rScroll) {
-                  self.rScroll = new BScroll(self.$refs.righters, {
-                    click: true,
-                    probeType: 3
+          let s
+          if (id == 127) {
+            s = 700
+          } else {
+            s = 30
+          }
+          self.timer && clearTimeout(self.timer)
+          self.timer = setTimeout(function () {
+            if (!self.rScroll) {
+              self.rScroll = new BScroll(self.$refs.righters, {
+                click: true,
+                probeType: 3
+              })
+              self.$store.state.position.forEach((now) => {
+                if (now.path === self.$route.path + '2') {
+                  self.rScroll.scrollTo(0, now.y, 0);
+                }
+              })
+              self.rScroll.on('touchEnd', function (pos) {
+                self.$store.commit('setPosition', {
+                  path: self.$route.path + '2',
+                  y: pos.y
                 })
-                self.$store.state.position.forEach((now) => {
-                  if (now.path === self.$route.path + '2') {
-                    self.rScroll.scrollTo(0, now.y, 0);
-                  }
-                })
-                self.rScroll.on('scroll', function (pos) {
-                  self.$store.commit('setPosition', {
-                    path: self.$route.path + '2',
-                    y: pos.y
-                  })
-                })
-              }
-              self.loadingFlag += 1
-            // },1)
-
-          })
+              })
+            }
+            self.loadingFlag += 1
+          },s)
 
         })
       },
@@ -343,13 +346,14 @@
   }
   .content .left{
     width: 21%;
-    height: 100%;
+    height: 100vh;
     float: left;
     background-color: rgb(242,242,242);
   }
   .content .left ul{
-    min-height: calc(100% + 1px);
-    padding-bottom: 1.5rem;
+    /*height: calc(100% + 1px);*/
+    /*height: 100%;*/
+    padding-bottom: 3rem;
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
@@ -366,14 +370,15 @@
   /*中间内容右边--开始*/
   .content .right{
     width: 79%;
-    height: 100%;
+    height: 100vh;
     background-color: #fff;
     float: left;
   }
   .right ul.tabs{
     min-height: calc(100% + 1px);
+    /*height: 100%;*/
     padding-top: .45rem;
-    padding-bottom: 1.5rem;
+    padding-bottom: 4rem;
   }
   .right ul.tabs .title{
     font-size: .4rem;
