@@ -4,15 +4,28 @@
       .topLeft(slot="left")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") {{titleName}}
-    .form
-      w-input(v-model="userData.mi_phone", label="手机号码：", label-width="2.5rem")
-      w-input(v-model="form.gCode",label="验证码：", label-width="2.5rem", placeholder="请输入验证码", input-button=true, :error="gCodeError", required, button-cover, @input="checkCode")
-        img.aplaceholder(slot="button", @click="getPicCode", :src="url")
-      w-input(v-model="form.vcode", label="手机验证码：", label-width="2.5rem", placeholder="请输入手机验证码", :error="checkCodeError", input-button=true, required, button-cover)
-        .inputButton(slot="button", @click="getPhoneCode", v-show="sendMsg" ,:class="{inputButtonGray:sendMsgStatus}") 获取验证码
-        .inputButton(slot="button", v-show="!sendMsg",style="background-color:gray") {{countDown}}
-      p.tips 系统将向您的手机号发送短信验证码
-      button.regButton(@click="nextStep", :class="{regButtonGray:nextStepStatus}") 下一步
+    .content
+      .form
+        .inputWrapper
+          .phoneIcon
+            img.icon(src="../../../assets/img/forget2.png")
+          input.input(type="number", placeholder="请输入手机号", v-model="userData.mi_phone", readonly="readonly")
+        .validateWrapper
+          #sc(v-if="showSc")
+          .timer(v-show="!showSc") {{timerText}}
+        .inputWrapper
+          .phoneIcon
+            img.icon(src="../../../assets/img/forget1.png")
+          input.input(type="text", placeholder="请输入验证码", v-model="form.code")
+        .inputWrapper
+          .phoneIcon
+            img.icon(src="../../../assets/img/forget3.png")
+          input.input(type="password", placeholder="新密码", v-model="form.pwd")
+        .inputWrapper
+          .phoneIcon
+            img.icon(src="../../../assets/img/forget3.png")
+          input.input(type="password", placeholder="确认密码", v-model="form.rightPwd")
+      .rightBtn(@click="right") 确认
 </template>
 <script>
   import {mapState} from 'vuex'
@@ -21,114 +34,166 @@
     name: 'updatePassword1',
     data() {
       return {
+        scFlag: false,
+        sessionId: '',
+        sendCodeFlag: false,
+        showSc: true,
+        status: true,
+        timerText: '',
         form: {
-          gCode: '',
-          vcode: '',
-          type: '3',
-          W5MALLTOKEN: ''
-        },
-        version: 1,
-        url: this.$apiMember + 'member/picCode/150/75/60',
-        title: this.$route.query.routeParams,
-        sendMsgStatus: true,
-        nextStepStatus: true,
-        countDown: 60,
-        gCodeError: '',
-        checkCodeError: '',
-        sendMsg: true,
-        titleName: ''
+          code: '',
+          pwd: '',
+          rightPwd: ''
+        }
       }
     },
     computed: mapState(['userData']),
-    created() {
-      if (this.title == 1) {
+
+    created () {
+      if (this.$route.query.routeParams == 1) {
         this.titleName = "修改登录密码"
         this.form.type = '3'
-      }
-      if (this.title == 2) {
+      } else if (this.$route.query.routeParams == 2) {
         this.titleName = "修改支付密码"
         this.form.type = '4'
       }
     },
+    destroyed () {
+      this.timer && clearInterval(this.timer)
+    },
     mounted() {
-      this.getToken()
+      this._initSc()
     },
     methods: {
-      getToken () {
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'member/getSessionId',
-          params: {}
-        }).then(function (response) {
-          self.form.W5MALLTOKEN = response.data.data
-          self.getPicCode()
-        })
-      },
-      checkCode () {
-        if (this.form.gCode.trim().length === 4) {
-          this.sendMsgStatus = false
-        } else {
-          this.sendMsgStatus = true
-        }
-      },
-      getPicCode() {
-        this.version += 1
-        this.url = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version + '&W5MALLTOKEN=' +  this.form.W5MALLTOKEN
-      },
-      getPhoneCode() {
-        if (this.sendMsgStatus) {
+      right () {
+        // 验证
+        if (!/^1[0-9]{10}$/.test(this.userData.mi_phone)) {
+          this.$message.error('手机号码格式不正确！')
           return
         }
-        // 发送验证码
+        if (this.form.code.length!=6) {
+          this.$message.error('手机验证码格式不正确！')
+          return
+        }
+        if (!/^\S{6,20}$/.test(this.form.pwd)) {
+          this.$message.error('密码只能6-20位字母与数字组合！')
+          return
+        }
+        if (this.form.pwd!=this.form.rightPwd) {
+          this.$message.error('两次密码输入不一致！')
+          return
+        }
         let self = this
+        if (!this.status) {
+          return
+        }
+        this.status = false
 
-        if (self.form.gCode == '') {
-          self.gCodeError = ''
-          return
-        }
-
-        this.sendMsgStatus = true
-        self.$ajax({
-          method: 'post',
-          url: self.$apiMember + 'sms/sendCodeLoginIn',
-          params: self.form
-        }).then(function (response) {
-          if (response && response.data.optSuc) {
-            self.nextStepStatus = false
-            // 读秒倒计时
-            self.sendMsg = false
-            let interval = window.setInterval(function () {
-              if ((self.countDown--) <= 0) {
-                self.countDown = 60
-                self.sendMsg = true
-                self.sendMsgStatus = false
-                window.clearInterval(interval)
-              }
-            }, 1000)
-          } else {
-            self.getPicCode()
-            self.sendMsgStatus = false
-          }
-        })
-      },
-      nextStep() {
-        let self = this
-        if (self.form.vcode == '' || self.nextStepStatus) {
-          self.checkCodeError = ''
-          return
-        }
         self.$ajax({
           method: 'post',
           url: self.$apiMember + 'member/validationLoginIn',
-          params: self.form
+          params: {
+            vcode: this.form.code,
+            type: this.form.type
+          }
         }).then(function (response) {
           if (response.data.optSuc) {
-            // 成功跳转页面
-            self.$router.push({name: '修改登录登录密码与支付密码验证码验证', query: {routeParams:self.title}})
+            self.$ajax({
+              method: 'post',
+              url: self.$apiMember + 'member/resetPwdLoginIn',
+              params: {
+                pwd: self.form.pwd
+              }
+            }).then(function (response) {
+              self.status = true
+              if (response && response.data.optSuc) {
+                self.$message.success('修改成功')
+                // 成功跳转页面
+                self.$router.push({path: '/my/accountSafety'})
+              }
+            })
+          }
+        }).catch(function () {
+          self.status = true
+        })
+
+      },
+      _initSc () {
+        let _this = this
+        this.$nextTick(()=>{
+          var ic = new smartCaptcha({
+            renderTo: '#sc',
+            width: '9.2rem',
+            height: '1.17rem',
+            default_txt: '获取验证码',
+            success_txt: '获取成功，请查收短信',
+            fail_txt: '点击按钮刷新',
+            scaning_txt: '验证码发送中',
+            success: function(data) {
+              if (!_this.scFlag) {
+                _this.$ajax({
+                  method: 'post',
+                  url: _this.$apiMember + 'afs/afsValidateWeb',
+                  params: {
+                    sessionId: data.sessionId,
+                    sig: data.sig,
+                    token: NVC_Opt.token,
+                    scene: NVC_Opt.scene
+                  }
+                }).then(function (response) {
+                  if (response) {
+                    _this.scFlag = true
+                    _this.sessionId = data.sessionId
+                    _this.sendCodeAjax()
+                  }
+                })
+              }
+            }
+          });
+          ic.init();
+        })
+      },
+      sendCodeAjax () {
+        if (!/^1[0-9]{10}$/.test(this.userData.mi_phone)) {
+          this.$message.error('手机号码格式不正确！')
+          this.scFlag = false
+          this.showSc = false
+          this.$nextTick(() => {
+            this.showSc = true
+            this._initSc()
+          })
+          return
+        }
+        let _this = this
+        this.$ajax({
+          method: 'post',
+          url: _this.$apiMember + 'sms/sendCodeByAfs',
+          params: {
+            sessionId: this.sessionId,
+            mobile : this.userData.mi_phone
+          }
+        }).then(function (response) {
+          if (response) {
+            _this.showSc = false
+            _this.sendCodeFlag = true
+            let count = 60
+            _this.timerText = count + 's'
+            _this.timer && clearInterval(_this.timer)
+            _this.timer = setInterval(()=>{
+              count--
+              if (count <= 0) {
+                clearInterval(_this.timer)
+                _this.showSc = true
+                _this.scFlag = false
+                _this._initSc()
+              } else {
+                _this.timerText = count + 's'
+              }
+
+            }, 1000)
           }
         })
-      }
+      },
     }
   }
 </script>
@@ -138,70 +203,61 @@
     height: 100vh;
     background-color: rgb(242, 242, 242);
   }
-
-  .updatePassword1 .topCenter {
-    font-size: .5rem;
-    font-weight: 400;
-    color: rgb(51, 51, 51);
+  input::placeholder{
+    color: rgb(153,153,153);
   }
-
-  .inputButton {
-    width: 2rem;
-    height: .9rem;
-    border-radius: 1rem;
-    background: rgb(245, 0, 87);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  input  {
+    -webkit-appearance: none;
   }
-
-  .inputButtonGray {
-    background: rgb(192, 192, 192) !important;
-  }
-
   .form {
-    margin-top: 1.3rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: .53rem .4rem .26rem;
   }
-
-  .send {
-    width: 2rem;
-    height: .9rem;
-    border-radius: 1rem;
-    background: rgb(245, 0, 87);
-    color: white;
+  .inputWrapper {
+    height: 1.17rem;
+    background-color: #fff;
     display: flex;
-    justify-content: center;
     align-items: center;
+    padding: 0 .13rem 0;
+    margin-bottom: .26rem;
   }
-
-  .regButton {
-    margin-top: 1rem;
-    width: 7rem;
-    height: 1rem;
-    background-color: rgb(245, 0, 87);
-    color: white;
-    font-size: .4rem;
+  .icon {
+    width: .64rem;
+  }
+  .phoneIcon {
+    flex: none;
+  }
+  .input {
+    flex: 1;
+    height: 100%;
     border: none;
     outline: none;
+    margin-left: .13rem;
+    font-size: 13px;
+    color: #333;
+  }
+  .validateWrapper {
+    margin-bottom: 0.26rem;
+  }
+  #sc {
+    width: 9.2rem;
+    margin: 0;
+  }
+  .timer {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    line-height: 1.17rem;
+  }
+  .rightBtn {
+    width: 6.9rem;
+    height: 1rem;
+    color: #fff;
+    background-color: rgb(245,0,87);
+    font-size: 14px;
+    margin: 0 auto;
     border-radius: .5rem;
+    text-align: center;
+    line-height: 1rem;
   }
 
-  .regButtonGray {
-    background-color: rgb(192, 192, 192) !important;
-  }
-
-  .tips {
-    font-size: .3rem;
-    color: rgb(153, 153, 153);
-    text-indent: 2rem;
-  }
-
-  .aplaceholder {
-    width: 2rem;
-    background-color: rgb(245, 0, 87);
-  }
 </style>

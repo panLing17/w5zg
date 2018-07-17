@@ -24,10 +24,10 @@
     .four.cover(v-if="index === 3", @click="next")
       .inner
       .tips
-        img(src="../../../assets/img/ic_guide_ul.png")
         .content
           p "你要的大牌都在这"
           button.iSee 知道啦
+        img(src="../../../assets/img/ic_guide_right.png")
 
 </template>
 
@@ -157,10 +157,12 @@
   /*---------------------------------------------*/
   .four .inner{
     position: absolute;
-    left: 6.2rem;
-    top: 7.8rem;
-    width: 1.7rem;
-    height: 1.7rem;
+    /*left: 6.2rem;*/
+    /*top: 7.8rem;*/
+    left: 2.9rem;
+    bottom: .2rem;
+    width: 1.6rem;
+    height: 1.3rem;
     box-shadow: rgba(0,0,0,.7) 0 0 0 2017px;
     z-index: 100;
   }
@@ -170,7 +172,7 @@
   }
   .four .content{
     width: 4rem;
-    left: -.8rem;
-    bottom: -.5rem;
+    left: .8rem;
+    bottom: .5rem;
   }
 </style>
