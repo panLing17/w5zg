@@ -41,6 +41,9 @@
     mounted () {
       this._initSc()
     },
+    destroyed () {
+      this.timer && clearInterval(this.timer)
+    },
     methods: {
       right () {
         if (!/^1[0-9]{10}$/.test(this.form.phone)) {
@@ -61,17 +64,33 @@
             this.status = false
             self.$ajax({
               method: 'post',
-              url: self.$apiMember + 'asec/changeMobile',
-              params: self.form
+              url: self.$apiMember + 'asec/changeMobileAfs',
+              params: {
+                mobile: this.form.phone,
+                vcode: this.form.code,
+                sessionId: this.sessionId
+              }
             }).then(function (response) {
               self.status = true
               if (response && response.data.optSuc) {
                 self.$message.success('修改成功')
-                self.getUserData()
+                self._getUserData()
                 // 成功跳转页面
                 self.$router.push({path: '/my/accountSafety'})
               }
             })
+          }
+        })
+      },
+      _getUserData () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/currentMember',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            self.$store.commit('userDataChange',response.data.data)
           }
         })
       },
@@ -126,7 +145,7 @@
         })
       },
       sendCodeAjax () {
-        if (!/^1[0-9]{10}$/.test(this.userData.mi_phone)) {
+        if (!/^1[0-9]{10}$/.test(this.form.phone)) {
           this.$message.error('手机号码格式不正确！')
           this.scFlag = false
           this.showSc = false
@@ -137,7 +156,6 @@
           return
         }
         this._checkPhone((flag) => {
-          console.log(typeof flag)
           if (flag) {
             let _this = this
             this.$ajax({
