@@ -254,121 +254,121 @@
               }
             })
           })
-          return
-        }
+        } else {
+        // 若无则正常
+          // 若已经选择，则进行反选
+          if (e.target.className === 'specChecked') {
+            this.spec[index].valueIndex = -1
+            // 能与反选列能组成可选规格的规格全部可选
+            let reverseSpec = []  // 反选规格的整行集合
+            let reverseSpecRel = [] // 由反选集合所筛选出的可选集合
+            this.spec[index].specValue.forEach((now)=>{
+              reverseSpec.push(now.value)
+            })
+            reverseSpec.forEach((now)=>{
+              this.graySpecData.forEach((sonNow)=>{
+                if(sonNow.includes(now) && !reverseSpecRel.includes(sonNow)){
+                  reverseSpecRel = reverseSpecRel.concat(sonNow)
+                }
+              })
+            })
+            // 去重
+            let newReverseSpecRel = []
+            reverseSpecRel.forEach((now)=>{
+              if(newReverseSpecRel.indexOf(now) === -1) {
+                newReverseSpecRel.push(now)
+              }
+            })
+            reverseSpecRel = newReverseSpecRel
+            console.log(reverseSpecRel)
+            // 将该恢复的规格恢复
+            this.spec.forEach((now, index)=>{
+              now.specValue.forEach((sonNow, sonIndex)=>{
+                if (reverseSpecRel.includes(sonNow.value)) {
+                  this.spec[index].specValue[sonIndex].gray = false
+                }
+              })
+            })
+            console.log(this.spec)
+            // console.log(reverseSpecRel)
+          }
 
 
-        // 若已经选择，则进行反选
-        if (e.target.className === 'specChecked') {
-          this.spec[index].valueIndex = -1
-          // 能与反选列能组成可选规格的规格全部可选
-          let reverseSpec = []  // 反选规格的整行集合
-          let reverseSpecRel = [] // 由反选集合所筛选出的可选集合
+          // 获取同级规格
+          let selectedLevel = []
           this.spec[index].specValue.forEach((now)=>{
-            reverseSpec.push(now.value)
+            if (now.value !== key) {
+              selectedLevel.push(now.value)
+            }
           })
-          reverseSpec.forEach((now)=>{
+          // 如果同级规格跟任何规格都无法组成存在规格，那么置灰
+          let noGray = []  // 不该置灰的集合
+          selectedLevel.forEach((now)=>{
             this.graySpecData.forEach((sonNow)=>{
-              if(sonNow.includes(now) && !reverseSpecRel.includes(sonNow)){
-                reverseSpecRel = reverseSpecRel.concat(sonNow)
+              if (sonNow.includes(now) && !noGray.includes(now)) {
+                noGray.push(now)
               }
             })
           })
-          // 去重
-          let newReverseSpecRel = []
-          reverseSpecRel.forEach((now)=>{
-            if(newReverseSpecRel.indexOf(now) === -1) {
-              newReverseSpecRel.push(now)
+          console.log(noGray)
+          // 全部同级规格与不该置灰集合差集为该置灰的同级规格
+          let grayLevelSpec = selectedLevel.filter(key => !noGray.includes(key))
+          console.log(grayLevelSpec)
+          // 将全部需要置灰的同级置灰(封装成一个方法，方便之后调用)
+          let specGrayFun = grayArray => {
+            this.spec.forEach((now,index)=>{
+              now.specValue.forEach((sonNow,sonIndex)=>{
+                if (grayArray.includes(sonNow.value)) {
+                  this.spec[index].specValue[sonIndex].gray = true
+                }
+              })
+            })
+          }
+          specGrayFun(grayLevelSpec) //置灰
+
+
+          // 获取不同级规格
+          let selectedNotLevel = []
+          this.spec.forEach((now,specIndex)=>{
+            if (specIndex !== index) {
+              now.specValue.forEach((sonNow)=>{
+                selectedNotLevel.push(sonNow.value)
+              })
             }
           })
-          reverseSpecRel = newReverseSpecRel
-          console.log(reverseSpecRel)
-          // 将该恢复的规格恢复
-          this.spec.forEach((now, index)=>{
-            now.specValue.forEach((sonNow, sonIndex)=>{
-              if (reverseSpecRel.includes(sonNow.value)) {
-                delete this.spec[index].specValue[sonIndex].gray
-                this.spec[index].specValue[sonIndex].gray = false
-                console.log(this.spec[index].specValue[sonIndex])
-              }
-            })
-          })
-          console.log(this.spec)
-          // console.log(reverseSpecRel)
-        }
-
-
-        // 获取同级规格
-        let selectedLevel = []
-        this.spec[index].specValue.forEach((now)=>{
-          if (now.value !== key) {
-            selectedLevel.push(now.value)
-          }
-        })
-        // 如果同级规格跟任何规格都无法组成存在规格，那么置灰
-        let noGray = []  // 不该置灰的集合
-        selectedLevel.forEach((now)=>{
-          this.graySpecData.forEach((sonNow)=>{
-            if (sonNow.includes(now) && !noGray.includes(now)) {
-              noGray.push(now)
+          // 获取包含已选同级规格的存在组合
+          let relSpecHasSelected = []
+          this.graySpecData.forEach((now)=>{
+            if (now.includes(key)) {
+              relSpecHasSelected = relSpecHasSelected.concat(now)
             }
           })
-        })
-        console.log(noGray)
-        // 全部同级规格与不该置灰集合差集为该置灰的同级规格
-        let grayLevelSpec = selectedLevel.filter(key => !noGray.includes(key))
-        console.log(grayLevelSpec)
-        // 将全部需要置灰的同级置灰(封装成一个方法，方便之后调用)
-        let specGrayFun = grayArray => {
-          this.spec.forEach((now,index)=>{
-            now.specValue.forEach((sonNow,sonIndex)=>{
-              if (grayArray.includes(sonNow.value)) {
-                this.spec[index].specValue[sonIndex].gray = true
-              }
-            })
+          // 不同级,该置灰的规格集合
+          let selectedNotLevelGary = []
+          selectedNotLevel.forEach((now)=>{
+            if (!relSpecHasSelected.includes(now) && !selectedNotLevelGary.includes(now)) {
+              selectedNotLevelGary.push(now)
+            }
           })
+          // 不同级进行置灰
+          specGrayFun(selectedNotLevelGary)
+          //若所有层级都选择了规格则继续
+          let flag = 0
+          this.spec.forEach((now)=>{
+            if (now.valueIndex === -1) {
+              flag+=1
+            }
+          })
+          if (flag>0) {
+            return
+          }
         }
-        specGrayFun(grayLevelSpec) //置灰
-
-
-        // 获取不同级规格
-        let selectedNotLevel = []
-        this.spec.forEach((now,specIndex)=>{
-          if (specIndex !== index) {
-            now.specValue.forEach((sonNow)=>{
-              selectedNotLevel.push(sonNow.value)
-            })
-          }
-        })
-        // 获取包含已选同级规格的存在组合
-        let relSpecHasSelected = []
-        this.graySpecData.forEach((now)=>{
-          if (now.includes(key)) {
-            relSpecHasSelected = relSpecHasSelected.concat(now)
-          }
-        })
-        // 不同级,该置灰的规格集合
-        let selectedNotLevelGary = []
-        selectedNotLevel.forEach((now)=>{
-          if (!relSpecHasSelected.includes(now) && !selectedNotLevelGary.includes(now)) {
-            selectedNotLevelGary.push(now)
-          }
-        })
-        // 不同级进行置灰
-        specGrayFun(selectedNotLevelGary)
 
 
 
-        //若所有层级都选择了规格则继续
-        let flag = 0
-        this.spec.forEach((now)=>{
-          if (now.valueIndex === -1) {
-            flag+=1
-          }
-        })
-        if (flag>0) {
-          return
-        }
+
+
+
 
 
         if (key) {
