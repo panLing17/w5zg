@@ -5,13 +5,13 @@
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 足迹
       .topRight(slot="right")
-    .content(ref="conts").mescroll#footMescroll
+    .content(ref="conts")
       .wrapSon
         .date(v-for="item in footMarkData")
-          .title  {{item.create_time}}
+          .title {{item.create_time}}
           ul
             li(v-for="i in item.goods_info", @click="goGoods(i.gspu_id)")
-              img(:src="i.gi_image_url | img-filter")
+              img(:src="i.gi_image_url | img-filter", @load="imgOnload")
               .text
                 .price
                   span {{i.price | price-filter}}
@@ -29,26 +29,37 @@
 </template>
 
 <script>
+  import BScroll from 'better-scroll'
   export default {
     name: 'foot-mark',
     data () {
       return {
         footMarkData: [],
-        show: false
+        show: false,
+        loadIndex: '',
+        imgTotal: ''
       }
     },
     beforeDestroy () {
-      this.mescroll.hideTopBtn()
-      this.mescroll.destroy()
+
     },
     mounted () {
       this.getData()
-      this.$mescrollInt('footMescroll', this.upCallback)
-      this.hideStyles()
     },
     methods: {
-      hideStyles () {
-        this.$refs.conts.children[2].style.display = 'none'
+      imgOnload () {
+        this.loadIndex++
+        console.log(this.loadIndex)
+        if (this.loadIndex === this.imgTotal) {
+          this.loadIndex = 0
+          if (!this.cScroll) {
+            this.cScroll = new BScroll(this.$refs.conts, {
+              click: true
+            })
+          } else {
+            this.cScroll.refresh()
+          }
+        }
       },
       getData () {
         let self = this
@@ -59,45 +70,29 @@
           }
         }).then(function (response) {
           self.footMarkData = response.data.data
+          self.imgTotal = 0
+          self.footMarkData.forEach((item)=>{
+            console.log(item.goods_info)
+            self.imgTotal += item.goods_info.length
+          })
         })
       },
       goGoods (id) {
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
-      },
-
-      upCallback: function (page) {
-        let self = this
-        this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          // if (page.num === 1) self.pageName = []
-          // self.pageName = self.pageName.concat(curPageData)
-          self.mescroll.endSuccess(curPageData.length)
-        }, function () {
-          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr()
-        })
-      },
-      getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
-        successCallback && successCallback({}) // 成功回调
       }
+
     }
   }
 </script>
 
 <style scoped>
-  #footMescroll{
+  .content{
     position: fixed;
     top: 1.28rem;
     bottom: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgb(242,242,242);
-    padding-bottom: 3rem;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
   }
   .wrapSon{
-    width: 100%;
-    min-height: calc(100% + 1px);
+
   }
   .footMarkBox {
     position: relative;
