@@ -119,7 +119,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
+      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -158,7 +158,7 @@
     data () {
       return {
         // 真正存在的规格组合（置灰用）
-        relSpecData: [],
+        graySpecData: [],
         // 禁止选择专柜自提
         disableCabinet: false,
         // 能省多少钱
@@ -297,8 +297,8 @@
       this.getGoodsDetailed()
       this.getGoodsDesc()
       this.getBanner()
-      this.getRelSpec().then((d)=>{
-        this.getSpec(d)
+      this.getRelSpec().then(()=>{
+        this.getSpec()
       })
       // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
       if(this.skuId){
@@ -340,8 +340,8 @@
         this.getGoodsDetailed()
         this.getGoodsDesc()
         this.getBanner()
-        this.getRelSpec().then((d)=>{
-          this.getSpec(d)
+        this.getRelSpec().then(()=>{
+          this.getSpec()
         })
         // 重新赋值sku，以触发sku变化问题，防止从订单页回退，skuid并没变化导致的可省金额与到货日期不变化的问题
         if(this.skuId){
@@ -358,19 +358,19 @@
       }
     },
     methods:{
-      // 获取实际存在规格（置灰）
+      // 获取实际不存在规格（置灰）
       getRelSpec () {
         let p = new Promise((resolve)=>{
           let self = this
           self.$ajax({
             method: 'post',
-            url: self.$apiGoods + 'goods/spu/findSkuStatus',
+            url: self.$apiGoods + '/goods/spu/findSkuStatus',
             params: {
               gspuId: self.$route.query.id
             },
           }).then(function (response) {
-            self.relSpecData = response.data.data
-            resolve(response.data.data)
+            self.graySpecData = response.data.data
+            resolve()
           })
         })
         return p
@@ -608,80 +608,22 @@
           self.isShare()
         })
       },
-      // 分配哪些规格置灰
-      specGray (sepc, relSpec, checkedSpec) {
-        // 置灰后的spec
-        let newSpec = []
-        // spec现有规格，selSpec真实存在的规格，checkedSpec当前选中规格
-        let hasSpec = [] //实际存在的spec集合
-
-        relSpec.forEach((now)=>{
-          let flag = 0
-          if (!$isContained(now,checkedSpec)) {
-            flag += 1
-          }
-          // 为小于两个长度差证明跟选中规格完全匹配
-          if(flag < now.length-checkedSpec.length) {
-            hasSpec.push(now)
-          }
-        })
-        // 如果用户只选中一个规格，那么同级规格全部可选
-        if (checkedSpec.length === 1) {
-          sepc.forEach((now)=>{
-            now.hasSpec = []
-            // 如果当前条目包含已选规格，则整条都加入可选列表
-            if ($isContained(now.specValue,checkedSpec)) {
-              now.hasSpec = now.specValue
-            // 如果不包含则正常匹配
-            } else {
-              now.specValue.forEach((sonNow)=>{
-                hasSpec.forEach((three)=>{
-                  three.forEach((four)=>{
-                    if(sonNow === four) {
-                      now.hasSpec.push(four)
-                    }
-                  })
-                })
-              })
+      // 改造格式
+      specGray (spec, graySpec, checkedSpec) {
+        // 改造原有数据格式
+        spec.forEach((now)=>{
+          now.specValue.forEach((sonNow,index)=>{
+            now.specValue[index] = {
+              value: sonNow,
+              gray: false
             }
-            // 去重
-            let removal = []
-            now.hasSpec.forEach((now)=>{
-              if (removal.indexOf(now)===-1) {
-                removal.push(now)
-              }
-            })
-            now.hasSpec = removal
           })
-        }
-        // 如果是复合选择，那么完全按照组合表执行
-        if (checkedSpec.length > 1) {
-          sepc.forEach((now)=>{
-            now.hasSpec = []
-            now.specValue.forEach((sonNow)=>{
-              hasSpec.forEach((three)=>{
-                three.forEach((four)=>{
-                  if(sonNow === four) {
-                    now.hasSpec.push(four)
-                  }
-                })
-              })
-            })
-            // 去重
-            let removal = []
-            now.hasSpec.forEach((now)=>{
-              if (removal.indexOf(now)===-1) {
-                removal.push(now)
-              }
-            })
-            now.hasSpec = removal
-          })
-        }
-        console.log(sepc)
-        return sepc
+        })
+        // 返回新的数据
+        return spec
       },
       // 获取规格
-      getSpec (data) {
+      getSpec () {
         let self = this
         this.$ajax({
           method: 'post',
@@ -690,11 +632,19 @@
             gspuId: self.$route.query.id
           }
         }).then(function (response) {
-          self.specGray(response.data.data, data, [response.data.data[0].specValue[1]])
-          response.data.data.forEach((now,index)=>{
-            now.valueIndex = -1
+          // 改造格式
+          let newData = self.specGray(response.data.data)
+          console.log(newData)
+          newData.forEach((now)=>{
+            now.specValue.forEach((sonNow, sonIndex)=>{
+              if (!sonNow.gray) {
+                now.valueIndex = -1
+              } else {
+                now.valueIndex = -1
+              }
+            })
           })
-          self.spec = response.data.data
+          self.spec = newData
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
         })
