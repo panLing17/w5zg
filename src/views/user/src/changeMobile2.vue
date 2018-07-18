@@ -10,7 +10,7 @@
         .inputWrapper
           .phoneIcon
             img.icon(src="../../../assets/img/forget2.png")
-          input.input(type="number", placeholder="请输入手机号", v-model="form.phone")
+          input.input(type="number", placeholder="请输入新手机号", v-model="form.phone")
         .validateWrapper
           #sc(v-if="showSc")
           .timer(v-show="!showSc") {{timerText}}
