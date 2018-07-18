@@ -4,15 +4,15 @@
       .topLogo
         img(src="../../../../../assets/img/user_title.png" @click.prevent="")
       .words(v-if="temp == 1")
-        h1 活动7月3日开始
+        h1 活动已结束
         p
-        p 邀请好友关注“万物直供商城”,一起免费领鞋吧~
-      .goShopping(v-if="temp == 1", @click="$router.replace('/home')")
+        <!--p 邀请好友关注“万物直供商城”,一起免费领鞋吧~-->
+      .goShopping(v-if="temp == 1", @click="goHome")
         img(src="../../../../../assets/img/user_not_started_btn.png" @click.prevent="")
-      .rule(v-if="temp == 1")
-        .ruleTitle 活动规则
-        .ruleDesc1 送1万双耐克鞋，限3万人报名参加（成功率33%），按领券数排名，前1万名立得1双1200元耐克鞋。
-        .ruleDesc2 即日起，报名满2万人，短信通知报名者：活动开始。
+      <!--.rule(v-if="temp == 1")-->
+        <!--.ruleTitle 活动规则-->
+        <!--.ruleDesc1 送1万双耐克鞋，限3万人报名参加（成功率33%），按领券数排名，前1万名立得1双1200元耐克鞋。-->
+        <!--.ruleDesc2 即日起，报名满2万人，短信通知报名者：活动开始。-->
       .center(v-if="temp == 2")
         .topper
           .lefter
@@ -65,7 +65,7 @@
       return {
         shareFlag: 0,
         ruleFlag: '',
-        temp: 0,
+        temp: 1,
         aGroup: [],
         oMyInfo: {},
         bIsLast: '',
@@ -74,17 +74,20 @@
       }
     },
     created () {
-      this.loadShare()
-      this.saveUnionId()
-      this.whereFrom()
+      // this.loadShare()
+      // this.saveUnionId()
+      // this.whereFrom()
     },
     mounted () {
       document.title = "送耐克活动";
-      this.scroll3 = new BScroll(this.$refs.wrapAssisting, {
-        click: true
-      })
+      // this.scroll3 = new BScroll(this.$refs.wrapAssisting, {
+      //   click: true
+      // })
     },
     methods: {
+      goHome () {
+        window.location.href = this.getLocationHref() + '/#/home'
+      },
       //保存unionId
       saveUnionId () {
         if (this.$route.query.unionId) {

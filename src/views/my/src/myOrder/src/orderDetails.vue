@@ -32,10 +32,10 @@
             span.num {{item.order_no}}
           .right
             span.orderStatus {{item.orderInfoStatus}}
-        .center(v-for="items in item.orderDetail")
+        .center(v-for="items in item.orderDetail" @click="$router.push({path:'/goodsDetailed',query:{id:items.gspu_id}})")
           .wrapGoods
             .image
-              img(:src="items.logo | img-filter")
+              img(:src="items.logo | img-filter" @click.prevent="")
             .goodsDetails
               .words {{items.goods_name}}
               .wrapAttr

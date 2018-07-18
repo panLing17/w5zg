@@ -196,17 +196,17 @@
   }
 
   .goodsList {
-    width: calc(50% - .1rem);
+    width: calc(50% - .08rem);
     background: rgb(242, 242, 242);
   }
 
   .goodsList>li {
-    border: solid 1px #f2f2f2;
+    /*border: solid 1px #f2f2f2;*/
     background: #fff;
-    border-radius: 5px;
+    /*border-radius: 5px;*/
     overflow: hidden;
     width: 100%;
-    margin-bottom: .2rem;
+    margin-bottom: .16rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

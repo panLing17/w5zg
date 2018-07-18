@@ -12,20 +12,20 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
     .page
-      .content
+      .content(v-loading="loadingFlag < 2")
         .left(ref='lefters')
-            ul
-              li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-        .right(:class="{styles:flag}" ref='righters')
-            ul.tabs
-              li.tabsList(v-for="(item,index) in productList")
-                .title
-                  span.point(v-show="wordsShow")
-                  span.letter {{item.gc_name}}
-                ul.listOfGoods
-                  li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
-                    img(:src="items.gc_icon | img-filter")
-                    .words(v-show="wordsShow") {{items.gc_name}}
+          ul
+            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
+        .right(ref='righters')
+          ul.tabs(ref="tabs")
+            li.tabsList(v-for="(item,index) in productList")
+              .title
+                span.point
+                span.letter {{item.gc_name}}
+              ul.listOfGoods
+                li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+                  img(:src="items.gc_icon | img-filter", @load="imgOnload")
+                  .words {{items.gc_name}}
 </template>
 
 <script>
@@ -45,12 +45,17 @@
         productList: [],
         loadingFlag: 0,
         rightShowFlag: '', // 控制右侧内容的显隐
-        tabNums: ''
+        tabNums: '',
+        loadIndex: 0,
+        imgTotal: 0
       }
     },
     computed: mapState(['position']),
     activated () {
 
+    },
+    created () {
+      //this.request()
     },
     beforeDestroy () {
 
@@ -64,8 +69,33 @@
       this.judgeCity()
     },
     methods: {
+      imgOnload () {
+        this.loadIndex++
+        if (this.loadIndex === this.imgTotal) {
+          this.loadIndex = 0
+          if (!this.rScroll) {
+            this.rScroll = new BScroll(this.$refs.righters, {
+              click: true,
+              probeType: 3
+            })
+            this.$store.state.position.forEach((now) => {
+              if (now.path === this.$route.path + '2') {
+                this.rScroll.scrollTo(0, now.y, 0);
+              }
+            })
+            this.rScroll.on('touchEnd', (pos) => {
+              this.$store.commit('setPosition', {
+                path: this.$route.path + '2',
+                y: pos.y
+              })
+            })
+          } else {
+            this.rScroll.refresh()
+          }
+          this.loadingFlag += 1
+        }
+      },
       keepState () {
-        console.log(this.$route.query.tabNum)
         if (this.$route.query.tabNum == undefined) {
           this.secondLevel(this.pageName[0].gc_id)
         } else {
@@ -145,42 +175,21 @@
           params: {firstId: id}
         }).then(function (res) {
           self.productList = res.data.data
-          self.timer && clearTimeout(self.timer)
-          let s
-          if (id == 127) {
-            s = 700
-          } else {
-            s = 20
-          }
-          self.timer =setTimeout(() => {
-            if (!self.rScroll) {
-              self.rScroll = new BScroll(self.$refs.righters, {
-                click: true,
-                probeType: 3
-              })
-              self.$store.state.position.forEach((now) => {
-                if (now.path === self.$route.path + '2') {
-                  self.rScroll.scrollTo(0, now.y, 0);
-                }
-              })
-              self.rScroll.on('scroll', function (pos) {
-                self.$store.commit('setPosition', {
-                  path: self.$route.path + '2',
-                  y: pos.y
-                })
-              })
-            }
-          },s)
+          self.imgTotal = 0
+          self.productList.forEach((item) => {
+            self.imgTotal += item.childList.length
+          })
         })
       },
       // 点击左侧一级分类切换右边二三级
       tab (item, index, id) {
-        this.flag = false
-        this.wordsShow = true
+        //this.flag = false
+        //this.wordsShow = true
         this.num = index
+        this.rScroll.scrollTo(0, 0);
+        this.loadIndex = 0
         this.$router.replace({path:'/page',query:{tabNum:index}})
         this.secondLevel(id)
-        this.rScroll.scrollTo(0, 0, 0);
       },
 
       // 展示左侧商品导航
@@ -210,7 +219,9 @@
                 })
               })
             }
+            self.loadingFlag += 1
           })
+
           // 第一个二级分类
           self.keepState()
         })
@@ -331,12 +342,12 @@
   }
   .content{
     width: 100%;
-    height: 100vh;
+    /*height: 100vh;*/
     background-color: #fff;
     position: fixed;
-    top: 0;
-    bottom: 0;
-    padding: 1.28rem 0 1.6rem;
+    top: 1.3rem;
+    bottom: 1.6rem;
+    /*padding: 1.28rem 0 1.6rem;*/
   }
   .content .left{
     width: 21%;
@@ -345,8 +356,9 @@
     background-color: rgb(242,242,242);
   }
   .content .left ul{
-    min-height: calc(100% + 1px);
-    padding-bottom: 3rem;
+    /*height: calc(100% + 1px);*/
+    /*height: 100%;*/
+    /*padding-bottom: 3rem;*/
   }
   .content .left ul li{
     background-color: rgb(242,242,242);
@@ -368,9 +380,10 @@
     float: left;
   }
   .right ul.tabs{
-    min-height: calc(100% + 1px);
-    padding-top: .45rem;
-    padding-bottom: 3rem;
+    /*min-height: calc(100% + 1px);*/
+    /*height: 100%;*/
+    /*padding-top: .45rem;*/
+    /*padding-bottom: 4rem;*/
   }
   .right ul.tabs .title{
     font-size: .4rem;
@@ -400,6 +413,9 @@
   .right ul.tabs ul.listOfGoods li .words{
     text-align: center;
     color: rgb(153,153,153);
+  }
+  .right .tabsList:first-child {
+    padding-top: .45rem;
   }
   /*中间内容右边--结束*/
 

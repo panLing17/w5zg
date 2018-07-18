@@ -30,7 +30,7 @@
         .right
           .prive 合计：{{computedPrice | price-filter}}
           .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
-    cart-guide
+    //cart-guide
 </template>
 
 <script>

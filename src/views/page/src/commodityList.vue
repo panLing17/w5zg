@@ -514,8 +514,8 @@
     background: rgb(242,242,242);
   }
   .goodsList li{
-    width: calc((100% - 6px)/2);
-    margin-bottom: 6px;
+    width: calc((100% - .16rem)/2);
+    margin-bottom: .16rem;
     background-color: #fff;
   }
   .goodsList li img{

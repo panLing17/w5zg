@@ -50,7 +50,7 @@
         span(:class="{play:animateShow}") 请
         span(:class="{play:animateShow}") 期
         span(:class="{play:animateShow}") 待
-    home-guide
+    //home-guide
 </template>
 <script>
   import hotButton from './hotButton'
@@ -120,6 +120,7 @@
       next();
     },
     mounted() {
+      document.title = '万物直供'
       this.$mescrollInt("homeMescroll", this.upCallback, () => {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {

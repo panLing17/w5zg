@@ -95,7 +95,7 @@
         span(:class="{play:animateShow}") 请
         span(:class="{play:animateShow}") 期
         span(:class="{play:animateShow}") 待
-    myGuide
+    //myGuide
 </template>
 
 <script>
