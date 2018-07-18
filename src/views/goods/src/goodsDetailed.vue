@@ -78,7 +78,7 @@
         .left 规格
           span(v-for="item1 in selectedSpec", v-if="!initPriceFlag") {{item1.gspec_value}}
         img(src="../../../assets/img/right.png").right
-      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'",ref="disType")
+      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :hasGoodsFlag="initPriceFlag", ref="disType")
       //.distribution(@click="selectCityShow")
         .top
           .left 地址
