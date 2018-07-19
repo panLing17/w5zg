@@ -23,7 +23,7 @@
         .express
           h1 配送方式
           .buttonTab
-            button(@click="changeExpress('专柜自提')", :class="{checked:expressType === '专柜自提'}") 专柜提货
+            button(@click="changeExpress('专柜自提')", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
             button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
         .address
           h1
@@ -300,18 +300,19 @@
             this.spec.forEach((now, index)=>{
               now.specValue.forEach((sonNow, sonIndex)=>{
                 if (reverseSpecRel.includes(sonNow.value)) {
-                  /*Object.defineProperty(this.spec[index].specValue[sonIndex],'gray',{
-                    value: false,
-                    writable: true
-                  })*/
+                  //Object.defineProperty(this.spec[index].specValue[sonIndex],'gray',{
+                    //value: false,
+                    //writable: true
+                  //})
+                  //delete this.spec[index].specValue[sonIndex].gray
+
                   this.spec[index].specValue[sonIndex].gray = false
-                  console.log(this.spec[index].specValue[sonIndex].gray)
-                  console.log(this.spec[index].specValue[sonIndex])
+
 
                 }
               })
             })
-            console.log(this.spec)
+            return
             // console.log(reverseSpecRel)
           }
 
@@ -369,6 +370,7 @@
               })
             }
           })
+
           // 获取包含已选同级规格的存在组合
           let relSpecHasSelected = []
           this.graySpecData.forEach((now)=>{
@@ -376,6 +378,7 @@
               relSpecHasSelected = relSpecHasSelected.concat(now)
             }
           })
+          console.log(relSpecHasSelected)
           // 不同级,该置灰的规格集合
           let selectedNotLevelGary = []
           selectedNotLevel.forEach((now)=>{
@@ -383,7 +386,6 @@
               selectedNotLevelGary.push(now)
             }
           })
-          console.log(selectedNotLevelGary)
           // 不同级进行置灰
           specGrayFun(selectedNotLevelGary,true)
           //若所有层级都选择了规格则继续
@@ -461,7 +463,6 @@
             goi_freight: self.realGoodsData.goi_freight
           }
           self.$emit('load',data)
-          console.log(new Date()-date)
         })
       },
       buy () {
@@ -671,9 +672,9 @@
   }
   /* 禁止选择 */
   .disableSelect{
-    background: gray;
+    background: #E8E8E8;
     color: white !important;
-    border: solid 1px gray !important;
+    border: solid 1px #E8E8E8 !important;
   }
   /* 选择数量部分 */
   .count {
@@ -708,6 +709,11 @@
     color: white !important;
     border: none !important;
     background: rgb(246,0,88) !important;
+  }
+  .lockNoChecked {
+    color: white !important;
+    border: none !important;
+    background: #E8E8E8 !important;
   }
   /* 配送地址 */
   .address {
