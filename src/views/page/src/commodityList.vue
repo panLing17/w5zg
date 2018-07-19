@@ -36,7 +36,7 @@
             li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
               img(:src="item.gi_image_url | img-filter" @click.prevent="")
               .wrapWords
-                .text <span v-show="item.carryFlag">专柜提货</span> {{item.gi_name}}
+                .text <span v-if="item.carry_type!==2">专柜提货</span> {{item.gi_name}}
                 .price <span>实付</span>{{item.direct_supply_price | price-filter}}
                   span(v-if="false") 可省{{item.economize_price}}元
                 .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}
@@ -349,14 +349,6 @@
           }
         }).then(function (response) {
           self.goodsFlag = true
-          for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].carry_type === 1) {
-              response.data.data[i].carryFlag = true
-            }
-            if (response.data.data[i].carry_type === 2) {
-              response.data.data[i].carryFlag = false
-            }
-          }
           successCallback && successCallback(response.data.data) // 成功回调
           // }
           if (self.recommendGoods.length === 0) {
