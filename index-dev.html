@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
+    <meta name="description" content="万物直供商城" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <!-- uc全屏 -->
+    <meta name="full-screen" content="yes">
+    <meta name="browsermode" content="application">
+    <!-- qq全屏 -->
+    <meta name="x5-fullscreen" content="true">
+    <meta name="x5-page-mode" content="app">
+    <link rel="stylesheet" type="text/css" href="static/css/animate.min.css" />
+    <link rel="stylesheet" href="static/mescroll/mescroll.min.css">
+    <!--阿里智能验证-->
+    <script>
+      window.NVC_Opt = {
+        appkey:'FFFF0N00000000006318',
+        scene:'ic_message_h5',
+        renderTo:'#captcha',
+        trans: {"key1": "code0", "nvcCode":200},
+        elements: [
+          '//img.alicdn.com/tfs/TB17cwllsLJ8KJjy0FnXXcFDpXa-50-74.png',
+          '//img.alicdn.com/tfs/TB17cwllsLJ8KJjy0FnXXcFDpXa-50-74.png'
+        ],
+        bg_back_prepared: '//img.alicdn.com/tps/TB1skE5SFXXXXb3XXXXXXXXXXXX-100-80.png',
+        bg_front: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABQCAMAAADY1yDdAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAADUExURefk5w+ruswAAAAfSURBVFjD7cExAQAAAMKg9U9tCU+gAAAAAAAAAIC3AR+QAAFPlUGoAAAAAElFTkSuQmCC',
+        obj_ok: '//img.alicdn.com/tfs/TB1rmyTltfJ8KJjy0FeXXXKEXXa-50-74.png',
+        bg_back_pass: '//img.alicdn.com/tfs/TB1KDxCSVXXXXasXFXXXXXXXXXX-100-80.png',
+        obj_error: '//img.alicdn.com/tfs/TB1q9yTltfJ8KJjy0FeXXXKEXXa-50-74.png',
+        bg_back_fail: '//img.alicdn.com/tfs/TB1w2oOSFXXXXb4XpXXXXXXXXXX-100-80.png',
+        upLang:{"cn":{
+            _ggk_guide: "请在屏幕上滑动，刮出两面盾牌",
+            _ggk_success: "恭喜您成功刮出盾牌<br/>继续下一步操作吧",
+            _ggk_loading: "加载中",
+            _ggk_fail: ['呀，盾牌不见了<br/>请', "javascript:noCaptcha.reset()", '再来一次', '或', "http://survey.taobao.com/survey/QgzQDdDd?token=%TOKEN", '反馈问题'],
+            _ggk_action_timeout: ['我等得太久啦<br/>请', "javascript:noCaptcha.reset()", '再来一次', '或', "http://survey.taobao.com/survey/QgzQDdDd?token=%TOKEN", '反馈问题'],
+            _ggk_net_err: ['网络实在不给力<br/>请', "javascript:noCaptcha.reset()", '再来一次', '或', "http://survey.taobao.com/survey/QgzQDdDd?token=%TOKEN", '反馈问题'],
+            _ggk_too_fast: ['您刮得太快啦<br/>请', "javascript:noCaptcha.reset()", '再来一次', '或', "http://survey.taobao.com/survey/QgzQDdDd?token=%TOKEN", '反馈问题']
+          }
+        }
+      }
+    </script>
+
+    <script src="//g.alicdn.com/sd/nvc/1.1.112/guide.js"></script>
+
+    <title>万物直供</title>
+  </head>
+  <body>
+    <script src="//g.alicdn.com/sd/smartCaptcha/0.0.1/index.js"></script>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <!-- <script src="https://qiyukf.com/script/6654954e4d94953d8596b1c500b54b78.js"></script> -->
+    <script src="static/mescroll/mescroll.min.js"></script>
+    <script src="static/js/path.js"></script>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?9d2fae9cb3845802a430bff154b0b25e";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
+    <!--<script>
+      /**/
+      function launchFullScreen(element) {
+        if(element.requestFullscreen) {
+          element.requestFullscreen();
+        } else if(element.mozRequestFullScreen) {
+          element.mozRequestFullScreen();
+        } else if(element.webkitRequestFullscreen) {
+          element.webkitRequestFullscreen();
+        } else if(element.msRequestFullscreen) {
+          element.msRequestFullscreen();
+        }
+      }
+      launchFullScreen(document.documentElement);
+      /**/
+      document.addEventListener('plusready', function() {
+        var webview = plus.webview.currentWebview();
+        plus.key.addEventListener('backbutton', function() {
+          webview.canBack(function(e) {
+            if(e.canBack) {
+              webview.back();
+            } else {
+              //webview.close(); //hide,quit
+              //plus.runtime.quit();
+              mui.plusReady(function() {
+                //首页返回键处理
+                //处理逻辑：1秒内，连续两次按返回键，则退出应用；
+                var first = null;
+                plus.key.addEventListener('backbutton', function() {
+                  //首次按键，提示‘再按一次退出应用’
+                  if (!first) {
+                    first = new Date().getTime();
+                    mui.toast('再按一次退出应用');
+                    setTimeout(function() {
+                      first = null;
+                    }, 1000);
+                  } else {
+                    if (new Date().getTime() - first < 1500) {
+                      plus.runtime.quit();
+                    }
+                  }
+                }, false);
+              });
+            }
+          })
+        });
+      });
+    </script>-->
+  </body>
+  <script src="static/mescroll/mescroll.min.js"></script>
+  <script src="static/js/path.js"></script>
+  <!-- 微信sdk -->
+  <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+  <!-- 百度地图 -->
+  <script src="http://webapi.amap.com/maps?v=1.4.5&key=ce7575fe15f1595f88919c7bffb68cf6"></script>
+  <!-- 七鱼云客服 -->
+  <script src="https://qiyukf.com/script/6654954e4d94953d8596b1c500b54b78.js"></script>
+</html>
