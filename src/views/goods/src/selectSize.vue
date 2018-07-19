@@ -240,7 +240,6 @@
           return
         }
 
-
         // 若无传参则为初始化
         if (!key && !index) {
           let allRelSpec = []
@@ -251,6 +250,9 @@
             now.specValue.forEach((sonNow, sonIndex) => {
               if (!allRelSpec.includes(sonNow.value)) {
                 this.spec[specIndex].specValue[sonIndex].gray = true
+                /*Object.defineProperty(this.spec[specIndex].specValue[sonIndex],'gray',{
+                  value: true
+                })*/
               }
             })
           })
@@ -280,12 +282,18 @@
               }
             })
             reverseSpecRel = newReverseSpecRel
-            console.log(reverseSpecRel)
             // 将该恢复的规格恢复
             this.spec.forEach((now, index)=>{
               now.specValue.forEach((sonNow, sonIndex)=>{
                 if (reverseSpecRel.includes(sonNow.value)) {
+                  /*Object.defineProperty(this.spec[index].specValue[sonIndex],'gray',{
+                    value: false,
+                    writable: true
+                  })*/
                   this.spec[index].specValue[sonIndex].gray = false
+                  console.log(this.spec[index].specValue[sonIndex].gray)
+                  console.log(this.spec[index].specValue[sonIndex])
+
                 }
               })
             })
@@ -310,16 +318,27 @@
               }
             })
           })
-          console.log(noGray)
           // 全部同级规格与不该置灰集合差集为该置灰的同级规格
           let grayLevelSpec = selectedLevel.filter(key => !noGray.includes(key))
-          console.log(grayLevelSpec)
           // 将全部需要置灰的同级置灰(封装成一个方法，方便之后调用)
-          let specGrayFun = grayArray => {
+          let specGrayFun = (grayArray,notGrayFlag) => {
             this.spec.forEach((now,index)=>{
               now.specValue.forEach((sonNow,sonIndex)=>{
                 if (grayArray.includes(sonNow.value)) {
+                  /*Object.defineProperty(this.spec[index].specValue[sonIndex],'gray',{
+                    value: true
+                  })*/
                   this.spec[index].specValue[sonIndex].gray = true
+                } else {
+                  // 如果来自不同级规格操作，并且规格不属于当前点击的同级规格，才可取消置灰
+                  if (notGrayFlag) {
+                    if (!selectedLevel.includes(this.spec[index].specValue[sonIndex].value)) {
+                      /*Object.defineProperty(this.spec[index].specValue[sonIndex],'gray',{
+                        value: false
+                      })*/
+                      this.spec[index].specValue[sonIndex].gray = false
+                    }
+                  }
                 }
               })
             })
@@ -350,8 +369,9 @@
               selectedNotLevelGary.push(now)
             }
           })
+          console.log(selectedNotLevelGary)
           // 不同级进行置灰
-          specGrayFun(selectedNotLevelGary)
+          specGrayFun(selectedNotLevelGary,true)
           //若所有层级都选择了规格则继续
           let flag = 0
           this.spec.forEach((now)=>{
@@ -360,8 +380,11 @@
             }
           })
           if (flag>0) {
+            this.$parent.initPriceFlag = true
             return
           }
+          this.$parent.initPriceFlag = false
+          // 隐藏掉商品详情拿到的最低价格，显示规格的
         }
 
 
