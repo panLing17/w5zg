@@ -35,8 +35,8 @@
             .text <span v-if="initPriceFlag">{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 现金券抵扣
-            .text(v-if="initPriceFlag") 省<span>{{goodsData.counter_price-goodsData.direct_supply_price}}</span>元
-            .text(v-else) 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
+            .text(v-if="initPriceFlag") 省<span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
+            .text(v-else) 省<span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
         //ul.saveMoneyBottom
           li.gray
             .label 专柜价购买
