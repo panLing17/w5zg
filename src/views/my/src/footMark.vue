@@ -53,7 +53,8 @@
           this.loadIndex = 0
           if (!this.cScroll) {
             this.cScroll = new BScroll(this.$refs.conts, {
-              click: true
+              click: true,
+              probeType: 3
             })
           } else {
             this.cScroll.refresh()
@@ -71,7 +72,6 @@
           self.footMarkData = response.data.data
           self.imgTotal = 0
           self.footMarkData.forEach((item)=>{
-            console.log(item.goods_info)
             self.imgTotal += item.goods_info.length
           })
         })

@@ -76,7 +76,7 @@
           if (!this.rScroll) {
             this.rScroll = new BScroll(this.$refs.righters, {
               click: true,
-              probeType: 3
+              // probeType: 3
             })
             this.$store.state.position.forEach((now) => {
               if (now.path === this.$route.path + '2') {
@@ -89,7 +89,8 @@
                 y: pos.y
               })
             })
-          } else {
+          }
+          else {
             this.rScroll.refresh()
           }
           this.loadingFlag += 1
