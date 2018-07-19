@@ -7,7 +7,7 @@
         .text
           .name {{data.goodsName}}
           .spec
-            span(v-for="item in data.spec") {{item}}
+            span(v-for="item in data.spec") {{item.value}}
         .price
           span {{data.price | price-filter}}
           span X{{data.number}}

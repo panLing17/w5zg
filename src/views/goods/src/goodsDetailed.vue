@@ -35,8 +35,8 @@
             .text <span v-if="initPriceFlag">{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 现金券抵扣
-            .text(v-if="initPriceFlag") 省<span>{{goodsData.counter_price-goodsData.direct_supply_price}}</span>元
-            .text(v-else) 省<span>{{makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0}}</span>元
+            .text(v-if="initPriceFlag") 省<span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
+            .text(v-else) 省<span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
         //ul.saveMoneyBottom
           li.gray
             .label 专柜价购买
@@ -114,7 +114,7 @@
         img(src="../../../assets/img/msg.png", @click="goService")
         .ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
-          ul(@click="bespeakFlag = true")
+          ul(@click="yuyueShow")
             li 预约体验
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
@@ -315,10 +315,7 @@
       this.mescroll.destroy()
     },
     watch: {
-      // 只要呼出过选择规格页面，就不再显示一开始的金额，而是根据sku详情
-      selectFlag () {
-        this.initPriceFlag = false
-      },
+
       skuId (val) {
         if (val) {
           this.getMakeMoney (val)
@@ -358,6 +355,14 @@
       }
     },
     methods:{
+      // 显示预约
+      yuyueShow () {
+        if (this.initPriceFlag) {
+          this.$message.warning('请选择规格')
+          return
+        }
+        this.bespeakFlag = true
+      },
       // 获取实际不存在规格（置灰）
       getRelSpec () {
         let p = new Promise((resolve)=>{
