@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="backJump()")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
-        img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()").search
+        img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()" v-if="false").search
         img(src="../../../../../assets/img/msg_0.png" v-show="false").msg
     .orderStatus
       ul.wrapStatus
