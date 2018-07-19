@@ -272,10 +272,10 @@
     bottom: 0;*/
   }
   .page{
-    /*width: 100%;
-    height: 100vh;
-    background: rgb(242,242,242);
-    overflow: hidden;*/
+    /*width: 100%;*/
+    /*height: 100vh;*/
+    /*background: rgb(242,242,242);*/
+    /*overflow: hidden;*/
     /*position: fixed;*/
   }
   /*顶部搜索--开始*/
