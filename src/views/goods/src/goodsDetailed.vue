@@ -114,7 +114,7 @@
         img(src="../../../assets/img/msg.png", @click="goService")
         .ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
-          ul(@click="bespeakFlag = true")
+          ul(@click="yuyueShow")
             li 预约体验
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
@@ -355,6 +355,14 @@
       }
     },
     methods:{
+      // 显示预约
+      yuyueShow () {
+        if (this.initPriceFlag) {
+          this.$message.warning('请选择规格')
+          return
+        }
+        this.bespeakFlag = true
+      },
       // 获取实际不存在规格（置灰）
       getRelSpec () {
         let p = new Promise((resolve)=>{
