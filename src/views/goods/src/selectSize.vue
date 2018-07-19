@@ -3,11 +3,12 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
+      //.main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
+      .main(v-show="show").mescroll#selectSize
         .photosBox()
           ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
-            li(v-for="item in list")
-              img(:src="item.gi_img_url | img-filter")
+            li(v-for="item,index in list")
+              img(:src="item.gi_img_url | img-filter", v-if="index===0")
         .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
           .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
           .price(v-else) {{realGoodsData.counter_price| price-filter}}
@@ -64,7 +65,7 @@
       return {
         startY: '',
         moveY: '',
-        smallPhotoFlag: false,
+        smallPhotoFlag: true,
         content: 1,
         realGoodsData: {},
         // 当前该显示的地址信息
@@ -204,6 +205,18 @@
       },
       // 更改地址
       changeLocation () {
+        //若所有层级都选择了规格则继续
+        let flag = 0
+        this.spec.forEach((now)=>{
+          if (now.valueIndex === -1) {
+            flag+=1
+          }
+        })
+        if (flag>0) {
+          this.$parent.initPriceFlag = true
+          this.$message.warning('请选择规格')
+          return
+        }
         this.$parent.selectCityShow()
       },
       notScroll (e) {
