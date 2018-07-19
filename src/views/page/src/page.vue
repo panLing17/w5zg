@@ -11,21 +11,20 @@
           img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
-    .page
-      .content(v-loading="loadingFlag < 2")
-        .left(ref='lefters')
-          ul
-            li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
-        .right(ref='righters')
-          ul.tabs(ref="tabs")
-            li.tabsList(v-for="(item,index) in productList")
-              .title
-                span.point
-                span.letter {{item.gc_name}}
-              ul.listOfGoods
-                li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
-                  img(:src="items.gc_icon | img-filter", @load="imgOnload")
-                  .words {{items.gc_name}}
+    .content(v-loading="loadingFlag < 2")
+      .left(ref='lefters')
+        ul
+          li(v-for="(item,index) in pageName" :class="{active:index == num}" @click="tab(item.gc_name,index,item.gc_id)") {{item.gc_name}}
+      .right(ref='righters')
+        ul.tabs(ref="tabs")
+          li.tabsList(v-for="(item,index) in productList")
+            .title
+              span.point
+              span.letter {{item.gc_name}}
+            ul.listOfGoods
+              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+                img(:src="items.gc_icon | img-filter", @load="imgOnload")
+                .words {{items.gc_name}}
 </template>
 
 <script>
@@ -55,7 +54,7 @@
 
     },
     created () {
-      //this.request()
+      this.request()
     },
     beforeDestroy () {
 
@@ -64,7 +63,7 @@
       // 判断显示城市的字数
       this.judgeCityNum()
       // 一级分类
-      this.request()
+      //this.request()
       // 判断显示当前城市
       this.judgeCity()
     },
@@ -76,7 +75,7 @@
           if (!this.rScroll) {
             this.rScroll = new BScroll(this.$refs.righters, {
               click: true,
-              // probeType: 3
+              probeType: 3
             })
             this.$store.state.position.forEach((now) => {
               if (now.path === this.$route.path + '2') {
@@ -264,12 +263,12 @@
     /*width: 100%;
     height: 100vh;*/
     /*overflow: hidden;*/
-    /*-webkit-overflow-scrolling: touch;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;*/
+    /*-webkit-overflow-scrolling: touch;*/
+    /*position: fixed;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
   }
   .page{
     /*width: 100%;*/
@@ -343,10 +342,12 @@
   .content{
     width: 100%;
     /*height: 100vh;*/
+    height: calc(100vh - 2.9rem);
+    overflow: hidden;
     background-color: #fff;
-    position: fixed;
-    top: 1.3rem;
-    bottom: 1.6rem;
+    /*position: fixed;*/
+    /*top: 1.3rem;*/
+    /*bottom: 1.6rem;*/
     /*padding: 1.28rem 0 1.6rem;*/
   }
   .content .left{
