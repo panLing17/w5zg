@@ -221,7 +221,6 @@
             }
             self.loadingFlag += 1
           })
-
           // 第一个二级分类
           self.keepState()
         })

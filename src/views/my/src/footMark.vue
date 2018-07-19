@@ -49,7 +49,6 @@
     methods: {
       imgOnload () {
         this.loadIndex++
-        console.log(this.loadIndex)
         if (this.loadIndex === this.imgTotal) {
           this.loadIndex = 0
           if (!this.cScroll) {
