@@ -42,10 +42,10 @@
               i(v-else) 请选择地址
             img(src="../../../assets/img/more@2x.png")
         ul.spec
-          li(v-for="item in spec")
+          li(v-for="(item,fatherIndex) in spec")
             .title {{item.specName}}
             ul.content
-              li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index}", @click="item.valueIndex=index;getStoreNum()") {{i}}
+              li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
               p(style="clear:both")
         .count
           span 购买数量
@@ -67,12 +67,13 @@
         content: 1,
         realGoodsData: {},
         // 当前该显示的地址信息
-        locationOrAddress: 'location'
+        locationOrAddress: 'location',
       }
     },
     props: {
       photos: Array,
       spec: Array,
+      graySpecData: Array,
       // 配送类型
       expressType:{
         type: String,
@@ -137,6 +138,9 @@
       this.getStoreNum()
     },
     methods:{
+      isGray (e, index) {
+
+      },
       upCallback: function(page) {
         let self = this;
         self.mescroll.endSuccess(1)
@@ -216,7 +220,7 @@
         this.spec.forEach((now)=>{
           data.spec.push({
             gspec_name: now.specName,
-            gspec_value: now.specValue[now.valueIndex]
+            gspec_value: now.specValue[now.valueIndex].value
           })
         })
         if (this.realGoodsData.storage_num>0 && this.realGoodsData.storage_num >= this.content) {
@@ -229,7 +233,155 @@
         this.$emit('buy')
       },*/
       // 校验库存与获得skuId（此请求每次挂载后都会执行）
-      getStoreNum () {
+      getStoreNum (e,key,index, disable) {
+        let date = new Date()
+        // 为置灰直接弹出，没有操作
+        if (disable) {
+          return
+        }
+
+
+        // 若无传参则为初始化
+        if (!key && !index) {
+          let allRelSpec = []
+          this.graySpecData.forEach((now)=>{
+            allRelSpec = allRelSpec.concat(now)
+          })
+          this.spec.forEach((now, specIndex) => {
+            now.specValue.forEach((sonNow, sonIndex) => {
+              if (!allRelSpec.includes(sonNow.value)) {
+                this.spec[specIndex].specValue[sonIndex].gray = true
+              }
+            })
+          })
+        } else {
+        // 若无则正常
+          // 若已经选择，则进行反选
+          if (e.target.className === 'specChecked') {
+            this.spec[index].valueIndex = -1
+            // 能与反选列能组成可选规格的规格全部可选
+            let reverseSpec = []  // 反选规格的整行集合
+            let reverseSpecRel = [] // 由反选集合所筛选出的可选集合
+            this.spec[index].specValue.forEach((now)=>{
+              reverseSpec.push(now.value)
+            })
+            reverseSpec.forEach((now)=>{
+              this.graySpecData.forEach((sonNow)=>{
+                if(sonNow.includes(now) && !reverseSpecRel.includes(sonNow)){
+                  reverseSpecRel = reverseSpecRel.concat(sonNow)
+                }
+              })
+            })
+            // 去重
+            let newReverseSpecRel = []
+            reverseSpecRel.forEach((now)=>{
+              if(newReverseSpecRel.indexOf(now) === -1) {
+                newReverseSpecRel.push(now)
+              }
+            })
+            reverseSpecRel = newReverseSpecRel
+            console.log(reverseSpecRel)
+            // 将该恢复的规格恢复
+            this.spec.forEach((now, index)=>{
+              now.specValue.forEach((sonNow, sonIndex)=>{
+                if (reverseSpecRel.includes(sonNow.value)) {
+                  this.spec[index].specValue[sonIndex].gray = false
+                }
+              })
+            })
+            console.log(this.spec)
+            // console.log(reverseSpecRel)
+          }
+
+
+          // 获取同级规格
+          let selectedLevel = []
+          this.spec[index].specValue.forEach((now)=>{
+            if (now.value !== key) {
+              selectedLevel.push(now.value)
+            }
+          })
+          // 如果同级规格跟任何规格都无法组成存在规格，那么置灰
+          let noGray = []  // 不该置灰的集合
+          selectedLevel.forEach((now)=>{
+            this.graySpecData.forEach((sonNow)=>{
+              if (sonNow.includes(now) && !noGray.includes(now)) {
+                noGray.push(now)
+              }
+            })
+          })
+          console.log(noGray)
+          // 全部同级规格与不该置灰集合差集为该置灰的同级规格
+          let grayLevelSpec = selectedLevel.filter(key => !noGray.includes(key))
+          console.log(grayLevelSpec)
+          // 将全部需要置灰的同级置灰(封装成一个方法，方便之后调用)
+          let specGrayFun = grayArray => {
+            this.spec.forEach((now,index)=>{
+              now.specValue.forEach((sonNow,sonIndex)=>{
+                if (grayArray.includes(sonNow.value)) {
+                  this.spec[index].specValue[sonIndex].gray = true
+                }
+              })
+            })
+          }
+          specGrayFun(grayLevelSpec) //置灰
+
+
+          // 获取不同级规格
+          let selectedNotLevel = []
+          this.spec.forEach((now,specIndex)=>{
+            if (specIndex !== index) {
+              now.specValue.forEach((sonNow)=>{
+                selectedNotLevel.push(sonNow.value)
+              })
+            }
+          })
+          // 获取包含已选同级规格的存在组合
+          let relSpecHasSelected = []
+          this.graySpecData.forEach((now)=>{
+            if (now.includes(key)) {
+              relSpecHasSelected = relSpecHasSelected.concat(now)
+            }
+          })
+          // 不同级,该置灰的规格集合
+          let selectedNotLevelGary = []
+          selectedNotLevel.forEach((now)=>{
+            if (!relSpecHasSelected.includes(now) && !selectedNotLevelGary.includes(now)) {
+              selectedNotLevelGary.push(now)
+            }
+          })
+          // 不同级进行置灰
+          specGrayFun(selectedNotLevelGary)
+          //若所有层级都选择了规格则继续
+          let flag = 0
+          this.spec.forEach((now)=>{
+            if (now.valueIndex === -1) {
+              flag+=1
+            }
+          })
+          if (flag>0) {
+            return
+          }
+        }
+
+
+
+
+
+
+
+
+        if (key) {
+          // 选中的key组成数组
+          let selectedKey = []
+          this.spec.forEach((now)=>{
+            if (now.valueIndex !== -1) {
+              selectedKey.push(now.specValue[now.valueIndex].value)
+            }
+          })
+          // 改变父组件对应绑定的规格数据
+          // this.$parent.spec = this.$parent.specGray(this.spec,this.graySpecData,selectedKey)
+        }
         // 获取选中的规格
         let specData = {
           //'W5MALLTOKEN': localStorage.getItem('token'),
@@ -239,9 +391,10 @@
           ]
         }
         this.spec.forEach((now)=>{
+          let val = now.specValue[now.valueIndex].value
           specData.specList.push({
             'gspec_name': now.specName,
-            'gspec_value': now.specValue[now.valueIndex]
+            'gspec_value': val
           })
         })
         let self = this
@@ -271,6 +424,7 @@
             goi_freight: self.realGoodsData.goi_freight
           }
           self.$emit('load',data)
+          console.log(new Date()-date)
         })
       },
       buy () {
@@ -477,6 +631,12 @@
   .specChecked {
     background: pink;
     color: white !important;
+  }
+  /* 禁止选择 */
+  .disableSelect{
+    background: gray;
+    color: white !important;
+    border: solid 1px gray !important;
   }
   /* 选择数量部分 */
   .count {

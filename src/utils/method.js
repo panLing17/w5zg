@@ -1,14 +1,16 @@
 /**
  * Created by Administrator on 2017-12-24.
  */
-global.$isContained=(a, b)=>{
-  if(!(a instanceof Array) || !(b instanceof Array)) return false;
-  if(a.length < b.length) return false;
-  var aStr = a.toString();
-  for(var i = 0, len = b.length; i < len; i++){
-    if(aStr.indexOf(b[i]) == -1) return false;
+global.$isContained=(aa, bb)=>{
+  if(!(aa instanceof Array)||!(bb instanceof Array)||((aa.length < bb.length))){
+    return false;
+  }
+  var aaStr = aa.toString();
+  for (var i = 0 ;i < bb.length;i++) {
+    if(aaStr.indexOf(bb[i]) < 0) return false;
   }
   return true;
+
 }
 // 日期转换
 function transformDate(date) {

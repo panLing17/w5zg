@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import image from '../../static/img/top@2x.png'
+import image from '../assets/img/top@2x.png'
 
 Vue.prototype.$mescrollInt = function (id,upFun,init,scrollWatch,downFun) {
   //创建MeScroll对象,down可以不用配置,因为内部已默认开启下拉刷新,重置列表数据为第一页

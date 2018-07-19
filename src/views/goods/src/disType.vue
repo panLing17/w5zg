@@ -6,7 +6,7 @@
       ul
         li(@click="selected(0)", :class="{checked:nowType === 0, greyWhite:lock}") <span>荐</span>专柜自提
         li(@click="selected(1)", :class="{checked:nowType === 1}") 快递配送
-      span {{hasGoods}}
+      span(v-if="!hasGoodsFlag") {{hasGoods}}
     .address(v-if="nowType === 0") {{transfer.store ? transfer.store.name : '请选择商品规格与配送方式'}}
     .address(v-else) {{giveGoodsAddress.city_name ? giveGoodsAddress.city_name + giveGoodsAddress.county_name + giveGoodsAddress.ra_detailed_addr: '请选择商品规格与配送方式'}}
 
@@ -30,6 +30,7 @@
         type: Boolean,
         default: false
       },
+      hasGoodsFlag: Boolean,
       hasGoods: {
         type: String,
         default: ''
