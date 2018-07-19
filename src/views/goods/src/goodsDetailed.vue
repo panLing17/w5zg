@@ -315,10 +315,7 @@
       this.mescroll.destroy()
     },
     watch: {
-      // 只要呼出过选择规格页面，就不再显示一开始的金额，而是根据sku详情
-      selectFlag () {
-        this.initPriceFlag = false
-      },
+
       skuId (val) {
         if (val) {
           this.getMakeMoney (val)
