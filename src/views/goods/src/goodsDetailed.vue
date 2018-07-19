@@ -78,7 +78,7 @@
         .left 规格
           span(v-for="item1 in selectedSpec", v-if="!initPriceFlag") {{item1.gspec_value}}
         img(src="../../../assets/img/right.png").right
-      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'",ref="disType")
+      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :hasGoodsFlag="initPriceFlag", ref="disType")
       //.distribution(@click="selectCityShow")
         .top
           .left 地址
@@ -674,10 +674,10 @@
           return
         }
         // 判断库存
-        if (this.maxStoreNum<this.content) {
+        /*if (this.maxStoreNum<this.content) {
           this.$message.warning('库存不足')
           return
-        }
+        }*/
         //
         this.ofBuy = false
         this.shoppingCartFlag = true
@@ -694,10 +694,10 @@
           return
         }
         // 判断库存
-        if (this.maxStoreNum<this.content) {
+        /*if (this.maxStoreNum<this.content) {
           this.$message.warning('库存不足')
           return
-        }
+        }*/
         // 关闭购物车flag
         this.shoppingCartFlag = false
         // 此生明，这次选择地址等一系列操作来自购买按钮
@@ -856,7 +856,7 @@
           this.spec.forEach((now)=>{
             specData.specList.push({
               'gspec_name': now.specName,
-              'gspec_value': now.specValue[now.valueIndex]
+              'gspec_value': now.specValue[now.valueIndex].value
             })
           })
           let self = this
