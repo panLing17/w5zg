@@ -28,10 +28,10 @@
           transition(name="slide-fade")
             ul.cont(v-show="showDiscover")
               li(v-for="(item,index) in record2" @click="change2(item,index)" :class="{active:selected2==index}") {{item}}
-        .result(v-show="resultFlag")
-          .words 没有搜索到
-            span.strong 此类
-            span 商品，及相关商品
+        <!--.result(v-show="resultFlag")-->
+          <!--.words 没有搜索到-->
+            <!--span.strong 此类-->
+            <!--span 商品，及相关商品-->
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(background="white", ref="recommend")
@@ -385,13 +385,9 @@
 }
 /*搜索结果显示--结束*/
 .title{
-  height: .8rem;
   width: 100%;
-  position: relative;
-  display: flex;
   background: #f2f2f2;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
 }
 .title img{
   width: 55%;
