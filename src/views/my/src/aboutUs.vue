@@ -6,10 +6,14 @@
       .topCenter(slot="center") 关于我们
       .topRight(slot="right")
     .flexBox
-      img(src="../../../assets/img/logo@2x.png")
-      p.one 关注我们，以了解更多优惠资讯
-      <!--qrcode(value="http://weixin.qq.com/r/Dy5AWELEmB-nrQY793sd", :options="{ size: 200 }")-->
-      img(src="../../../assets/img/qrcode_w5zg_wechat.jpg")
+      .shareText 点击右上角分享给好友
+      .logoText 万物直供
+      p.one
+        i.left
+        span 专柜提货·直供价格·预约试穿
+        i.right
+      p.imgWrapper
+        img(src="../../../assets/img/aboutUs.png")
       p.two 当前版本号：v1.0.2
       p.three 名品新款<span>3</span>折起, 专柜提货保正品
 </template>
@@ -27,25 +31,66 @@
 
 <style scoped>
   .flexBox {
-    margin-top: .5rem;
-    display: flex;
-    height: 12rem;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
+    height: calc(100vh - 1.3rem);
   }
-  .flexBox img{
-    width: 3rem;
+  .imgWrapper {
+    text-align: center;
+    font-size: 0;
+    margin-top: .58rem;
+  }
+  .imgWrapper img{
+    width: 5.3rem;
+  }
+  .one {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: .13rem;
+  }
+  i {
+    width: 1rem;
+    height: 1px;
+    background: rgb(154,154,154);
+  }
+  i.left {
+    margin-right: .2rem;
+  }
+  i.right {
+    margin-left: .2rem;
+  }
+  .one span {
+    font-size:.32rem;
+    color:rgb(102,102,102);
+    line-height:.45rem;
   }
   .two {
-    color: rgb(153,153,153);
+    color: rgb(102,102,102);
+    text-align: center;
+    margin-top: .26rem;
+    line-height: .45rem;
   }
   .three {
     font-size: .4rem;
+    text-align: center;
   }
   .three span{
     color: rgb(245,0,87);
     font-size: .8rem;
     margin: 0 .1rem;
+  }
+  .shareText {
+    font-size: .32rem;
+    color: rgb(102,102,102);
+    text-align: right;
+    padding-right: .37rem;
+    line-height: .45rem;
+    margin-top: .4rem;
+  }
+  .logoText {
+    font-size:.66rem;
+    color:rgb(224,56,139);
+    line-height:.9rem;
+    text-align: center;
+    margin-top: .66rem;
   }
 </style>
