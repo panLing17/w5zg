@@ -3,7 +3,7 @@
     self-goods.goodsCard( @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
-      .zeroDesc1 购物车是空的!
+      .zeroDesc1 购物车是空的！
       .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！ ”
     .disableGoodsBox(v-if="disableGoodsList.length>0")
       .title
