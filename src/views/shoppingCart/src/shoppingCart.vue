@@ -9,21 +9,21 @@
       .cartTypeTab
         ul
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
-            p 门店自提
-            span(class="animated", :class="{rubberBand:flag}") {{shoppingCartGoodsNum.carryNum}}
+            p 专柜自提
+            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
           li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
             p 快递配送
-            span(class="animated", :class="{swing:flag}") {{shoppingCartGoodsNum.sendNum}}
+            span(class="animated", :class="{swing:flag}") ({{shoppingCartGoodsNum.sendNum}})
         p(:style="{left:nowTab*50+'%'}")
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(style="min-height:calc(100vh - 6rem)", @clear="getGoodsNum")
+          router-view(@clear="getGoodsNum")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
     div
-      .settlement
+      .settlement(v-if="settlementShow")
         .left
           w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
           p 全选
@@ -50,7 +50,8 @@
         flag: false,
         loading: true,
         isdefault: false,
-        nowTab: 0
+        nowTab: 0,
+        settlementShow: false
       }
     },
     components: {goodsCard, disableGoods, citySelect, cartGuide, recommend},
@@ -102,13 +103,13 @@
       next()
     },
     activated () {
-      // 获取商品数量
-      this.getGoodsNum()
       if (this.$route.path === '/shoppingCart') {
         this.nowTab = 0
       } else {
         this.nowTab = 1
       }
+      // 获取商品数量
+      this.getGoodsNum()
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0);
@@ -172,6 +173,13 @@
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
+          if (self.nowTab == 0 && response.data.data.carryNum > 0) {
+            self.settlementShow = true
+          } else if (self.nowTab == 1 && response.data.data.sendNum > 0) {
+            self.settlementShow = true
+          } else {
+            self.settlementShow = false
+          }
         })
       },
       tabChange(num) {
@@ -183,6 +191,14 @@
           this.$router.push('/shoppingCart/express')
         } else {
           this.$router.push('/shoppingCart')
+        }
+
+        if (num == 0 && this.shoppingCartGoodsNum.carryNum > 0) {
+          this.settlementShow = true
+        } else if (num == 1 && this.shoppingCartGoodsNum.sendNum > 0) {
+          this.settlementShow = true
+        } else {
+          this.settlementShow = false
         }
       },
       changeType() {
@@ -314,12 +330,6 @@
 
   .cartTypeTab li span {
     margin-left: .1rem;
-    margin-bottom: .2rem;
-    padding: 0 .15rem;
-    border-radius: .2rem;
-    color: white;
-    background-color: rgb(51, 51, 51);
-    transition: background-color .4s;
   }
 
   .cartTypeTab > p {
@@ -341,7 +351,7 @@
   }
 
   .tabChecked span {
-    background-color: rgb(244, 0, 84) !important;
+    color: rgb(244, 0, 84);
   }
 
   /* 内容区域 */
@@ -373,7 +383,7 @@
     width: 100%;
     background-color: white;
     position: fixed;
-    bottom: 1.5rem;
+    bottom: 1.28rem;
   }
 
   .settlement .left {

@@ -1,8 +1,10 @@
 <template lang="pug">
-  .expressBox
-    self-goods.goodsCard( @tab="changeType", :goodsList="goodsList")
-    div(v-if="goodsList.length<1", style="min-height:100vh").zeroGoodsBox
+  .expressBox(:class="{minHeight: goodsList.length>0}")
+    self-goods.goodsCard( @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
+    div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
+      .zeroDesc1 购物车是空的!
+      .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！ ”
     .disableGoodsBox(v-if="disableGoodsList.length>0")
       .title
         span 失效商品
@@ -117,6 +119,9 @@
 </script>
 
 <style scoped>
+  .minHeight {
+    min-height: calc(100vh - 4.78rem);
+  }
   /* 商品卡片 */
   .goodsCard {
 
@@ -147,13 +152,23 @@
   }
   /* 空购物车 */
   .zeroGoodsBox {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    font-size: 0;
+    text-align: center;
   }
   .zeroGoods {
-    width: 80%;
-    padding: .2rem;
-    margin: 1rem 0;
+    width: 2.66rem;
+    margin-top: 1.33rem;
+  }
+  .zeroDesc1 {
+    margin-top: .16rem;
+    font-size:.48rem;
+    color:rgb(119,119,119);
+    line-height:.66rem;
+  }
+  .zeroDesc2 {
+    margin: .13rem 0 1.7rem;
+    font-size:.34rem;
+    color:rgb(119,119,119);
+    line-height:.48rem;
   }
 </style>
