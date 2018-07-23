@@ -8,8 +8,8 @@
         li
           router-link(to='/home')
             p
-              img(:src="routerPath=='/home'?require('../assets/img/homepage4@3x.png'):require('../assets/img/homepage3@3x.png')")
-            p(:class="{checked:routerPath=='/home'}") 主页
+              img(:src="routerPath=='/home'?require('../assets/img/logo2@3x.png'):require('../assets/img/homepage3@3x.png')")
+            p(:class="{checked:routerPath=='/home'}") 首页
         li
           router-link(to='/page')
             p
