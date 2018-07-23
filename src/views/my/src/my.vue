@@ -354,7 +354,7 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    height: calc(100vh - 1.6rem);
+    height: calc(100vh - 1.28rem);
   }
   .myBox {
     /*min-height: calc(100vh - 1.6rem);*/
@@ -510,6 +510,7 @@
   .myOrderForm ul.bottom li{
     position: relative;
     flex: none;
+    font-size: 0;
   }
 
   .myOrderForm ul.bottom li img{
@@ -517,10 +518,11 @@
   }
 
   .myOrderForm ul.bottom li .character{
-    margin-top: .2rem;
+    margin-top: .053rem;
     text-align: center;
     color: rgb(51,51,51);
     font-size: .32rem;
+    line-height: .45rem;
   }
 	/*我的订单和我的财富--结束*/
 	/*我的财富独有的样式--开始*/
@@ -538,9 +540,10 @@
 		width: .96rem;
 	}
   .myTreasure ul.bottom li .words{
-    margin-top: .2rem;
+    margin-top: .13rem;
     color: rgb(51,51,51);
     font-size: .32rem;
+    line-height: .45rem;
   }
 	/*我的财富独有的样式--结束*/
   .bottomPlaceholder {

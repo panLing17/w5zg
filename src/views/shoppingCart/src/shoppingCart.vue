@@ -373,7 +373,7 @@
     width: 100%;
     background-color: white;
     position: fixed;
-    bottom: 1.5rem;
+    bottom: 1.28rem;
   }
 
   .settlement .left {
