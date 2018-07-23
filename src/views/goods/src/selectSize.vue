@@ -253,7 +253,8 @@
         if (disable) {
           return
         }
-
+        // 是否在回调后进行sku价格显示
+        let initPriceFlag = false
         // 若无传参则为初始化
         if (!key && !index) {
           let allRelSpec = []
@@ -388,6 +389,7 @@
           })
           // 不同级进行置灰
           specGrayFun(selectedNotLevelGary,true)
+
           //若所有层级都选择了规格则继续
           let flag = 0
           this.spec.forEach((now)=>{
@@ -399,7 +401,7 @@
             this.$parent.initPriceFlag = true
             return
           }
-          this.$parent.initPriceFlag = false
+          initPriceFlag = true
           // 隐藏掉商品详情拿到的最低价格，显示规格的
         }
 
@@ -444,6 +446,10 @@
             gc:JSON.stringify(specData)
           }
         }).then(function (response) {
+          // 显示真实sku价格，隐藏spu返回的最低价
+          if (initPriceFlag) {
+            self.$parent.initPriceFlag = false
+          }
           // 将sku图片存入store
           self.$store.commit('skuImgSave', response.data.data.logo)
           // 根据sku切换展示图片
@@ -463,6 +469,7 @@
             goi_freight: self.realGoodsData.goi_freight
           }
           self.$emit('load',data)
+
         })
       },
       buy () {
