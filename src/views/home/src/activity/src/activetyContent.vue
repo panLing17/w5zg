@@ -1,6 +1,6 @@
 <template lang="pug">
   .content
-    recommend(ref="recommend")
+    recommend(ref="recommend", background="rgb(242, 242, 242)")
     .noData(v-if="isEmpty") 暂无相关商品
 </template>
 
@@ -117,10 +117,6 @@
 </script>
 
 <style scoped>
-.uuu {
-  height: 5rem;
-  overflow-y: scroll;
-}
   li {
     height: 2rem;
 

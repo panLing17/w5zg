@@ -62,7 +62,10 @@
       list:{
         type: Array
       },
-      storeName: String
+      storeName: String,
+      goodsList: {
+        type: Array
+      }
     },
     methods: {
       // 前往商品详情
@@ -99,9 +102,10 @@
             scIdArray: id
           },
         }).then(function (response) {
-          let goodsNum = self.$store.state.shoppingCartGoodsNum
-          goodsNum.sendNum-=1
-          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          self.$emit('clearGoods')
+          // let goodsNum = self.$store.state.shoppingCartGoodsNum
+          // goodsNum.sendNum-=1
+          // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
         })
       },
       // 商品数量变化
