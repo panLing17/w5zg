@@ -5,7 +5,7 @@
         img(src="../../../assets/img/back@3x.png", style="width:.8rem", @click="goBack()")
       .topCenter(slot="center")
       .topRight(slot="right")
-        img(src="../../../assets/img/toshoppingcart@3x.png", style="width:.8rem", @click="$router.push('/shoppingCart')")
+        //img(src="../../../assets/img/toshoppingcart@3x.png", style="width:.8rem", @click="$router.push('/shoppingCart')")
         // img(src="../../../assets/img/share@3x.png", style="width:.5rem", @click="selectShare = true")
     .goodsBox.mescroll#goodsDetailMescroll
       .banner
@@ -13,7 +13,7 @@
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
-        .tags <span class="tag" @click="tips(0)">专柜提货(体验)</span><span class="tag" @click="tips(1)">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
+        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
         .goodsName  {{goodsData.gi_name}}
         <!--a(href="tel:4008-947-999")-->
           //.stateChuiNiu(@click="saveMoneyTipsFlag = true")
@@ -34,9 +34,10 @@
             .label {{goodsData.retail_interval>goodsData.counter_interval? '专柜价':'专柜折后价'}}
             .text <span v-if="initPriceFlag">{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
-            .label 现金券抵扣
-            .text(v-if="initPriceFlag") 省<span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
-            .text(v-else) 省<span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
+            .label 用券立减
+            .text(v-if="initPriceFlag") <span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
+            .text(v-else) <span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
+          img(src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
         //ul.saveMoneyBottom
           li.gray
             .label 专柜价购买
@@ -70,13 +71,15 @@
             .leftRadio
             .righttRadio
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
-      .myPrice(@click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
-        .left 余额
-          span 现金券　通用券　使用说明
+      .myPrice
+        .left 余额:
+          span 现金券<strong>{{userData.netcard_balance | price-filter}}</strong>　通用券<strong>{{userData.cash_balance | price-filter}}</strong>
         img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
-        .left 规格
-          span(v-for="item1 in selectedSpec", v-if="!initPriceFlag") {{item1.gspec_value}}
+        .left(v-if="!initPriceFlag") 规格:
+          span(v-for="item1 in selectedSpec") <strong style="color:#000;font-weight:500">{{item1.gspec_name}}</strong>({{item1.gspec_value}})
+        .left(v-else) 规格:
+          span 请选择规格
         img(src="../../../assets/img/right.png").right
       dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :hasGoodsFlag="initPriceFlag", ref="disType")
       //.distribution(@click="selectCityShow")
@@ -111,8 +114,13 @@
       recommend(background="white", ref="recommend")
     div
       .buttons
-        img(src="../../../assets/img/msg.png", @click="goService")
-        .ready
+        .leftSmallButtons
+          img(src="../../../assets/img/msg.png", @click="goService")
+          p 客服
+        .leftSmallButtons
+          img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
+          p 购物车
+        //.ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
           ul(@click="yuyueShow")
             li 预约体验
@@ -1145,11 +1153,17 @@
     flex-wrap: wrap;
   }
   .saveMoney>.saveMoneyTop{
+    height: 1rem;
     padding-left: .2rem;
     width: 100%;
     display: flex;
-    margin-top: .2rem;
+    background-color: white;
+    border-bottom: solid 1px #eee;
 
+  }
+  .saveMoneyTop>img{
+    width: 2rem;
+    height: .65rem;
   }
   .saveMoney> .saveMoneyBottom{
     padding-left: .2rem;
@@ -1158,16 +1172,17 @@
   }
   .saveMoney li{
     display: flex;
-    width: 5rem;
+    width: 3rem;
     align-items: center;
+  }
+  .saveMoney li>img{
+    width: 2rem;
   }
   .saveMoney li .label{
     text-align: center;
-    border: solid 1px rgb(247,0,87);
     color: rgb(247,0,87);
     padding: 0 .1rem;
     border-radius: 3px;
-    background-color: rgb(255,232,240);
   }
   .saveMoney li .text{
     word-wrap: normal;
@@ -1306,7 +1321,6 @@
   /* 卡片结束 */
   /* 余额 */
   .myPrice {
-    margin-top: .2rem;
     height: 1rem;
     background: white;
     display: flex;
@@ -1323,6 +1337,9 @@
     font-weight: 500;
     color: black;
   }
+  .myPrice .left span strong{
+    color:#f93b80
+  }
   .myPrice .right{
     width: .6rem;
   }
@@ -1334,6 +1351,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 .2rem;
+    border-bottom: solid 1px #eee;
   }
   .size .left{
     font-size: .35rem;
@@ -1437,9 +1455,21 @@
     align-items: center;
     height: 100%;
   }
-  .buttons>img{
-    height: .6rem;
-    margin: 0 .4rem;
+  .buttons> .leftSmallButtons{
+    height: 100%;
+    width: 2rem;
+    border-right: solid 1px #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .buttons> .leftSmallButtons> img{
+    width: .6rem;
+  }
+  .buttons> .leftSmallButtons> p {
+    color: #666;
+    font-size: .2rem;
   }
   .buttons>.ready{
     width: 2.6rem;

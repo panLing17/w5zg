@@ -4,12 +4,12 @@
       .head#header
         .toper
           .lefter
-            img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
           .center(v-if="false")
           .righter
             img(src="../../../assets/img/message@2x.png", v-if="false")
             img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
-            img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)
+            <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
+            img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
         p.center
           ul.headPic
             li(@click="$router.push('/my/settings')")
@@ -20,9 +20,9 @@
             li 余额:
             li {{accoutBalance}}
             li 元
-        .upgradeMembers(@click="jingqingqidai()" v-if="userData.member_type !== '092'")
-          img(src="../../../assets/img/upgrade1@2x.png" v-if="imgFlag")
-          img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")
+        <!--.upgradeMembers(@click="jingqingqidai()" v-if="userData.member_type !== '092'")-->
+          <!--img(src="../../../assets/img/upgrade1@2x.png" v-if="imgFlag")-->
+          <!--img(src="../../../assets/img/upgrade2@2x.png" v-else="imgFlag")-->
       div.fav_att_foot(v-if="false")
         ul.left(@click="$router.push('/reservations')")
           li 0
@@ -40,18 +40,15 @@
             li(style="color:rgb(151,151,151);font-weight:400;") 全部订单 ＞
           ul.bottom
             li(@click="$router.push({path:'/my/orderManage',query:{id:1}})")
-              .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :style="{'text-align':orderCount.unPayOrder>99?'left':'center','font-size':orderCount.unPayOrder<10?'.3rem':'.25rem'}") {{orderCount.unPayOrder}}
-                i(v-if="orderCount.unPayOrder>99") +
+              .badge(v-if="orderCount.unPayOrder && orderCount.unPayOrder!==0", :class="{top:orderCount.unPayOrder.toString().length>3}") {{orderCount.unPayOrder.toString().length>3?'999':orderCount.unPayOrder}}
               img(src="../../../assets/img/my_obligation@2x.png")
               .character 待付款
             li(@click="$router.push({path:'/my/orderManage',query:{id:2}})")
-              .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :style="{'text-align':orderCount.unSendOrder>99?'left':'center','font-size':orderCount.unSendOrder<10?'.3rem':'.25rem'}") {{orderCount.unSendOrder}}
-                i(v-if="orderCount.unSendOrder>99") +
+              .badge(v-if="orderCount.unSendOrder && orderCount.unSendOrder!==0", :class="{top:orderCount.unSendOrder.toString().length>3}") {{orderCount.unSendOrder.toString().length>3?'999':orderCount.unSendOrder}}
               img(src="../../../assets/img/my_readyfordelivery@2x.png")
               .character 待发货
             li(@click="$router.push({path:'/my/orderManage',query:{id:3}})")
-              .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :style="{'text-align':orderCount.unRecieveOrder>99?'left':'center','font-size':orderCount.unRecieveOrder<10?'.3rem':'.25rem'}") {{orderCount.unRecieveOrder}}
-                i(v-if="orderCount.unRecieveOrder>99") +
+              .badge(v-if="orderCount.unRecieveOrder && orderCount.unRecieveOrder!==0", :class="{top:orderCount.unRecieveOrder.toString().length>3}") {{orderCount.unRecieveOrder.toString().length>3?'999':orderCount.unRecieveOrder}}
               img(src="../../../assets/img/my_waitforreceiving2@2x.png")
               .character 待收货
             li(@click="$router.push({path:'/my/orderManage',query:{id:4}})")
@@ -71,8 +68,7 @@
               .words 预约体验
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
-              .badge(v-if="netcardCount!==0", :style="{'text-align':netcardCount>99?'left':'center','width':netcardCount>99?'.55rem':'.4rem','padding':netcardCount>99?'0 .05rem':'0'}") {{netcardCount>99?'99':netcardCount}}
-                i(v-if="netcardCount>99") +
+              .badge(v-if="netcardCount!==0", :class="{top: netcardCount.toString().length>3}") {{netcardCount.toString().length>3?'999':netcardCount}}
               .words 现金券
             li(v-if="userData.member_type === '091'", @click="goAllCard")
               img(src="../../../assets/img/my_cashcoupon@2x.png")
@@ -82,9 +78,12 @@
               .words 银行卡
             li(@click="$router.push('/my/footMark')")
               img(src="../../../assets/img/ic_center_zj@2x.png")
-              .badge(v-if="footmarkNum && footmarkNum!==0", :style="{'text-align':footmarkNum>99?'left':'center','width':footmarkNum>99?'.6rem':'.4rem','padding':footmarkNum>99?'.08rem':'0','border-radius':footmarkNum>99?'.4rem':'50%','line-height':footmarkNum>99?'.3rem':'.45rem'}") {{footmarkNum<=99?footmarkNum:'99'}}
-                i(v-if="footmarkNum>99") ＋
-              .words 足迹
+              .badge(v-if="footmarkNum && footmarkNum!==0", :class="{top: footmarkNum.toString().length>3}") {{footmarkNum.toString().length>3?'999':footmarkNum}}
+              .words 浏览记录
+          ul.bottom
+            li(@click="$router.push('/service')")
+              img(src="../../../assets/img/service2@2x.png")
+              .words 客服中心
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(ref="recommend")
@@ -355,7 +354,7 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    height: calc(100vh - 1.6rem);
+    height: calc(100vh - 1.28rem);
   }
   .myBox {
     /*min-height: calc(100vh - 1.6rem);*/
@@ -366,7 +365,7 @@
   .head{
     width: 100%;
     height: 4.5rem;
-    background: url("../../../assets/img/my_bg.png") no-repeat;
+    background: url("../../../assets/img/top_bg@2x.png") no-repeat;
     background-size: 100% 100%;
     /*overflow: hidden;*/
     position: relative;
@@ -511,39 +510,19 @@
   .myOrderForm ul.bottom li{
     position: relative;
     flex: none;
+    font-size: 0;
   }
+
   .myOrderForm ul.bottom li img{
-    width: .8rem;
-    /*height: .8rem;*/
+    width: .9rem;
   }
-  /*.myOrderForm ul.bottom li:nth-child(2),
-  .myOrderForm ul.bottom li:nth-child(3),
-  .myOrderForm ul.bottom li:nth-child(4){
-    margin-left: .7rem;
-  }*/
-  .myOrderForm ul.bottom li:nth-child(2) img{
-    width: .7rem;
-  }
-  .myOrderForm ul.bottom li:nth-child(3) img{
-    width: .85rem;
-  }
-  .myOrderForm ul.bottom li:nth-child(4) img{
-    width: .65rem;
-  }
-  /*.myOrderForm ul.bottom li:nth-child(5){
-    margin-left: .3rem;
-  }*/
-  .myOrderForm ul.bottom li:nth-child(5) img{
-    width: .67rem;
-  }
-	/*.myOrderForm ul.bottom li img{
-		width: .7rem;
-	}*/
+
   .myOrderForm ul.bottom li .character{
-    margin-top: .2rem;
+    margin-top: .053rem;
     text-align: center;
-    color: rgb(151,151,151);
-    font-size: .3rem;
+    color: rgb(51,51,51);
+    font-size: .32rem;
+    line-height: .45rem;
   }
 	/*我的订单和我的财富--结束*/
 	/*我的财富独有的样式--开始*/
@@ -557,40 +536,14 @@
     display: flex;
     justify-content: space-between;
 	}
-  .myTreasure ul.bottom li:nth-child(2){
-    margin-left: -.5rem;
-  }
-  .myTreasure ul.bottom li:nth-child(2) img{
-    width: .75rem;
-    margin-bottom: .15rem;
-  }
-  .myTreasure ul.bottom li:nth-child(3){
-    margin-left: -.3rem;
-  }
-  .myTreasure ul.bottom li:nth-child(3) img{
-    width: .8rem;
-    margin-bottom: .17rem;
-  }
-  .myTreasure ul.bottom li:nth-child(4){
-    margin-left: -.3rem;
-  }
-  .myTreasure ul.bottom li:nth-child(4) img{
-    width: .85rem;
-    margin-bottom: .13rem;
-  }
-  .myTreasure ul.bottom li:nth-child(5){
-    margin-right: .5rem;
-  }
-  .myTreasure ul.bottom li:nth-child(5) img{
-    width: .6rem;
-  }
 	.myTreasure ul.bottom li img{
-		width: .7rem;
+		width: .96rem;
 	}
   .myTreasure ul.bottom li .words{
-    margin-top: .2rem;
-    color: rgb(151,151,151);
-    font-size: .3rem;
+    margin-top: .13rem;
+    color: rgb(51,51,51);
+    font-size: .32rem;
+    line-height: .45rem;
   }
 	/*我的财富独有的样式--结束*/
   .bottomPlaceholder {
@@ -614,30 +567,35 @@
     width: 55%;
   }
   .badge {
-    width: .4rem;
-    height: .4rem;
-    border-radius: 50%;
+    padding: 0 .1rem;
+    border-radius: .4rem;
     background: rgb(246,0,87);
     color: #fff;
     font-size: .25rem;
     position: absolute;
-    right: -.1rem;
-    top: -.15rem;
-    line-height: .45rem;
+    right: -.05rem;
+    top: 0;
+    line-height: .37rem;
   }
-  .badge i {
+  .badge.top {
+    width: .8rem;
+    overflow: hidden;
+    padding: 0 .1rem 0 0;
+  }
+  .badge.top:after {
+    content: '+';
     position: absolute;
-    top: .02rem;
-    right: .02rem;
-    font-size: .15rem;
-    font-style: normal;
+    right: .1rem;
+    top: -.105rem;
+    color: #fff;
+
   }
+
   .myTreasure ul.bottom li {
     position: relative;
     flex: none;
     text-align: center;
   }
-
   /* 可以设置不同的进入和离开动画 */
   /* 设置持续时间和动画函数 */
   .slide-fade-enter-active,

@@ -6,10 +6,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}.<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?item.direct_supply_price.toString().split('.')[1]:'00'}}</strong>
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -25,15 +25,18 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}.<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?item.direct_supply_price.toString().split('.')[1]:'00'}}</strong>
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
+          .tagTitle
+            .text 细分
+            .line
           li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
     div(style="clear:both")
 </template>
@@ -90,6 +93,10 @@
           imgaDom.style.width = '100%'
           imgaDom.src = process.env.IMG_URL + now.gi_image_url + '?x-oss-process=style/compress'
           box.appendChild(imgaDom)
+          // 图片出错也计数
+          imgaDom.onerror = ()=>{
+            num += 1
+          }
           imgaDom.onload = () => {
             if (leftH > rightH) {
               this.listData.right.push(now)
@@ -216,8 +223,10 @@
   }
 
   .text {
+    /*position:relative;*/
+    /*height: .92rem;*/
+
     margin: 0.2rem .1rem .1rem;
-    /*height: .86rem;*/
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -226,6 +235,15 @@
     -webkit-box-orient: vertical;
     word-break: break-all;
   }
+  /*.text::after {*/
+    /*content:"...";*/
+    /*font-weight:bold;*/
+    /*position:absolute;*/
+    /*bottom:0;*/
+    /*right:0;*/
+    /*padding:0 20px 1px 45px;*/
+    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*}*/
 
   .text span {
     font-size: .3rem;
@@ -238,7 +256,7 @@
   }
 
   .price {
-    margin: .2rem .1rem 0 .1rem;
+    margin: .35rem .1rem .2rem .1rem;
     color: rgb(246, 0, 87);
     font-size: .5rem;
     display: flex;
@@ -248,8 +266,7 @@
   .price span {
     font-weight: 500;
     font-size: .25rem !important;
-    border: solid 1px rgb(246, 0, 87);
-    padding: 0 .15rem;
+    padding: 0 0 0 .15rem;
     border-radius: .5rem;
   }
   .cabinetPrice {

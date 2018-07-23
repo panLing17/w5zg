@@ -142,9 +142,10 @@
             scIdArray: id
           },
         }).then(function (response) {
-          let goodsNum = self.$store.state.shoppingCartGoodsNum
-          goodsNum.carryNum-=1
-          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          self.$emit('clear')
+          // let goodsNum = self.$store.state.shoppingCartGoodsNum
+          // goodsNum.carryNum-=1
+          // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
         })
       }
     }
