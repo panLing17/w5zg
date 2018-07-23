@@ -9,7 +9,7 @@
           .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -28,7 +28,7 @@
           .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
