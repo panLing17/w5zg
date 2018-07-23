@@ -6,7 +6,20 @@ Vue.filter('img-filter', function (value) {
   return url
 })
 Vue.filter('price-filter', function (value) {
-  let fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
+  return '￥'+ value
+  /*let fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
   let fixedNum = new Number(fixNum - 1).toFixed(2);//四舍五入之后减1，再四舍五入一下
-  return '￥'+ fixedNum
+  let stringNum = fixedNum.toString().split('.')
+  let newNum
+  if(stringNum[1][0] === '0' && stringNum[1][1] === '0') {
+    newNum = stringNum[0]
+  }
+  if(stringNum[1][0] !== '0' && stringNum[1][1] === '0'){
+    newNum = stringNum[0]+'.'+ stringNum[1][0]
+  }
+  if(stringNum[1][0] === '0' && stringNum[1][1] !== '0'){
+    newNum = stringNum[0] + '.' + stringNum[1]
+  }
+  newNum = Number(newNum)
+  return '￥'+ newNum*/
 })

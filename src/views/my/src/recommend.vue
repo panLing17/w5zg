@@ -6,10 +6,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}.<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?item.direct_supply_price.toString().split('.')[1]:'00'}}</strong>
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -25,10 +25,10 @@
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
           .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
+          .price(v-if="userData.member_type !== '092'") <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}.<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?item.direct_supply_price.toString().split('.')[1]:'00'}}</strong>
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
@@ -256,7 +256,7 @@
   }
 
   .price {
-    margin: .2rem .1rem 0 .1rem;
+    margin: .35rem .1rem .2rem .1rem;
     color: rgb(246, 0, 87);
     font-size: .5rem;
     display: flex;
@@ -266,8 +266,7 @@
   .price span {
     font-weight: 500;
     font-size: .25rem !important;
-    border: solid 1px rgb(246, 0, 87);
-    padding: 0 .15rem;
+    padding: 0 0 0 .15rem;
     border-radius: .5rem;
   }
   .cabinetPrice {
