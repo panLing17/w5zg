@@ -1,15 +1,13 @@
 <template lang="pug">
   div
-    nav-bar.navBar(:background="navBarBg", border-bottom="none", height="0")
-      .topLeft(slot="left")
-        img(src="../../../assets/img/home扫描@2x.png", @click="searchCode", style="width:.5rem" )
-
-      .topCenter(slot="center")
-        img(src="../../../assets/img/W5ZG.png", style="height:.5rem" )
-        span.city {{cityName}}
-      .topRight(slot="right")
-        img(src="../../../assets/img/searchInput搜索图标@2x.png", @click="jump", style="width:.5rem;margin-right:.2rem")
-        img(src="../../../assets/img/msg.png", @click="$router.push('/service')", style="width:.5rem")
+    .homeHeader
+      .homeHeaderLeft(@click="$router.push('/page')")
+        img.fenleiImg(src="../../../assets/img/fenlei@2x.png")
+      .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
+        img.searchImg(src="../../../assets/img/ic_home_search@2x.png")
+        span.searchDesc 请输入商品类别 例如: 男装
+      .homeHeaderRight(@click="$router.push('/service')")
+        img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
       .banner
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
@@ -424,6 +422,66 @@
 </script>
 
 <style scoped>
+  .homeHeader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    height: 1.3rem;
+    overflow: hidden;
+    background: #fff;
+    width: 100%;
+  }
+  .homeHeaderLeft {
+    padding: 0 .26rem 0 .4rem;
+    font-size: 0;
+  }
+  .homeHeaderLeft:after {
+    content: '分类';
+  }
+  .homeHeaderRight:after {
+    content: '客服';
+  }
+  .homeHeaderLeft:after, .homeHeaderRight:after {
+    display: block;
+    text-align: center;
+    font-size: 10px;
+    color: rgb(102, 102, 102);
+    line-height: 1;
+    margin-top: .05rem;
+  }
+  .fenleiImg, .xiaoxiImg {
+    width: .58rem;
+    pointer-events: none;
+  }
+  .homeHeaderRight {
+    padding: 0 .4rem 0 .26rem;
+    font-size: 0;
+  }
+  .homeHeaderCenter {
+    flex: 1;
+    height: .77rem;
+    border-radius: .4rem;
+    border: 1px solid rgb(236,236,236);
+    position: relative;
+  }
+  .searchImg {
+    position: absolute;
+    top: 50%;
+    left: .26rem;
+    transform: translateY(-50%);
+    width: .42rem;
+    pointer-events: none;
+  }
+  .searchDesc {
+    margin-left: .82rem;
+    line-height: .77rem;
+    font-size: 11px;
+    color: rgb(119,119,119);
+  }
+
   /*顶部搜索--开始*/
   .topLeft {
     width: 1.8rem;
