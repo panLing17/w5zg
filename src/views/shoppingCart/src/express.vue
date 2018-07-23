@@ -1,9 +1,9 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="$emit('clear')", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
+    goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="clearGoods", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
-      .zeroDesc1 购物车是空的!
+      .zeroDesc1 购物车是空的！
       .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！ ”
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
@@ -55,6 +55,15 @@
       this.getData()
     },
     methods: {
+      clearGoods (){
+        let i = this.goodsList.length
+        while(i--) {
+          if (this.goodsList[i].shoppingCartVOList.length === 0) {
+            this.goodsList.splice(i, 1)
+          }
+        }
+        this.$emit('clear')
+      },
       // 勾选变化后
       selectChange () {
         let price = 0
@@ -88,7 +97,6 @@
             array.push(response.data.data.send[i])
           }
           self.goodsList = array
-          console.log(self.goodsList)
           self.disableGoods = response.data.data.failure
         })
       },
