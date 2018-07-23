@@ -13,6 +13,7 @@
           input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
           .btn(@click="receive") 点击领取
           .text 万物直供商城送您现金券，购物更省钱！
+          .agreementBtn(@click="$refs.agreement.mShow()") 《万物直供用户协议》
       .successWrapper(v-if="showSuccess")
         .topWrapper
           .success(v-if="getSuccess")
@@ -29,11 +30,16 @@
             a.btn(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
             a.btn(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8")
           .goHome(@click="$router.push('/home')") 进入万物直供商城首页 >
+      agreement(ref="agreement")
 </template>
 
 <script>
+  import Agreement from '@/views/common/src/agreement'
   export default {
     name: "receiveTicket",
+    components: {
+      Agreement
+    },
     data () {
       return {
         phone: '',
@@ -306,5 +312,15 @@
     font-size: .53rem;
     color: #c82c26;
     line-height: 1.5;
+  }
+  .agreementBtn {
+    position: absolute;
+    top: 4.5rem;
+    left: 0;
+    width: 100%;
+    color: #fff;
+    font-size: .4rem;
+    text-align: center;
+    z-index: 150;
   }
 </style>
