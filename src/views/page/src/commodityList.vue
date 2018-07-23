@@ -45,9 +45,9 @@
               img(:src="item.gi_image_url | img-filter" @click.prevent="")
               .wrapWords
                 .text <span v-if="item.carry_type!==2">专柜提货</span> {{item.gi_name}}
-                .price <span>实付</span>{{item.direct_supply_price | price-filter}}
+                .price <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{(item.direct_supply_price.toString().split('.')[1].split('')[1] === '0'&&item.direct_supply_price.toString().split('.')[1].split('')[0] === '0')?'':'.'+item.direct_supply_price.toString().split('.')[1].split('')[0]}}</strong><strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1].split('')[1] === '0'?'':item.direct_supply_price.toString().split('.')[1].split('')[1]}}</strong>
                   span(v-if="false") 可省{{item.economize_price}}元
-                .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}
+                .cabinetPrice(v-if="false") <span>专柜价</span>{{item.counter_price | price-filter}}
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
     transition(name="slide-fade")
       .mask(v-show="maskFlag")
@@ -611,9 +611,7 @@
   .price span{
     font-weight: 500;
     font-size: .25rem !important;
-    border: solid 1px rgb(246, 0, 87);
-    padding: 0 .15rem;
-    border-radius: .5rem;
+    padding: 0 0 0 .15rem;
   }
   .cabinetPrice {
     margin-bottom: .2rem;
