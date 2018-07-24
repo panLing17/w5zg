@@ -5,33 +5,39 @@
         // 正常商品布局
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
-          .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.gi_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
+          .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
+          .price(v-if="userData.member_type !== '092'") <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?'.'+item.direct_supply_price.toString().split('.')[1]:''}}</strong>
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
-          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
+          .tagTitle
+            .text 细分
+            .line
+          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
     ul.goodsList.right(:style="{background:background}", ref="right")
       li(v-for="item in listData.right")
         // 正常商品布局
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
-          .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.gi_name}}
-          .price(v-if="userData.member_type !== '092'") <span>实付</span>{{item.direct_supply_price | price-filter}}
+          .text <span v-if="item.carry_type!==2">专柜提货</span>{{item.goods_name}}
+          .price(v-if="userData.member_type !== '092'") <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?'.'+item.direct_supply_price.toString().split('.')[1]:''}}</strong>
             //span(v-if="item.economize_price!==0") 可省{{item.economize_price}}元
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
-          .cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
+          //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         .advertType(v-if="item.type === '333'", @click="goActivity(item)")
           img(:src="item.image | img-filter")
         // 标签布局
         ul.tagType(v-if="item.type === '334'")
-          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)") {{i}}
+          .tagTitle
+            .text 细分
+            .line
+          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
     div(style="clear:both")
 </template>
 
@@ -56,6 +62,8 @@
         this.$router.push({path: '/goodsDetailed', query: {id: id}})
       },
       more(newList, pageNum, pageSize) {
+        // 为了防止网速过慢导致的布局错乱问题，执行回调后则锁定上拉加载事件
+        this.$parent.lockUpDown(true)
         // 将原始数据的每条加入type
         newList.forEach((now)=>{
           now.type = '0'
@@ -85,6 +93,10 @@
           imgaDom.style.width = '100%'
           imgaDom.src = process.env.IMG_URL + now.gi_image_url + '?x-oss-process=style/compress'
           box.appendChild(imgaDom)
+          // 图片出错也计数
+          imgaDom.onerror = ()=>{
+            num += 1
+          }
           imgaDom.onload = () => {
             if (leftH > rightH) {
               this.listData.right.push(now)
@@ -94,10 +106,11 @@
               leftH += imgaDom.clientHeight
             }
             num += 1
-            // 若大于page，则证明已经成功加载完一页，移除盒子以及执行插入广告
+            // 若大于page，则证明已经成功加载完一页，移除盒子以及执行插入广告,并允许加载下一页
             if (num >= pageSize) {
               this.$refs.left.removeChild(box)
               this.advertInsert(pageNum, leftH, rightH)
+              this.$parent.lockUpDown(false)
             }
           }
         })
@@ -184,7 +197,7 @@
 
   .goodsList {
     width: calc(50% - .08rem);
-    background: #fff;
+    background: rgb(242, 242, 242);
   }
 
   .goodsList>li {
@@ -193,7 +206,7 @@
     /*border-radius: 5px;*/
     overflow: hidden;
     width: 100%;
-    margin-bottom: .08rem;
+    margin-bottom: .16rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -210,15 +223,27 @@
   }
 
   .text {
+    /*position:relative;*/
+    /*height: .92rem;*/
+
     margin: 0.2rem .1rem .1rem;
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     word-break: break-all;
   }
+  /*.text::after {*/
+  /*content:"...";*/
+  /*font-weight:bold;*/
+  /*position:absolute;*/
+  /*bottom:0;*/
+  /*right:0;*/
+  /*padding:0 20px 1px 45px;*/
+  /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*}*/
 
   .text span {
     font-size: .3rem;
@@ -231,7 +256,7 @@
   }
 
   .price {
-    margin: .2rem .1rem 0 .1rem;
+    margin: .35rem .1rem .2rem .1rem;
     color: rgb(246, 0, 87);
     font-size: .5rem;
     display: flex;
@@ -241,8 +266,7 @@
   .price span {
     font-weight: 500;
     font-size: .25rem !important;
-    border: solid 1px rgb(246, 0, 87);
-    padding: 0 .15rem;
+    padding: 0 0 0 .15rem;
     border-radius: .5rem;
   }
   .cabinetPrice {
@@ -262,27 +286,45 @@
   }
   .advertType> img{
     width: 100% !important;
-    /*height: 100% !important;*/
+    height: 100% !important;
   }
   /* 推荐标签布局 */
   .tagType {
-    height: 7.6rem;
     background-color:  rgb(242, 242, 242);
-    padding: .2rem .25rem;
+    padding: .5rem .25rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .tagTypeChecked{
+    background-color: #E2EFFF !important;
   }
   .tagType>li{
-    /*padding: .1rem .2rem;*/
-    width: 47%;
-    line-height: .86rem;
+    width: 47.5%;
     text-align: center;
+    padding: .1rem .2rem;
     background-color: white;
-    color: #aaaaaa;
+    color: #666;
     float: left;
-    margin-right: .2rem;
     margin-bottom: .2rem;
     border-radius: .2rem;
   }
-  .tagType>li:nth-child(2n) {
-    margin-right: 0;
+  .tagTitle{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tagTitle .text{
+    background-color: rgb(242,242,242);
+    padding: 1px .2rem;
+    position: relative;
+    z-index: 5;
+  }
+  .tagTitle .line{
+    width: 90%;
+    height: 1px;
+    background-color: #666;
+    position: absolute;
   }
 </style>
