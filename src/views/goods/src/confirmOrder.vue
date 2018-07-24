@@ -61,7 +61,7 @@
     data () {
       return {
         flag: false,
-        netCardFlag:false,
+        netCardFlag:true,
         commonTicketFlag:false,
         price: 0,
         content: 0,

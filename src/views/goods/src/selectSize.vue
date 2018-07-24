@@ -226,6 +226,18 @@
         this.$emit('close')
       },
       confirm () {
+        //若所有层级都选择了规格则继续
+        let flag = 0
+        this.spec.forEach((now)=>{
+          if (now.valueIndex === -1) {
+            flag+=1
+          }
+        })
+        if (flag>0) {
+          this.$parent.initPriceFlag = true
+          this.$message.warning('请选择规格')
+          return
+        }
         let data = {
           price: this.realGoodsData.counter_price,
           content: this.content,
@@ -237,6 +249,7 @@
             gspec_value: now.specValue[now.valueIndex].value
           })
         })
+
         if (this.realGoodsData.storage_num>0 && this.realGoodsData.storage_num >= this.content) {
           this.$emit('confirm', data)
         } else {
