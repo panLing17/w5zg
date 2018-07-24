@@ -153,7 +153,7 @@
       //判断显示当前的城市
       this.judgeCity()
       //判断显示城市的字数
-      this.judgeCityNum()
+      //this.judgeCityNum()
       // 首页分享
       // this.loadShare()
     },
