@@ -274,7 +274,8 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   .sanjiao {
     width: 0;
     height: 0;
@@ -383,7 +384,7 @@
     width: 100%;
     background-color: white;
     position: fixed;
-    bottom: 1.28rem;
+    bottom: $height-footer;
   }
 
   .settlement .left {
