@@ -35,7 +35,7 @@
             .text <span v-if="initPriceFlag"><strong style="color:#666;font-size:.2rem">￥</strong>{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 用券立减
-            .text(v-if="initPriceFlag") <strong style="color:#f70057;font-size:.2rem">￥</strong><span>{{parseInt(goodsData.counter_price-goodsData.direct_supply_price)}}</span>
+            .text(v-if="initPriceFlag") <strong style="color:#f70057;font-size:.2rem">￥</strong><span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter2}}</span>
             .text(v-else) <strong style="color:#f70057;font-size:.2rem">￥</strong><span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0)}}</span>
           img(src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
         //ul.saveMoneyBottom
