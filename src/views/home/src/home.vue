@@ -4,8 +4,9 @@
       .homeHeaderLeft(@click="$router.push('/page')")
         img.fenleiImg(src="../../../assets/img/fenlei@2x.png")
       .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
+        input.headerSearchInput(type="text", placeholder="请输入商品类别 例如: 男装")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png")
-        span.searchDesc 请输入商品类别 例如: 男装
+        <!--span.searchDesc 请输入商品类别 例如: 男装-->
       .homeHeaderRight(@click="$router.push('/service')")
         img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
@@ -466,6 +467,17 @@
     border-radius: .4rem;
     border: 1px solid rgb(236,236,236);
     position: relative;
+    overflow: hidden;
+  }
+  input::-webkit-input-placeholder{
+    color:rgb(119,119,119);
+  }
+  .headerSearchInput {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    padding-left: .82rem;
   }
   .searchImg {
     position: absolute;
