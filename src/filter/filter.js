@@ -29,8 +29,4 @@ Vue.filter('price-filter', function (value) {
   return '￥'+ newNum*/
 
   return '￥'+ parseFloat(fixedNum)
-
-
-
-  return '￥'+ parseFloat(fixedNum)
 })
