@@ -341,7 +341,10 @@ const router = new Router ({
             {
               path: '/home/searchHistory',
               name: '搜索历史',
-              component: Home.searchHistory
+              component: Home.searchHistory,
+              meta: {
+                keepAlive: true
+              }
             },
             {
               path: '/home/activities',
@@ -418,10 +421,7 @@ const router = new Router ({
             {
               path: '/page/commodityList',
               name: '商品列表',
-              component: Page.commodityList,
-              meta: {
-                keepAlive: false
-              },
+              component: Page.commodityList
             }
           ]
         }, {

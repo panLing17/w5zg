@@ -297,6 +297,10 @@
         getAdvert()
         getTags()
       }
+      if (from.path === '/home/searchHistory') {
+        from.meta.keepAlive = false
+      }
+      next()
       /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
         next()
       })*/
