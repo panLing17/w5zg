@@ -72,7 +72,7 @@ function wxShare (options) {
   if (options.link) {
     link = options.link
   } else {
-    link = window.location.href.replace(/\?.*#/, "#")
+    link = window.location.href.replace(/\?*#/, "?#")
   }
   wx.onMenuShareAppMessage({
     title: options.shareTitle, // 分享标题
