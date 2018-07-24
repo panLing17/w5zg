@@ -14,11 +14,11 @@
   export default {
     data () {
       return {
-        id: ''
+        // id: ''
       }
     },
     created () {
-      this.savePlatform()
+      // this.savePlatform()
     },
     methods: {
       savePlatform () {
@@ -40,7 +40,7 @@
           url: self.$apiApp + 'appDownloadInfo/modifyUcAppDownloadInfo',
           params: {
             littleBId: this.$route.query.road_id,
-            id: this.id,
+            // id: this.id,
             clientType: index==0?'ios':'android'
           }
         }).then(function (response) {
