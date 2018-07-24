@@ -95,6 +95,9 @@
       })
     },
     beforeRouteLeave (to, from, next) {
+      if (to.path === '/goodsDetailed') {
+        from.meta.keepAlive = false
+      }
       this.guangbiao()
       next()
     },

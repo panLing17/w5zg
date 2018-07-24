@@ -130,6 +130,12 @@
     destroyed () {
 
     },
+    beforeRouteLeave(to, from, next) {
+      if (to.path === '/home/searchHistory') {
+        to.meta.keepAlive = true
+      }
+      next()
+    },
     activated () {
       this.resultFlag = 2
       if (this.$route.query.relNum == 1) {
@@ -577,7 +583,7 @@
   }
   .goodsList li .wrapWords{
     width: 100%;
-    padding: .1rem .2rem 0;
+    padding: .1rem .25rem 0;
   }
   .text{
     line-height: 18px;
@@ -611,7 +617,7 @@
   .price span{
     font-weight: 500;
     font-size: .24rem !important;
-    padding: 0 0 0 .25rem;
+    /*padding: 0 0 0 .25rem;*/
   }
   .cabinetPrice {
     margin-bottom: .2rem;
@@ -627,7 +633,7 @@
   /*商品大图展示--结束*/
   /*切换成列表模式的样式--开始*/
   .toggle{
-    padding-top: .2rem;
+    padding-top: 1.28rem;
   }
   .toggle li{
     margin-bottom: .2rem;
