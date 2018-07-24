@@ -1,9 +1,9 @@
 <template lang="pug">
   .wrap
     img.img1(src="../../../assets/img/applogo@2x.png")
-    a.link(href="https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8")
+    a.link(@click="toNext(0)")
       img.img3(src="../../../assets/img/IOS2@2x.png")
-    a.link(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
+    a.link(@click="toNext(1)")
       img.img4(src="../../../assets/img/android2@2x.png")
     img.img2(src="../../../assets/img/pic@2x.png")
     img.img5(src="../../../assets/img/gzhred.png")
@@ -11,7 +11,48 @@
 </template>
 
 <script>
-
+  export default {
+    data () {
+      return {
+        id: ''
+      }
+    },
+    created () {
+      this.savePlatform()
+    },
+    methods: {
+      savePlatform () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'appDownloadInfo/saveUcAppDownloadInfo',
+          params: {
+            littleBId: this.$route.query.road_id
+          }
+        }).then(function (response) {
+          self.id = response.data.data
+        })
+      },
+      toNext (index) {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'appDownloadInfo/modifyUcAppDownloadInfo',
+          params: {
+            littleBId: this.$route.query.road_id,
+            id: this.id,
+            clientType: index==0?'ios':'android'
+          }
+        }).then(function (response) {
+          if (index == 0) {
+            window.location.href = 'https://itunes.apple.com/cn/app/%E4%B8%87%E7%89%A9%E7%9B%B4%E4%BE%9B/id1391512233?mt=8'
+          } else {
+            window.location.href = 'http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002'
+          }
+        })
+      }
+    }
+  }
 </script>
 
 <style scoped>
