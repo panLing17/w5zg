@@ -25,18 +25,18 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p(v-if="initPriceFlag") {{goodsData.direct_supply_price | price-filter}}
-          p(v-else) {{goodsData.direct_supply_interval | price-filter}}
-          .salePrice 统一零售价：<span v-if="initPriceFlag">{{goodsData.retail_price}}</span><span v-else>{{goodsData.retail_interval}}</span>
+          p(v-if="initPriceFlag") <strong style="color:#70057;font-size:.2rem">￥</strong>{{goodsData.direct_supply_price}}
+          p(v-else) <strong style="color:#70057;font-size:.2rem">￥</strong>{{goodsData.direct_supply_interval}}
+          //.salePrice 统一零售价：<span v-if="initPriceFlag">{{goodsData.retail_price}}</span><span v-else>{{goodsData.retail_interval}}</span>
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         ul.saveMoneyTop
           li.red
-            .label {{goodsData.retail_interval>goodsData.counter_interval? '专柜价':'专柜折后价'}}
-            .text <span v-if="initPriceFlag">{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
+            .label {{goodsData.retail_interval>goodsData.counter_interval? '专柜价':'专柜价'}}
+            .text <span v-if="initPriceFlag"><strong style="color:#9b9b9b;font-size:.2rem">￥</strong>{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 用券立减
-            .text(v-if="initPriceFlag") <span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
-            .text(v-else) <span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
+            .text(v-if="initPriceFlag") <strong style="color:#9b9b9b;font-size:.2rem">￥</strong><span>{{parseInt(goodsData.counter_price-goodsData.direct_supply_price)}}</span>
+            .text(v-else) <strong style="color:#9b9b9b;font-size:.2rem">￥</strong><span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0)}}</span>
           img(src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
         //ul.saveMoneyBottom
           li.gray
@@ -1073,7 +1073,7 @@
   }
   .goodsInfo{
     height: 3rem;
-    padding: .2rem;
+    padding: .2rem .2rem 0 .2rem;
     background: white;
     display: flex;
     flex-direction: column;
@@ -1162,6 +1162,7 @@
 
   }
   .saveMoneyTop>img{
+    margin-top: .15rem;
     width: 2rem;
     height: .65rem;
   }
@@ -1172,7 +1173,7 @@
   }
   .saveMoney li{
     display: flex;
-    width: 3rem;
+    width: 3.5rem;
     align-items: center;
   }
   .saveMoney li>img{

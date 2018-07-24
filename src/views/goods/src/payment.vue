@@ -81,6 +81,11 @@
         ...mapState(['userData'])
       },
       mounted () {
+        if (this.isWeiXin()) {
+          this.type.pricePay = true
+        } else {
+          this.type.aliPay = true
+        }
         this.priceZero()
         // 判断用户有无支付密码
         // this.havePayPwd()
