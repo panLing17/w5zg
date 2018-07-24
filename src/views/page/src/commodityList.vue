@@ -45,7 +45,7 @@
               img(:src="item.gi_image_url | img-filter" @click.prevent="")
               .wrapWords
                 .text <span v-if="item.carry_type!==2">专柜提货</span> {{item.gi_name}}
-                .price <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?'.'+item.direct_supply_price.toString().split('.')[1]:''}}</strong>
+                .price <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}<strong style="weight:500;font-size:.24rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?'.'+item.direct_supply_price.toString().split('.')[1]:''}}</strong>
                   span(v-if="false") 可省{{item.economize_price}}元
                 .cabinetPrice(v-if="false") <span>专柜价</span>{{item.counter_price | price-filter}}
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
@@ -385,7 +385,6 @@
         }).then(function (response) {
           self.goodsFlag = true
           successCallback && successCallback(response.data.data) // 成功回调
-          // }
           if (self.recommendGoods.length === 0) {
             self.brandId = '' // 品牌的id
             self.minPrice = '' // 开始价格区间
@@ -395,7 +394,6 @@
             self.resultFlag = 1 // 搜索结果的显隐
             self.$router.replace({path: '/page/commodityList', query:{relNum: 1}})
             self.mescroll.resetUpScroll(true)
-            //self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
           } else {
             self.resultFlag = 2
           }
@@ -593,25 +591,27 @@
     padding-top: .1rem;
   }
   .text span{
-    margin-top: 10px;
-    padding: .01rem .02rem;
-    background-color: rgb(255, 232, 240);
-    border: solid .5px #f70057;
-    color: #f70057;
-    border-radius: 4px;
-    margin-right: .08rem;
+    width: 1.04rem;
+    height: .37rem;
+    line-height: .37rem;
+    font-size: .3rem;
+    padding: 0 .1rem 0 .1rem;
+    background-color: rgb(255, 87, 147);
+    color: #fff;
+    border-radius: .3rem;
+    margin-right: .1rem;
   }
   .goodsList .price{
     margin: .2rem 0 .05rem;
     color: rgb(246, 0, 87);
-    font-size: .5rem;
+    font-size: .48rem;
     display: flex;
     align-items: center;
   }
   .price span{
     font-weight: 500;
-    font-size: .25rem !important;
-    padding: 0 0 0 .15rem;
+    font-size: .24rem !important;
+    padding: 0 0 0 .25rem;
   }
   .cabinetPrice {
     margin-bottom: .2rem;

@@ -349,12 +349,13 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   #myMescroll{
     position: fixed;
     top: 0;
     bottom: 0;
-    height: calc(100vh - 1.28rem);
+    height: calc(100vh - $height-footer);
   }
   .myBox {
     /*min-height: calc(100vh - 1.6rem);*/
