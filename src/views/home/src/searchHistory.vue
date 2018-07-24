@@ -95,7 +95,6 @@
       })
     },
     beforeRouteLeave (to, from, next) {
-      console.log(to,from)
       if (to.path === '/goodsDetailed') {
         from.meta.keepAlive = false
       }
