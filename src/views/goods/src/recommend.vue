@@ -226,7 +226,7 @@
     /*position:relative;*/
     /*height: .92rem;*/
 
-    margin: 0.2rem .1rem .1rem;
+    margin: 0.2rem .25rem .1rem;
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -236,22 +236,24 @@
     word-break: break-all;
   }
   /*.text::after {*/
-    /*content:"...";*/
-    /*font-weight:bold;*/
-    /*position:absolute;*/
-    /*bottom:0;*/
-    /*right:0;*/
-    /*padding:0 20px 1px 45px;*/
-    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*content:"...";*/
+  /*font-weight:bold;*/
+  /*position:absolute;*/
+  /*bottom:0;*/
+  /*right:0;*/
+  /*padding:0 20px 1px 45px;*/
+  /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
   /*}*/
 
   .text span {
+    width: 1.04rem;
+    height: .37rem;
+    line-height: .37rem;
     font-size: .3rem;
     padding: 0 .1rem 0 .1rem;
-    background-color: rgb(255, 232, 240);
-    border: solid 1px #f70057;
-    color: #f70057;
-    border-radius: 4px;
+    background-color: rgb(255, 87, 147);
+    color: #fff;
+    border-radius: .3rem;
     margin-right: .1rem;
   }
 

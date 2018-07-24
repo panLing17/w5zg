@@ -591,13 +591,15 @@
     padding-top: .1rem;
   }
   .text span{
-    margin-top: 10px;
-    padding: .01rem .02rem;
-    background-color: rgb(255, 232, 240);
-    border: solid .5px #f70057;
-    color: #f70057;
-    border-radius: 4px;
-    margin-right: .08rem;
+    width: 1.04rem;
+    height: .37rem;
+    line-height: .37rem;
+    font-size: .3rem;
+    padding: 0 .1rem 0 .1rem;
+    background-color: rgb(255, 87, 147);
+    color: #fff;
+    border-radius: .3rem;
+    margin-right: .1rem;
   }
   .goodsList .price{
     margin: .2rem 0 .05rem;
@@ -609,7 +611,7 @@
   .price span{
     font-weight: 500;
     font-size: .24rem !important;
-    padding: 0 0 0 .15rem;
+    padding: 0 0 0 .25rem;
   }
   .cabinetPrice {
     margin-bottom: .2rem;

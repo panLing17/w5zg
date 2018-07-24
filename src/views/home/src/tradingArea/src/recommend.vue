@@ -226,7 +226,7 @@
     /*position:relative;*/
     /*height: .92rem;*/
 
-    margin: 0.2rem .1rem .1rem;
+    margin: 0.2rem .25rem .1rem;
     line-height: .46rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -246,12 +246,14 @@
   /*}*/
 
   .text span {
+    width: 1.04rem;
+    height: .37rem;
+    line-height: .37rem;
     font-size: .3rem;
     padding: 0 .1rem 0 .1rem;
-    background-color: rgb(255, 232, 240);
-    border: solid 1px #f70057;
-    color: #f70057;
-    border-radius: 4px;
+    background-color: rgb(255, 87, 147);
+    color: #fff;
+    border-radius: .3rem;
     margin-right: .1rem;
   }
 
