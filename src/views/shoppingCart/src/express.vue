@@ -181,9 +181,10 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   .minHeight {
-    min-height: calc(100vh - 4.78rem);
+    min-height: "calc(100vh - %s)" % ($height-footer+$height-header+2.2rem)
   }
   /* 商品卡片 */
   .goodsCard {
