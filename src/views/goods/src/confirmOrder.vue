@@ -38,13 +38,13 @@
       ul.switchList
         li
           .left 现金券
-          .right
+          .right(v-if="dataFlag")
             span 可抵扣{{netAndCommitCard.netCard}}
             toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
         li
-          .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}{{netCardFlag}}</span>
-          .right
-            toggle-button(v-if="dataFlag", v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
+          .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
+          .right(v-if="dataFlag")
+            toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
@@ -61,7 +61,7 @@
     data () {
       return {
         flag: false,
-        netCardFlag:true,
+        netCardFlag:false,
         commonTicketFlag:false,
         dataFlag: false,
         price: 0,
