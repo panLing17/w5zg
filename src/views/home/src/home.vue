@@ -478,6 +478,7 @@
     border: none;
     outline: none;
     padding-left: .82rem;
+    font-size: 11px;
   }
   .searchImg {
     position: absolute;
