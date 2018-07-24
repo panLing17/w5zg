@@ -12,11 +12,11 @@
         li.right
           span.name {{name}}
           img(src="../../../assets/img/next@2x.png")
-    .accountBind
-      ul.wrap(@click="notOpen()")
-        li.left 账户绑定
-        li.right
-          img(src="../../../assets/img/next@2x.png")
+    <!--.accountBind-->
+      <!--ul.wrap(@click="notOpen()")-->
+        <!--li.left 账户绑定-->
+        <!--li.right-->
+          <!--img(src="../../../assets/img/next@2x.png")-->
     .accountSafety
       ul.wrap(@click="$router.push('/my/accountSafety')")
         li.left 账户安全
