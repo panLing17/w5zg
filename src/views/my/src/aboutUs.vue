@@ -14,7 +14,7 @@
         i.right
       p.imgWrapper
         img(src="../../../assets/img/aboutUs.png")
-      p.two 当前版本号：v1.0.2
+      p.two 当前版本号：v1.0.11
       p.three 名品新款<span>3</span>折起, 专柜提货保正品
 </template>
 
