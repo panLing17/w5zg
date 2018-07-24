@@ -42,9 +42,9 @@
             span 可抵扣{{netAndCommitCard.netCard}}
             toggle-button(v-model="netCardFlag", color="rgb(244,0,87)", @change="netCardChange" , :disabled="netAndCommitCard.netCard === 0")
         li
-          .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
+          .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}{{netCardFlag}}</span>
           .right
-            toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
+            toggle-button(v-if="dataFlag", v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
@@ -63,6 +63,7 @@
         flag: false,
         netCardFlag:true,
         commonTicketFlag:false,
+        dataFlag: false,
         price: 0,
         content: 0,
         name: '',
@@ -422,6 +423,12 @@
             }
           }).then(function (response) {
             self.netAndCommitCard = response.data.data
+            if( self.netAndCommitCard.netCard>0 ){
+              self.netCardFlag = true
+            } else {
+              self.netCardFlag = false
+            }
+            self.dataFlag = true
           })
         } else {
           self.$ajax({
@@ -434,6 +441,12 @@
             }
           }).then(function (response) {
             self.netAndCommitCard = response.data.data
+            if( self.netAndCommitCard.netCard>0 ){
+              self.netCardFlag = true
+            } else {
+              self.netCardFlag = false
+            }
+            self.dataFlag = true
           })
         }
       },
