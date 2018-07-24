@@ -128,7 +128,8 @@
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   .child-view {
     position: absolute;
     width: 100%;
@@ -139,7 +140,7 @@
     background: white;
     padding: 0 .2rem;
     width: 100%;
-    height: 1.28rem;
+    height: $height-footer;
     border-top: solid 1px #d7d7d7;
     position: fixed;
     z-index: 99;
@@ -162,6 +163,7 @@
   .bottomNav > li p:last-child {
     font-size: .26rem;
     line-height: 1;
+    margin: 0.05rem 0;
   }
 
   .bottomNav > li .count {

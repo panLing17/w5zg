@@ -236,7 +236,8 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   /*品牌名的页面--开始*/
   .styles .title{
     background-color: rgb(242,242,242);
@@ -347,14 +348,9 @@
   }
   .content{
     width: 100%;
-    /*height: 100vh;*/
-    height: calc(100vh - 2.58rem);
+    height: "calc(100vh - %s)" % ($height-footer+$height-header)
     overflow: hidden;
     background-color: #fff;
-    /*position: fixed;*/
-    /*top: 1.3rem;*/
-    /*bottom: 1.6rem;*/
-    /*padding: 1.28rem 0 1.6rem;*/
   }
   .content .left{
     width: 21%;
