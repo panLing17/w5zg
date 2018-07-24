@@ -2,11 +2,11 @@
   div.box
     ul
       li(v-for="(item, index) in list.slice(0,5)")
-        img(:src="item.image | img-filter" , @click="toNext(1,index)")
+        img(:src="item.image | gif-filter" , @click="toNext(1,index)")
         span {{item.title}}
     ul
       li(v-for="(item, index) in list.slice(5,10)", @click="toNext(2,index)")
-        img(:src="item.image | img-filter" )
+        img(:src="item.image | gif-filter" )
         span {{item.title}}
 </template>
 

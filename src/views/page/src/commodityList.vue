@@ -10,7 +10,7 @@
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
         .searchbtn(v-show="false") 搜索
-    ul.wrap
+    ul.wrap(v-if="resultFlag == 2")
       li.left
         ul
           li(@click="changes1()" :class="{active:change1}") 综合
@@ -30,18 +30,25 @@
           li.filters(@click="leftScroll()") | 筛选
             img(src="../../../assets/img/pageFiltrate.png")
     .commodityList.mescroll#pageMescroll
-      .contenter(v-show="goodsFlag")
+      .wraps(v-if="resultFlag == 1")
+        .result
+          .words 没有搜索到
+            span.strong 此类
+            span 商品，及相关商品
+        .title
+          img(src="../../../assets/img/recommend.png")
+        recommend#dataId(ref="recommend")
+      .contenter(v-show="goodsFlag", v-if="resultFlag ==2")
         .bottomList
           ul.goodsList#box
             li(v-for="item in recommendGoods" , @click="goGoods(item.gspu_id)")
               img(:src="item.gi_image_url | img-filter" @click.prevent="")
               .wrapWords
-                .text <span v-show="item.carryFlag">专柜提货</span> {{item.gi_name}}
-                .price <span>实付</span>{{item.direct_supply_price | price-filter}}
+                .text <span v-if="item.carry_type!==2">专柜提货</span> {{item.gi_name}}
+                .price <span>实付价:￥</span>{{item.direct_supply_price.toString().split('.')[0]}}<strong style="weight:500;font-size:.25rem;margin-top:.1rem">{{item.direct_supply_price.toString().split('.')[1]?'.'+item.direct_supply_price.toString().split('.')[1]:''}}</strong>
                   span(v-if="false") 可省{{item.economize_price}}元
-                .cabinetPrice <span>专柜价</span>{{item.counter_price | price-filter}}
+                .cabinetPrice(v-if="false") <span>专柜价</span>{{item.counter_price | price-filter}}
                 .bottom(v-if="false") <span>江苏南京</span><span>{{item.gi_salenum}}人购买</span>
-      .bottomPlaceholder
     transition(name="slide-fade")
       .mask(v-show="maskFlag")
         .lefter(@click="lefterBack()")
@@ -52,11 +59,13 @@
 <script>
   import filtrate from './filtrate.vue'
   import {mapState} from 'vuex'
+  import recommend from '../../my/src/recommend'
   export default {
     name: 'commodityList',
-    components: {filtrate},
+    components: {filtrate,recommend},
     data () {
       return {
+        resultFlag: 2, // 搜索结果显隐
         jumps: this.$route.query.jumps, // 接收上个页面的参数判断是那个页面来的
         message: this.$route.query.msg, // 在输入框搜索的内容
         saveMsg: '', // 把每次搜索的关键字存储
@@ -113,7 +122,6 @@
             this.message = this.$route.query.msg
           }
           if (this.$refs.oInput.value == this.$route.query.msg) {
-            //this.mescroll.resetUpScroll(true)
             this.mescroll.scrollTo(0, 0)
           }
         }
@@ -123,8 +131,10 @@
 
     },
     activated () {
-      //console.log(this.$route.query.msg)
-      //console.log(this.$refs.oInput.value)
+      this.resultFlag = 2
+      if (this.$route.query.relNum == 1) {
+        this.resultFlag = 1
+      }
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
           this.mescroll.scrollTo(now.y, 0)
@@ -148,14 +158,11 @@
       }
     },
     mounted () {
+      this.resultFlag = 2
       this.change1 = true
       // 上拉加载
       this.$mescrollInt('pageMescroll', this.upCallback, () => {
-        // this.position.forEach((now) => {
-        //   if (now.path === this.$route.path) {
-        //     this.mescroll.scrollTo(now.y, 0)
-        //   }
-        // })
+
       }, (obj) => {
         this.$store.commit('setPosition', {
           path: this.$route.path,
@@ -168,6 +175,10 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll(isLock)
+      },
       // 当无订单时，将end去掉
       emptys () {
         let mescrollUpwarp = document.getElementsByClassName('mescroll-upwarp')[0]
@@ -320,13 +331,37 @@
       },
       upCallback: function (page) {
         let self = this
-        this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          if (page.num === 1) self.recommendGoods = []
-          self.recommendGoods = self.recommendGoods.concat(curPageData)
-          self.mescroll.endSuccess(curPageData.length)
-        }, function () {
-          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr()
+        if (self.resultFlag == 2) {
+          self.getListDataFromNet(page.num, page.size, function (curPageData) {
+            if (page.num === 1) self.recommendGoods = []
+            self.recommendGoods = self.recommendGoods.concat(curPageData)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function () {
+            // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr()
+          })
+        } else if(self.resultFlag == 1){
+          self.getListDataFromNets(page.num, page.size, function (curPageData) {
+            self.$refs.recommend.more(curPageData,page.num,page.size)
+            self.mescroll.endSuccess(curPageData.length)
+          }, function () {
+            // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+            self.mescroll.endErr()
+          })
+        }
+      },
+      getListDataFromNets (pageNum,pageSize,successCallback,errorCallback) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods +  'goodsSearch/goodsRecommendationList',
+          params: {
+            page: pageNum,
+            rows: pageSize
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback&&successCallback(response.data.data)//成功回调
         })
       },
       getListDataFromNet (pageNum, pageSize, successCallback, errorCallback) {
@@ -349,14 +384,6 @@
           }
         }).then(function (response) {
           self.goodsFlag = true
-          for (let i = 0; i < response.data.data.length; i++) {
-            if (response.data.data[i].carry_type === 1) {
-              response.data.data[i].carryFlag = true
-            }
-            if (response.data.data[i].carry_type === 2) {
-              response.data.data[i].carryFlag = false
-            }
-          }
           successCallback && successCallback(response.data.data) // 成功回调
           // }
           if (self.recommendGoods.length === 0) {
@@ -365,7 +392,12 @@
             self.maxPrice = '' // 结束价格区间
             self.pickUps = '' // 自提不自提
             self.rReset = 'no' // 重置筛选
-            self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
+            self.resultFlag = 1 // 搜索结果的显隐
+            self.$router.replace({path: '/page/commodityList', query:{relNum: 1}})
+            self.mescroll.resetUpScroll(true)
+            //self.$router.push({path: '/home/searchHistory', query: {relNum: 1, messages: self.message, jumps: self.jumps}})
+          } else {
+            self.resultFlag = 2
           }
         })
       }
@@ -379,6 +411,28 @@
 </script>
 
 <style scoped>
+  /*搜索结果显示--开始*/
+  .result{
+    padding: 1.2rem 0 1.5rem;
+    background-color: #fff;
+    text-align: center;
+  }
+  .result .words{
+    font-size: .4rem;
+  }
+  .result .words span.strong{
+    color: rgb(244,0,87);
+    margin: 0 .2rem;
+  }
+  .title{
+    width: 100%;
+    background: #f2f2f2;
+    text-align: center;
+  }
+  .title img{
+    width: 55%;
+  }
+  /*搜索结果显示--结束*/
   #pageMescroll {
     position: fixed;
     top: 1.3rem;
@@ -504,12 +558,13 @@
   /*中间内容部分顶部右边--结束*/
   /*商品大图展示--开始*/
   .bottomList{
-    margin-top: 1.2rem;
+
   }
   .goodsList{
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    padding-top: 1.2rem;
     padding-bottom: .2rem;
     background: rgb(242,242,242);
   }
@@ -556,9 +611,7 @@
   .price span{
     font-weight: 500;
     font-size: .25rem !important;
-    border: solid 1px rgb(246, 0, 87);
-    padding: 0 .15rem;
-    border-radius: .5rem;
+    padding: 0 0 0 .15rem;
   }
   .cabinetPrice {
     margin-bottom: .2rem;
@@ -626,7 +679,6 @@
     background-color: rgba(0,0,0,0.3);
     position: fixed;
     top: 0;
-    /*left: 110%;*/
     left: 0;
     right: 0;
     bottom: 0;

@@ -344,11 +344,6 @@ const router = new Router ({
               component: Home.searchHistory
             },
             {
-              path: '/home/searchResult',
-              name: '搜索结果',
-              component: Home.searchResult
-            },
-            {
               path: '/home/activities',
               name: '活动',
               component: Home.activities

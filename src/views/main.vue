@@ -8,23 +8,23 @@
         li
           router-link(to='/home')
             p
-              img(:src="routerPath=='/home'?'static/img/homepage4@3x.png':'static/img/homepage3@3x.png'")
-            p(:class="{checked:routerPath=='/home'}") 主页
+              img(:src="routerPath=='/home'?require('../assets/img/logo2@3x.png'):require('../assets/img/homepage3@3x.png')")
+            p(:class="{checked:routerPath=='/home'}") 首页
         li
           router-link(to='/page')
             p
-              img(:src="routerPath=='/page'?'static/img/classification4@3x.png':'static/img/classification3@3x.png'")
+              img(:src="routerPath=='/page'?require('../assets/img/classification4@3x.png'):require('../assets/img/classification3@3x.png')")
             p(:class="{checked:routerPath=='/page'}") 分类
         li
           router-link(:to="$route.matched[1].path !== '/shoppingCart' ? '/shoppingCart' : ''")
             span.count(v-if="$store.state.shoppingCount>0") {{$store.state.shoppingCount}}
             p
-              img(:src="routerPath=='/shoppingCart'?'static/img/shoppingcart4@3x.png':'static/img/shoppingcart3@3x.png'")
+              img(:src="routerPath=='/shoppingCart'?require('../assets/img/shoppingcart4@3x.png'):require('../assets/img/shoppingcart3@3x.png')")
             p(:class="{checked:routerPath=='/shoppingCart'}") 购物车
         li
           router-link(to='/my')
             p
-              img(:src="routerPath=='/my'?'static/img/mine4@3x.png':'static/img/mine3@3x.png'")
+              img(:src="routerPath=='/my'?require('../assets/img/mine4@3x.png'):require('../assets/img/mine3@3x.png')")
             p(:class="{checked:routerPath=='/my'}") 我的
 </template>
 
@@ -139,7 +139,7 @@
     background: white;
     padding: 0 .2rem;
     width: 100%;
-    height: 1.6rem;
+    height: 1.28rem;
     border-top: solid 1px #d7d7d7;
     position: fixed;
     z-index: 99;
@@ -156,9 +156,12 @@
     justify-content: center;
     flex-direction: column;
   }
-
-  .bottomNav > li p {
-    font-size: .35rem;
+  .bottomNav > li p:first-child {
+    font-size: 0;
+  }
+  .bottomNav > li p:last-child {
+    font-size: .26rem;
+    line-height: 1;
   }
 
   .bottomNav > li .count {
@@ -175,7 +178,7 @@
   }
 
   .bottomNav > li p > img {
-    height: .6rem;
+    width: 1rem;
   }
 
   .bottomNav > li a {

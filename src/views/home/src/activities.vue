@@ -2,7 +2,7 @@
   .activities
     ul.goodsList
       li(v-for="(i,index) in listData.slice(0,4)", @click="toNext(index)")
-        img(:src="i.image | img-filter")
+        img(:src="i.image | gif-filter")
     .columLine
     .rowLine
 </template>

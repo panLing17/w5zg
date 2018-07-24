@@ -90,7 +90,8 @@
             _this.tabScroll = new BScroll(this.$refs.tabWrapper, {
               // 让menuScroll可以点击
               click: true,
-              scrollX: true
+              scrollX: true,
+              scrollY: false
             })
 
           })

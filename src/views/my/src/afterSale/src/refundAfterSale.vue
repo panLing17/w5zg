@@ -6,7 +6,7 @@
       .topCenter(slot="center") 退款/售后
       .topRight(slot="right")
         <!--img(src="../../../../../assets/img/searchInput搜索图标@2x.png").search-->
-        img(src="../../../../../assets/img/msg_0.png").msg
+        <!--img(src="../../../../../assets/img/msg_0.png").msg-->
     .orderStatus
       ul.wrapStatus
         li.status(v-for="(item,index) in status" @click="statusChange(index)" :class="{active:index===statusActive}") {{item}}
