@@ -56,12 +56,6 @@
     created () {
       this.request()
     },
-    beforeRouteLeave(to, from, next) {
-      if (to.path === '/home/searchHistory') {
-        to.meta.keepAlive = true
-      }
-      next()
-    },
     beforeDestroy () {
 
     },

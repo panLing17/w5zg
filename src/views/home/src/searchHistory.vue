@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="backRouter()")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center")
         .searchInput
           input(type="text", placeholder="请输入商品名称", @focus="handFocus", v-model="msg", @keyup.enter="searchGoods()", v-focus="true", ref="mMessage")
@@ -93,13 +93,6 @@
           this.mescroll.scrollTo(now.y, 0)
         }
       })
-    },
-    beforeRouteLeave (to, from, next) {
-      if (to.path === '/goodsDetailed') {
-        from.meta.keepAlive = false
-      }
-      this.guangbiao()
-      next()
     },
     mounted(){
       //搜索发现
