@@ -24,7 +24,7 @@
           .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
         img.louceng(src="../../../../../assets/img/louceng2.png")
         .recommendWrapper
-          recommend(ref="recommend")
+          recommend(ref="recommend", background="rgb(242, 242, 242)")
           .noData(v-if="noDataShow.goods") 暂无相关商品
 </template>
 
