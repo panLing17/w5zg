@@ -55,11 +55,32 @@
           url: self.$apiApp + 'shoppingCart/carryShoppingCartList',
           params: {},
         }).then(function (response) {
+          let storeList = []
           response.data.data.carryList.forEach((now)=>{
             now.checked = false
             now.editClose = true
+            if (storeList.indexOf(now.store_name) === -1) {
+              storeList.push(now.store_name)
+            }
           })
-          self.goodsList = response.data.data.carryList
+          let storeListOfJson = []
+          storeList.forEach((now)=>{
+            storeListOfJson.push({
+              checked: false,
+              storeName: now,
+              goodsList: []
+            })
+          })
+          storeListOfJson.forEach((now)=>{
+            response.data.data.carryList.forEach((goodsNow)=>{
+              if (goodsNow.store_name === now.storeName) {
+                now.goodsList.push(goodsNow)
+              }
+            })
+          })
+
+          // console.log(storeListOfJson)
+          self.goodsList = storeListOfJson
           self.disableGoodsList = response.data.data.failureList
         })
       },

@@ -921,9 +921,9 @@
         this.content = data.content
         this.selectedSpec = data.spec
         // 仅选规格 --------------------------------------------------------------------
-        if (this.onlySelectSpec) {
+        /*if (this.onlySelectSpec) {
           this.selectFlag = false
-        }
+        }*/
         // 购买--------------------------------------------------------------------------
         if (this.ofBuy) {
           if (this.selectedSpec.length>0) {
@@ -1496,7 +1496,7 @@
   .buttons .left{
     flex-grow: 1;
     width: 0;
-    background: rgb(255,128,171);
+    background: #ff8500;
     font-size: .4rem;
     color: white;
   }

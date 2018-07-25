@@ -36,6 +36,10 @@ Vue.filter('price-filter', function (value) {
   return '￥'+ newNum*/
 
 
+  if (fixedNum>0) {
+    return '￥'+ parseFloat(fixedNum)
+  } else {
+    return '￥'+ 0
+  }
 
-  return '￥'+ parseFloat(fixedNum)
 })

@@ -20,6 +20,16 @@
           .price(v-else) {{0 | price-filter}}
           .store 库存{{realGoodsData.storage_num}}
           .size 选择 颜色 尺寸
+
+        ul.spec
+          li(v-for="(item,fatherIndex) in spec")
+            .title {{item.specName}}
+            ul.content
+              li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
+              p(style="clear:both")
+        .count
+          span 购买数量
+          w-counter(v-model="content", :min="1")
         .express
           h1 配送方式
           .buttonTab
@@ -27,8 +37,8 @@
             button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
         .address
           h1
-           span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
-           span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
+            span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
+            span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
           p(@click="changeLocation")
             span(v-if="expressType === '专柜自提'")
               img(src="../../../assets/img/location.png")
@@ -43,16 +53,10 @@
               i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
               i(v-else) 请选择地址
             img(src="../../../assets/img/more@2x.png")
-        ul.spec
-          li(v-for="(item,fatherIndex) in spec")
-            .title {{item.specName}}
-            ul.content
-              li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
-              p(style="clear:both")
-        .count
-          span 购买数量
-          w-counter(v-model="content", :min="1")
-        .bottomButton
+        .bottomButton(v-if="onlySelectSpec")
+          .left(@click="goBuy") 立即购买
+          .right(@click="addCart") 加入购物车
+        .bottomButton(v-else)
           .right(@click="confirm") 确定
 </template>
 
@@ -140,6 +144,18 @@
       this.getStoreNum()
     },
     methods:{
+      // 立即购买
+      goBuy () {
+        this.$parent.ofBuy = true
+        this.$parent.shoppingCartFlag = false
+        this.confirm()
+      },
+      // 加入购物车
+      addCart () {
+        this.$parent.ofBuy = false
+        this.$parent.shoppingCartFlag = true
+        this.confirm()
+      },
       isGray (e, index) {
 
       },
@@ -584,9 +600,9 @@
   .bottomButton .left{
     flex-grow: 1;
     height: 100%;
-    background: white;
     font-size: .4rem;
-    color: rgb(244,0,87);
+    color: white;
+    background-color: #FF8500;
   }
   .bottomButton .right{
     flex-grow: 1;
@@ -664,7 +680,8 @@
   }
   /* 规格部分 */
   .spec{
-
+    border-top:1px solid #eee;
+    margin-top: .5rem;
   }
   .spec>li{
     margin-top: .4rem;
@@ -679,7 +696,7 @@
   .spec .content li{
     float: left;
     padding: .2rem .3rem;
-    border:  solid 1px pink;
+    border:  solid 1px #999;
     margin-left: .4rem;
     margin-bottom: .4rem;
     border-radius: .2rem;
@@ -687,8 +704,8 @@
   }
   /* 规格选中 */
   .specChecked {
-    background: pink;
-    color: white !important;
+    border:  solid 1px #F70057 !important;
+    color: #F70057 !important;
   }
   /* 禁止选择 */
   .disableSelect{
@@ -698,9 +715,10 @@
   }
   /* 选择数量部分 */
   .count {
+    border-bottom: solid 1px #eee;
     margin-top: .5rem;
     font-size: .4rem;
-    padding: 0 .2rem;
+    padding: .2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
