@@ -142,6 +142,29 @@
           })
 
         })
+        // 转为以门店分隔的json数据
+        let storeList = []
+        checked.forEach((now)=>{
+          if (storeList.indexOf(now.store_name) === -1) {
+            storeList.push(now.store_name)
+          }
+        })
+        let storeListOfJson = []
+        storeList.forEach((now)=>{
+          storeListOfJson.push({
+            checked: true,
+            storeName: now,
+            goodsList: []
+          })
+        })
+        storeListOfJson.forEach((now)=>{
+          checked.forEach((goodsNow)=>{
+            if (goodsNow.store_name === now.storeName) {
+              now.goodsList.push(goodsNow)
+            }
+          })
+        })
+        console.log(storeListOfJson)
         this.$store.commit('computedPriceChange', allPrice)
         this.$store.commit('shoppingCartSelectedChange', checked)
         let allGoodsLen = 0
