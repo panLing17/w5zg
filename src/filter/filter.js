@@ -43,3 +43,16 @@ Vue.filter('price-filter', function (value) {
   }
 
 })
+
+Vue.filter('price-filter2', function (value) {
+  let fixNum;
+  let fixedNum;
+  if (value) {
+    fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
+    fixedNum = new Number(fixNum - 1).toFixed(2);//四舍五入之后减1，再四舍五入一下
+  } else {
+    fixedNum = 0
+  }
+
+  return parseFloat(fixedNum)
+})
