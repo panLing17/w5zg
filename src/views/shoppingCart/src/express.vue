@@ -39,10 +39,10 @@
       }
     },
     watch: {
-      allClick() {
+      allClick(val) {
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
-            sonNow.checked = this.$store.state.shoppingCartAllChecked
+            sonNow.checked = val
           })
         })
         this.selectChange()
@@ -77,8 +77,27 @@
             }
           })
         })
+        // 获取配送订单信息（然后转入中转，因为运费展示难以计算,如果用户操作过快，选择商品后迅速点击结算可能会有bug）
+
+          let self = this
+          let cartId = []
+          checked.forEach((now)=>{
+            cartId.push(now.sc_id)
+          })
+        cartId = cartId.join(',')
+
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/submitCarryList1',
+          params: {
+            scIdArray: cartId
+          }
+        }).then(function (response) {
+          //self.$store.commit('shoppingCartSelectedChange', response.data.data.send)
+        })
+
         this.$store.commit('computedPriceChange', price)
-        this.$store.commit('shoppingCartSelectedChange', checked)
+
       },
       getData () {
         let self = this

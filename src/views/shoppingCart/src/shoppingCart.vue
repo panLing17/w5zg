@@ -28,7 +28,7 @@
           w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
           p 全选
         .right
-          .prive 合计：{{computedPrice | price-filter}}
+          .price (不含运费) 实付：<span>{{computedPrice | price-filter}}</span>
           .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
     //cart-guide
 </template>
@@ -212,48 +212,63 @@
       },
       // 前往确认订单
       goConfirmOrder() {
-        let flag = false
-        let data = []
-        this.$store.state.shoppingCartSelected.forEach((now) => {
-          if (now.goods_num > now.storage_num) {
-            flag = true
+        let data = this.$store.state.shoppingCartSelected
+        // this.$store.state.shoppingCartSelected.forEach((now) => {
+        //   let spec = []
+        //   now.specVOList.forEach((n) => {
+        //     spec.push(n.gspec_value)
+        //   })
+        //   data.push({
+        //     si_id: now.si_id,
+        //     skuId: now.gsku_id,
+        //     number: now.goods_num,
+        //     spec: spec,
+        //     price: now.now_price,
+        //     goodsName: now.gi_name,
+        //     storeName: now.store_name,
+        //     photo: now.logo,
+        //     cartId: now.sc_id,
+        //     freight: now.sku_freight,
+        //     storeLocation: {
+        //       province: {
+        //         name: now.pro_Name,
+        //         id: now.province
+        //       },
+        //       city: {
+        //         name: now.city_name,
+        //         id: now.city
+        //       },
+        //       store: {
+        //         name: now.store_name,
+        //         id: now.store_id
+        //       }
+        //     }
+        //   })
+        // })
+
+        // 转为以门店分隔的json数据
+        /*let storeList = []
+        data.forEach((now)=>{
+          if (storeList.indexOf(now.storeName) === -1) {
+            storeList.push(now.storeName)
           }
-          let spec = []
-          now.specVOList.forEach((n) => {
-            spec.push(n.gspec_value)
-          })
-          data.push({
-            si_id: now.si_id,
-            skuId: now.gsku_id,
-            number: now.goods_num,
-            spec: spec,
-            price: now.now_price,
-            goodsName: now.gi_name,
-            storeName: now.store_name,
-            photo: now.logo,
-            cartId: now.sc_id,
-            freight: now.sku_freight,
-            storeLocation: {
-              province: {
-                name: now.pro_Name,
-                id: now.province
-              },
-              city: {
-                name: now.city_name,
-                id: now.city
-              },
-              store: {
-                name: now.store_name,
-                id: now.store_id
-              }
-            }
+        })
+        let storeListOfJson = []
+        storeList.forEach((now)=>{
+          storeListOfJson.push({
+            checked: true,
+            storeName: now,
+            goodsList: []
           })
         })
-        // 如果有大于库存的商品
-        if (flag) {
-          this.$message.error('存在库存不足商品')
-          return
-        }
+        storeListOfJson.forEach((now)=>{
+          data.forEach((goodsNow)=>{
+            if (goodsNow.storeName === now.storeName) {
+              now.goodsList.push(goodsNow)
+            }
+          })
+        })*/
+        console.log(data)
         this.$store.commit('transferGive', data)
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
@@ -399,7 +414,11 @@
     justify-content: flex-end;
     align-items: center;
   }
-
+  .settlement .right .price span{
+    color:#f70057;
+    font-size: .35rem;
+    font-weight: 600
+  }
   .settlement .right .button {
     width: 3rem;
     height: 100%;

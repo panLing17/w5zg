@@ -3,14 +3,14 @@
     .goodsCardBox(v-if="goodsList.length>0")
       .store(v-for="storeItem in goodsList")
         .title
-          w-checkbox(v-model="storeItem.checked", @change="selectedChange(storeItem.checked,storeItem.storeName,true)")
-          span {{storeItem.storeName}}
+          w-checkbox(v-model="storeItem.checked", @change="selectedChange(storeItem.checked,storeItem.store_name,true)")
+          span {{storeItem.store_name}}
         transition-group(tag="div", :name="animate")
-          .goodsBox(v-for="(i,index) in storeItem.goodsList", :key="index")
+          .goodsBox(v-for="(i,index) in storeItem.shoppingCartVOList", :key="index")
             transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
               .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
                 .checkbox(@click.stop="")
-                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.storeName)")
+                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name)")
                 .img
                   img(:src="i.logo | img-filter")
                   p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
@@ -22,12 +22,13 @@
                       img(src="../../../assets/img/ic_page_xljt@2x.png")
                     w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                   .price
-                    span {{i.now_price | price-filter}}
+                    span 实付价：{{i.direct_supply_price | price-filter}}
+                    span(style="color:#999;text-decoration:line-through") 专柜价：{{i.counter_price | price-filter}}
                 .mainRight
                   //img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
               .main(v-else, key="change")
                 .checkbox
-                  w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange(i.checked,storeItem.storeName)")
+                  w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange(i.checked,storeItem.store_name)")
                 .img
                   img(:src="i.logo | img-filter")
                 .specChange
@@ -70,7 +71,7 @@
       allClick() {
         this.goodsList.forEach((now) => {
           now.checked = this.allClick
-          now.goodsList.forEach((sonNow)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
             sonNow.checked = this.allClick
           })
         })
@@ -103,8 +104,8 @@
         // 为true则为按店铺全选
         if (storeFlag) {
           this.goodsList.forEach((now) => {
-            if (now.storeName === storeName) {
-              now.goodsList.forEach((sonNow) => {
+            if (now.store_name === storeName) {
+              now.shoppingCartVOList.forEach((sonNow) => {
                 sonNow.checked = checked
               })
             }
@@ -112,8 +113,8 @@
         } else {
           let notCheckedNum = 0
           this.goodsList.forEach((now) => {
-            if (now.storeName === storeName) {
-              now.goodsList.forEach((sonNow) => {
+            if (now.store_name === storeName) {
+              now.shoppingCartVOList.forEach((sonNow) => {
                 if (!sonNow.checked) {
                   notCheckedNum += 1
                 }
@@ -121,11 +122,10 @@
             }
           })
           this.goodsList.forEach((now) => {
-            if (now.storeName === storeName) {
+            if (now.store_name === storeName) {
               now.checked = !notCheckedNum > 0
             }
           })
-
         }
         this.computedPrice()
       },
@@ -134,17 +134,18 @@
         let allPrice = 0
         let checked = []
         this.goodsList.forEach((storeNow) => {
-          storeNow.goodsList.forEach((now)=>{
+          storeNow.shoppingCartVOList.forEach((now)=>{
             if (now.checked) {
-              allPrice = allPrice + now.goods_num * now.now_price
+              allPrice = allPrice + now.goods_num * now.direct_supply_price
               checked.push(now)
             }
           })
 
         })
-        // 转为以门店分隔的json数据
         let storeList = []
         checked.forEach((now)=>{
+
+          now.editClose = true
           if (storeList.indexOf(now.store_name) === -1) {
             storeList.push(now.store_name)
           }
@@ -152,27 +153,28 @@
         let storeListOfJson = []
         storeList.forEach((now)=>{
           storeListOfJson.push({
-            checked: true,
+            checked: false,
             storeName: now,
-            goodsList: []
+            shoppingCartVOList: []
           })
         })
         storeListOfJson.forEach((now)=>{
           checked.forEach((goodsNow)=>{
             if (goodsNow.store_name === now.storeName) {
-              now.goodsList.push(goodsNow)
+              now.shoppingCartVOList.push(goodsNow)
             }
           })
         })
         console.log(storeListOfJson)
         this.$store.commit('computedPriceChange', allPrice)
-        this.$store.commit('shoppingCartSelectedChange', checked)
+        this.$store.commit('shoppingCartSelectedChange', storeListOfJson)
         let allGoodsLen = 0
         this.goodsList.forEach((storeNow) => {
-          storeNow.goodsList.forEach((now)=>{
+          storeNow.shoppingCartVOList.forEach((now)=>{
             allGoodsLen += 1
           })
         })
+        console.log(checked)
         // 判断已选数据与总数据长度
         if (checked.length === allGoodsLen) {
           this.$store.commit('allCheckedChange', true)

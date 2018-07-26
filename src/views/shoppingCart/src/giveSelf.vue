@@ -9,12 +9,12 @@
       .title
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
-      disable-goods(:list="disableGoodsList")
+      disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
 </template>
 
 <script>
   import selfGoods from './selfGoods'
-  import disableGoods from './disableGoods'
+  import disableGoods from './sendDisableGoods'
 
   export default {
     name: 'give-self',
@@ -52,36 +52,45 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/carryShoppingCartList',
+          url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
           params: {},
         }).then(function (response) {
-          let storeList = []
-          response.data.data.carryList.forEach((now)=>{
-            now.checked = false
-            now.editClose = true
-            if (storeList.indexOf(now.store_name) === -1) {
-              storeList.push(now.store_name)
-            }
-          })
-          let storeListOfJson = []
-          storeList.forEach((now)=>{
-            storeListOfJson.push({
-              checked: false,
-              storeName: now,
-              goodsList: []
-            })
-          })
-          storeListOfJson.forEach((now)=>{
-            response.data.data.carryList.forEach((goodsNow)=>{
-              if (goodsNow.store_name === now.storeName) {
-                now.goodsList.push(goodsNow)
-              }
-            })
-          })
+          // let storeList = []
+          // response.data.data.carryList.forEach((now)=>{
+          //   now.checked = false
+          //   now.editClose = true
+          //   if (storeList.indexOf(now.store_name) === -1) {
+          //     storeList.push(now.store_name)
+          //   }
+          // })
+          // let storeListOfJson = []
+          // storeList.forEach((now)=>{
+          //   storeListOfJson.push({
+          //     checked: false,
+          //     storeName: now,
+          //     goodsList: []
+          //   })
+          // })
+          // storeListOfJson.forEach((now)=>{
+          //   response.data.data.carryList.forEach((goodsNow)=>{
+          //     if (goodsNow.store_name === now.storeName) {
+          //       now.goodsList.push(goodsNow)
+          //     }
+          //   })
+          // })
 
           // console.log(storeListOfJson)
-          self.goodsList = storeListOfJson
-          self.disableGoodsList = response.data.data.failureList
+            response.data.data.commList.forEach((now)=>{
+              now.checked = false
+              now.editClose = true
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                sonNow.checked = false
+                sonNow.editClose = true
+              })
+            })
+          console.log(response.data.data.commList)
+          self.goodsList = response.data.data.commList
+          self.disableGoodsList = response.data.data.failure
         })
       },
       changeType (data,fun) {
