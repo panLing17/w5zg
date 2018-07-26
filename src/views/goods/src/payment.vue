@@ -82,7 +82,7 @@
       },
       mounted () {
         if (this.isWeiXin()) {
-          this.type.pricePay = true
+          this.type.wePay = true
         } else {
           this.type.aliPay = true
         }

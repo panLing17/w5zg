@@ -11,8 +11,15 @@ Vue.filter('gif-filter', function (value) {
   return url
 })
 Vue.filter('price-filter', function (value) {
-  let fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
-  let fixedNum = new Number(fixNum - 1).toFixed(2);//四舍五入之后减1，再四舍五入一下
+  let fixNum;
+  let fixedNum;
+  if (value) {
+    fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
+    fixedNum = new Number(fixNum - 1).toFixed(2);//四舍五入之后减1，再四舍五入一下
+  } else {
+    fixedNum = 0
+  }
+
   /*
   let stringNum = fixedNum.toString().split('.')
   let newNum
@@ -28,5 +35,20 @@ Vue.filter('price-filter', function (value) {
   newNum = Number(newNum)
   return '￥'+ newNum*/
 
+
+
   return '￥'+ parseFloat(fixedNum)
+})
+
+Vue.filter('price-filter2', function (value) {
+  let fixNum;
+  let fixedNum;
+  if (value) {
+    fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
+    fixedNum = new Number(fixNum - 1).toFixed(2);//四舍五入之后减1，再四舍五入一下
+  } else {
+    fixedNum = 0
+  }
+
+  return parseFloat(fixedNum)
 })

@@ -35,8 +35,8 @@
             .text <span v-if="initPriceFlag"><strong style="color:#666;font-size:.2rem">￥</strong>{{goodsData.counter_price ? goodsData.counter_price : 0}}</span><span v-else>￥{{goodsData.counter_interval ? goodsData.counter_interval : 0}}</span>
           li.gray
             .label 用券立减
-            .text(v-if="initPriceFlag") <strong style="color:#f70057;font-size:.2rem">￥</strong><span>{{parseInt(goodsData.counter_price-goodsData.direct_supply_price)}}</span>
-            .text(v-else) <strong style="color:#f70057;font-size:.2rem">￥</strong><span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0)}}</span>
+            .text(v-if="initPriceFlag") <span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
+            .text(v-else) <span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
           img(src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
         //ul.saveMoneyBottom
           li.gray
@@ -73,7 +73,7 @@
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .myPrice
         .left 余额:
-          span 现金券 <strong>{{userData.netcard_balance | price-filter}}</strong>　通用券 <strong>{{userData.cash_balance | price-filter}}</strong>
+          span 现金券 <strong>{{(userData.netcard_balance | price-filter)?(userData.netcard_balance | price-filter):'0'}}</strong>　通用券 <strong>{{(userData.cash_balance | price-filter)?(userData.cash_balance | price-filter):'0'}}</strong>
         //img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left(v-if="!initPriceFlag") 规格:
