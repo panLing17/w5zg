@@ -10,6 +10,7 @@
             img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
             <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
             img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
+            img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem", @click="$router.push('/my/inform')")
         p.center
           ul.headPic
             li(@click="$router.push('/my/settings')")
@@ -66,6 +67,9 @@
             li(@click="$router.push('/reservations')")
               img(src="../../../assets/img/ic_center_yyty@2x.png")
               .words 预约体验
+            li(@click="$router.push('/my/collection')")
+              img(src="../../../assets/img/shoucang@2x.png")
+              .words 收藏夹
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
               .badge(v-if="netcardCount!==0", :class="{top: netcardCount.toString().length>3}") {{netcardCount.toString().length>3?'999':netcardCount}}
@@ -76,11 +80,14 @@
             li(@click="goBankCard")
               img(src="../../../assets/img/my_bankcard@2x.png")
               .words 银行卡
+          ul.bottom
             li(@click="$router.push('/my/footMark')")
               img(src="../../../assets/img/ic_center_zj@2x.png")
               .badge(v-if="footmarkNum && footmarkNum!==0", :class="{top: footmarkNum.toString().length>3}") {{footmarkNum.toString().length>3?'999':footmarkNum}}
               .words 浏览记录
-          ul.bottom
+            li(@click="$router.push('/my/inform')")
+              img(src="../../../assets/img/daohuotongzhi@2x.png")
+              .words 到货通知
             li(@click="$router.push('/service')")
               img(src="../../../assets/img/service2@2x.png")
               .words 客服中心
@@ -386,10 +393,11 @@
     line-height: .8rem;
   }
   .toper .righter img{
-    width: .7rem;
+    width: .58rem;
+    vertical-align: middle;
   }
-  .toper .righter img:nth-child(2){
-    margin-left: .2rem;
+  .toper .righter img:last-child{
+    margin-left: .37rem;
   }
   .head .center{
     margin-top: .3rem;
@@ -499,7 +507,7 @@
 		font-size: .4rem;
 	}
   .myOrderForm ul.top li:nth-child(2){
-    padding-top: .1rem;
+    padding-top: .08rem;
     font-size: .3rem;
   }
 	.myOrderForm ul.bottom{
@@ -535,8 +543,25 @@
 	.myTreasure ul.bottom{
 		padding: .4rem .4rem 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
 	}
+  .myTreasure ul.bottom:nth-child(3){
+    padding: .4rem .4rem 0;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .myTreasure ul.bottom:nth-child(3) li{
+    margin-right: .73rem;
+  }
+  .myTreasure ul.bottom:nth-child(3) li:nth-child(2){
+    margin-right: .6rem;
+  }
+  .myTreasure ul.bottom li{
+    margin-right: .9rem;
+  }
+  .myTreasure ul.bottom li:nth-child(5){
+    margin-right: 0;
+  }
 	.myTreasure ul.bottom li img{
 		width: .96rem;
 	}

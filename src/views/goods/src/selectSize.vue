@@ -53,7 +53,8 @@
           span 购买数量
           w-counter(v-model="content", :min="1")
         .bottomButton
-          .right(@click="confirm") 确定
+          .right(@click="confirm", v-if="nogoods === 0") 确定
+          .right(v-if="nogoods === 1") 到货通知
 </template>
 
 <script>
@@ -67,6 +68,7 @@
         moveY: '',
         smallPhotoFlag: true,
         content: 1,
+        nogoods: 0,
         realGoodsData: {},
         // 当前该显示的地址信息
         locationOrAddress: 'location',
@@ -470,6 +472,9 @@
           skuGoodsData.gi_img_url = response.data.data.logo
           self.list.splice(0,1,skuGoodsData)
           self.realGoodsData = response.data.data
+          if (self.realGoodsData.storage_num<=0) {
+            self.nogoods = 1
+          }
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)
           // 派发此组件load事件 (用于返回库存与规格)

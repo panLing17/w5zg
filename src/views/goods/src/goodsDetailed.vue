@@ -120,6 +120,10 @@
         .leftSmallButtons
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
+        .leftSmallButtons(@click="collectFlag = !collectFlag", v-if="isdenglu")
+          img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0")
+          img(src="../../../assets/img/Group 9 Copy@2x.png", v-else="collectFlag == 0")
+          p {{collectFlag == 0? '收藏':'已收藏'}}
         //.ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
           ul(@click="yuyueShow")
@@ -165,6 +169,7 @@
     name: "goods-detailed",
     data () {
       return {
+        collectFlag: 0,
         // 真正存在的规格组合（置灰用）
         graySpecData: [],
         // 禁止选择专柜自提
@@ -226,6 +231,9 @@
       }
     },
     computed:{
+      isdenglu(){
+        return localStorage.hasOwnProperty('token')
+      },
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -297,10 +305,6 @@
         getAdvert()
         getTags()
       }
-      if (from.path === '/home/searchHistory') {
-        from.meta.keepAlive = false
-      }
-      next()
       /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
         next()
       })*/
@@ -1462,7 +1466,8 @@
   }
   .buttons> .leftSmallButtons{
     height: 100%;
-    width: 2rem;
+    width: 0;
+    flex-grow: 1;
     border-right: solid 1px #eee;
     display: flex;
     flex-direction: column;
@@ -1494,13 +1499,20 @@
     color: rgb(100,100,100);
   }
   .buttons .left{
-    flex-grow: 1;
+    flex-grow: 1.5;
     width: 0;
-    background: rgb(255,128,171);
+    background: #FF8500;
     font-size: .4rem;
     color: white;
   }
   .buttons .right{
+    flex-grow: 1.5;
+    width: 0;
+    background: rgb(244,0,87);
+    font-size: .4rem;
+    color: white;
+  }
+  .buttons .goodsInform{
     flex-grow: 1;
     width: 0;
     background: rgb(244,0,87);

@@ -12,8 +12,10 @@ import localAdd from './src/localhostAdd'
 import feedback from './src/feedback'
 import aboutUs from './src/aboutUs'
 import footMark from './src/footMark'
+import collection from './src/collection'
+import inform from './src/inform'
 
 
 export default {
-  index,my,settings,userinfo,nickname,accountBind,accountSafety,updatePassword1,updatePassword2,localAdmin,localAdd,feedback,aboutUs,footMark
+  index,my,settings,userinfo,nickname,accountBind,accountSafety,updatePassword1,updatePassword2,localAdmin,localAdd,feedback,aboutUs,footMark,collection,inform
 }
