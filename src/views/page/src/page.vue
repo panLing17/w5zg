@@ -50,14 +50,12 @@
       }
     },
     computed: mapState(['position']),
-    activated () {
-
-    },
     created () {
       this.request()
     },
     beforeDestroy () {
-
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy()
     },
     mounted () {
       // 判断显示城市的字数
