@@ -339,14 +339,6 @@ const router = new Router ({
               component: Home.scanSuccess
             },
             {
-              path: '/home/searchHistory',
-              name: '搜索历史',
-              component: Home.searchHistory,
-              meta: {
-                keepAlive: true
-              }
-            },
-            {
               path: '/home/activities',
               name: '活动',
               component: Home.activities
@@ -408,23 +400,23 @@ const router = new Router ({
               component: Acitivity.twoLevel
             }
           ]
-        }, {
+        },
+        {
+          path: '/home/searchHistory',
+          name: '搜索历史',
+          component: Home.searchHistory
+        },
+        {
           path: '/page',
           name: '分类',
-          component: Page.index,
-          children: [
-            {
-              path: '/',
-              name: '分类',
-              component: Page.page
-            },
-            {
-              path: '/page/commodityList',
-              name: '商品列表',
-              component: Page.commodityList
-            }
-          ]
-        }, {
+          component: Page.page,
+        },
+        {
+          path: '/page/commodityList',
+          name: '商品列表',
+          component: Page.commodityList
+        },
+        {
           path: '/shoppingCart',
           name: '购物车',
           component: ShoppingCart.index,
