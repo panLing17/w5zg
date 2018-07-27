@@ -9,8 +9,11 @@
             img(src="../../../assets/img/message@2x.png", v-if="false")
             img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
             <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
-            img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
-            img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem", @click="$router.push('/my/inform')")
+            .wrapSet
+              img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
+            .wrapXiao
+              .badge2(v-if="informNum!==0", :class="{top: informNum.toString().length>3}") {{informNum.toString().length>3?'999':informNum}}
+              img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem", @click="$router.push({path:'/my/inform',query:{num:0}})")
         p.center
           ul.headPic
             li(@click="$router.push('/my/settings')")
@@ -69,6 +72,7 @@
               .words 预约体验
             li(@click="$router.push('/my/collection')")
               img(src="../../../assets/img/shoucang@2x.png")
+              .badge(v-if="collectionNum!==0", :class="{top: collectionNum.toString().length>3}") {{collectionNum.toString().length>3?'999':collectionNum}}
               .words 收藏夹
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
@@ -85,7 +89,7 @@
               img(src="../../../assets/img/ic_center_zj@2x.png")
               .badge(v-if="footmarkNum && footmarkNum!==0", :class="{top: footmarkNum.toString().length>3}") {{footmarkNum.toString().length>3?'999':footmarkNum}}
               .words 浏览记录
-            li(@click="$router.push('/my/inform')")
+            li(@click="$router.push({path:'/my/inform',query:{num:1}})")
               img(src="../../../assets/img/daohuotongzhi@2x.png")
               .words 到货通知
             li(@click="$router.push('/service')")
@@ -112,6 +116,8 @@
     name: 'my',
     data () {
       return {
+        collectionNum: 0,
+        informNum: 0,
         animateShow: '',
         nameShow: '', // 控制上滑时显示的用户名
         footmarkNum: 0,
@@ -132,6 +138,7 @@
       this.getOrderCount()
     },
     activated () {
+      this.collectionNumCheck()
       this.getUserData()
       this.getFootmarkNum()
       this.getOrderCount()
@@ -163,6 +170,8 @@
           y: obj.preScrollY
         })
       })
+      this.collectionNumCheck() // 收藏数量
+      this.informNumCheck() // 消息通知数量
       this.getUserData()
       this.getFootmarkNum()
       // 切换动画HACK
@@ -180,6 +189,32 @@
       // window.removeEventListener('scroll', this.judgeScroll);
     },
     methods: {
+      // 获取收藏夹的收藏商品数量
+      collectionNumCheck(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteNum',
+          params: {
+          }
+        }).then(function (res) {
+          console.log(res.data.data)
+          self.collectionNum = res.data.data
+        })
+      },
+      // 查询用户消息条数
+      informNumCheck(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          params: {
+          }
+        }).then(function (res) {
+          console.log(res.data.data.messageNum)
+          self.informNum = res.data.data.messageNum
+        })
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -392,9 +427,14 @@
     font-size: .4rem;
     line-height: .8rem;
   }
+  .toper .righter{
+    display: flex;
+    align-items: center;
+  }
   .toper .righter img{
     width: .58rem;
-    vertical-align: middle;
+    height: .58rem;
+    vertical-align: top;
   }
   .toper .righter img:last-child{
     margin-left: .37rem;
@@ -614,7 +654,6 @@
     right: .1rem;
     top: -.105rem;
     color: #fff;
-
   }
 
   .myTreasure ul.bottom li {
@@ -674,5 +713,31 @@
       transform: translate(0) rotate(0) scale(1);
       opacity: 1;
     }
+  }
+  .wrapXiao{
+    position: relative;
+  }
+  .badge2 {
+    padding: 0 .1rem;
+    border-radius: .4rem;
+    background: #fff;
+    color: rgb(246,0,87);
+    font-size: .25rem;
+    position: absolute;
+    right: -.05rem;
+    top: -.15rem;
+    line-height: .37rem;
+  }
+  .badge2.top {
+    width: .8rem;
+    overflow: hidden;
+    padding: 0 .1rem 0 0;
+  }
+  .badge2.top:after {
+    content: '+';
+    position: absolute;
+    right: .1rem;
+    top: -.105rem;
+    color: #fff;
   }
 </style>

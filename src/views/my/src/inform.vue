@@ -4,23 +4,24 @@
       .topLeft(slot="left")
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 通知
-    .contList
+    .contList.mescroll#collectMescroll
       ul
         li(v-for="item in contLists")
           .topper
             .leftT
-              .point <span v-if="looked==1"></span>
-              .title(:class="{active:looked==1}") 到货通知
-            .rightT 18/07/17
+              .point <span v-if="item.ms_status === '5303'"></span>
+              .title(:class="{active:item.ms_status === '5303'}") {{item.msType === '802'?'到货通知':'购物车降价通知'}}
+            .rightT {{item.notice_time}}
           .bottommer
             .leftB
-              img(src="")
+              img(:src="item.ms_thumbnail | img-filter")
             .rightB
-              .text 您关注的【海蓝之谜精华乳霜补水保湿滋润修护柔润…】已到货，手慢无哦！
-              .attr 白色; 60ml
+              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,19) + '...'}}</span>】已到货，手慢无哦！
+              .text(v-if="item.msType !== '802'") {{item.ms_title}}
+              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]?';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
-                .leftP <span>实付价:</span><strong>￥299</strong>
-                .rightP 已降价27元
+                .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
+                .rightP(v-if="item.msType !== '802'") 已降价27元
 
 </template>
 
@@ -30,13 +31,58 @@
     data(){
       return{
         looked: 1,
-        contLists: [{}, {}, {}]
+        mstype: '',
+        contLists: []
       }
+    },
+    mounted(){
+      this.$mescrollInt('collectMescroll', this.upCallback)
+    },
+    methods:{
+      judgeType(){
+        if (this.$route.query.num == 0) {
+          this.mstype = ''
+        } else {
+          this.mstype = '802'
+        }
+      },
+      upCallback: function (page) {
+        let self = this
+        self.getListDataFromNet(page.num, page.size, function (curPageData) {
+          if (page.num === 1) self.contLists = []
+          self.contLists = self.contLists.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function () {
+          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr()
+        })
+      },
+      getListDataFromNet (pageNum,pageSize,successCallback,errorCallback) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + 'ucMessage/queryMemberMessagePage',
+          params: {
+            page: pageNum,
+            rows: pageSize,
+            msType: self.mstype
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          console.log(response.data.data.rows)
+          successCallback&&successCallback(response.data.data.rows)//成功回调
+        })
+      },
     }
   }
 </script>
 
 <style scoped>
+#collectMescroll{
+  position: fixed;
+  top: 1.28rem;
+  bottom: 0;
+}
 .active{
   font-weight: 600 !important;
   padding-left: 0 !important;

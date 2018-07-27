@@ -66,9 +66,14 @@ const state = {
   recommendAdvert:{
     advert: [],
     tags: []
-  }
+  },
+  // 收藏商品
+  collectGoods:[]
 }
 const mutations = {
+  setCollectGoods (state, data) {
+    state.collectGoods.push(data)
+  },
   transferGive (state, data) {
     state.transfer = data
   },

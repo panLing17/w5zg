@@ -11,10 +11,10 @@
           .checkbox(v-if="zheng != 0")
             w-checkbox(@change="change", v-model="item.selected")
           .lefter
-            img(src="")
+            img(:src="item.gi_image_url | img-filter")
           .righter
-            .text 海蓝之谜精华乳霜补水保湿滋润修护柔润奢华乳液面霜60ml
-            .price <span>实付价:</span><strong>￥299</strong>
+            .text {{item.gi_name}}
+            .price <span>实付价:</span><strong>{{item.direct_supply_price | price-filter}}</strong>
       ul.lose(v-if="deleteFlag == 1")
         li.title
           .left 失效商品共<span>2</span>件
@@ -30,7 +30,7 @@
       .checkAll
         w-checkbox(@change="changeAll", v-model="selectedAll")
         span 全选
-      .clearBtn 删除
+      .clearBtn(@click="deleteGoods()") 删除
 </template>
 
 <script>
@@ -40,18 +40,59 @@
     data() {
       return {
         clearFlag: 1,
-        deleteFlag: 1,
+        deleteFlag: 0,
         zheng: 0,
         selectedAll: '',
-        contLists: [{selected:false}, {selected:false}, {selected:false}],
+        contLists: [],
         lostList: [{}, {}]
       }
     },
     computed: mapState(['collectionCheckedAll']),
+    activated(){
+      this.getLists()
+    },
     mounted() {
-
+      //this.getLists()
     },
     methods:{
+      deleteGoods(){
+        let arr = []
+        let b
+        this.contLists.forEach((item)=>{
+          if (item.selected === true) {
+            arr.push(item.fi_id)
+          }
+        })
+        console.log(arr)
+        b = arr.join(',')
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavoriteList',
+          params: {
+            fiIdArray: b
+          }
+        }).then(function (res) {
+          console.log(res)
+          self.zheng = 0
+          self.getLists()
+        })
+      },
+      getLists(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteList',
+          params: {}
+        }).then(function (res) {
+          console.log(res.data.data)
+          for (let i=0; i<res.data.data.length; i++) {
+            res.data.data[i].selected = false
+          }
+          self.contLists = res.data.data
+          console.log(self.contLists)
+        })
+      },
       change(e){
         console.log(e)
         for (let i=0; i<this.contLists.length; i++) {

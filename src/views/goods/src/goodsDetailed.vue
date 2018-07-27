@@ -73,7 +73,7 @@
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .myPrice
         .left 余额:
-          span 现金券 <strong>{{(userData.netcard_balance | price-filter)?(userData.netcard_balance | price-filter):'0'}}</strong>　通用券 <strong>{{(userData.cash_balance | price-filter)?(userData.cash_balance | price-filter):'0'}}</strong>
+          span 现金券 <strong>{{userData.netcard_balance | price-filter}}</strong>　通用券 <strong>{{userData.cash_balance | price-filter}}</strong>
         //img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left(v-if="!initPriceFlag") 规格:
@@ -120,9 +120,9 @@
         .leftSmallButtons
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
-        .leftSmallButtons(@click="collectFlag = !collectFlag", v-if="isdenglu")
-          img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0")
-          img(src="../../../assets/img/Group 9 Copy@2x.png", v-else="collectFlag == 0")
+        .leftSmallButtons(v-if="isdenglu")
+          img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0", @click="changeCollect1()")
+          img(src="../../../assets/img/Group 9 Copy@2x.png", v-if="collectFlag == 1", @click="changeCollect2()")
           p {{collectFlag == 0? '收藏':'已收藏'}}
         //.ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
@@ -169,6 +169,7 @@
     name: "goods-detailed",
     data () {
       return {
+        fiIds: '',
         collectFlag: 0,
         // 真正存在的规格组合（置灰用）
         graySpecData: [],
@@ -310,6 +311,8 @@
       })*/
     },
     mounted () {
+      // 是否收藏
+      this.isCollect()
       this.getGoodsDetailed()
       this.getGoodsDesc()
       this.getBanner()
@@ -371,6 +374,59 @@
       }
     },
     methods:{
+      // 收藏
+      changeCollect1(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+          params: {
+            gspuId: self.$route.query.id
+          }
+        }).then(function (res) {
+          if (res.data.data.fiId) {
+            self.collectFlag = 1
+          }
+        })
+      },
+      // 取消收藏
+      changeCollect2(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
+          params: {
+            fiId: self.fiIds
+          }
+        }).then(function (res) {
+          console.log(res)
+          if (res.data.code === '081') {
+            self.collectFlag = 0
+          }
+        })
+      },
+      // 商品是否收藏
+      isCollect(){
+        if (localStorage.hasOwnProperty('token')) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'gcFavoritesInfo/queryFavorite',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (res) {
+            console.log(res.data.data)
+            if (res.data.data.flag === 'N') {
+              self.collectFlag = 0
+            }
+            if (res.data.data.flag === 'Y') {
+              self.collectFlag = 1
+              self.fiIds = res.data.data.fiId
+            }
+          })
+        }
+      },
       // 显示预约
       yuyueShow () {
         if (this.initPriceFlag) {
