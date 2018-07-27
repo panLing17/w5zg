@@ -13,14 +13,17 @@
               .img
                 img(:src="i.logo | img-filter")
                 p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
-              .info
+              .info(@click.stop="")
                 .text
                   .name {{i.gi_name}}
                   .spec
-                    span(v-for="item in i.specVOList") {{item.gspec_value}}
+                    span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
+                    img(src="../../../assets/img/ic_page_xljt@2x.png")
+                  w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                 .price
-                  span {{i.now_price | price-filter}}
-              .mainRight
+                  span 实付价：{{i.direct_supply_price | price-filter}}
+                  span(style="color:#999;text-decoration:line-through") 专柜价：{{i.counter_price | price-filter}}
+              //.mainRight
                 img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
                 p x{{i.goods_num}}
             .main(v-else, key="change")
@@ -217,29 +220,60 @@
     justify-content: center;
   }
   /* 商品描述部分 */
-  .info{
+  .info {
     flex-grow: 1;
     width: 0;
     padding-left: .3rem;
+    padding-right: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-  .info .text .name{
+  .info .text {
+
+  }
+  .info .text .name {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
   .info .text .spec {
-    margin-top: .1rem;
+    display: flex;
+    position: relative;
+    float: left;
+    max-width: 3rem;
+    overflow: hidden;
+
+    align-items: center;
+    padding: .05rem .2rem;
+    margin-top: .2rem;
     color: #999;
+    background-color: #eee;
   }
-  .price{
+
+  .info .text .spec span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info .text .spec img {
+    width: .2rem;
+    margin-left: .15rem;
+  }
+
+  .info .text .counter {
+    float: right;
+    margin-top: .1rem;
+  }
+
+  .price {
     display: flex;
     justify-content: space-between;
   }
+
   .mainRight {
     width: 1rem;
     height: 100%;
@@ -248,10 +282,12 @@
     justify-content: space-between;
     align-items: center;
   }
-  .mainRight>img{
+
+  .mainRight > img {
     width: .5rem;
   }
-  .mainRight>p{
+
+  .mainRight > p {
     font-size: .35rem;
   }
   .bottom{

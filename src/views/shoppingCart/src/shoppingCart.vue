@@ -28,12 +28,17 @@
           w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
           p 全选
         .right
-          .price (不含运费) 实付：<span>{{computedPrice | price-filter}}</span>
+          .price
+            p (不含运费) 实付：<span>{{computedPrice.allPrice | price-filter}}</span>
+            p 现金券抵扣：{{computedPrice.counterPrice-computedPrice.allPrice | price-filter}}
           .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+    // 失效商品提示
+    disableTips(ref="disableTips")
     //cart-guide
 </template>
 
 <script>
+  import disableTips from './goodsDisableTips'
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
@@ -54,7 +59,7 @@
         settlementShow: false
       }
     },
-    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend},
+    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend, disableTips},
     computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
     mounted() {
       // mescroll初始化
@@ -268,15 +273,9 @@
             }
           })
         })*/
-        console.log(data)
         this.$store.commit('transferGive', data)
-        let since = ''
-        this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-        if (this.$store.state.transfer.length > 0) {
-          this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
-        } else {
-          this.$message.error('请勾选商品')
-        }
+        this.$refs['disableTips'].checkDisableGoods(data)
+
       },
       // 切换动画hack
       animateHack() {
@@ -413,6 +412,9 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
+  }
+  .settlement .right .price p{
+    text-align: right
   }
   .settlement .right .price span{
     color:#f70057;

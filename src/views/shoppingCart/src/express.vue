@@ -4,7 +4,7 @@
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
-      .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！ ”
+      .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！”
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
         span 失效商品
@@ -67,11 +67,13 @@
       // 勾选变化后
       selectChange () {
         let price = 0
+        let counterPrice = 0
         let checked = []
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
             if (sonNow.checked) {
-              price = price + sonNow.goods_num*sonNow.now_price
+              counterPrice = counterPrice + sonNow.goods_num * sonNow.counter_price
+              price = price + sonNow.goods_num*sonNow.direct_supply_price
               sonNow.si_id = now.si_id
               checked.push(sonNow)
             }
@@ -88,15 +90,18 @@
 
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/submitCarryList1',
+          url: self.$apiApp + 'shoppingCart/submitSendList1',
           params: {
             scIdArray: cartId
           }
         }).then(function (response) {
-          //self.$store.commit('shoppingCartSelectedChange', response.data.data.send)
+          self.$store.commit('shoppingCartSelectedChange', response.data.data)
         })
-
-        this.$store.commit('computedPriceChange', price)
+        let priceData = {
+          allPrice: price,
+          counterPrice: counterPrice
+        }
+        this.$store.commit('computedPriceChange', priceData)
 
       },
       getData () {

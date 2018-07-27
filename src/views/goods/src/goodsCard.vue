@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     .goodsCardBox(v-if="$route.query.type === 'shoppingCart'")
-      .title {{data.storeName}}
+      .title {{data.storeName ? data.storeName : data.si_name}}
       .main(v-for="i in data.shoppingCartVOList")
         img(:src="i.logo | img-filter")
         .info
@@ -12,8 +12,9 @@
           .price
             span {{i.counter_price | price-filter}}
             span X{{i.goods_num}}
-      .bottom(v-if="since === 'true'")
-        .left 门店自提
+      .bottom
+        .left(v-if="since === 'true'") 门店自提
+        .right(v-else) 运费: {{data.freight | price-filter}}
     .goodsCardBox(v-else)
       .title {{data.storeName}}
       .main
@@ -26,8 +27,9 @@
           .price
             span {{data.price | price-filter}}
             span X{{data.number}}
-      .bottom(v-if="since === 'true'")
-        .left 门店自提
+      .bottom
+        .left(v-if="since === 'true'") 门店自提
+        .right(v-else) 运费: {{data.freight | price-filter}}
         //.right {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
           //img(src="../../../assets/img/next@2x.png")
       //.bottom(v-else)
@@ -110,17 +112,16 @@
   .bottom {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: flex-end;
     padding: .2rem;
     border-top: solid 1px #eee;
   }
   .bottom .left{
-    width: 2rem;
+
   }
   .bottom .right {
-    flex-grow: 1;
-    width: 0;
+    color: #999;
   }
   .bottom .right img{
     height: .4rem;

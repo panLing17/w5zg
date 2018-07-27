@@ -131,11 +131,15 @@
       },
       // 计算已选总价, 并将选中数据加入vuex
       computedPrice() {
+        // 直供总价
         let allPrice = 0
+        // 专柜总价
+        let counterPrice = 0
         let checked = []
         this.goodsList.forEach((storeNow) => {
           storeNow.shoppingCartVOList.forEach((now)=>{
             if (now.checked) {
+              counterPrice = counterPrice + now.goods_num * now.counter_price
               allPrice = allPrice + now.goods_num * now.direct_supply_price
               checked.push(now)
             }
@@ -166,7 +170,11 @@
           })
         })
         console.log(storeListOfJson)
-        this.$store.commit('computedPriceChange', allPrice)
+        let priceData = {
+          allPrice: allPrice,
+          counterPrice: counterPrice
+        }
+        this.$store.commit('computedPriceChange', priceData)
         this.$store.commit('shoppingCartSelectedChange', storeListOfJson)
         let allGoodsLen = 0
         this.goodsList.forEach((storeNow) => {
