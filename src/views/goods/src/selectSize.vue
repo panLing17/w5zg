@@ -387,7 +387,7 @@
               })
             })
           }
-          specGrayFun(grayLevelSpec) //置灰
+          //specGrayFun(grayLevelSpec) //置灰
 
 
           // 获取不同级规格
@@ -416,7 +416,7 @@
             }
           })
           // 不同级进行置灰
-          specGrayFun(selectedNotLevelGary,true)
+          //specGrayFun(selectedNotLevelGary,true)
 
           //若所有层级都选择了规格则继续
           let flag = 0
@@ -474,6 +474,7 @@
             gc:JSON.stringify(specData)
           }
         }).then(function (response) {
+          console.log(response.data.data)
           // 显示真实sku价格，隐藏spu返回的最低价
           if (initPriceFlag) {
             self.$parent.initPriceFlag = false
@@ -487,7 +488,10 @@
           self.realGoodsData = response.data.data
           if (self.realGoodsData.storage_num<=0) {
             self.nogoods = 1
+          } else{
+            self.nogoods = 0
           }
+          console.log(self.nogoods)
           self.skuId = response.data.data.gsku_id
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)

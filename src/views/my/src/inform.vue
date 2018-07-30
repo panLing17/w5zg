@@ -12,7 +12,7 @@
               .point <span v-if="item.ms_status === '5303'"></span>
               .title(:class="{active:item.ms_status === '5303'}") {{item.msType === '802'?'到货通知':'购物车降价通知'}}
             .rightT {{item.notice_time}}
-          .bottommer
+          .bottommer(@click="goTogGoods(item)")
             .leftB
               img(:src="item.ms_thumbnail | img-filter")
             .rightB
@@ -55,6 +55,24 @@
       })
     },
     methods:{
+      goTogGoods(e){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/updateMessageStatus',
+          params:{
+            msStatus: 5302
+          }
+        }).then(function (res) {
+          console.log(res)
+        })
+        this.$router.push({
+          path:'/goodsDetailed',
+          query:{
+            id: e.gspu_id
+          }
+        })
+      },
       judgeType(){
         if (this.$route.query.num == 0) {
           this.mstype = ''
