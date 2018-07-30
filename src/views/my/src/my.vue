@@ -11,9 +11,9 @@
             <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
             .wrapSet
               img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
-            .wrapXiao
+            .wrapXiao(@click="$router.push({path:'/my/inform',query:{num:0}})")
               .badge2(v-if="informNum!==0", :class="{top: informNum.toString().length>3}") {{informNum.toString().length>3?'999':informNum}}
-              img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem", @click="$router.push({path:'/my/inform',query:{num:0}})")
+              img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem")
         p.center
           ul.headPic
             li(@click="$router.push('/my/settings')")

@@ -4,15 +4,16 @@
       .topLeft(slot="left")
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 收藏夹
-      .topRight(slot="right", @click="zhengli") {{zheng == 0 ?'整理':'完成'}}
-    .contList
+      .topRight(slot="right", @click="zhengli", v-if="!isEmpty") {{zheng == 0 ?'整理':'完成'}}
+    .empty(v-if="isEmpty") 暂无收藏
+    .contList(ref="conts")
       ul
         li(v-for="item in contLists")
           .checkbox(v-if="zheng != 0")
             w-checkbox(@change="change", v-model="item.selected")
-          .lefter
-            img(:src="item.gi_image_url | img-filter")
-          .righter
+          .lefter(@click="$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})")
+            img(:src="item.gi_image_url | img-filter", @click.prevent="")
+          .righter(@click="$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})")
             .text {{item.gi_name}}
             .price <span>实付价:</span><strong>{{item.direct_supply_price | price-filter}}</strong>
       ul.lose(v-if="deleteFlag == 1")
@@ -35,6 +36,7 @@
 
 <script>
   import {mapState} from 'vuex'
+  import BScroll from 'better-scroll'
   export default {
     name: "collection",
     data() {
@@ -47,8 +49,17 @@
         lostList: [{}, {}]
       }
     },
-    computed: mapState(['collectionCheckedAll']),
+    computed:{
+      isEmpty(){
+        if (this.contLists.length === 0) {
+          return true
+        }
+        return false
+      },
+      ...mapState(['collectionCheckedAll']),
+    },
     activated(){
+      this.zheng = 0
       this.getLists()
     },
     mounted() {
@@ -91,6 +102,14 @@
           }
           self.contLists = res.data.data
           console.log(self.contLists)
+          if (!self.cScroll) {
+            self.cScroll = new BScroll(self.$refs.conts, {
+              click: true,
+              probeType: 3
+            })
+          } else {
+            self.cScroll.refresh()
+          }
         })
       },
       change(e){
@@ -121,6 +140,17 @@
 </script>
 
 <style scoped>
+.empty{
+  width: 100%;
+  line-height: 100vh;
+  font-size: .5rem;
+  text-align: center;
+  color: #666;
+  position: fixed;
+  top: 1.28rem;
+  bottom: 0;
+  z-index: 100;
+}
 .topLeft{
   padding-left: .36rem;
   padding-top: .1rem;
@@ -137,11 +167,15 @@
 }
 /*内容列表*/
 .contList{
-  padding-top: .26rem;
+  position: fixed;
+  top: 1.28rem;
+  bottom: 0;
+  width: 100%;
   background-color: #f2f2f2;
-  padding-bottom: 1.89rem;
 }
 .contList ul{
+  padding-top: .26rem;
+  padding-bottom: 1.5rem;
   background-color: #f2f2f2;
 }
 .contList li{

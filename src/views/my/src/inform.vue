@@ -26,6 +26,7 @@
 </template>
 
 <script>
+  import {mapState} from 'vuex'
   export default {
     name: "inform",
     data(){
@@ -35,8 +36,23 @@
         contLists: []
       }
     },
+    computed: mapState(['position']),
+    activated(){
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0)
+        }
+      })
+    },
     mounted(){
-      this.$mescrollInt('collectMescroll', this.upCallback)
+      this.$mescrollInt('collectMescroll', this.upCallback, ()=>{
+
+      }, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
     },
     methods:{
       judgeType(){
