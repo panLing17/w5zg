@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    self-goods.goodsCard( @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
+    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -15,7 +15,8 @@
 <script>
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
-
+  import {mapState} from 'vuex'
+  import {bus} from '../../../bus'
   export default {
     name: 'give-self',
     data () {
@@ -27,9 +28,15 @@
         disableGoodsList: []
       }
     },
+    computed: {
+      ...mapState(['shoppingCartSelected'])
+    },
     components: {selfGoods, disableGoods},
     mounted () {
       this.getData()
+      bus.$on('selfCarryUpData',()=>{
+        this.getData()
+      })
     },
     activated () {
       this.getData()
@@ -81,16 +88,33 @@
 
           // console.log(storeListOfJson)
             response.data.data.commList.forEach((now)=>{
-              now.checked = false
+              let checkedFlag = 0
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (sonNow.checked !== '011') {
+                  checkedFlag += 1
+                }
+              })
+              if (checkedFlag>0) {
+                now.checked = false
+              } else {
+                now.checked = true
+              }
               now.editClose = true
               now.shoppingCartVOList.forEach((sonNow)=>{
-                sonNow.checked = false
+                if (sonNow.checked === '011') {
+                  sonNow.checked = true
+                } else {
+                  sonNow.checked = false
+                }
                 sonNow.editClose = true
               })
             })
-          console.log(response.data.data.commList)
           self.goodsList = response.data.data.commList
           self.disableGoodsList = response.data.data.failure
+          self.$nextTick(()=>{
+            self.$refs['selfGoods'].computedPrice()
+          })
+
         })
       },
       changeType (data,fun) {

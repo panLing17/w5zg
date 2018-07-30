@@ -8,19 +8,24 @@
           .title 抱歉，本单部分商品库存不足或失效，已为您降到最大库存
           ul.goodsList
             li(v-for="i in goodsList")
-              img(:src="i.logo | img-filter")
+              .img
+                .shade(v-if="i.status_flag !== 0")
+                  span(v-if="i.status_flag === 2") 库存不足
+                  span(v-if="i.status_flag === 3") 失效
+                img(:src="i.logo | img-filter")
               .info
                 .text {{i.gi_name}}
                 ul.spec
                   li(v-for="item in i.specVOList") {{item.gspec_value}}
-                .storeNum 库存:{{i.goods_num}}
+                .storeNum 库存:{{i.storage_num}}
           .bottom
-            .goShoppingCart 返回购物车
-            .next 继续结算
+            .goShoppingCart(@click="goShoppingCart") 返回购物车
+            .next(@click="next") 继续结算
 
 </template>
 
 <script>
+  import {bus} from '../../../bus'
   export default {
     name: "card-tips",
     data() {
@@ -34,6 +39,12 @@
         if (val) {
           // mescroll初始化
           this.$mescrollInt("goodsDisableTips", this.upCallback)
+          if (this.$route.path === '/shoppingCart/express') {
+            this.expressUpData()
+          } else {
+            this.selfCarryUpData()
+          }
+
         } else {
           this.mescroll.hideTopBtn();
           this.mescroll.destroy()
@@ -41,7 +52,6 @@
       }
     },
     mounted () {
-
     },
     methods: {
       upCallback: function (page) {
@@ -51,9 +61,34 @@
       close() {
         this.show = false
       },
+      expressUpData () {
+        bus.$emit('expressGetData')
+      },
+      selfCarryUpData () {
+        bus.$emit('selfCarryUpData')
+      },
+      goShoppingCart () {
+        this.close()
+        if (this.$route.path === '/shoppingCart/express') {
+          this.expressUpData()
+        } else {
+          this.selfCarryUpData()
+        }
+      },
+      next () {
+        this.close()
+        let since = ''
+        this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+        if (this.$store.state.transfer.length > 0) {
+          this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+        } else {
+          this.$message.error('请勾选商品')
+        }
+      },
       checkDisableGoods (array) {
         console.log(array)
-        let url = this.$route.path === '/shoppingCart/express'?'shoppingCart/submitSendList1':''
+        this.$store.commit('transferGive', array)
+        let url = 'shoppingCart/checkSubmitCartList'
         let self = this
         let cartId = []
         array.forEach((now)=>{
@@ -63,7 +98,7 @@
 
         })
         cartId = cartId.join(',')
-        if (url) {
+
           self.$ajax({
             method: 'get',
             url: self.$apiApp + url,
@@ -74,12 +109,12 @@
             self.goodsList = []
             let nextFlag = 0
             response.data.data.forEach((now)=>{
-              now.shoppingCartVOList.forEach((sonNow)=>{
-                if (sonNow.status_flag.toString() === '0') {
+
+                if (now.status_flag.toString() === '0') {
                   nextFlag+=1
-                  self.goodsList.push(sonNow)
+                  self.goodsList.push(now)
                 }
-              })
+
             })
             if (nextFlag>0) {
               self.show = true
@@ -94,9 +129,6 @@
               }
             }
           })
-        } else {
-          alert('专柜自提')
-        }
 
       }
     }
@@ -140,6 +172,21 @@
     margin-bottom: .2rem;
     padding-bottom: .2rem;
     border-bottom: solid 1px  #eee;
+  }
+  .goodsList .img {
+    position: relative;
+  }
+  .goodsList .img .shade {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: rgba(0,0,0,.5);
   }
   .goodsList img {
     width: 2rem;

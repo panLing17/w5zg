@@ -9,7 +9,7 @@
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
               .checkbox(@click.stop="")
-                w-checkbox(v-model="i.checked", @change="selectChange")
+                w-checkbox(v-model="i.checked", @change="selectChange(i.checked,i.sc_id)")
               .img
                 img(:src="i.logo | img-filter")
                 p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
@@ -28,7 +28,7 @@
                 p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
-                w-checkbox(v-model="i.checked", @change="selectChange")
+                w-checkbox(v-model="i.checked", @change="selectChange(i.checked,i.sc_id)")
               .img
                 img(:src="i.logo | img-filter")
               .specChange
@@ -91,8 +91,20 @@
       edit (k,index) {
         this.list[index].editClose = k
       },
-      selectChange () {
-        this.$emit('selectChange')
+      selectChange (checked,id) {
+        if (id) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+            params: {
+              scIdArray : id,
+              checked: checked
+            },
+          }).then(function (response) {
+            self.$emit('selectChange')
+          })
+        }
       },
       deleteGoods (id, index) {
         this.animateName = 'fadeOut'

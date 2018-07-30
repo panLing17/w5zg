@@ -17,7 +17,8 @@
   import goodsCard from './goodsCard'
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
-
+  import {mapState} from 'vuex'
+  import {bus} from '../../../bus'
   export default {
     name: 'express',
     data () {
@@ -36,23 +37,39 @@
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
-      }
+      },
+      ...mapState(['shoppingCartSelected'])
     },
     watch: {
       allClick(val) {
+        let scId = []
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
             sonNow.checked = val
+            scId.push(sonNow.sc_id)
           })
+        })
+
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : scId.join(','),
+            checked: val
+          },
+        }).then(function (response) {
         })
         this.selectChange()
       }
     },
     mounted () {
       this.getData()
+      bus.$on('expressGetData',()=>{this.getData()})
     },
     activated () {
       this.getData()
+      // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
       clearGoods (){
@@ -102,7 +119,6 @@
           counterPrice: counterPrice
         }
         this.$store.commit('computedPriceChange', priceData)
-
       },
       getData () {
         let self = this
@@ -115,13 +131,19 @@
           let array = []
           for (let i in response.data.data.send) {
             response.data.data.send[i].shoppingCartVOList.forEach((now)=>{
-              now.checked = false
+              if (now.checked === '011') {
+                now.checked = true
+              } else {
+                now.checked = false
+              }
+
               now.editClose = true
             })
             array.push(response.data.data.send[i])
           }
           self.goodsList = array
           self.disableGoods = response.data.data.failure
+          self.selectChange()
         })
       },
       tabChange (num) {

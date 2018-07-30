@@ -125,11 +125,11 @@
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
       // 清除勾选信息
-      this.$store.commit('allCheckedChange', false)
+       this.$store.commit('allCheckedChange', false)
       // 清除勾选数据
-      this.$store.commit('shoppingCartSelectedChange', [])
+      // this.$store.commit('shoppingCartSelectedChange', [])
       // 清除总价格
-      this.$store.commit('computedPriceChange', 0)
+       this.$store.commit('computedPriceChange', 0)
     },
     methods: {
       goBack () {
@@ -190,7 +190,7 @@
       tabChange(num) {
         this.nowTab = num
         this.$store.commit('computedPriceChange', 0)
-        this.$store.commit('shoppingCartSelectedChange', [])
+        //this.$store.commit('shoppingCartSelectedChange', [])
         this.$store.commit('allCheckedChange', false)
         if (num === 1) {
           this.$router.push('/shoppingCart/express')
@@ -215,7 +215,7 @@
       allChecked(e) {
         this.$store.commit('allCheckedChange', e)
       },
-      // 前往确认订单
+      // 前往确认订单或弹出商品不足提示
       goConfirmOrder() {
         let data = this.$store.state.shoppingCartSelected
         // this.$store.state.shoppingCartSelected.forEach((now) => {
@@ -273,7 +273,13 @@
             }
           })
         })*/
-        this.$store.commit('transferGive', data)
+        console.log(data)
+        if (data.commList) {
+          data = data.commList
+        } else {
+          data = data
+        }
+        // this.$store.commit('transferGive', data)
         this.$refs['disableTips'].checkDisableGoods(data)
 
       },

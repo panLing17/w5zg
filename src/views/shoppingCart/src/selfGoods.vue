@@ -10,7 +10,7 @@
             transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
               .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
                 .checkbox(@click.stop="")
-                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name)")
+                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name,i.sc_id)")
                 .img
                   img(:src="i.logo | img-filter")
                   p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
@@ -28,7 +28,7 @@
                   //img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
               .main(v-else, key="change")
                 .checkbox
-                  w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange(i.checked,storeItem.store_name)")
+                  w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange(i.checked,storeItem.store_name,i.sc_id)")
                 .img
                   img(:src="i.logo | img-filter")
                 .specChange
@@ -68,12 +68,24 @@
       }
     },
     watch: {
-      allClick() {
+      allClick(val) {
+        let scId = []
         this.goodsList.forEach((now) => {
           now.checked = this.allClick
           now.shoppingCartVOList.forEach((sonNow)=>{
             sonNow.checked = this.allClick
+            scId.push(sonNow.sc_id)
           })
+        })
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : scId.join(','),
+            checked: val
+          },
+        }).then(function (response) {
         })
         this.computedPrice()
       }
@@ -100,17 +112,20 @@
         this.goodsList[index].editClose = k
       },
       // 勾选变化
-      selectedChange(checked, storeName, storeFlag) {
+      selectedChange(checked, storeName, storeFlag, scId) {
+        let scIds = []
         // 为true则为按店铺全选
         if (storeFlag) {
           this.goodsList.forEach((now) => {
             if (now.store_name === storeName) {
               now.shoppingCartVOList.forEach((sonNow) => {
                 sonNow.checked = checked
+                scIds.push(sonNow.sc_id)
               })
             }
           })
         } else {
+          scIds.push(scId)
           let notCheckedNum = 0
           this.goodsList.forEach((now) => {
             if (now.store_name === storeName) {
@@ -127,7 +142,19 @@
             }
           })
         }
-        this.computedPrice()
+        scIds = scIds.join(',')
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : scIds,
+            checked: checked
+          },
+        }).then(function (response) {
+          self.computedPrice()
+        })
+
       },
       // 计算已选总价, 并将选中数据加入vuex
       computedPrice() {
@@ -169,7 +196,6 @@
             }
           })
         })
-        console.log(storeListOfJson)
         let priceData = {
           allPrice: allPrice,
           counterPrice: counterPrice
@@ -182,9 +208,9 @@
             allGoodsLen += 1
           })
         })
-        console.log(checked)
         // 判断已选数据与总数据长度
         if (checked.length === allGoodsLen) {
+
           this.$store.commit('allCheckedChange', true)
         } else {
           // this.$store.commit('allCheckedChange', false)
