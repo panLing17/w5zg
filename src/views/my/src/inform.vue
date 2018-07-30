@@ -4,6 +4,7 @@
       .topLeft(slot="left")
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 通知
+    .empty(v-if="isEmpty") 暂无通知
     .contList.mescroll#collectMescroll
       ul
         li(v-for="item in contLists")
@@ -21,7 +22,7 @@
               .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]?';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
-                .rightP(v-if="item.msType !== '802'") 已降价27元
+                .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元
 
 </template>
 
@@ -36,7 +37,15 @@
         contLists: []
       }
     },
-    computed: mapState(['position']),
+    computed: {
+      isEmpty(){
+        if (this.contLists.length === 0) {
+          return true
+        }
+        return false
+      },
+      ...mapState(['position'])
+    },
     activated(){
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
@@ -44,9 +53,29 @@
         }
       })
     },
+    beforeRouteLeave(to, from, next){
+      console.log(to.path)
+      if (to.path === '/my'){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/updateMessageStatus',
+          params:{
+            msStatus: '5302'
+          }
+        }).then(function (res) {
+          console.log(res)
+        })
+      }
+      next()
+    },
     mounted(){
       this.$mescrollInt('collectMescroll', this.upCallback, ()=>{
-
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0)
+          }
+        })
       }, (obj) => {
         this.$store.commit('setPosition', {
           path: this.$route.path,
@@ -56,16 +85,6 @@
     },
     methods:{
       goTogGoods(e){
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'ucMessage/updateMessageStatus',
-          params:{
-            msStatus: 5302
-          }
-        }).then(function (res) {
-          console.log(res)
-        })
         this.$router.push({
           path:'/goodsDetailed',
           query:{
@@ -112,10 +131,22 @@
 </script>
 
 <style scoped>
-#collectMescroll{
+.empty{
+  width: 100%;
+  line-height: 100vh;
+  font-size: .5rem;
+  text-align: center;
+  color: #666;
   position: fixed;
   top: 1.28rem;
   bottom: 0;
+  z-index: 101;
+}
+#collectMescroll{
+  top: 1.28rem;
+  bottom: 0;
+  z-index: 100;
+  position: fixed;
 }
 .active{
   font-weight: 600 !important;

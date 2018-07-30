@@ -144,6 +144,7 @@
     },
     methods:{
       reachInform(){
+        console.log(this.skuId)
         let self =this
         self.$ajax({
           method: 'get',
@@ -154,6 +155,7 @@
         }).then(function (res) {
           console.log(res)
         })
+        this.$emit('reachgoods')
       },
       isGray (e, index) {
 
@@ -387,7 +389,7 @@
               })
             })
           }
-          //specGrayFun(grayLevelSpec) //置灰
+          specGrayFun(grayLevelSpec) //置灰
 
 
           // 获取不同级规格
@@ -416,7 +418,7 @@
             }
           })
           // 不同级进行置灰
-          //specGrayFun(selectedNotLevelGary,true)
+          specGrayFun(selectedNotLevelGary,true)
 
           //若所有层级都选择了规格则继续
           let flag = 0

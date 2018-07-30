@@ -9,7 +9,7 @@
             img(src="../../../assets/img/message@2x.png", v-if="false")
             img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
             <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
-            .wrapSet
+            .wrapSet(v-if="false")
               img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
             .wrapXiao(@click="$router.push({path:'/my/inform',query:{num:0}})")
               .badge2(v-if="informNum!==0", :class="{top: informNum.toString().length>3}") {{informNum.toString().length>3?'999':informNum}}

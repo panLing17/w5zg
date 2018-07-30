@@ -7,26 +7,27 @@
       .topRight(slot="right", @click="zhengli", v-if="!isEmpty") {{zheng == 0 ?'整理':'完成'}}
     .empty(v-if="isEmpty") 暂无收藏
     .contList(ref="conts")
-      ul
-        li(v-for="item in contLists")
-          .checkbox(v-if="zheng != 0")
-            w-checkbox(@change="change", v-model="item.selected")
-          .lefter(@click="$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})")
-            img(:src="item.gi_image_url | img-filter", @click.prevent="")
-          .righter(@click="$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})")
-            .text {{item.gi_name}}
-            .price <span>实付价:</span><strong>{{item.direct_supply_price | price-filter}}</strong>
-      ul.lose(v-if="deleteFlag == 1")
-        li.title
-          .left 失效商品共<span>2</span>件
-          .right(@click="deleteFlag = !deleteFlag") 清空失效商品
-        li(v-for="item in lostList")
-          .lefter
-            .mask 失效
-            img(src="")
-          .righter
-            .textLose 阿迪达斯三叶草男鞋女鞋2018春史密斯绿尾小白鞋运动鞋板鞋S75187
-            .lost 该商品已失效，请重新选择
+      div
+        ul(:class="{zhengS:zhengSFlag}")
+          li(v-for="item in contLists", v-if="item.gi_status === '221'")
+            .checkbox(v-if="zheng != 0")
+              w-checkbox(@change="change", v-model="item.selected")
+            .lefter(@click="$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})")
+              img(:src="item.gi_image_url | img-filter", @click.prevent="")
+            .righter(@click="$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})")
+              .text {{item.gi_name}}
+              .price <span>实付价:</span><strong>{{item.direct_supply_price | price-filter}}</strong>
+        ul.lose(v-if="deleteFlag == 1", :class="{zhengL:zhengSFlag}")
+          li.title
+            .left 失效商品共<span>{{indexN}}</span>件
+            .right(@click="deleteFlag = !deleteFlag", v-if="false") 清空失效商品
+          li(v-if="item.gi_status !== '221'", v-for="item in contLists")
+            .lefter
+              .mask 失效
+              img(:src="item.gi_image_url | img-filter", @click.prevent="")
+            .righter
+              .textLose {{item.gi_name}}
+              .lost 该商品已失效，请重新选择
     .clearFixed(v-if="zheng != 0")
       .checkAll
         w-checkbox(@change="changeAll", v-model="selectedAll")
@@ -41,16 +42,18 @@
     name: "collection",
     data() {
       return {
+        zhengSFlag: false,
+        indexN: '',
         clearFlag: 1,
-        deleteFlag: 0,
+        deleteFlag: '',
         zheng: 0,
         selectedAll: '',
         contLists: [],
         lostList: [{}, {}]
       }
     },
-    computed:{
-      isEmpty(){
+    computed: {
+      isEmpty() {
         if (this.contLists.length === 0) {
           return true
         }
@@ -58,38 +61,52 @@
       },
       ...mapState(['collectionCheckedAll']),
     },
-    activated(){
+    activated() {
       this.zheng = 0
       this.getLists()
     },
     mounted() {
       //this.getLists()
     },
-    methods:{
-      deleteGoods(){
-        let arr = []
-        let b
-        this.contLists.forEach((item)=>{
-          if (item.selected === true) {
-            arr.push(item.fi_id)
+    methods: {
+      judgeSelect() {
+        for (let i = 0; i < this.contLists.length; i++) {
+          if (this.contLists[i].selected === true) {
+            return true
           }
-        })
-        console.log(arr)
-        b = arr.join(',')
-        let self = this
-        self.$ajax({
-          method: 'delete',
-          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavoriteList',
-          params: {
-            fiIdArray: b
-          }
-        }).then(function (res) {
-          console.log(res)
-          self.zheng = 0
-          self.getLists()
-        })
+        }
+        this.$message('请选择商品！')
+        return false
       },
-      getLists(){
+      deleteGoods() {
+        console.log(this.judgeSelect())
+        if (this.judgeSelect()) {
+          let arr = []
+          let b
+          this.contLists.forEach((item) => {
+            if (item.selected === true) {
+              arr.push(item.fi_id)
+            }
+          })
+          console.log(arr)
+          b = arr.join(',')
+          let self = this
+          self.$ajax({
+            method: 'delete',
+            url: self.$apiGoods + 'gcFavoritesInfo/cancelFavoriteList',
+            params: {
+              fiIdArray: b
+            }
+          }).then(function (res) {
+            console.log(res)
+            self.zheng = 0
+            self.zhengSFlag = false
+            self.getLists()
+          })
+        }
+
+      },
+      getLists() {
         let self = this
         self.$ajax({
           method: 'get',
@@ -97,59 +114,74 @@
           params: {}
         }).then(function (res) {
           console.log(res.data.data)
-          for (let i=0; i<res.data.data.length; i++) {
+          for (let i = 0; i < res.data.data.length; i++) {
             res.data.data[i].selected = false
           }
           self.contLists = res.data.data
+          self.contLists.forEach((item) => {
+            if (item.gi_status !== '221') {
+              self.indexN += 1
+              self.deleteFlag = 1
+            } else {
+              self.deleteFlag = 0
+            }
+          })
           console.log(self.contLists)
-          if (!self.cScroll) {
-            self.cScroll = new BScroll(self.$refs.conts, {
-              click: true,
-              probeType: 3
-            })
-          } else {
-            self.cScroll.refresh()
-          }
+          self.$nextTick(() => {
+            if (!self.cScroll) {
+              self.cScroll = new BScroll(self.$refs.conts, {
+                click: true,
+                probeType: 3
+              })
+            } else {
+              self.cScroll.refresh()
+            }
+          })
         })
       },
-      change(e){
+      change(e) {
         console.log(e)
-        for (let i=0; i<this.contLists.length; i++) {
+        for (let i = 0; i < this.contLists.length; i++) {
           if (this.contLists[i].selected === false) {
             return this.selectedAll = false
           }
         }
         return this.selectedAll = true
       },
-      changeAll(e){
-        this.contLists.forEach((i)=>{
+      changeAll(e) {
+        this.contLists.forEach((i) => {
           i.selected = e
         })
       },
-      zhengli(){
+      zhengli() {
         this.zheng = !this.zheng
         if (this.zheng != 0) {
-          this.contLists.forEach((i)=>{
+          this.zhengSFlag = true
+          this.contLists.forEach((i) => {
             i.selected = false
           })
           this.selectedAll = false
+        } else{
+          this.zhengSFlag = false
         }
+        this.$nextTick(()=>{
+          this.cScroll.refresh()
+        })
+
       }
     }
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+@import '~assets/stylus/variable.styl'
 .empty{
   width: 100%;
   line-height: 100vh;
   font-size: .5rem;
   text-align: center;
   color: #666;
-  position: fixed;
-  top: 1.28rem;
-  bottom: 0;
-  z-index: 100;
+  height: "calc(100vh - %s)" % $height-header;
 }
 .topLeft{
   padding-left: .36rem;
@@ -167,15 +199,23 @@
 }
 /*内容列表*/
 .contList{
-  position: fixed;
-  top: 1.28rem;
-  bottom: 0;
+  /*position: fixed;*/
+  /*top: 1.28rem;*/
+  /*bottom: 0;*/
   width: 100%;
+  height: "calc(100vh - %s)" % $height-header;
   background-color: #f2f2f2;
 }
+.zhengS{
+  padding-bottom: 1.5rem !important;
+}
+.zhengL{
+  margin-top: 0 !important;
+  padding-bottom: 1.5rem !important;
+}
 .contList ul{
-  padding-top: .26rem;
-  padding-bottom: 1.5rem;
+  /*padding-top: .26rem;*/
+  /*padding-bottom: 1.5rem;*/
   background-color: #f2f2f2;
 }
 .contList li{
@@ -284,6 +324,7 @@ ul.lose .lefter .mask{
   border-top: 1px solid #f2f2f2;
   background-color: #fff;
   padding: 0 .26rem;
+  z-index: 100;
 }
 .clearFixed .checkAll{
   display: flex;
@@ -303,4 +344,7 @@ ul.lose .lefter .mask{
   line-height: .96rem;
   font-size: .42rem;
 }
+  .top {
+    z-index: 0 !important;
+  }
 </style>

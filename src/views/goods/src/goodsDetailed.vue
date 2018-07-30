@@ -131,7 +131,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
+      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -374,6 +374,10 @@
       }
     },
     methods:{
+      // 到货通知
+      reachGoods(){
+        this.selectFlag = false
+      },
       // 收藏
       changeCollect1(){
         let self = this
@@ -385,7 +389,8 @@
           }
         }).then(function (res) {
           if (res.data.data.fiId) {
-            self.collectFlag = 1
+            //self.collectFlag = 1
+            self.isCollect()
           }
         })
       },
@@ -401,7 +406,8 @@
         }).then(function (res) {
           console.log(res)
           if (res.data.code === '081') {
-            self.collectFlag = 0
+            //self.collectFlag = 0
+            self.isCollect()
           }
         })
       },
