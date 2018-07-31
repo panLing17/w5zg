@@ -942,7 +942,7 @@
           // 订单页需要展示及用到的数据
           let orderData = [{
             skuId: this.$store.state.skuId,
-            storeName: 'xx旗舰店',
+            storeName: '专柜正品',
             storeLocation: this.$store.state.location,
             photo: this.$store.state.skuImg,
             spec: spec,
@@ -1009,9 +1009,9 @@
         this.content = data.content
         this.selectedSpec = data.spec
         // 仅选规格 --------------------------------------------------------------------
-        if (this.onlySelectSpec) {
+        /*if (this.onlySelectSpec) {
           this.selectFlag = false
-        }
+        }*/
         // 购买--------------------------------------------------------------------------
         if (this.ofBuy) {
           if (this.selectedSpec.length>0) {

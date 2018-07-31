@@ -2,7 +2,7 @@
   transition( leave-active-class="animated flipOutX")
     .goodsCardBox
       .title
-        p {{list.si_name}}
+        p {{list.si_name ? list.si_name : list.store_name}}
         // img(src="../../../assets/img/searchHistory_clear.png")
       transition-group(tag="div", name="leftOut")
         .goodsBox(v-for="(i,index) in list.shoppingCartVOList", :key="index")
@@ -33,7 +33,7 @@
       }
     },
     props: {
-      list: Array
+      list: Object
     },
     methods: {
       changeType () {

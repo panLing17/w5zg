@@ -28,12 +28,17 @@
           w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
           p 全选
         .right
-          .prive 合计：{{computedPrice | price-filter}}
-          .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+          .price
+            p (不含运费) 实付：<span>{{computedPrice.allPrice | price-filter}}</span>
+            p 现金券抵扣：{{computedPrice.counterPrice-computedPrice.allPrice | price-filter}}
+          .button(@click="goConfirmOrder") 结算
+    // 失效商品提示
+    disableTips(ref="disableTips")
     //cart-guide
 </template>
 
 <script>
+  import disableTips from './goodsDisableTips'
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
@@ -54,7 +59,7 @@
         settlementShow: false
       }
     },
-    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend},
+    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend, disableTips},
     computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
     mounted() {
       // mescroll初始化
@@ -120,11 +125,11 @@
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
       // 清除勾选信息
-      this.$store.commit('allCheckedChange', false)
+      // this.$store.commit('allCheckedChange', false)
       // 清除勾选数据
-      this.$store.commit('shoppingCartSelectedChange', [])
+      // this.$store.commit('shoppingCartSelectedChange', [])
       // 清除总价格
-      this.$store.commit('computedPriceChange', 0)
+      // this.$store.commit('computedPriceChange', 0)
     },
     methods: {
       goBack () {
@@ -185,7 +190,7 @@
       tabChange(num) {
         this.nowTab = num
         this.$store.commit('computedPriceChange', 0)
-        this.$store.commit('shoppingCartSelectedChange', [])
+        //this.$store.commit('shoppingCartSelectedChange', [])
         this.$store.commit('allCheckedChange', false)
         if (num === 1) {
           this.$router.push('/shoppingCart/express')
@@ -210,58 +215,73 @@
       allChecked(e) {
         this.$store.commit('allCheckedChange', e)
       },
-      // 前往确认订单
+      // 前往确认订单或弹出商品不足提示
       goConfirmOrder() {
-        let flag = false
-        let data = []
-        this.$store.state.shoppingCartSelected.forEach((now) => {
-          if (now.goods_num > now.storage_num) {
-            flag = true
+        let data = this.$store.state.shoppingCartSelected
+        // this.$store.state.shoppingCartSelected.forEach((now) => {
+        //   let spec = []
+        //   now.specVOList.forEach((n) => {
+        //     spec.push(n.gspec_value)
+        //   })
+        //   data.push({
+        //     si_id: now.si_id,
+        //     skuId: now.gsku_id,
+        //     number: now.goods_num,
+        //     spec: spec,
+        //     price: now.now_price,
+        //     goodsName: now.gi_name,
+        //     storeName: now.store_name,
+        //     photo: now.logo,
+        //     cartId: now.sc_id,
+        //     freight: now.sku_freight,
+        //     storeLocation: {
+        //       province: {
+        //         name: now.pro_Name,
+        //         id: now.province
+        //       },
+        //       city: {
+        //         name: now.city_name,
+        //         id: now.city
+        //       },
+        //       store: {
+        //         name: now.store_name,
+        //         id: now.store_id
+        //       }
+        //     }
+        //   })
+        // })
+
+        // 转为以门店分隔的json数据
+        /*let storeList = []
+        data.forEach((now)=>{
+          if (storeList.indexOf(now.storeName) === -1) {
+            storeList.push(now.storeName)
           }
-          let spec = []
-          now.specVOList.forEach((n) => {
-            spec.push(n.gspec_value)
-          })
-          data.push({
-            si_id: now.si_id,
-            skuId: now.gsku_id,
-            number: now.goods_num,
-            spec: spec,
-            price: now.now_price,
-            goodsName: now.gi_name,
-            storeName: now.store_name,
-            photo: now.logo,
-            cartId: now.sc_id,
-            freight: now.sku_freight,
-            storeLocation: {
-              province: {
-                name: now.pro_Name,
-                id: now.province
-              },
-              city: {
-                name: now.city_name,
-                id: now.city
-              },
-              store: {
-                name: now.store_name,
-                id: now.store_id
-              }
-            }
+        })
+        let storeListOfJson = []
+        storeList.forEach((now)=>{
+          storeListOfJson.push({
+            checked: true,
+            storeName: now,
+            goodsList: []
           })
         })
-        // 如果有大于库存的商品
-        if (flag) {
-          this.$message.error('存在库存不足商品')
-          return
-        }
-        this.$store.commit('transferGive', data)
-        let since = ''
-        this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-        if (this.$store.state.transfer.length > 0) {
-          this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+        storeListOfJson.forEach((now)=>{
+          data.forEach((goodsNow)=>{
+            if (goodsNow.storeName === now.storeName) {
+              now.goodsList.push(goodsNow)
+            }
+          })
+        })*/
+        if (data.commList) {
+          data = data.commList
         } else {
-          this.$message.error('请勾选商品')
+          data = data
         }
+        // this.$store.commit('transferGive', data)
+        this.$refs['disableTips'].checkDisableGoods(data)
+        console.log(data)
+
       },
       // 切换动画hack
       animateHack() {
@@ -399,7 +419,14 @@
     justify-content: flex-end;
     align-items: center;
   }
-
+  .settlement .right .price p{
+    text-align: right
+  }
+  .settlement .right .price span{
+    color:#f70057;
+    font-size: .35rem;
+    font-weight: 600
+  }
   .settlement .right .button {
     width: 3rem;
     height: 100%;
