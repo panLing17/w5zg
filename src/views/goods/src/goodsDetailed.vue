@@ -112,6 +112,8 @@
         .line
         p 推荐
       recommend(background="white", ref="recommend")
+    .collectSuc(v-if="collectSucS")
+      span {{xuanfukuang === 1?'收藏成功':'取消收藏成功'}}
     div
       .buttons
         .leftSmallButtons
@@ -142,6 +144,7 @@
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
     // 选择收货地址
     location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+
     // 新手教程
     //goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
@@ -169,6 +172,8 @@
     name: "goods-detailed",
     data () {
       return {
+        xuanfukuang: '',
+        collectSucS: '',
         fiIds: '',
         collectFlag: 0,
         // 真正存在的规格组合（置灰用）
@@ -374,6 +379,19 @@
       }
     },
     methods:{
+      // 收藏成功&&取消收藏成功
+      collectionSuc(){
+        this.collectSucS = true
+        let self = this
+        let a = 2
+        self.time1 = setInterval(function () {
+          a--
+          if (a === 0) {
+            self.collectSucS = false
+            clearInterval(self.time1)
+          }
+        },1000)
+      },
       // 到货通知
       reachGoods(){
         this.selectFlag = false
@@ -390,6 +408,8 @@
         }).then(function (res) {
           if (res.data.data.fiId) {
             //self.collectFlag = 1
+            self.xuanfukuang = 1
+            self.collectionSuc()
             self.isCollect()
           }
         })
@@ -407,6 +427,8 @@
           console.log(res)
           if (res.data.code === '081') {
             //self.collectFlag = 0
+            self.xuanfukuang = 2
+            self.collectionSuc()
             self.isCollect()
           }
         })
@@ -1132,6 +1154,21 @@
 </script>
 
 <style scoped>
+  .collectSuc{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 1.3rem;
+    text-align: center;
+    z-index: 200;
+  }
+  .collectSuc span{
+    display: inline-block;
+    padding: .2rem;
+    background-color: rgba(0,0,0,.4);
+    border-radius: .2rem;
+    color: #fff;
+  }
   .goodsBox {
     background: rgb(242,242,242);
     padding-bottom: 1rem;
