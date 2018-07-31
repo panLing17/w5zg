@@ -17,7 +17,7 @@
             .leftB
               img(:src="item.ms_thumbnail | img-filter")
             .rightB
-              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,19) + '...'}}</span>】已到货，手慢无哦！
+              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,22) + '...'}}</span>】已到货，手慢无哦！
               .text(v-if="item.msType !== '802'") {{item.ms_title}}
               .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]?';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
@@ -47,14 +47,16 @@
       ...mapState(['position'])
     },
     activated(){
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0)
-        }
-      })
+      this.judgeType()
+      this.mescroll.triggerDownScroll()
+      // this.position.forEach((now) => {
+      //   if (now.path === this.$route.path) {
+      //     this.mescroll.scrollTo(now.y, 0)
+      //   }
+      // })
     },
     beforeRouteLeave(to, from, next){
-      console.log(to.path)
+      console.log(from.path)
       if (to.path === '/my'){
         let self = this
         self.$ajax({
@@ -70,12 +72,9 @@
       next()
     },
     mounted(){
+      this.judgeType()
       this.$mescrollInt('collectMescroll', this.upCallback, ()=>{
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
+
       }, (obj) => {
         this.$store.commit('setPosition', {
           path: this.$route.path,
@@ -99,7 +98,8 @@
       judgeType(){
         if (this.$route.query.num == 0) {
           this.mstype = ''
-        } else {
+        }
+        if (this.$route.query.num == 1){
           this.mstype = '802'
         }
       },
@@ -144,12 +144,10 @@
     position: fixed;
     top: 1.28rem;
     bottom: 0;
-    z-index: 101;
   }
   #collectMescroll{
     top: 1.28rem;
     bottom: 0;
-    z-index: 100;
     position: fixed;
   }
   .active{

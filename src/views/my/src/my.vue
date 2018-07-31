@@ -91,6 +91,7 @@
               .words 浏览记录
             li(@click="$router.push({path:'/inform',query:{num:1}})")
               img(src="../../../assets/img/daohuotongzhi@2x.png")
+              .badge(v-if="reachGoodsNum && reachGoodsNum!==0", :class="{top: reachGoodsNum.toString().length>3}") {{reachGoodsNum.toString().length>3?'999':reachGoodsNum}}
               .words 到货通知
             li(@click="$router.push('/service')")
               img(src="../../../assets/img/service2@2x.png")
@@ -116,6 +117,7 @@
     name: 'my',
     data () {
       return {
+        reachGoodsNum: 0,
         collectionNum: 0,
         informNum: 0,
         animateShow: '',
@@ -139,6 +141,8 @@
     },
     activated () {
       this.collectionNumCheck()
+      this.reachGoodsNumCheck()
+      this.informNumCheck()
       this.getUserData()
       this.getFootmarkNum()
       this.getOrderCount()
@@ -170,6 +174,7 @@
           y: obj.preScrollY
         })
       })
+      this.reachGoodsNumCheck() // 到货通知数量
       this.collectionNumCheck() // 收藏数量
       this.informNumCheck() // 消息通知数量
       this.getUserData()
@@ -213,6 +218,20 @@
         }).then(function (res) {
           console.log(res.data.data.messageNum)
           self.informNum = res.data.data.messageNum
+        })
+      },
+      // 查询到货通知消息条数
+      reachGoodsNumCheck(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          params: {
+            msType: 802
+          }
+        }).then(function (res) {
+          console.log(res.data.data.messageNum)
+          self.reachGoodsNum = res.data.data.messageNum
         })
       },
       // 锁定或者解锁上拉加载

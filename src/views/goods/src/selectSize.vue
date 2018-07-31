@@ -55,6 +55,7 @@
         .bottomButton
           .right(@click="confirm", v-if="nogoods === 0") 确定
           .right(v-if="nogoods === 1", @click="reachInform()") 到货通知
+        .notice(v-if="noticeFlag") 如果30天内到货，会通过系统消息提醒您
 </template>
 
 <script>
@@ -64,6 +65,7 @@
     name: "city-select",
     data () {
       return {
+        noticeFlag: '',
         skuId: '',
         startY: '',
         moveY: '',
@@ -154,8 +156,18 @@
           }
         }).then(function (res) {
           console.log(res)
+          if (res.data.code === '081') {
+            self.noticeFlag = true
+            let t = 2
+            let timer = setInterval(function () {
+              t--
+              if (t==0) {
+                self.noticeFlag = false
+                self.$emit('reachgoods')
+              }
+            },1000)
+          }
         })
-        this.$emit('reachgoods')
       },
       isGray (e, index) {
 
@@ -566,6 +578,14 @@
 </script>
 
 <style scoped>
+  .notice{
+    position: fixed;
+    width: 100%;
+    bottom: 1.29rem;
+    background-color: rgba(0,0,0,.3);
+    color: #fff;
+    text-align: center;
+  }
   .selectSizeBox {
   }
 
