@@ -31,7 +31,7 @@
           .price
             p (不含运费) 实付：<span>{{computedPrice.allPrice | price-filter}}</span>
             p 现金券抵扣：{{computedPrice.counterPrice-computedPrice.allPrice | price-filter}}
-          .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+          .button(@click="goConfirmOrder") 结算
     // 失效商品提示
     disableTips(ref="disableTips")
     //cart-guide
@@ -125,11 +125,11 @@
       this.mescroll.hideTopBtn();
       this.mescroll.destroy();
       // 清除勾选信息
-       this.$store.commit('allCheckedChange', false)
+      // this.$store.commit('allCheckedChange', false)
       // 清除勾选数据
       // this.$store.commit('shoppingCartSelectedChange', [])
       // 清除总价格
-       this.$store.commit('computedPriceChange', 0)
+      // this.$store.commit('computedPriceChange', 0)
     },
     methods: {
       goBack () {
@@ -273,7 +273,6 @@
             }
           })
         })*/
-        console.log(data)
         if (data.commList) {
           data = data.commList
         } else {
@@ -281,6 +280,7 @@
         }
         // this.$store.commit('transferGive', data)
         this.$refs['disableTips'].checkDisableGoods(data)
+        console.log(data)
 
       },
       // 切换动画hack

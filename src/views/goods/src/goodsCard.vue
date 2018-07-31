@@ -13,7 +13,7 @@
             span {{i.counter_price | price-filter}}
             span X{{i.goods_num}}
       .bottom
-        .left(v-if="since === 'true'") 门店自提
+        .left(v-if="since === 'true'") {{data.shoppingCartVOList[0].store_address}}
         .right(v-else) 运费: {{data.freight | price-filter}}
     .goodsCardBox(v-else)
       .title {{data.storeName}}

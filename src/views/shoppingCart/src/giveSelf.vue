@@ -39,7 +39,7 @@
       })
     },
     activated () {
-      this.getData()
+      // this.getData()
     },
     // beforeRouteEnter (to, from, next) {
     //   next(vm => {

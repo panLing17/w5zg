@@ -10,7 +10,7 @@
             transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
               .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
                 .checkbox(@click.stop="")
-                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name,i.sc_id)")
+                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name,false,i.sc_id)")
                 .img
                   img(:src="i.logo | img-filter")
                   p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
@@ -38,11 +38,21 @@
                     //img(src="../../../assets/img/next@2x.png")
                   w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
                 .specOk(@click="edit(true,index)") 完成
-            .bottom
-              .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>切换至快递配送
-              .right
-                span {{i.pro_Name}} {{i.city_name}}
-                img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")
+            .bottomOperation
+              .more
+                img(src="../../../assets/img/diandian.png")
+                .moreOperation
+                  .sanjiao
+                  ul.buttons
+                    li(@click="changeType(index,i)")
+                      img(src="../../../assets/img/shoppingCartChange.png")
+                      p 快递配送
+                    li(@click="deleteGoods(i.sc_id, index)")
+                      img(src="../../../assets/img/shoppingCartDelete.png")
+                      p 删除
+        .bottom
+          .left <img src="../../../assets/img/location.png"/>{{storeItem.store_address}}
+          .right
 </template>
 
 <script>
@@ -128,6 +138,7 @@
           scIds.push(scId)
           let notCheckedNum = 0
           this.goodsList.forEach((now) => {
+
             if (now.store_name === storeName) {
               now.shoppingCartVOList.forEach((sonNow) => {
                 if (!sonNow.checked) {
@@ -375,7 +386,7 @@
   }
 
   .mainRight {
-    width: 1rem;
+    width: .3rem;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -392,7 +403,6 @@
   }
 
   .bottom {
-    margin-top: .3rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -403,7 +413,7 @@
   .bottom .right {
     flex-grow: 1;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-left: .3rem;
     color: #aaaaaa;
   }
@@ -414,8 +424,11 @@
   }
 
   .bottom .left {
+    color: #888;
+    padding-left: .8rem;
     display: flex;
     align-items: center;
+    text-overflow: ellipsis;
   }
 
   .bottom .left img {
@@ -462,7 +475,63 @@
     align-items: center;
     justify-content: center;
   }
-
+  /* 更多操作 */
+  .bottomOperation{
+    margin-top: .2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: .5rem;
+    border-bottom: solid 1px #eee;
+  }
+  .bottomOperation> .more{
+    position: relative;
+  }
+  .bottomOperation> .more:hover .moreOperation {
+    display: block;
+  }
+  .bottomOperation> .more> img{
+    height: .4rem;
+    margin-right: .4rem;
+  }
+  .bottomOperation> .more> .moreOperation {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: .2rem;
+  }
+  .moreOperation>.buttons {
+    width: 2.5rem;
+    margin-top: .4rem;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,0.8);
+  }
+  .moreOperation>.buttons li{
+    height: 1rem;
+    border-bottom: solid 1px #dfdfdf;
+    display: flex;
+    align-items: center;
+    padding: 0 .2rem;
+  }
+  .moreOperation>.buttons li img{
+    height: .4rem;
+  }
+  .moreOperation>.buttons li p{
+    color: #e8e8e8;
+    margin-left: .1rem;
+  }
+  .sanjiao{
+    position: absolute;
+    right: .2rem;
+    top: .1rem;
+    height: 0px;
+    width: 0px;
+    border-top: 0 solid transparent;
+    border-right: .3rem solid transparent;
+    border-left: .3rem solid transparent;
+    border-bottom: .3rem solid rgba(0,0,0,0.8);
+  }
+  /* 更多操作结束 */
   /* */
   /* 动画 */
   .leftOut-enter-active {

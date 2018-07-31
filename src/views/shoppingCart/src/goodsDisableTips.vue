@@ -26,12 +26,15 @@
 
 <script>
   import {bus} from '../../../bus'
+
   export default {
     name: "card-tips",
     data() {
       return {
         goodsList: [],
-        show: false
+        show: false,
+        normalGoods: false,
+        storeDownGoods: false
       }
     },
     watch: {
@@ -51,7 +54,7 @@
         }
       }
     },
-    mounted () {
+    mounted() {
     },
     methods: {
       upCallback: function (page) {
@@ -61,13 +64,13 @@
       close() {
         this.show = false
       },
-      expressUpData () {
+      expressUpData() {
         bus.$emit('expressGetData')
       },
-      selfCarryUpData () {
+      selfCarryUpData() {
         bus.$emit('selfCarryUpData')
       },
-      goShoppingCart () {
+      goShoppingCart() {
         this.close()
         if (this.$route.path === '/shoppingCart/express') {
           this.expressUpData()
@@ -75,7 +78,7 @@
           this.selfCarryUpData()
         }
       },
-      next () {
+      next() {
         this.close()
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
@@ -85,50 +88,62 @@
           this.$message.error('请勾选商品')
         }
       },
-      checkDisableGoods (array) {
-        console.log(array)
+      checkDisableGoods(array) {
         this.$store.commit('transferGive', array)
         let url = 'shoppingCart/checkSubmitCartList'
         let self = this
         let cartId = []
-        array.forEach((now)=>{
-          now.shoppingCartVOList.forEach((sonNow)=>{
+        array.forEach((now) => {
+          now.shoppingCartVOList.forEach((sonNow) => {
             cartId.push(sonNow.sc_id)
           })
 
         })
         cartId = cartId.join(',')
 
-          self.$ajax({
-            method: 'get',
-            url: self.$apiApp + url,
-            params: {
-              scIdArray: cartId
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + url,
+          params: {
+            scIdArray: cartId
+          }
+        }).then(function (response) {
+          self.goodsList = []
+          let normalFlag = 0
+          let downFlag = 0
+          // 先判断是否有正常商品
+          response.data.data.forEach((now) => {
+            if (now.status_flag.toString() !== '0') {
+              normalFlag += 1
             }
-          }).then(function (response) {
-            self.goodsList = []
-            let nextFlag = 0
-            response.data.data.forEach((now)=>{
-
-                if (now.status_flag.toString() === '0') {
-                  nextFlag+=1
-                  self.goodsList.push(now)
-                }
-
-            })
-            if (nextFlag>0) {
-              self.show = true
-            } else {
-              self.show = false
-              let since = ''
-              self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-              if (self.$store.state.transfer.length > 0) {
-                self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
-              } else {
-                self.$message.error('请勾选商品')
-              }
+            if (now.status_flag.toString() !== '1') {
+              downFlag += 1
             }
+            self.goodsList.push(now)
           })
+          if (normalFlag > 0) {
+            self.normalGoods = true
+          } else {
+            self.normalGoods = false
+          }
+            // 再判断有无降库存商品
+          if (downFlag > 0) {
+            self.storeDownGoods = true
+          } else {
+            self.storeDownGoods = false
+          }
+          if (!self.normalGoods || !self.storeDownGoods) {
+            let since = ''
+            self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+            if (self.$store.state.transfer.length > 0) {
+              self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+            } else {
+              self.$message.error('请勾选商品')
+            }
+          } else {
+            self.show = true
+          }
+        })
 
       }
     }
@@ -164,18 +179,22 @@
     text-align: center;
     border-bottom: solid 1px #eee;
   }
-  .goodsList{
+
+  .goodsList {
     padding: .2rem;
   }
-  .goodsList>li{
+
+  .goodsList > li {
     display: flex;
     margin-bottom: .2rem;
     padding-bottom: .2rem;
-    border-bottom: solid 1px  #eee;
+    border-bottom: solid 1px #eee;
   }
+
   .goodsList .img {
     position: relative;
   }
+
   .goodsList .img .shade {
     position: absolute;
     width: 100%;
@@ -186,12 +205,14 @@
     justify-content: center;
     align-items: center;
     color: white;
-    background-color: rgba(0,0,0,.5);
+    background-color: rgba(0, 0, 0, .5);
   }
+
   .goodsList img {
     width: 2rem;
     height: 2rem;
   }
+
   .info {
     flex-grow: 1;
     width: 0;
@@ -200,18 +221,22 @@
     flex-direction: column;
     padding-left: .2rem;
   }
-  .spec{
+
+  .spec {
     display: flex;
     align-items: center;
   }
-  .spec li{
+
+  .spec li {
     margin-right: .2rem;
     color: #999;
   }
+
   .storeNum {
     text-align: right;
     color: #999;
   }
+
   /* 底部按钮 */
   .bottom {
     border-top: 1px solid #ddd;
@@ -224,13 +249,15 @@
     left: 0;
     display: flex;
   }
+
   .goShoppingCart {
     flex-grow: 1;
     color: #666;
   }
+
   .next {
     flex-grow: 1;
-    background-color: rgb(244,0,84);
+    background-color: rgb(244, 0, 84);
     color: white;
   }
 </style>

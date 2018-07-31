@@ -38,11 +38,19 @@
                   //img(src="../../../assets/img/next@2x.png")
                 w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
               .specOk(@click="edit(true,index)") 完成
-          .bottom
-            .left(@click="changeType(i,index)") <img src="../../../assets/img/switch@2x.png"/>切换至门店自提
-            .right
-              span {{i.pro_Name}} {{i.city_name}}
-              img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")
+          .bottomOperation
+            .more
+              img(src="../../../assets/img/diandian.png")
+              .moreOperation
+                .sanjiao
+                ul.buttons
+                  li(@click="changeType(i,index)")
+                    img(src="../../../assets/img/shoppingCartChange.png")
+                    p 专柜自提
+                  li(@click="deleteGoods(i.sc_id, index)")
+                    img(src="../../../assets/img/shoppingCartDelete.png")
+                    p 删除
+
 </template>
 
 <script>
@@ -236,7 +244,7 @@
     flex-grow: 1;
     width: 0;
     padding-left: .3rem;
-    padding-right: 1rem;
+    padding-right: .5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -287,7 +295,7 @@
   }
 
   .mainRight {
-    width: 1rem;
+    width: .2rem;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -329,6 +337,63 @@
     height: .4rem;
     margin-right: .1rem;
   }
+  /* 更多操作 */
+  .bottomOperation{
+    margin-top: .2rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: .5rem;
+    border-bottom: solid 1px #eee;
+  }
+  .bottomOperation> .more{
+    position: relative;
+  }
+  .bottomOperation> .more:hover .moreOperation {
+    display: block;
+  }
+  .bottomOperation> .more> img{
+    height: .4rem;
+    margin-right: .4rem;
+  }
+  .bottomOperation> .more> .moreOperation {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: .2rem;
+  }
+  .moreOperation>.buttons {
+    width: 2.5rem;
+    margin-top: .4rem;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,0.8);
+  }
+  .moreOperation>.buttons li{
+    height: 1rem;
+    border-bottom: solid 1px #dfdfdf;
+    display: flex;
+    align-items: center;
+    padding: 0 .2rem;
+  }
+  .moreOperation>.buttons li img{
+    height: .4rem;
+  }
+  .moreOperation>.buttons li p{
+    color: #e8e8e8;
+    margin-left: .1rem;
+  }
+  .sanjiao{
+    position: absolute;
+    right: .2rem;
+    top: .1rem;
+    height: 0px;
+    width: 0px;
+    border-top: 0 solid transparent;
+    border-right: .3rem solid transparent;
+    border-left: .3rem solid transparent;
+    border-bottom: .3rem solid rgba(0,0,0,0.8);
+  }
+  /* 更多操作结束 */
   /* 动画 */
   .leftOut-enter-active {
     transition: all .3s ease;
