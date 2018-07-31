@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    self-goods.goodsCard( @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
+    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -9,13 +9,14 @@
       .title
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
-      disable-goods(:list="disableGoodsList")
+      disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
 </template>
 
 <script>
   import selfGoods from './selfGoods'
-  import disableGoods from './disableGoods'
-
+  import disableGoods from './sendDisableGoods'
+  import {mapState} from 'vuex'
+  import {bus} from '../../../bus'
   export default {
     name: 'give-self',
     data () {
@@ -27,12 +28,18 @@
         disableGoodsList: []
       }
     },
+    computed: {
+      ...mapState(['shoppingCartSelected'])
+    },
     components: {selfGoods, disableGoods},
     mounted () {
       this.getData()
+      bus.$on('selfCarryUpData',()=>{
+        this.getData()
+      })
     },
     activated () {
-      this.getData()
+      // this.getData()
     },
     // beforeRouteEnter (to, from, next) {
     //   next(vm => {
@@ -52,36 +59,62 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/carryShoppingCartList',
+          url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
           params: {},
         }).then(function (response) {
-          let storeList = []
-          response.data.data.carryList.forEach((now)=>{
-            now.checked = false
-            now.editClose = true
-            if (storeList.indexOf(now.store_name) === -1) {
-              storeList.push(now.store_name)
-            }
-          })
-          let storeListOfJson = []
-          storeList.forEach((now)=>{
-            storeListOfJson.push({
-              checked: false,
-              storeName: now,
-              goodsList: []
-            })
-          })
-          storeListOfJson.forEach((now)=>{
-            response.data.data.carryList.forEach((goodsNow)=>{
-              if (goodsNow.store_name === now.storeName) {
-                now.goodsList.push(goodsNow)
-              }
-            })
-          })
+          // let storeList = []
+          // response.data.data.carryList.forEach((now)=>{
+          //   now.checked = false
+          //   now.editClose = true
+          //   if (storeList.indexOf(now.store_name) === -1) {
+          //     storeList.push(now.store_name)
+          //   }
+          // })
+          // let storeListOfJson = []
+          // storeList.forEach((now)=>{
+          //   storeListOfJson.push({
+          //     checked: false,
+          //     storeName: now,
+          //     goodsList: []
+          //   })
+          // })
+          // storeListOfJson.forEach((now)=>{
+          //   response.data.data.carryList.forEach((goodsNow)=>{
+          //     if (goodsNow.store_name === now.storeName) {
+          //       now.goodsList.push(goodsNow)
+          //     }
+          //   })
+          // })
 
           // console.log(storeListOfJson)
-          self.goodsList = storeListOfJson
-          self.disableGoodsList = response.data.data.failureList
+            response.data.data.commList.forEach((now)=>{
+              let checkedFlag = 0
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (sonNow.checked !== '011') {
+                  checkedFlag += 1
+                }
+              })
+              if (checkedFlag>0) {
+                now.checked = false
+              } else {
+                now.checked = true
+              }
+              now.editClose = true
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (sonNow.checked === '011') {
+                  sonNow.checked = true
+                } else {
+                  sonNow.checked = false
+                }
+                sonNow.editClose = true
+              })
+            })
+          self.goodsList = response.data.data.commList
+          self.disableGoodsList = response.data.data.failure
+          self.$nextTick(()=>{
+            self.$refs['selfGoods'].computedPrice()
+          })
+
         })
       },
       changeType (data,fun) {

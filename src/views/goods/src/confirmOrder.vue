@@ -109,6 +109,7 @@
       this.$mescrollInt("confirmOrderBox",this.upCallback)
       this.getLocation()
       this.computedPrice()
+      this.getExpressGoodsData
       // this.computedFreight()
       // 如果用户不是b请求计算通用券与抵用金额
       if (this.$store.state.userData.member_type !== '092') {
@@ -122,9 +123,9 @@
       // 地址变化后
       locationChange () {
         // 为商品赋值运费
-        this.getGoodsFreight().then(()=>{
-          this.computedFreight()
-        })
+        // this.getGoodsFreight().then(()=>{
+        //   this.computedFreight()
+        // })
       },
       // 获取每个商品运费
       getGoodsFreight () {
@@ -202,7 +203,7 @@
             this.allFreight = 0
           }
         }*/
-        if (this.$route.query.since !== 'true'){
+        /*if (this.$route.query.since !== 'true'){
           // 通过接口请求运费，临时用，后续修改
           let self = this
           let jsonStr = []
@@ -224,7 +225,7 @@
             self.allFreight = response.data.data
           })
 
-        }
+        }*/
 
       },
       submit () {
@@ -318,7 +319,10 @@
         let self = this
         let cartId = []
         this.$store.state.transfer.forEach((now)=>{
-          cartId.push(now.cartId)
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            cartId.push(sonNow.sc_id)
+          })
+
         })
         cartId = cartId.join(',')
         // 点击按钮失效
@@ -390,19 +394,30 @@
                   self.$store.commit('giveGoodsAddressChange',now)
                 }
                 // 为商品赋值运费
-                self.getGoodsFreight().then(()=>{
-                  self.computedFreight()
-                })
+                // self.getGoodsFreight().then(()=>{
+                //   self.computedFreight()
+                // })
               }
             })
           }
         })
       },
       computedPrice () {
-        this.transfer.forEach((now)=>{
-          this.price += now.price*now.number
-          this.content += now.number-0
-        })
+        // 来自购物车与直接购买计算规则不同
+        if (this.$route.query.type === 'shoppingCart') {
+          this.transfer.forEach((now)=>{
+            now.shoppingCartVOList.forEach((sonNow)=>{
+              this.price += sonNow.counter_price*sonNow.goods_num
+              this.content += sonNow.goods_num-0
+            })
+
+          })
+        } else {
+          this.transfer.forEach((now)=>{
+            this.price += now.price*now.number
+            this.content += now.number-0
+          })
+        }
       },
       // 请求可抵用金额与通用券
       getVoucher () {
@@ -411,7 +426,10 @@
         if (this.$route.query.type === 'shoppingCart') {
           let cartId = []
           this.$store.state.transfer.forEach((now)=>{
-            cartId.push(now.cartId)
+            now.shoppingCartVOList.forEach((sonNow)=>{
+              cartId.push(sonNow.sc_id)
+            })
+
           })
           cartId = cartId.join(',')
           self.$ajax({
