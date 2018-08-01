@@ -49,12 +49,10 @@
     },
     activated(){
       this.judgeType()
-      console.log(this.number)
-      console.log(this.$route.query.num)
-      console.log(this.number != this.$route.query.num)
+
       if (this.number != this.$route.query.num) {
         this.number = this.$route.query.num
-        this.mescroll.triggerDownScroll()
+        this.mescroll.resetUpScroll()
       } else {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
@@ -98,12 +96,59 @@
       },
       goTogGoods(e){
         this.$store.commit('setInformGoods', e)
-        this.$router.push({
-          path:'/goodsDetailed',
-          query:{
-            id: e.gspu_id
-          }
-        })
+        if (e.msType === '801') {
+          // 跳购物车
+          // 1.判断购物车里还有没有商品
+          let self = this
+          console.log(new Date().getTime())
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
+            params: {},
+          }).then(function (response) {
+            console.log(new Date().getTime())
+            response.data.data.commList.forEach((item) => {
+              item.shoppingCartVOList.forEach((goods) => {
+                if (e.gspu_id === goods.gspu_id) {
+                  self.$router.push('/shoppingCart')
+                  return
+                }
+              })
+            })
+
+            self.$ajax({
+              method: 'get',
+              url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+              params: {},
+            }).then(function (res) {
+              console.log(new Date().getTime())
+              res.data.data.send.forEach((item) => {
+                item.shoppingCartVOList.forEach((goods) => {
+                  if (e.gspu_id == goods.gspu_id) {
+                    self.$router.push('/shoppingCart/express')
+                    return
+                  }
+                })
+              })
+              // 跳商品详情
+              // self.$router.push({
+              //   path:'/goodsDetailed',
+              //   query:{
+              //     id: e.gspu_id
+              //   }
+              // })
+            })
+          })
+
+        } else if (e.msType === '802') {
+          // 跳商品详情
+          this.$router.push({
+            path:'/goodsDetailed',
+            query:{
+              id: e.gspu_id
+            }
+          })
+        }
       },
       judgeType(){
         if (this.$route.query.num == 0) {

@@ -332,6 +332,7 @@
           })
 
           if (this.$store.state.informGoods) {
+            this.$store.commit('setInformGoods', null)
             // 获取选中的规格
             let specData = {
               'cityId': this.$store.state.location.city.id,
