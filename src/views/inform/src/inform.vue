@@ -1,9 +1,9 @@
 <template lang="pug">
   .wrapNav
-    nav-bar(background="rgb(244, 0, 87)")
-      .topLeft(slot="left")
+    .navbar
+      .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 通知
+      .topCenter 通知
     .empty(v-if="isEmpty") 暂无通知
     .contList.mescroll#collectMescroll
       ul
@@ -17,7 +17,7 @@
             .leftB
               img(:src="item.ms_thumbnail | img-filter")
             .rightB
-              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,22) + '...'}}</span>】已到货，手慢无哦！
+              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
               .text(v-if="item.msType !== '802'") {{item.ms_title}}
               .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]?';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
@@ -49,12 +49,9 @@
     },
     activated(){
       this.judgeType()
-      console.log(this.number)
-      console.log(this.$route.query.num)
-      console.log(this.number != this.$route.query.num)
       if (this.number != this.$route.query.num) {
         this.number = this.$route.query.num
-        this.mescroll.triggerDownScroll()
+        this.mescroll.resetUpScroll()
       } else {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
@@ -97,15 +94,20 @@
         this.mescroll.lockUpScroll(isLock)
       },
       goTogGoods(e){
-        this.$router.push({
-          path:'/goodsDetailed',
-          query:{
-            id: e.gspu_id
-          }
-        })
+        if (e.msType === '802') {
+          this.$router.push({
+            path:'/goodsDetailed',
+            query:{
+              id: e.gspu_id
+            }
+          })
+        } else{
+          this.$router.push('/shoppingCart')
+        }
+
       },
       judgeType(){
-        if (this.$route.query.num == 0) {
+        if (this.$route.query.num == 0){
           this.mstype = ''
         }
         if (this.$route.query.num == 1){
@@ -163,11 +165,22 @@
     font-weight: 600 !important;
     padding-left: 0 !important;
   }
+  .navbar{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 1.28rem;
+    border-bottom: 1px solid #f2f2f2;
+    background: rgb(244, 0, 87);
+    display: flex;
+    align-items: center;
+  }
   .topLeft{
     padding-left: .36rem;
     padding-top: .1rem;
   }
   .topCenter{
+    margin-left: 3.7rem;
     font-size: .48rem;
     color: #fff;
   }

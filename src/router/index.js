@@ -205,16 +205,6 @@ const router = new Router ({
       component: Common.paySao
     },
     {
-      path: '/collection',
-      name: '收藏夹',
-      component: Collection.collection
-    },
-    {
-      path: '/inform',
-      name: '通知',
-      component: Inform.inform
-    },
-    {
       path: '/reservations',
       name: '预约试穿',
       component: Reservations.reservations
@@ -299,6 +289,12 @@ const router = new Router ({
         keepAlive: true
       }
     },
+    {
+      path: '/collection',
+      name: '收藏夹',
+      component: Collection.collection
+    },
+
     // {
     //   path: '/marketing/rankingList',
     //   name: '排行榜',
@@ -455,6 +451,11 @@ const router = new Router ({
               ]
             }
           ]
+        },
+        {
+          path: '/inform',
+          name: '通知',
+          component: Inform.inform
         },
         {
           path: '/my',
