@@ -40,6 +40,7 @@
               .specOk(@click="edit(true,index)") 完成
           .bottomOperation
             .more
+              p(:class="{opc0:i.difference_price<=0}")  比加入时降{{i.difference_price | price-filter}}
               img(src="../../../assets/img/diandian.png")
               .moreOperation
                 .sanjiao
@@ -339,18 +340,27 @@
   }
   /* 更多操作 */
   .bottomOperation{
-    margin-top: .2rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    height: .5rem;
+    height: 1rem;
     border-bottom: solid 1px #eee;
   }
   .bottomOperation> .more{
+    height: 100%;
+    width: 6.5rem;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .bottomOperation> .more:hover .moreOperation {
     display: block;
+  }
+  .bottomOperation> .more> p{
+    color: #F70057;
+    border: solid 1px #F70057;
+    padding: 1px .2rem;
   }
   .bottomOperation> .more> img{
     height: .4rem;
@@ -360,7 +370,7 @@
     display: none;
     position: absolute;
     right: 0;
-    top: .2rem;
+    top: .6rem;
   }
   .moreOperation>.buttons {
     width: 2.5rem;
@@ -392,6 +402,10 @@
     border-right: .3rem solid transparent;
     border-left: .3rem solid transparent;
     border-bottom: .3rem solid rgba(0,0,0,0.8);
+  }
+  /* 透明 */
+  .opc0 {
+    opacity: 0;
   }
   /* 更多操作结束 */
   /* 动画 */

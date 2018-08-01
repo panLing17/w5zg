@@ -89,7 +89,6 @@
         }
       },
       checkDisableGoods(array) {
-        this.$store.commit('transferGive', array)
         let url = 'shoppingCart/checkSubmitCartList'
         let self = this
         let cartId = []
@@ -111,6 +110,8 @@
           self.goodsList = []
           let normalFlag = 0
           let downFlag = 0
+          // 不正常商品购物车ID合集
+          let noNormalGoods = []
           // 先判断是否有正常商品
           response.data.data.forEach((now) => {
             if (now.status_flag.toString() !== '0') {
@@ -119,8 +120,21 @@
             if (now.status_flag.toString() !== '1') {
               downFlag += 1
             }
+            if (now.status_flag.toString() !== '0' && now.status_flag.toString() !== '1') {
+              noNormalGoods.push(now.sc_id)
+            }
             self.goodsList.push(now)
           })
+          // 去除不能提交的商品，将数据存入
+          array.forEach((now,index) => {
+            now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
+              if (noNormalGoods.includes(sonNow.sc_id)) {
+                console.log(sonNow)
+                array[index].shoppingCartVOList.splice(sonIndex,1)
+              }
+            })
+          })
+          self.$store.commit('transferGive', array)
           if (normalFlag > 0) {
             self.normalGoods = true
           } else {
@@ -239,12 +253,14 @@
 
   /* 底部按钮 */
   .bottom {
+    background-color: white;
     border-top: 1px solid #ddd;
     width: 100%;
     height: 1.2rem;
     line-height: 1.2rem;
     text-align: center;
     position: absolute;
+    z-index: 10;
     bottom: 0;
     left: 0;
     display: flex;

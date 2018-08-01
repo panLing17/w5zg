@@ -39,7 +39,7 @@
       })
     },
     activated () {
-      // this.getData()
+       this.getData()
     },
     // beforeRouteEnter (to, from, next) {
     //   next(vm => {
@@ -153,7 +153,9 @@
         let self = this
         let list = []
         this.disableGoodsList.forEach((now)=>{
-          list.push(now.sc_id)
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            list.push(sonNow.sc_id)
+          })
         })
         list = list.join(',')
         self.$ajax({

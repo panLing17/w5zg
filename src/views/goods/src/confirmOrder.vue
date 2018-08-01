@@ -352,8 +352,11 @@
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
         let cartId = []
+        console.log(this.$store.state.transfer)
         this.$store.state.transfer.forEach((now)=>{
-          cartId.push(now.cartId)
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            cartId.push(sonNow.sc_id)
+          })
         })
         cartId = cartId.join(',')
         // 点击按钮失效

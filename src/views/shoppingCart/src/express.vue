@@ -124,13 +124,13 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+          url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
           params: {},
         }).then(function (response) {
           // 转为数组
           let array = []
-          for (let i in response.data.data.send) {
-            response.data.data.send[i].shoppingCartVOList.forEach((now)=>{
+          for (let i in response.data.data.commList) {
+            response.data.data.commList[i].shoppingCartVOList.forEach((now)=>{
               if (now.checked === '011') {
                 now.checked = true
               } else {
@@ -139,7 +139,7 @@
 
               now.editClose = true
             })
-            array.push(response.data.data.send[i])
+            array.push(response.data.data.commList[i])
           }
           self.goodsList = array
           self.disableGoods = response.data.data.failure
