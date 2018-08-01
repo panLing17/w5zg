@@ -1,13 +1,13 @@
 <template lang="pug">
   .wrapNav
-    nav-bar(background="rgb(244, 0, 87)")
-      .topLeft(slot="left")
+    .navbar
+      .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") 收藏夹
-      .topRight(slot="right", @click="zhengli", v-if="!isEmpty") {{zheng == 0 ?'整理':'完成'}}
+      .topCenter 收藏夹
+      .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
     .empty(v-if="isEmpty") 暂无收藏
     .contList(ref="conts", v-else="isEmpty")
-      div
+      div(:class="{zhengpP:zhengPFlag}")
         ul(:class="{zhengS:zhengSFlag}")
           li(v-for="item in contLists", v-if="item.gi_status === '221'")
             .checkbox(v-if="zheng != 0")
@@ -17,11 +17,11 @@
             .righter(@click="gotoGoods(item)")
               .text {{item.gi_name}}
               .price <span>实付价:</span><strong>{{item.direct_supply_price | price-filter}}</strong>
-        ul.lose(v-if="deleteFlag == 1", :class="{zhengL:zhengSFlag}")
+        ul.lose(v-if="deleteFlag == 1", :class="{zhengL:zhengSFlag,zhengpp:zhengppFlag}")
           li.title
             .left 失效商品共<span>{{indexN}}</span>件
             .right(@click="clearLost") 清空失效商品
-          li(v-if="item.gi_status !== '221'", v-for="item in contLists")
+          li(v-for="item in contLists", v-if="item.gi_status === '224'")
             .lefter
               .mask 失效
               img(:src="item.gi_image_url | img-filter", @click.prevent="")
@@ -42,6 +42,9 @@
     name: "collection",
     data() {
       return {
+        buzheng: '',
+        zhengppFlag: false,
+        zhengPFlag: false,
         zhengSFlag: false,
         indexN: 0,
         clearFlag: 1,
@@ -50,6 +53,7 @@
         selectedAll: '',
         contLists: [],
         lostList: [{}, {}]
+
       }
     },
     computed: {
@@ -66,9 +70,41 @@
       this.getLists()
     },
     mounted() {
-      //this.getLists()
+      this.getLists()
+      this.judgeAndOrIos()
     },
     methods: {
+      // 调整只有失效商品的样式
+      tiaozheng(){
+        let x = 0
+        let rel
+        this.contLists.forEach((item)=>{
+          if (item.gi_status === '221') {
+            x+=1
+          }
+        })
+        rel = x
+        if (rel <= 0) {
+          this.buzheng = false
+          this.zhengppFlag = true
+        } else {
+          this.buzheng = true
+          this.zhengppFlag = false
+        }
+      },
+      // 判断是安卓还是苹果
+      judgeAndOrIos(){
+        let u = navigator.userAgent;
+        let isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1; //android终端
+        let isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+        // alert('是否是Android：'+isAndroid);
+        // alert('是否是iOS：'+isiOS);
+        if (isiOS) {
+          this.zhengPFlag = true
+        } else {
+          this.zhengPFlag = false
+        }
+      },
       // 去商品详情
       gotoGoods(item){
         if (this.zheng ==0) {
@@ -80,7 +116,7 @@
         let arr = []
         let b
         this.contLists.forEach((item) => {
-          if (item.gi_status !== '221') {
+          if (item.gi_status === '224') {
             arr.push(item.fi_id)
           }
         })
@@ -88,16 +124,18 @@
         b = arr.join(',')
         let self = this
         self.$ajax({
-          methods: 'delete',
+          method: 'delete',
           url: self.$apiGoods + 'gcFavoritesInfo/cancelFavoriteList',
           params: {
             fiIdArray: b
           }
         }).then(function (res) {
           console.log(res)
-          self.getLists()
-          self.deleteFlag = 0
-          self.zheng = 0
+          if (res.data.code === '081') {
+            self.getLists()
+            self.deleteFlag = 0
+            self.zheng = 0
+          }
         })
       },
       // 判断是否选择要删除的商品
@@ -132,12 +170,13 @@
             }
           }).then(function (res) {
             console.log(res)
-            self.zheng = 0
-            self.zhengSFlag = false
-            self.getLists()
+            if (res.data.code === '081') {
+              self.zheng = 0
+              self.zhengSFlag = false
+              self.getLists()
+            }
           })
         }
-
       },
       // 获取收藏商品的
       getLists() {
@@ -149,19 +188,24 @@
         }).then(function (res) {
           console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
-            res.data.data[i].selected = false
+            if (res.data.data[i].gi_status === '221') {
+              res.data.data[i].selected = false
+            }
           }
           self.contLists = res.data.data
           let a = 0
           self.contLists.forEach((item) => {
-            if (item.gi_status !== '221') {
+            if (item.gi_status === '224') {
               a += 1
-              self.deleteFlag = 1
-            } else {
-              self.deleteFlag = 0
             }
           })
           self.indexN = a
+          if (self.indexN >0) {
+            self.deleteFlag = 1
+          } else {
+            self.deleteFlag = 0
+          }
+          self.tiaozheng()
           console.log(self.contLists)
           self.$nextTick(() => {
             if (!self.cScroll) {
@@ -187,7 +231,9 @@
       },
       changeAll(e) {
         this.contLists.forEach((i) => {
-          i.selected = e
+          if (i.gi_status === '221') {
+            i.selected = e
+          }
         })
       },
       // 整理&&完成
@@ -196,7 +242,9 @@
         if (this.zheng != 0) {
           this.zhengSFlag = true
           this.contLists.forEach((i) => {
-            i.selected = false
+            if (i.gi_status === '221') {
+              i.selected = false
+            }
           })
           this.selectedAll = false
         } else {
@@ -224,18 +272,31 @@
     background-color: #f2f2f2;
     height: "calc(100vh - %s)" % $height-header;
   }
+  .navbar{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 1.28rem;
+    border-bottom: 1px solid #f2f2f2;
+    background: rgb(244, 0, 87);
+    display: flex;
+    align-items: center;
+    z-index: 1;
+  }
   .topLeft{
     padding-left: .36rem;
     padding-top: .1rem;
   }
   .topCenter{
+    margin-left: 3.7rem;
     font-size: .48rem;
     color: #fff;
   }
   .topRight{
+    margin-left: 2.9rem;
     font-size: .37rem;
     color: #fff;
-    padding-top: .1rem;
+    padding-top: .07rem;
     padding-right: .1rem;
   }
   /*内容列表*/
@@ -246,6 +307,12 @@
     width: 100%;
     height: "calc(100vh - %s)" % $height-header;
     background-color: #f2f2f2;
+  }
+  .zhengpp{
+    margin-top: 0 !important;
+  }
+  .zhengpP{
+    padding-bottom: 1.5rem !important;
   }
   .zhengS{
     padding-bottom: 1.5rem !important;
