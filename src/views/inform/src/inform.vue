@@ -62,7 +62,7 @@
 
     },
     beforeRouteLeave(to, from, next){
-      console.log(from.path)
+
       if (to.path === '/my'){
         let self = this
         self.$ajax({
@@ -129,6 +129,7 @@
                   }
                 })
               })
+
               // 跳商品详情
               // self.$router.push({
               //   path:'/goodsDetailed',
