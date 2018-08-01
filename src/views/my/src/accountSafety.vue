@@ -2,7 +2,7 @@
   .accountBind
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBackPage")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 账户安全
     .loginPassword
       ul.wrap(@click="routergoUpdate1()")

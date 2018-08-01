@@ -80,7 +80,7 @@
         let rel
         this.contLists.forEach((item)=>{
           if (item.gi_status === '221') {
-            x+=1
+            x += 1
           }
         })
         rel = x
@@ -107,7 +107,7 @@
       },
       // 去商品详情
       gotoGoods(item){
-        if (this.zheng ==0) {
+        if (this.zheng == 0) {
           this.$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})
         }
       },

@@ -140,7 +140,6 @@
       this.getOrderCount()
     },
     activated () {
-      alert(1)
       this.collectionNumCheck()
       this.reachGoodsNumCheck()
       this.informNumCheck()
@@ -163,7 +162,6 @@
       next()
     },
     mounted () {
-      alert(2)
       this.$mescrollInt('myMescroll', this.upCallback, () => {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
