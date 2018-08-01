@@ -39,6 +39,7 @@
       })
     },
     activated () {
+      this.swap()
       // this.getData()
     },
     // beforeRouteEnter (to, from, next) {
@@ -47,6 +48,37 @@
     //   })
     // },
     methods: {
+      swap () {
+        if (this.$store.state.informGoods) {
+          this.$emit('scroll')
+          let topIndex = {}
+          let self = this
+          this.goodsList.forEach((now, index)=> {
+            now.shoppingCartVOList.forEach((sonNow, i) => {
+              if (self.$store.state.informGoods && self.$store.state.informGoods.rel_id == sonNow.sc_id && self.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
+                self.$store.commit('setInformGoods', null)
+                topIndex = {
+                  first: index,
+                  second: i
+                }
+              }
+            })
+          })
+          // 交换位置
+          if (topIndex) {
+            let temp = this.goodsList[topIndex.first].shoppingCartVOList[0]
+            if (topIndex.second != 0) {
+              this.goodsList[topIndex.first].shoppingCartVOList.splice(0, 1, this.goodsList[topIndex.first].shoppingCartVOList[topIndex.second])
+              this.goodsList[topIndex.first].shoppingCartVOList.splice(topIndex.second, 1, temp)
+            }
+            if (topIndex.first != 0) {
+              temp = this.goodsList[0]
+              this.goodsList.splice(0, 1, this.goodsList[topIndex.first])
+              this.goodsList.splice(topIndex.first, 1, temp)
+            }
+          }
+        }
+      },
       tabChange (num) {
         this.nowTab = num
         if (num === 1) {
@@ -87,9 +119,22 @@
           // })
 
           // console.log(storeListOfJson)
-            response.data.data.commList.forEach((now)=>{
+
+            let topIndex = {}
+            response.data.data.commList.forEach((now, index)=>{
               let checkedFlag = 0
-              now.shoppingCartVOList.forEach((sonNow)=>{
+              now.shoppingCartVOList.forEach((sonNow, i)=>{
+                // 如果是降价通知过来的，需将商品第一个显示
+                if (self.$store.state.informGoods) {
+                  if (self.$store.state.informGoods.rel_id == sonNow.sc_id && self.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
+                    self.$store.commit('setInformGoods', null)
+                    topIndex = {
+                      first: index,
+                      second: i
+                    }
+                  }
+                }
+
                 if (sonNow.checked !== '011') {
                   checkedFlag += 1
                 }
@@ -109,6 +154,21 @@
                 sonNow.editClose = true
               })
             })
+          // 交换位置
+          if (topIndex.first) {
+            let temp = response.data.data.commList[topIndex.first].shoppingCartVOList[0]
+            if (topIndex.second != 0) {
+              response.data.data.commList[topIndex.first].shoppingCartVOList[0] = response.data.data.commList[topIndex.first].shoppingCartVOList[topIndex.second]
+              response.data.data.commList[topIndex.first].shoppingCartVOList[topIndex.second] = temp
+            }
+            if (topIndex.first != 0) {
+              temp = response.data.data.commList[0]
+              response.data.data.commList[0] = response.data.data.commList[topIndex.first]
+              response.data.data.commList[topIndex.first] = temp
+            }
+          }
+
+
           self.goodsList = response.data.data.commList
           self.disableGoodsList = response.data.data.failure
           self.$nextTick(()=>{

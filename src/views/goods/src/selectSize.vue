@@ -330,6 +330,62 @@
               }
             })
           })
+
+          if (this.$store.state.informGoods) {
+            this.$store.commit('setInformGoods', null)
+            // 获取选中的规格
+            let specData = {
+              'cityId': this.$store.state.location.city.id,
+              'gspu_id': this.$route.query.id,
+              'specList': [
+              ]
+            }
+            this.spec.forEach((now)=>{
+              let val = now.specValue[now.valueIndex].value
+              specData.specList.push({
+                'gspec_name': now.specName,
+                'gspec_value': val
+              })
+            })
+            let self = this
+            this.$ajax({
+              method: 'post',
+              url: self.$apiGoods + 'goods/sku/detail',
+              params: {
+                gc:JSON.stringify(specData)
+              }
+            }).then(function (response) {
+              // 显示真实sku价格，隐藏spu返回的最低价
+              self.$parent.initPriceFlag = false
+              // 将sku图片存入store
+              self.$store.commit('skuImgSave', response.data.data.logo)
+              // 根据sku切换展示图片
+              let skuGoodsData = self.list[0]
+              skuGoodsData.gi_img_url = response.data.data.logo
+              self.list.splice(0,1,skuGoodsData)
+              self.realGoodsData = response.data.data
+              if (self.realGoodsData.storage_num<=0) {
+                self.nogoods = 1
+              } else{
+                self.nogoods = 0
+              }
+              self.skuId = response.data.data.gsku_id
+              // vuex中保存skuId
+              self.$store.commit('getSkuId',response.data.data.gsku_id)
+              // 派发此组件load事件 (用于返回库存与规格)
+              let data = {
+                maxStoreNum: self.realGoodsData.storage_num,
+                spec: specData.specList,
+                counter_price: self.realGoodsData.counter_price ? self.realGoodsData.counter_price : 0,
+                retail_price: self.realGoodsData.retail_price ? self.realGoodsData.retail_price : 0,
+                direct_supply_price: self.realGoodsData.direct_supply_price ? self.realGoodsData.direct_supply_price : 0,
+                goi_freight: self.realGoodsData.goi_freight
+              }
+              self.$emit('load',data)
+
+            })
+
+          }
         } else {
         // 若无则正常
           // 若已经选择，则进行反选
@@ -538,6 +594,7 @@
           self.$emit('load',data)
 
         })
+
       },
       buy () {
         // 判断用户类型，小B显示直供价，小C显示专柜价

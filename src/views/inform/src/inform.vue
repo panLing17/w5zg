@@ -62,7 +62,7 @@
 
     },
     beforeRouteLeave(to, from, next){
-      console.log(from.path)
+
       if (to.path === '/my'){
         let self = this
         self.$ajax({
@@ -94,17 +94,64 @@
         this.mescroll.lockUpScroll(isLock)
       },
       goTogGoods(e){
-        if (e.msType === '802') {
+        this.$store.commit('setInformGoods', e)
+        if (e.msType === '801') {
+          // 跳购物车
+          // 1.判断购物车里还有没有商品
+          let self = this
+          let isExits = false
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
+            params: {},
+          }).then(function (response) {
+            response.data.data.commList.forEach((item) => {
+              item.shoppingCartVOList.forEach((goods) => {
+                if (e.rel_id === goods.sc_id && e.gspu_id === goods.gspu_id) {
+                  self.$router.push('/shoppingCart')
+                  isExits = true
+                  return false
+                }
+              })
+            })
+
+            if (!isExits) {
+              self.$ajax({
+                method: 'get',
+                url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+                params: {},
+              }).then(function (res) {
+                res.data.data.send.forEach((item) => {
+                  item.shoppingCartVOList.forEach((goods) => {
+                    if (e.rel_id == goods.sc_id && e.gspu_id === goods.gspu_id) {
+                      self.$router.push('/shoppingCart/express')
+                      isExits = true
+                      return false
+                    }
+                  })
+                })
+
+                // 跳商品详情
+                if (!isExits) {
+                  self.$router.push({
+                    path:'/goodsDetailed',
+                    query:{
+                      id: e.gspu_id
+                    }
+                  })
+                }
+              })            }
+          })
+
+        } else if (e.msType === '802') {
+          // 跳商品详情
           this.$router.push({
             path:'/goodsDetailed',
             query:{
               id: e.gspu_id
             }
           })
-        } else{
-          this.$router.push('/shoppingCart')
         }
-
       },
       judgeType(){
         if (this.$route.query.num == 0){

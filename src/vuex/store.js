@@ -68,9 +68,14 @@ const state = {
     tags: []
   },
   // 收藏商品
-  collectGoods:[]
+  collectGoods:[],
+  // 到货传规格
+  informGoods: null
 }
 const mutations = {
+  setInformGoods (state, data) {
+    state.informGoods = data
+  },
   setCollectGoods (state, data) {
     state.collectGoods.push(data)
   },

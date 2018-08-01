@@ -866,7 +866,11 @@ router.beforeEach ((to, from, next) => {
       _hmt.push(['_trackPageview', to.path +'/1'])
     }
   } else {
-    _hmt.push(['_trackPageview', to.path])
+    if (to.query.road_id) {
+      _hmt.push(['_trackPageview', to.path + '?road_id=' + to.query.road_id])
+    } else {
+      _hmt.push(['_trackPageview', to.path])
+    }
   }
 
 

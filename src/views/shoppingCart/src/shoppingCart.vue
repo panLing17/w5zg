@@ -18,7 +18,7 @@
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(@clear="getGoodsNum")
+          router-view(@clear="getGoodsNum", @scroll="scrollToTop")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
@@ -115,15 +115,19 @@
       }
       // 获取商品数量
       this.getGoodsNum()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
-        }
-      })
+      if (!this.scroll) {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      } else {
+        this.scroll = false
+      }
+
     },
     deactivated() {
-      this.mescroll.hideTopBtn();
-      this.mescroll.destroy();
+
       // 清除勾选信息
       // this.$store.commit('allCheckedChange', false)
       // 清除勾选数据
@@ -131,7 +135,15 @@
       // 清除总价格
       // this.$store.commit('computedPriceChange', 0)
     },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy()
+    },
     methods: {
+      scrollToTop () {
+        this.scroll = true
+        this.mescroll.scrollTo(0, 0)
+      },
       goBack () {
         this.$router.go(-1)
       },
@@ -316,8 +328,8 @@
   /*  */
   .shoppingCartBox {
     background-color: rgb(242, 242, 242);
-    padding-bottom: 3rem;
-    min-height: 100%;
+    padding-bottom: 1.2rem;
+    /*min-height: 100%;*/
   }
 
   .slider {
@@ -441,9 +453,9 @@
 
   /* 上拉刷新下俩加载 */
   #shoppingCartMescroll {
-    padding-top: 1.3rem;
-    top: 0;
-    bottom: 0;
+    /*padding-top: 1.3rem;*/
+    top: $height-header;
+    bottom: $height-footer;
     height: auto;
   }
 </style>

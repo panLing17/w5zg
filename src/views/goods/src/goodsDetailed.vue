@@ -309,6 +309,7 @@
         getAdvert()
         getTags()
       }
+      next()
       /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
         next()
       })*/
@@ -447,7 +448,6 @@
               gspuId: self.$route.query.id
             }
           }).then(function (res) {
-            console.log(res.data.data)
             if (res.data.data.flag === 'N') {
               self.collectFlag = 0
             }
@@ -742,17 +742,28 @@
         }).then(function (response) {
           // 改造格式
           let newData = self.specGray(response.data.data)
-          console.log(newData)
+          let informGoods = self.$store.state.informGoods
           newData.forEach((now)=>{
+            now.valueIndex = -1
             now.specValue.forEach((sonNow, sonIndex)=>{
-              if (!sonNow.gray) {
-                now.valueIndex = -1
-              } else {
-                now.valueIndex = -1
+
+              // if (!sonNow.gray) {
+              //   now.valueIndex = -1
+              // } else {
+              //   now.valueIndex = -1
+              // }
+              if (informGoods) {
+                let s = informGoods.gspec_values.split(',').slice(0, informGoods.gspec_values.split(',').length-1)
+                s.forEach((item) => {
+                  if (sonNow.value.trim() === item.trim()) {
+                    now.valueIndex = sonIndex
+                  }
+                })
               }
             })
           })
           self.spec = newData
+          console.log(self.spec)
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
         })
@@ -1011,6 +1022,7 @@
         this.price = data.price
         this.content = data.content
         this.selectedSpec = data.spec
+        console.log('spec3333333333333')
         // 仅选规格 --------------------------------------------------------------------
         /*if (this.onlySelectSpec) {
           this.selectFlag = false
@@ -1074,6 +1086,7 @@
         this.price = data.price
         this.content = data.content
         this.selectedSpec = data.spec
+        console.log('spec4444444444')
         // 打开类型选择
         // this.disTypeFlag = true
         // 关闭规格选择
