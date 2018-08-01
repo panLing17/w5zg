@@ -36,6 +36,12 @@ import Marketing from '../views/common/src/marketing/index'
 
 import shareImg from '../assets/img/applogo@2x.png'
 
+//收藏夹
+import Collection from '../views/collection/index.js'
+
+//通知
+import Inform from '../views/inform/index.js'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -197,6 +203,16 @@ const router = new Router ({
       path: '/scavengingPayment',
       name: '扫码支付',
       component: Common.paySao
+    },
+    {
+      path: '/collection',
+      name: '收藏夹',
+      component: Collection.collection
+    },
+    {
+      path: '/inform',
+      name: '通知',
+      component: Inform.inform
     },
     {
       path: '/reservations',
@@ -404,12 +420,12 @@ const router = new Router ({
         {
           path: '/home/searchHistory',
           name: '搜索历史',
-          component: Home.searchHistory
+          component: Home.searchHistory,
         },
         {
           path: '/page',
           name: '分类',
-          component: Page.page,
+          component: Page.page
         },
         {
           path: '/page/commodityList',
@@ -439,7 +455,8 @@ const router = new Router ({
               ]
             }
           ]
-        }, {
+        },
+        {
           path: '/my',
           name: '我的',
           component: My.index,

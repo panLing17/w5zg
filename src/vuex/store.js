@@ -35,6 +35,8 @@ const state = {
     carryNum:0,
     sendNum:0
   },
+  // 收藏夹全选
+  collectionCheckedAll: false,
   // 购物车全选
   shoppingCartAllChecked: false,
   // 购物车已选商品
@@ -64,9 +66,14 @@ const state = {
   recommendAdvert:{
     advert: [],
     tags: []
-  }
+  },
+  // 收藏商品
+  collectGoods:[]
 }
 const mutations = {
+  setCollectGoods (state, data) {
+    state.collectGoods.push(data)
+  },
   transferGive (state, data) {
     state.transfer = data
   },

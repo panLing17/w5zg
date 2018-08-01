@@ -2,7 +2,7 @@
   .settings
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="goBackPage")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 设置
     .avatar
       ul.wrap(@click="routergoUser()")
@@ -115,9 +115,8 @@
     width: 100%;
     min-height: 100vh;
   	background-color: rgb(242,242,242);
-    position: absolute;
-    z-index: 100;
-  	overflow: scroll;
+    position: fixed;
+    /*z-index: 100;*/
   }
   .settings .topCenter{
   	font-size: .5rem;

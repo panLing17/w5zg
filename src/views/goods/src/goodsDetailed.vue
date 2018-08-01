@@ -73,7 +73,7 @@
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .myPrice
         .left 余额:
-          span 现金券 <strong>{{(userData.netcard_balance | price-filter)?(userData.netcard_balance | price-filter):'0'}}</strong>　通用券 <strong>{{(userData.cash_balance | price-filter)?(userData.cash_balance | price-filter):'0'}}</strong>
+          span 现金券 <strong>{{userData.netcard_balance | price-filter}}</strong>　通用券 <strong>{{userData.cash_balance | price-filter}}</strong>
         //img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left(v-if="!initPriceFlag") 规格:
@@ -112,6 +112,8 @@
         .line
         p 推荐
       recommend(background="white", ref="recommend")
+    .collectSuc(v-if="collectSucS")
+      span {{xuanfukuang === 1?'收藏成功':'取消收藏成功'}}
     div
       .buttons
         .leftSmallButtons
@@ -120,6 +122,10 @@
         .leftSmallButtons
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
+        .leftSmallButtons
+          img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0", @click="changeCollect1()")
+          img(src="../../../assets/img/Group 9 Copy@2x.png", v-if="collectFlag == 1 ", @click="changeCollect2()")
+          p {{collectFlag == 0? '收藏':'已收藏'}}
         //.ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
           ul(@click="yuyueShow")
@@ -127,7 +133,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
+      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -138,6 +144,7 @@
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
     // 选择收货地址
     location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+
     // 新手教程
     //goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
@@ -165,6 +172,10 @@
     name: "goods-detailed",
     data () {
       return {
+        xuanfukuang: '',
+        collectSucS: '',
+        fiIds: '',
+        collectFlag: 0,
         // 真正存在的规格组合（置灰用）
         graySpecData: [],
         // 禁止选择专柜自提
@@ -226,6 +237,7 @@
       }
     },
     computed:{
+
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -303,6 +315,8 @@
       })*/
     },
     mounted () {
+      // 是否收藏
+      this.isCollect()
       this.getGoodsDetailed()
       this.getGoodsDesc()
       this.getBanner()
@@ -364,6 +378,87 @@
       }
     },
     methods:{
+      // 收藏成功&&取消收藏成功
+      collectionSuc(){
+        this.collectSucS = true
+        let self = this
+        let a = 2
+        self.time1 = setInterval(function () {
+          a--
+          if (a === 0) {
+            self.collectSucS = false
+            clearInterval(self.time1)
+          }
+        },1000)
+      },
+      // 到货通知
+      reachGoods(){
+        this.selectFlag = false
+      },
+      // 收藏
+      changeCollect1(){
+        if (localStorage.hasOwnProperty('token')) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (res) {
+            if (res.data.data.fiId) {
+              //self.collectFlag = 1
+              self.xuanfukuang = 1
+              self.collectionSuc()
+              self.isCollect()
+            }
+          })
+        } else{
+          this.$router.push('/login/login2')
+        }
+
+      },
+      // 取消收藏
+      changeCollect2(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
+          params: {
+            fiId: self.fiIds
+          }
+        }).then(function (res) {
+          console.log(res)
+          if (res.data.code === '081') {
+            //self.collectFlag = 0
+            self.xuanfukuang = 2
+            self.collectionSuc()
+            self.isCollect()
+          }
+        })
+      },
+      // 商品是否收藏
+      isCollect(){
+        if (localStorage.hasOwnProperty('token')) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'gcFavoritesInfo/queryFavorite',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (res) {
+            console.log(res.data.data)
+            if (res.data.data.flag === 'N') {
+              self.collectFlag = 0
+            }
+            if (res.data.data.flag === 'Y') {
+              self.collectFlag = 1
+              self.fiIds = res.data.data.fiId
+            }
+          })
+        }
+      },
       // 显示预约
       yuyueShow () {
         if (this.initPriceFlag) {
@@ -851,7 +946,7 @@
           // 订单页需要展示及用到的数据
           let orderData = [{
             skuId: this.$store.state.skuId,
-            storeName: 'xx旗舰店',
+            storeName: '专柜正品',
             storeLocation: this.$store.state.location,
             photo: this.$store.state.skuImg,
             spec: spec,
@@ -918,9 +1013,9 @@
         this.content = data.content
         this.selectedSpec = data.spec
         // 仅选规格 --------------------------------------------------------------------
-        if (this.onlySelectSpec) {
+        /*if (this.onlySelectSpec) {
           this.selectFlag = false
-        }
+        }*/
         // 购买--------------------------------------------------------------------------
         if (this.ofBuy) {
           if (this.selectedSpec.length>0) {
@@ -1063,6 +1158,21 @@
 </script>
 
 <style scoped>
+  .collectSuc{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 1.3rem;
+    text-align: center;
+    z-index: 200;
+  }
+  .collectSuc span{
+    display: inline-block;
+    padding: .2rem;
+    background-color: rgba(0,0,0,.4);
+    border-radius: .2rem;
+    color: #fff;
+  }
   .goodsBox {
     background: rgb(242,242,242);
     padding-bottom: 1rem;
@@ -1459,7 +1569,8 @@
   }
   .buttons> .leftSmallButtons{
     height: 100%;
-    width: 2rem;
+    width: 0;
+    flex-grow: 1;
     border-right: solid 1px #eee;
     display: flex;
     flex-direction: column;
@@ -1491,13 +1602,20 @@
     color: rgb(100,100,100);
   }
   .buttons .left{
-    flex-grow: 1;
+    flex-grow: 1.5;
     width: 0;
-    background: rgb(255,128,171);
+    background: #FF8500;
     font-size: .4rem;
     color: white;
   }
   .buttons .right{
+    flex-grow: 1.5;
+    width: 0;
+    background: rgb(244,0,87);
+    font-size: .4rem;
+    color: white;
+  }
+  .buttons .goodsInform{
     flex-grow: 1;
     width: 0;
     background: rgb(244,0,87);

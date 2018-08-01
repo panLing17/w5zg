@@ -46,7 +46,7 @@
                   .amount
                     span.nums x{{items.goods_num}}
                 .right
-                  .price 可抵扣最低价格: <span>{{items.sale_price | price-filter}}</span>
+                  .price 实付价:<span>{{items.sale_price | price-filter}}</span>
                   .cartPrice 专柜价: {{items.sale_price | price-filter}}
         .wrapDownner
           .wrapFreight
@@ -841,11 +841,11 @@
   .consignee .addressee{
     margin-top: -.1rem;
     margin-left: .2rem;
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .consignee .addressee span.man strong{
     margin-left: .2rem;
-    font-size: .4rem;
+    font-size: .37rem;
     font-weight: 400;
   }
   .consignee .addressee span.phone{
@@ -854,7 +854,7 @@
   .address{
     margin-top: .2rem;
     margin-left: .45rem;
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .address strong{
     display: inline-block;
@@ -871,31 +871,33 @@
     padding-bottom: .2rem;
   }
   .content .top{
-    height: .8rem;
     border-bottom: 1px solid rgb(242,242,242);
     background-color: #fff;
     display: flex;
     justify-content: space-between;
-    padding: 0 .3rem;
-    line-height: .8rem;
+    padding: .32rem .3rem;
   }
   .top .left{
     color: rgb(51,51,51);
-    font-size: .35rem;
+    font-size: .37rem;
   }
   .top .left span.orderNum{
     margin-right: .2rem;
   }
   .top .right{
-    font-size: .4rem;
+    font-size: .37rem;
     color: rgb(244,0,87);
   }
   .center{
-    background-color: #fff;
+    background-color: #f2f2f2;
     padding: .3rem .3rem .2rem;
     /*border-bottom: 1px solid rgb(242,242,242);*/
     /*display: flex;*/
     position: relative;
+    margin-bottom: .13rem;
+  }
+  .center:last-child{
+    margin-bottom: 0;
   }
   .center .wrapGoods{
     display: flex;
@@ -924,7 +926,11 @@
     align-items: center;
   }
   .center .goodsDetails .wrapAttr .right{
-    margin-top: .2rem;
+    border-top: 1px solid #D7D7D7;
+    margin-top: .1rem;
+    padding-top: .2rem;
+    display: flex;
+    align-items: center;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
@@ -951,17 +957,17 @@
     color: rgb(153,153,153);
   }
   .center .goodsDetails .price{
-    margin-top: .05rem;
-    font-size: .35rem;
+    font-size: .29rem;
   }
   .center .goodsDetails .price span{
     color: rgb(244,0,87);
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .center .goodsDetails .cartPrice{
     color: rgb(153,153,153);
-    font-size: .35rem;
+    font-size: .26rem;
     text-decoration: line-through;
+    margin-left: .24rem;
   }
   .wrapDownner{
     padding: .2rem .3rem;
@@ -1039,25 +1045,29 @@
     background-color: #fff;
   }
   .total ul{
-    padding: .2rem .3rem .1rem;
+    padding: .2rem .3rem;
     color: rgb(153,153,153);
     font-size: .35rem;
   }
   .total ul li{
     display: flex;
     justify-content: space-between;
+    margin-bottom: .3rem;
+  }
+  .total ul li:last-child{
+    margin-bottom: 0;
   }
   .total .bottoms{
-    padding: 0 .3rem;
+    padding: .26rem .3rem;
     border-top: 1px solid rgb(242,242,242);
-    height: .8rem;
-    line-height: .8rem;
-    font-size: .4rem;
+    font-size: .37rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
   .total .bottoms span.money{
     color: rgb(244,0,87);
+    font-size: .53rem;
   }
   /*总商品的统计--结束*/
   /*返现金券--开始*/
@@ -1083,6 +1093,10 @@
   .orderNumber ul li{
     font-size: .35rem;
     color: rgb(153,153,153);
+    margin-bottom: .3rem;
+  }
+  .orderNumber ul li:last-child{
+    margin-bottom: 0;
   }
   .orderNumber ul li span{
     margin-right: .2rem;
