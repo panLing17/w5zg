@@ -390,7 +390,6 @@
       },
       // 现金券变化
       netCardChange() {
-
       },
       getLocation() {
         let self = this
