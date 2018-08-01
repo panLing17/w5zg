@@ -2,7 +2,7 @@
 module.exports = {
   NODE_ENV: '"production"' ,
   REQ_PRE : '"http://"',
-  API_ROOT: '".w5zg.net:"',
+  API_ROOT: '".w5zg.com:"',
   MEMBER_PORT: '"80"',
   GOODS_PORT: '"80"',
   TRADING_PORT: '"80"',

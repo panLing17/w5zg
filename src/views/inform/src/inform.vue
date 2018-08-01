@@ -95,20 +95,16 @@
       },
       goTogGoods(e){
         this.$store.commit('setInformGoods', e)
-        console.log(e)
         if (e.msType === '801') {
           // 跳购物车
           // 1.判断购物车里还有没有商品
           let self = this
           let isExits = false
-          console.log(new Date().getTime())
           self.$ajax({
             method: 'get',
             url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
             params: {},
           }).then(function (response) {
-            console.log(new Date().getTime())
-            console.log(response.data.data.commList)
             response.data.data.commList.forEach((item) => {
               item.shoppingCartVOList.forEach((goods) => {
                 if (e.rel_id === goods.sc_id && e.gspu_id === goods.gspu_id) {
@@ -125,8 +121,6 @@
                 url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
                 params: {},
               }).then(function (res) {
-                console.log(new Date().getTime())
-                console.log(res.data.data.send)
                 res.data.data.send.forEach((item) => {
                   item.shoppingCartVOList.forEach((goods) => {
                     if (e.rel_id == goods.sc_id && e.gspu_id === goods.gspu_id) {

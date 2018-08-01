@@ -18,7 +18,7 @@
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(@clear="getGoodsNum")
+          router-view(@clear="getGoodsNum", @scroll="scrollToTop")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
@@ -115,11 +115,16 @@
       }
       // 获取商品数量
       this.getGoodsNum()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
-        }
-      })
+      if (!this.scroll) {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      } else {
+        this.scroll = false
+      }
+
     },
     deactivated() {
 
@@ -135,6 +140,10 @@
       this.mescroll.destroy()
     },
     methods: {
+      scrollToTop () {
+        this.scroll = true
+        this.mescroll.scrollTo(0, 0)
+      },
       goBack () {
         this.$router.go(-1)
       },

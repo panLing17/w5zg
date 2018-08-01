@@ -50,11 +50,13 @@
     methods: {
       swap () {
         if (this.$store.state.informGoods) {
+          this.$emit('scroll')
           let topIndex = {}
+          let self = this
           this.goodsList.forEach((now, index)=> {
             now.shoppingCartVOList.forEach((sonNow, i) => {
-              if (this.$store.state.informGoods.rel_id == sonNow.sc_id && this.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
-                this.$store.commit('setInformGoods', null)
+              if (self.$store.state.informGoods && self.$store.state.informGoods.rel_id == sonNow.sc_id && self.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
+                self.$store.commit('setInformGoods', null)
                 topIndex = {
                   first: index,
                   second: i
@@ -63,16 +65,16 @@
             })
           })
           // 交换位置
-          if (topIndex.first) {
+          if (topIndex) {
             let temp = this.goodsList[topIndex.first].shoppingCartVOList[0]
             if (topIndex.second != 0) {
-              this.goodsList[topIndex.first].shoppingCartVOList[0] = this.goodsList[topIndex.first].shoppingCartVOList[topIndex.second]
-              this.goodsList[topIndex.first].shoppingCartVOList[topIndex.second] = temp
+              this.goodsList[topIndex.first].shoppingCartVOList.splice(0, 1, this.goodsList[topIndex.first].shoppingCartVOList[topIndex.second])
+              this.goodsList[topIndex.first].shoppingCartVOList.splice(topIndex.second, 1, temp)
             }
             if (topIndex.first != 0) {
               temp = this.goodsList[0]
-              this.goodsList[0] = this.goodsList[topIndex.first]
-              this.goodsList[topIndex.first] = temp
+              this.goodsList.splice(0, 1, this.goodsList[topIndex.first])
+              this.goodsList.splice(topIndex.first, 1, temp)
             }
           }
         }
