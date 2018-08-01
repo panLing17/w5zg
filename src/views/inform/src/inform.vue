@@ -97,6 +97,7 @@
         this.mescroll.lockUpScroll(isLock)
       },
       goTogGoods(e){
+        this.$store.commit('setInformGoods', e)
         this.$router.push({
           path:'/goodsDetailed',
           query:{
