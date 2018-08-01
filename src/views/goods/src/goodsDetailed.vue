@@ -122,9 +122,9 @@
         .leftSmallButtons
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
-        .leftSmallButtons(v-if="isdenglu")
+        .leftSmallButtons
           img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0", @click="changeCollect1()")
-          img(src="../../../assets/img/Group 9 Copy@2x.png", v-if="collectFlag == 1", @click="changeCollect2()")
+          img(src="../../../assets/img/Group 9 Copy@2x.png", v-if="collectFlag == 1 ", @click="changeCollect2()")
           p {{collectFlag == 0? '收藏':'已收藏'}}
         //.ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
@@ -237,9 +237,7 @@
       }
     },
     computed:{
-      isdenglu(){
-        return localStorage.hasOwnProperty('token')
-      },
+
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -398,21 +396,26 @@
       },
       // 收藏
       changeCollect1(){
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
-          params: {
-            gspuId: self.$route.query.id
-          }
-        }).then(function (res) {
-          if (res.data.data.fiId) {
-            //self.collectFlag = 1
-            self.xuanfukuang = 1
-            self.collectionSuc()
-            self.isCollect()
-          }
-        })
+        if (localStorage.hasOwnProperty('token')) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (res) {
+            if (res.data.data.fiId) {
+              //self.collectFlag = 1
+              self.xuanfukuang = 1
+              self.collectionSuc()
+              self.isCollect()
+            }
+          })
+        } else{
+          this.$router.push('/login/login2')
+        }
+
       },
       // 取消收藏
       changeCollect2(){

@@ -32,6 +32,7 @@
     name: "inform",
     data(){
       return{
+        number: this.$route.query.num,
         looked: 1,
         mstype: '',
         contLists: []
@@ -48,12 +49,20 @@
     },
     activated(){
       this.judgeType()
-      this.mescroll.triggerDownScroll()
-      // this.position.forEach((now) => {
-      //   if (now.path === this.$route.path) {
-      //     this.mescroll.scrollTo(now.y, 0)
-      //   }
-      // })
+      console.log(this.number)
+      console.log(this.$route.query.num)
+      console.log(this.number != this.$route.query.num)
+      if (this.number != this.$route.query.num) {
+        this.number = this.$route.query.num
+        this.mescroll.triggerDownScroll()
+      } else {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0)
+          }
+        })
+      }
+
     },
     beforeRouteLeave(to, from, next){
       console.log(from.path)

@@ -54,8 +54,9 @@
               i(v-else) 请选择地址
             img(src="../../../assets/img/more@2x.png")
         .bottomButton(v-if="onlySelectSpec")
-          .left(@click="goBuy") 立即购买
-          .right(@click="addCart") 加入购物车
+          .left(@click="goBuy", v-if="nogoods === 0") 立即购买
+          .right(@click="addCart", v-if="nogoods === 0") 加入购物车
+          .right(v-if="nogoods === 1", @click="reachInform()") 到货通知
         .bottomButton(v-else)
           .right(@click="confirm", v-if="nogoods === 0") 确定
           .right(v-if="nogoods === 1", @click="reachInform()") 到货通知
