@@ -12,7 +12,7 @@
                 w-checkbox(v-model="i.checked", @change="selectChange(i.checked,i.sc_id)")
               .img
                 img(:src="i.logo | img-filter")
-                p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
+                // p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
               .info(@click.stop="")
                 .text
                   .name {{i.gi_name}}
@@ -45,7 +45,7 @@
               .moreOperation
                 .sanjiao
                 ul.buttons
-                  li(@click="changeType(i,index)")
+                  li(@click="changeType(i,index)", v-if="i.storage_num>0")
                     img(src="../../../assets/img/shoppingCartChange.png")
                     p 专柜自提
                   li(@click="deleteGoods(i.sc_id, index)")
