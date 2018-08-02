@@ -4,7 +4,10 @@
       .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 通知
-    .empty(v-if="isEmpty") 暂无通知
+    .empty(v-if="!contLists.length")
+      .imgs
+        img(src="../../../assets/img/Group 7@2x.png")
+      .goToHome(@click="$router.push('/home')") 去商城首页
     .contList.mescroll#collectMescroll
       ul
         li(v-for="item in contLists")
@@ -195,13 +198,30 @@
 <style scoped>
   .empty{
     width: 100%;
-    line-height: 100vh;
     font-size: .5rem;
     text-align: center;
     color: #666;
+    background-color: #f2f2f2;
     position: fixed;
     top: 1.28rem;
     bottom: 0;
+  }
+  .imgs{
+    margin-top: 1.06rem;
+  }
+  .imgs img{
+    width: 2.96rem;
+    height: 3.38rem;
+  }
+  .goToHome{
+    width: 4.26rem;
+    height: 1.17rem;
+    line-height: 1.17rem;
+    margin: .74rem auto 0;
+    background-color: #F70057;
+    border-radius: .26rem;
+    color: #fff;
+    font-size: .4rem;
   }
   #collectMescroll{
     top: 1.28rem;
