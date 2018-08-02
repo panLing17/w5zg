@@ -45,7 +45,7 @@
               .moreOperation
                 .sanjiao
                 ul.buttons
-                  li(@click="changeType(i,index)", v-if="i.storage_num>0")
+                  li(@click="changeType(i,index)", v-if="i.storage_num>0 && i.carry_type === 1")
                     img(src="../../../assets/img/shoppingCartChange.png")
                     p 专柜自提
                   li(@click="deleteGoods(i.sc_id, index)")
@@ -135,7 +135,7 @@
       // 商品数量变化
       countChange (cartId,skuId,num) {
         // 计算价格
-        this.selectChange()
+        this.$parent.selectChange()
         let self = this
         self.$ajax({
           method: 'post',
