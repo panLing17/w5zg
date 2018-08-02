@@ -9,7 +9,7 @@
           ul.goodsList
             li(v-for="i in goodsList")
               .img
-                .shade(v-if="i.status_flag !== 0")
+                .shade(v-if="i.status_flag !== 0 && i.status_flag !== 1")
                   span(v-if="i.status_flag === 2") 库存不足
                   span(v-if="i.status_flag === 3") 失效
                 img(:src="i.logo | img-filter")
@@ -146,7 +146,7 @@
           } else {
             self.storeDownGoods = false
           }
-          if (!self.normalGoods || !self.storeDownGoods) {
+          if (!self.normalGoods) {
             let since = ''
             self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
             if (self.$store.state.transfer.length > 0) {
