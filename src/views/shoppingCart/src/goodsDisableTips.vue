@@ -20,7 +20,7 @@
                 .storeNum 库存:{{i.storage_num}}
           .bottom
             .goShoppingCart(@click="goShoppingCart") 返回购物车
-            .next(@click="next") 继续结算
+            .next(@click="next", v-if="storeDownGoods | normalGoods") 继续结算
 
 </template>
 
