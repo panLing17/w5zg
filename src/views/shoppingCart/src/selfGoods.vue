@@ -1,7 +1,7 @@
 <template lang="pug">
   transition( leave-active-class="animated rotateOutUpRight")
     .goodsCardBox(v-if="goodsList.length>0")
-      .store(v-for="storeItem in goodsList")
+      .store(v-for="(storeItem,storeIndex) in goodsList")
         .title
           w-checkbox(v-model="storeItem.checked", @change="selectedChange(storeItem.checked,storeItem.store_name,true)")
           span {{storeItem.store_name}}
@@ -40,14 +40,15 @@
                 .specOk(@click="edit(true,index)") 完成
             .bottomOperation
               .more
+                p(:class="{opc0:i.difference_price<=0}") 比加入时降{{i.difference_price | price-filter}}
                 img(src="../../../assets/img/diandian.png")
                 .moreOperation
                   .sanjiao
                   ul.buttons
-                    li(@click="changeType(index,i)")
+                    li(@click="changeType(storeIndex,index,i)")
                       img(src="../../../assets/img/shoppingCartChange.png")
                       p 快递配送
-                    li(@click="deleteGoods(i.sc_id, index)")
+                    li(@click="deleteGoods(i.sc_id, storeIndex, index)")
                       img(src="../../../assets/img/shoppingCartDelete.png")
                       p 删除
         .bottom
@@ -110,10 +111,13 @@
           }
         })
       },
-      changeType(index, data) {
+      changeType(storeIndex, index, data) {
         this.animateName = 'leftOut'
         let fun = () => {
-          this.goodsList.splice(index, 1)
+          this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+          if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
+            this.goodsList.splice(storeIndex,1)
+          }
         }
         this.$emit('tab', data, fun)
 
@@ -244,9 +248,12 @@
 
         })
       },
-      deleteGoods(id, index) {
+      deleteGoods(id, storeIndex, index) {
         this.animateName = 'fadeOut'
-        this.goodsList.splice(index, 1)
+        this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+        if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
+          this.goodsList.splice(storeIndex,1)
+        }
         let self = this
         self.$ajax({
           method: 'delete',
@@ -477,18 +484,27 @@
   }
   /* 更多操作 */
   .bottomOperation{
-    margin-top: .2rem;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    height: .5rem;
+    height: 1rem;
     border-bottom: solid 1px #eee;
   }
   .bottomOperation> .more{
+    height: 100%;
+    width: 6.5rem;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   .bottomOperation> .more:hover .moreOperation {
     display: block;
+  }
+  .bottomOperation> .more> p{
+    color: #F70057;
+    border: solid 1px #F70057;
+    padding: 1px .2rem;
   }
   .bottomOperation> .more> img{
     height: .4rem;
@@ -498,7 +514,7 @@
     display: none;
     position: absolute;
     right: 0;
-    top: .2rem;
+    top: .7rem;
   }
   .moreOperation>.buttons {
     width: 2.5rem;
@@ -530,6 +546,10 @@
     border-right: .3rem solid transparent;
     border-left: .3rem solid transparent;
     border-bottom: .3rem solid rgba(0,0,0,0.8);
+  }
+  /* 透明 */
+  .opc0 {
+    opacity: 0;
   }
   /* 更多操作结束 */
   /* */

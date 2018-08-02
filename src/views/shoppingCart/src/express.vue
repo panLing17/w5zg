@@ -124,14 +124,14 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+          url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
           params: {},
         }).then(function (response) {
           // 转为数组
           let array = []
           let topIndex = {}
-          for (let i in response.data.data.send) {
-            response.data.data.send[i].shoppingCartVOList.forEach((now, index)=>{
+          for (let i in response.data.data.commList) {
+            response.data.data.commList[i].shoppingCartVOList.forEach((now, index)=>{
               // 如果是降价通知过来的，需将商品第一个显示
               if (self.$store.state.informGoods) {
                 if (self.$store.state.informGoods.rel_id == now.sc_id && self.$store.state.informGoods.gspu_id == now.gspu_id) {
@@ -151,7 +151,7 @@
 
               now.editClose = true
             })
-            array.push(response.data.data.send[i])
+            array.push(response.data.data.commList[i])
           }
           // 交换位置
           if (topIndex.first) {
