@@ -515,6 +515,7 @@
     position: absolute;
     right: 0;
     top: .7rem;
+    z-index: 99;
   }
   .moreOperation>.buttons {
     width: 2.5rem;

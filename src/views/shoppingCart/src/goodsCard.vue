@@ -356,6 +356,7 @@
   }
   .bottomOperation> .more:hover .moreOperation {
     display: block;
+
   }
   .bottomOperation> .more> p{
     color: #F70057;
@@ -370,7 +371,8 @@
     display: none;
     position: absolute;
     right: 0;
-    top: .6rem;
+    top: .8rem;
+    z-index: 99;
   }
   .moreOperation>.buttons {
     width: 2.5rem;
