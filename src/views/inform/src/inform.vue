@@ -118,10 +118,10 @@
             if (!isExits) {
               self.$ajax({
                 method: 'get',
-                url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+                url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
                 params: {},
               }).then(function (res) {
-                res.data.data.send.forEach((item) => {
+                res.data.data.commList.forEach((item) => {
                   item.shoppingCartVOList.forEach((goods) => {
                     if (e.rel_id == goods.sc_id && e.gspu_id === goods.gspu_id) {
                       self.$router.push('/shoppingCart/express')

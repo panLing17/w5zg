@@ -39,7 +39,7 @@
       })
     },
     activated () {
-      this.swap()
+      // this.swap()
       this.getData()
     },
     // beforeRouteEnter (to, from, next) {
