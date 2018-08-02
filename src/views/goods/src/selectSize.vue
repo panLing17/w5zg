@@ -553,6 +553,7 @@
             'gspec_value': val
           })
         })
+        console.log(specData)
         let self = this
         this.$ajax({
           method: 'post',

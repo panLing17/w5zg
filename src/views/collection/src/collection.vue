@@ -134,7 +134,6 @@
             fiIdArray: b
           }
         }).then(function (res) {
-          console.log(res)
           if (res.data.code === '081') {
             self.getLists()
             self.deleteFlag = 0
@@ -154,7 +153,6 @@
       },
       // 删除收藏商品
       deleteGoods() {
-        console.log(this.judgeSelect())
         if (this.judgeSelect()) {
           let arr = []
           let b
@@ -173,7 +171,6 @@
               fiIdArray: b
             }
           }).then(function (res) {
-            console.log(res)
             if (res.data.code === '081') {
               self.zheng = 0
               self.zhengSFlag = false
@@ -190,7 +187,6 @@
           url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteList',
           params: {}
         }).then(function (res) {
-          console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
             if (res.data.data[i].gi_status === '221') {
               res.data.data[i].selected = false
@@ -210,7 +206,6 @@
             self.deleteFlag = 0
           }
           self.tiaozheng()
-          console.log(self.contLists)
           self.$nextTick(() => {
             if (!self.cScroll) {
               self.cScroll = new BScroll(self.$refs.conts, {

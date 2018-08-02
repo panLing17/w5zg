@@ -32,8 +32,8 @@
             span.num {{item.order_no}}
           .right
             span.orderStatus {{item.orderInfoStatus}}
-        .center(v-for="items in item.orderDetail" @click="$router.push({path:'/goodsDetailed',query:{id:items.gspu_id}})")
-          .wrapGoods
+        .center(v-for="items in item.orderDetail")
+          .wrapGoods(@click="$router.push({path:'/goodsDetailed',query:{id:items.gspu_id}})")
             .image
               img(:src="items.logo | img-filter" @click.prevent="")
             .goodsDetails
@@ -48,6 +48,7 @@
                 .right
                   .price 实付价:<span>{{items.sale_price | price-filter}}</span>
                   .cartPrice 专柜价: {{items.sale_price | price-filter}}
+          .buyAgainBtn(@click="againBuy(item,items)", v-if="item.orderInfo_status === '已完成'") <span>再次购买</span>
         .wrapDownner
           .wrapFreight
             span(v-if="delivery_ways === '快递配送'") 运费：{{item.freight | price-filter}}
@@ -227,6 +228,51 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 再次购买
+      againBuy(item,items){
+        let a ={
+          'cityId': items.city_no,
+          'gspu_id': items.gspu_id,
+          'specList': items.spec_json
+        }
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/sku/detail',
+          params:{
+            gc:JSON.stringify(a)
+          }
+        }).then(function (res) {
+          let deliveryNum = 0
+          if (self.delivery_ways === '自提') {
+            deliveryNum = 168
+          }
+          if (self.delivery_ways === '快递配送') {
+            deliveryNum = 167
+          }
+          let b ={
+            gskuId: res.data.data.gsku_id,
+            deliveryWays: deliveryNum,
+            province: self.$store.state.location.province.id,
+            city: self.$store.state.location.city.id,
+            storeId: items.si_id,
+            goodsNum: items.goods_num
+          }
+          self.addShoppingCar(b)
+        })
+      },
+      addShoppingCar(eve){
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods+ 'goods/shoppingCart/add',
+          params: eve
+        }).then(function (response) {
+          if (response.data.code = '081') {
+            self.$message.success('添加购物车成功')
+          }
+        })
+      },
       // 判断是否超过7天退货中
       judgeRefund () {
         let self = this;
@@ -908,11 +954,15 @@
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
+    vertical-align: top;
   }
   .center .goodsDetails{
     width: 0;
     flex-grow: 1;
     margin-left: .3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .center .goodsDetails .wrapAttr{
     width: 100%;
@@ -968,6 +1018,21 @@
     font-size: .26rem;
     text-decoration: line-through;
     margin-left: .24rem;
+  }
+  .buyAgainBtn{
+    text-align: right;
+    padding-top: .26rem;
+  }
+  .buyAgainBtn span{
+    display: inline-block;
+    width: 1.8rem;
+    height: .7rem;
+    border-radius: .8rem;
+    border: 1px solid #F70057;
+    text-align: center;
+    line-height: .7rem;
+    font-size: .35rem;
+    color: #F70057;
   }
   .wrapDownner{
     padding: .2rem .3rem;

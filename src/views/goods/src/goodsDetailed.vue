@@ -924,6 +924,7 @@
           this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
         }
         if (this.shoppingCartFlag) {
+
           // 如果操作来自添加购物车按钮
           let self = this
           this.$ajax({
