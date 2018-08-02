@@ -1,13 +1,13 @@
 <template lang="pug">
   .wrapNav
-    .navbar
+    .navbar(ref="nav")
       .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 收藏夹
       .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
-    .empty(v-if="isEmpty") 暂无收藏
-    .contList(ref="conts", v-else="isEmpty")
-      div(:class="{zhengpP:zhengPFlag}")
+    .empty(v-if="!contLists.length") 暂无收藏
+    .contList(ref="conts")
+      div
         ul(:class="{zhengS:zhengSFlag}")
           li(v-for="item in contLists", v-if="item.gi_status === '221'")
             .checkbox(v-if="zheng != 0")
@@ -72,6 +72,10 @@
     mounted() {
       this.getLists()
       this.judgeAndOrIos()
+      this.$nextTick(() => {
+        console.log(window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px')
+        this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+      })
     },
     methods: {
       // 调整只有失效商品的样式
@@ -271,6 +275,7 @@
     color: #666;
     background-color: #f2f2f2;
     height: "calc(100vh - %s)" % $height-header;
+    z-index: 1;
   }
   .navbar{
     position: fixed;
