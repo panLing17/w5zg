@@ -57,6 +57,7 @@
 </template>
 
 <script>
+
   export default {
     name: "goods-card",
     data() {
@@ -69,6 +70,9 @@
     },
     props: {
       goodsList: Array
+    },
+    components:{
+
     },
     computed: {
       allClick() {

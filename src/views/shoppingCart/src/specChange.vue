@@ -1,0 +1,299 @@
+<template lang="pug">
+  .specChangeBox
+    transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
+      .bg(v-if="show", @click="close", @touchmove.prevent="")
+    transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
+      .main(v-show="show")
+        .content.mescroll#specChange
+          .topData
+            .topImg
+              img
+            .topText
+              .price {{168 | price-filter}}
+                span(@click="close") X
+              .selectedSpec 粉色 3.5g
+              .haveGoods 有货
+          ul.specList
+            li.specItem(v-for="(i,specIndex) in spec")
+              .valueName {{i.specName}}
+              ul.valueList
+                li(@click="specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index}") {{item.value}}
+                p.clearBoth
+          .emitGoods
+            .emitGoodsTitle 配送方式
+            ul.emitGoodsButtons
+              li(:class="{checked:emitType === 'express'}", @click="emitType = express") 快递配送
+              li(:class="{checked:emitType === 'counter'}", @click="emitType = express") 专柜自提
+              p.clearBoth
+          .bottomButton
+            .confirm(@click="submit") 确定
+</template>
+
+<script>
+  import {bus} from '../../../bus'
+
+  export default {
+    name: "specChange",
+    data() {
+      return {
+        spuId: '',
+        spec: [],
+        show: false,
+        emitType: 'express',
+        normalGoods: false,
+        storeDownGoods: false
+      }
+    },
+    watch: {
+      show(val) {
+        if (val) {
+          // mescroll初始化
+          this.$mescrollInt("specChange", this.upCallback)
+          /*if (this.$route.path === '/shoppingCart/express') {
+            this.expressUpData()
+          } else {
+            this.selfCarryUpData()
+          }*/
+          this.$parent.$parent.settlementShow = false
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy();
+          this.$parent.$parent.settlementShow = true
+        }
+      }
+    },
+    mounted() {
+    },
+    methods: {
+      init (id, spec) {
+        this.spuId = id
+        this.getSpec(id, spec)
+      },
+      upCallback: function (page) {
+        let self = this;
+        self.mescroll.endSuccess(1)
+      },
+      close() {
+        this.show = false
+      },
+      // 改造格式
+      specGray (spec, graySpec, checkedSpec) {
+        // 改造原有数据格式
+        spec.forEach((now)=>{
+          now.specValue.forEach((sonNow,index)=>{
+            now.specValue[index] = {
+              value: sonNow,
+              gray: false
+            }
+          })
+        })
+        // 返回新的数据
+        return spec
+      },
+      // 将传入数组按当前已选规格进行选入，并返回改动后数据
+      returnSelectedJson (oldData, defaultSpec) {
+        let specValueList = []
+        defaultSpec.forEach((now)=>{
+          specValueList.push(now.gspec_value)
+        })
+
+        oldData.forEach((now)=>{
+          now.specValue.forEach((sonNow, sonIndex)=>{
+            if (specValueList.includes(sonNow.value)) {
+              now.valueIndex = sonIndex
+            }
+          })
+        })
+        return oldData
+      },
+      // 获取规格
+      getSpec (id, spec) {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/spec',
+          params: {
+            gspuId: id
+          }
+        }).then(function (response) {
+          // 改造格式
+          let newData = self.specGray(response.data.data)
+          // 选中默认
+          newData = self.returnSelectedJson(newData, spec)
+
+          self.spec = newData
+        })
+      },
+      submit (id) {
+        /* 获取选中规格 */
+        let specData = {
+          //'W5MALLTOKEN': localStorage.getItem('token'),
+          'cityId': this.$store.state.location.city.id,
+          'gspu_id': this.spuId,
+          'specList': [
+          ]
+        }
+        this.spec.forEach((now)=>{
+          let val = now.specValue[now.valueIndex].value
+          specData.specList.push({
+            'gspec_name': now.specName,
+            'gspec_value': val
+          })
+        })
+
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/sku/detail',
+          params: {
+            gc: JSON.stringify(specData)
+          }
+        }).then(function (response) {
+          if (response.data.data.storage_num>0) {
+
+          } else {
+            self.$message.error('库存不足')
+          }
+        })
+      }
+    }
+  }
+</script>
+
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
+  .bg {
+    background-color: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 101;
+  }
+
+  .main {
+    background-color: white;
+    width: 100%;
+    height: 75%;
+    position: fixed;
+    bottom: 0;
+    padding-bottom: $height-footer;
+    left: 0;
+    z-index: 105;
+    overflow: auto;
+  }
+  .content{
+    position: relative;
+  }
+  .clearBoth{
+    clear: both;
+  }
+  /* 商品概要 */
+  .topData {
+    border-bottom: solid 1px #eee
+    padding: .2rem
+    display: flex
+  }
+  .topImg{
+    width:2rem;
+    height:2rem
+    border:solid 1px #eee
+  }
+  .topText{
+    width 0
+    flex-grow 1
+    display flex
+    flex-direction column
+    justify-content space-between
+    padding-left .2rem
+  }
+  .price {
+    color #F70057
+    font-size .6rem
+    display flex
+    justify-content space-between
+  }
+  .price span{
+    color #666
+    font-size .4rem
+  }
+  .selectedSpec{
+    color #666
+    font-size .3rem
+  }
+  .haveGoods {
+    font-size .35rem
+    font-weight 600
+  }
+  /* 规格 */
+  .specList {
+    padding: 0 .2rem;
+  }
+  .specItem {
+    padding: .2rem 0;
+    border-bottom: solid 1px #eee
+  }
+  .valueName {
+    font-size: .4rem;
+    font-weight: 600;
+    margin-bottom: .2rem;
+  }
+  .valueList {
+
+  }
+  .valueList>li{
+    float: left;
+    margin-right: .2rem;
+    margin-bottom: .2rem;
+    padding: .1rem .3rem;
+    border: solid 1px #333;
+    color: #333;
+    border-radius: .1rem;
+  }
+  /* 切换配送 */
+  .emitGoods {
+    margin-top: .4rem;
+    padding: 0 .2rem;
+  }
+  .emitGoodsTitle {
+    font-weight: 600;
+    font-size: .4rem;
+    margin-bottom: .2rem;
+  }
+  .emitGoodsButtons{
+
+  }
+  .emitGoodsButtons li{
+    float: left;
+    margin-right: .2rem;
+    padding: .1rem .3rem;
+    border: solid 1px #333;
+    color: #333;
+    border-radius: .1rem;
+  }
+  /* 选中状态 */
+  .checked{
+    border: solid 1px #F70057 !important;
+    color: #F70057 !important;
+  }
+  /* 底部按钮 */
+  .bottomButton {
+    position fixed
+    bottom $height-footer
+    left 0
+    width 100%
+    height 1.2rem
+    background-color white
+  }
+  .confirm {
+    background-color #F70057
+    color white
+    width 100%
+    height 100%
+    display flex
+    align-items center
+    justify-content center
+    font-size .4rem
+  }
+</style>

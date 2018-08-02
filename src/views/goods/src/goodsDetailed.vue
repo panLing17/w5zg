@@ -651,7 +651,6 @@
         }).then(function (response) {
           // 改造格式
           let newData = self.specGray(response.data.data)
-          console.log(newData)
           newData.forEach((now)=>{
             now.specValue.forEach((sonNow, sonIndex)=>{
               if (!sonNow.gray) {

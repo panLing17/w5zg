@@ -10,9 +10,11 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
+    specChange
 </template>
 
 <script>
+  import specChange from './specChange'
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
   import {mapState} from 'vuex'
@@ -31,7 +33,7 @@
     computed: {
       ...mapState(['shoppingCartSelected'])
     },
-    components: {selfGoods, disableGoods},
+    components: {selfGoods, disableGoods, specChange},
     mounted () {
       this.getData()
       bus.$on('selfCarryUpData',()=>{

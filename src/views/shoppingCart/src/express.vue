@@ -11,6 +11,7 @@
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
     city-select(:show='selectFlag', :goodsList="nowGoodsDataList", @close="selectClose", @submit="submit")
+    specChange(ref="specChange")
 </template>
 
 <script>
@@ -18,6 +19,7 @@
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
   import {mapState} from 'vuex'
+  import specChange from './specChange'
   import {bus} from '../../../bus'
   export default {
     name: 'express',
@@ -33,7 +35,7 @@
         disableGoods: []
       }
     },
-    components:{goodsCard, disableGoods, citySelect},
+    components:{goodsCard, disableGoods, citySelect, specChange},
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
@@ -72,6 +74,10 @@
       // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
+      openSpecChange (id, spec) {
+        this.$refs['specChange'].show = true
+        this.$refs['specChange'].init(id, spec)
+      },
       clearGoods (){
         let i = this.goodsList.length
         while(i--) {
