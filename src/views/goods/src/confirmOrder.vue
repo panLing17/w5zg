@@ -31,7 +31,7 @@
           p(@click="$router.push('/my/localAdd')") 添加收货地址
       goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
       .allPrice
-        .goodsNum 共计{{content}}件商品，运费{{allFreight}}
+        .goodsNum 共计{{content}}件商品
         .price
           span 合计
           p {{price | price-filter}}
