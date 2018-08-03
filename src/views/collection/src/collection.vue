@@ -5,15 +5,8 @@
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 收藏夹
       .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
-    .empty.mescroll#collectMescroll
-      .imgs
-        img(src="../../../assets/img/coupon-icon@2x.png")
-      .words 您还没有收藏商品，快去逛逛吧
-      .goToHome(@click="$router.push('/home')") 去商城首页
-      .title
-        img(src="../../../assets/img/recommend.png")
-      recommend#dataId(ref="recommend")
-    .contList(ref="conts", v-if="false")
+    emptys(v-if="!contLists.length")
+    .contList(ref="conts", v-if="contsFlag")
       div
         ul(:class="{zhengS:zhengSFlag}")
           li(v-for="item in contLists", v-if="item.gi_status === '221'")
@@ -45,12 +38,13 @@
 <script>
   import {mapState} from 'vuex'
   import BScroll from 'better-scroll'
-  import recommend from './recommend'
+  import emptys from './emptys'
   export default {
     name: "collection",
-    components:{recommend},
+    components:{emptys},
     data() {
       return {
+        contsFlag: true,
         buzheng: '',
         zhengppFlag: false,
         zhengPFlag: false,
@@ -76,11 +70,6 @@
     activated() {
       this.zheng = 0
       this.getLists()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0)
-        }
-      })
     },
     mounted() {
       this.getLists()
@@ -89,20 +78,8 @@
         console.log(window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px')
         this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
       })
-      this.$mescrollInt('collectMescroll', this.upCallback, () => {
-
-      }, (obj) => {
-        this.$store.commit('setPosition', {
-          path: this.$route.path,
-          y: obj.preScrollY
-        })
-      })
     },
     methods: {
-      // 锁定或者解锁上拉加载
-      lockUpDown (isLock) {
-        this.mescroll.lockUpScroll(isLock)
-      },
       // 调整只有失效商品的样式
       tiaozheng(){
         let x = 0
@@ -231,16 +208,22 @@
             self.deleteFlag = 0
           }
           self.tiaozheng()
-          self.$nextTick(() => {
-            if (!self.cScroll) {
-              self.cScroll = new BScroll(self.$refs.conts, {
-                click: true,
-                probeType: 3
-              })
-            } else {
-              self.cScroll.refresh()
-            }
-          })
+          if (self.contLists.length === 0) {
+            self.contsFlag = false
+          } else {
+            self.contsFlag = true
+            self.$nextTick(() => {
+              if (!self.cScroll) {
+                self.cScroll = new BScroll(self.$refs.conts, {
+                  click: true,
+                  probeType: 3
+                })
+              } else {
+                self.cScroll.refresh()
+              }
+            })
+          }
+
         })
       },
       // 复选框选择
@@ -278,84 +261,14 @@
           this.cScroll.refresh()
         })
       },
-      // 推荐
-      upCallback: function(page) {
-        let self = this;
-        this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          self.$refs.recommend.more(curPageData,page.num,page.size)
-          self.mescroll.endSuccess(curPageData.length)
-        }, function() {
-          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr();
-        })
-      },
-      getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        let self = this;
-        self.$ajax({
-          method: 'post',
-          url:self.$apiGoods + 'goodsSearch/goodsRecommendationList',
-          params: {
-            page: pageNum,
-            rows: pageSize
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function (response) {
-          successCallback&&successCallback(response.data.data);//成功回调
-        })
-      }
+
     }
   }
 </script>
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
-  .empty{
-    position: fixed;
-    top: 1.28rem;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    color: #666;
-    background-color: #f2f2f2;
-    height: "calc(100vh - %s)" % $height-header;
-    z-index: 1;
-  }
-  .imgs{
-    margin-top: 1.06rem;
-  }
-  .imgs img{
-    width: 2.66rem;
-    height: 2.66rem;
-  }
-  .empty .words{
-    margin-top: .26rem;
-    color: #777;
-    font-size: .37rem;
-  }
-  .goToHome{
-    width: 4.26rem;
-    height: 1.17rem;
-    line-height: 1.17rem;
-    margin: .66rem auto 0;
-    background-color: #F70057;
-    border-radius: .26rem;
-    color: #fff;
-    font-size: .4rem;
-  }
-  /*我的推荐--开始*/
-  .title{
-    height: 1rem;
-    width: 100%;
-    position: relative;
-    display: flex;
-    background: #f2f2f2;
-    justify-content: center;
-    align-items: center;
-    padding: .2rem 0;
-  }
-  .title img{
-    width: 55%;
-  }
+
   .navbar{
     position: fixed;
     top: 0;
@@ -365,12 +278,13 @@
     background: rgb(244, 0, 87);
     display: flex;
     align-items: center;
-    z-index: 1;
+    z-index: 2;
   }
   .topLeft{
     padding-left: .36rem;
     padding-top: .1rem;
   }
+
   .topCenter{
     margin-left: 3.7rem;
     font-size: .48rem;
@@ -391,6 +305,7 @@
     width: 100%;
     height: "calc(100vh - %s)" % $height-header;
     background-color: #f2f2f2;
+    z-index: 1;
   }
   .zhengpp{
     margin-top: 0 !important;

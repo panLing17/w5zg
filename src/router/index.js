@@ -289,11 +289,11 @@ const router = new Router ({
         keepAlive: true
       }
     },
-    {
-      path: '/collection',
-      name: '收藏夹',
-      component: Collection.collection
-    },
+    // {
+    //   path: '/collection',
+    //   name: '收藏夹',
+    //   component: Collection.collection
+    // },
 
     // {
     //   path: '/marketing/rankingList',
@@ -451,6 +451,11 @@ const router = new Router ({
               ]
             }
           ]
+        },
+        {
+          path: '/collection',
+          name: '收藏夹',
+          component: Collection.collection
         },
         {
           path: '/inform',
