@@ -4,7 +4,7 @@
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
-      .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！ ”
+      .zeroDesc2 “再忙, 也要记得多去犒赏自己哦！”
     .disableGoodsBox(v-if="disableGoods.length>0")
       .title
         span 失效商品
@@ -17,7 +17,8 @@
   import goodsCard from './goodsCard'
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
-
+  import {mapState} from 'vuex'
+  import {bus} from '../../../bus'
   export default {
     name: 'express',
     data () {
@@ -36,23 +37,39 @@
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
-      }
+      },
+      ...mapState(['shoppingCartSelected'])
     },
     watch: {
-      allClick() {
+      allClick(val) {
+        let scId = []
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
-            sonNow.checked = this.$store.state.shoppingCartAllChecked
+            sonNow.checked = val
+            scId.push(sonNow.sc_id)
           })
+        })
+
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : scId.join(','),
+            checked: val
+          },
+        }).then(function (response) {
         })
         this.selectChange()
       }
     },
     mounted () {
       this.getData()
+      bus.$on('expressGetData',()=>{this.getData()})
     },
     activated () {
       this.getData()
+      // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
       clearGoods (){
@@ -67,37 +84,66 @@
       // 勾选变化后
       selectChange () {
         let price = 0
+        let counterPrice = 0
         let checked = []
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
             if (sonNow.checked) {
-              price = price + sonNow.goods_num*sonNow.now_price
+              counterPrice = counterPrice + sonNow.goods_num * sonNow.counter_price
+              price = price + sonNow.goods_num*sonNow.direct_supply_price
               sonNow.si_id = now.si_id
               checked.push(sonNow)
             }
           })
         })
-        this.$store.commit('computedPriceChange', price)
-        this.$store.commit('shoppingCartSelectedChange', checked)
+        // 获取配送订单信息（然后转入中转，因为运费展示难以计算,如果用户操作过快，选择商品后迅速点击结算可能会有bug）
+
+          let self = this
+          let cartId = []
+          checked.forEach((now)=>{
+            cartId.push(now.sc_id)
+          })
+        cartId = cartId.join(',')
+
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/submitSendList1',
+          params: {
+            scIdArray: cartId
+          }
+        }).then(function (response) {
+          self.$store.commit('shoppingCartSelectedChange', response.data.data)
+        })
+        let priceData = {
+          allPrice: price,
+          counterPrice: counterPrice
+        }
+        this.$store.commit('computedPriceChange', priceData)
       },
       getData () {
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/sendShoppingCartList',
+          url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
           params: {},
         }).then(function (response) {
           // 转为数组
           let array = []
-          for (let i in response.data.data.send) {
-            response.data.data.send[i].shoppingCartVOList.forEach((now)=>{
-              now.checked = false
+          for (let i in response.data.data.commList) {
+            response.data.data.commList[i].shoppingCartVOList.forEach((now)=>{
+              if (now.checked === '011') {
+                now.checked = true
+              } else {
+                now.checked = false
+              }
+
               now.editClose = true
             })
-            array.push(response.data.data.send[i])
+            array.push(response.data.data.commList[i])
           }
           self.goodsList = array
           self.disableGoods = response.data.data.failure
+          self.selectChange()
         })
       },
       tabChange (num) {

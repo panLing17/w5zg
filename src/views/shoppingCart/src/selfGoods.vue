@@ -1,19 +1,19 @@
 <template lang="pug">
   transition( leave-active-class="animated rotateOutUpRight")
     .goodsCardBox(v-if="goodsList.length>0")
-      .store(v-for="storeItem in goodsList")
+      .store(v-for="(storeItem,storeIndex) in goodsList")
         .title
-          w-checkbox(v-model="storeItem.checked", @change="selectedChange(storeItem.checked,storeItem.storeName,true)")
-          span {{storeItem.storeName}}
+          w-checkbox(v-model="storeItem.checked", @change="selectedChange(storeItem.checked,storeItem.store_name,true)")
+          span {{storeItem.store_name}}
         transition-group(tag="div", :name="animate")
-          .goodsBox(v-for="(i,index) in storeItem.goodsList", :key="index")
+          .goodsBox(v-for="(i,index) in storeItem.shoppingCartVOList", :key="index")
             transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
               .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
                 .checkbox(@click.stop="")
-                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.storeName)")
+                  w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name,false,i.sc_id)")
                 .img
                   img(:src="i.logo | img-filter")
-                  p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
+                  //p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
                 .info(@click.stop="")
                   .text
                     .name {{i.gi_name}}
@@ -22,12 +22,13 @@
                       img(src="../../../assets/img/ic_page_xljt@2x.png")
                     w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                   .price
-                    span {{i.now_price | price-filter}}
+                    span 实付价：{{i.direct_supply_price | price-filter}}
+                    span(style="color:#999;text-decoration:line-through") 专柜价：{{i.counter_price | price-filter}}
                 .mainRight
                   //img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
               .main(v-else, key="change")
                 .checkbox
-                  w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange(i.checked,storeItem.storeName)")
+                  w-checkbox(v-model="i.checked", @click.stop="", @change="selectedChange(i.checked,storeItem.store_name,i.sc_id)")
                 .img
                   img(:src="i.logo | img-filter")
                 .specChange
@@ -37,11 +38,22 @@
                     //img(src="../../../assets/img/next@2x.png")
                   w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
                 .specOk(@click="edit(true,index)") 完成
-            .bottom
-              .left(@click="changeType(index,i)") <img src="../../../assets/img/switch@2x.png"/>切换至快递配送
-              .right
-                span {{i.pro_Name}} {{i.city_name}}
-                img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")
+            .bottomOperation
+              .more
+                p(:class="{opc0:i.difference_price<=0}") 比加入时降{{i.difference_price | price-filter}}
+                img(src="../../../assets/img/diandian.png")
+                .moreOperation
+                  .sanjiao
+                  ul.buttons
+                    li(@click="changeType(storeIndex,index,i)", v-if="i.storage_num>0")
+                      img(src="../../../assets/img/shoppingCartChange.png")
+                      p 快递配送
+                    li(@click="deleteGoods(i.sc_id, storeIndex, index)")
+                      img(src="../../../assets/img/shoppingCartDelete.png")
+                      p 删除
+        .bottom
+          .left <img src="../../../assets/img/location.png"/>{{storeItem.store_address}}
+          .right
 </template>
 
 <script>
@@ -67,12 +79,24 @@
       }
     },
     watch: {
-      allClick() {
+      allClick(val) {
+        let scId = []
         this.goodsList.forEach((now) => {
           now.checked = this.allClick
-          now.goodsList.forEach((sonNow)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
             sonNow.checked = this.allClick
+            scId.push(sonNow.sc_id)
           })
+        })
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : scId.join(','),
+            checked: val
+          },
+        }).then(function (response) {
         })
         this.computedPrice()
       }
@@ -87,10 +111,13 @@
           }
         })
       },
-      changeType(index, data) {
+      changeType(storeIndex, index, data) {
         this.animateName = 'leftOut'
         let fun = () => {
-          this.goodsList.splice(index, 1)
+          this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+          if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
+            this.goodsList.splice(storeIndex,1)
+          }
         }
         this.$emit('tab', data, fun)
 
@@ -99,21 +126,25 @@
         this.goodsList[index].editClose = k
       },
       // 勾选变化
-      selectedChange(checked, storeName, storeFlag) {
+      selectedChange(checked, storeName, storeFlag, scId) {
+        let scIds = []
         // 为true则为按店铺全选
         if (storeFlag) {
           this.goodsList.forEach((now) => {
-            if (now.storeName === storeName) {
-              now.goodsList.forEach((sonNow) => {
+            if (now.store_name === storeName) {
+              now.shoppingCartVOList.forEach((sonNow) => {
                 sonNow.checked = checked
+                scIds.push(sonNow.sc_id)
               })
             }
           })
         } else {
+          scIds.push(scId)
           let notCheckedNum = 0
           this.goodsList.forEach((now) => {
-            if (now.storeName === storeName) {
-              now.goodsList.forEach((sonNow) => {
+
+            if (now.store_name === storeName) {
+              now.shoppingCartVOList.forEach((sonNow) => {
                 if (!sonNow.checked) {
                   notCheckedNum += 1
                 }
@@ -121,37 +152,80 @@
             }
           })
           this.goodsList.forEach((now) => {
-            if (now.storeName === storeName) {
+            if (now.store_name === storeName) {
               now.checked = !notCheckedNum > 0
             }
           })
-
         }
-        this.computedPrice()
+        scIds = scIds.join(',')
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : scIds,
+            checked: checked
+          },
+        }).then(function (response) {
+          self.computedPrice()
+        })
+
       },
       // 计算已选总价, 并将选中数据加入vuex
       computedPrice() {
+        // 直供总价
         let allPrice = 0
+        // 专柜总价
+        let counterPrice = 0
         let checked = []
         this.goodsList.forEach((storeNow) => {
-          storeNow.goodsList.forEach((now)=>{
+          storeNow.shoppingCartVOList.forEach((now)=>{
             if (now.checked) {
-              allPrice = allPrice + now.goods_num * now.now_price
+              counterPrice = counterPrice + now.goods_num * now.counter_price
+              allPrice = allPrice + now.goods_num * now.direct_supply_price
               checked.push(now)
             }
           })
 
         })
-        this.$store.commit('computedPriceChange', allPrice)
-        this.$store.commit('shoppingCartSelectedChange', checked)
+        let storeList = []
+        checked.forEach((now)=>{
+
+          now.editClose = true
+          if (storeList.indexOf(now.store_name) === -1) {
+            storeList.push(now.store_name)
+          }
+        })
+        let storeListOfJson = []
+        storeList.forEach((now)=>{
+          storeListOfJson.push({
+            checked: false,
+            storeName: now,
+            shoppingCartVOList: []
+          })
+        })
+        storeListOfJson.forEach((now)=>{
+          checked.forEach((goodsNow)=>{
+            if (goodsNow.store_name === now.storeName) {
+              now.shoppingCartVOList.push(goodsNow)
+            }
+          })
+        })
+        let priceData = {
+          allPrice: allPrice,
+          counterPrice: counterPrice
+        }
+        this.$store.commit('computedPriceChange', priceData)
+        this.$store.commit('shoppingCartSelectedChange', storeListOfJson)
         let allGoodsLen = 0
         this.goodsList.forEach((storeNow) => {
-          storeNow.goodsList.forEach((now)=>{
+          storeNow.shoppingCartVOList.forEach((now)=>{
             allGoodsLen += 1
           })
         })
         // 判断已选数据与总数据长度
         if (checked.length === allGoodsLen) {
+
           this.$store.commit('allCheckedChange', true)
         } else {
           // this.$store.commit('allCheckedChange', false)
@@ -174,9 +248,12 @@
 
         })
       },
-      deleteGoods(id, index) {
+      deleteGoods(id, storeIndex, index) {
         this.animateName = 'fadeOut'
-        this.goodsList.splice(index, 1)
+        this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+        if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
+          this.goodsList.splice(storeIndex,1)
+        }
         let self = this
         self.$ajax({
           method: 'delete',
@@ -316,7 +393,7 @@
   }
 
   .mainRight {
-    width: 1rem;
+    width: .3rem;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -333,7 +410,6 @@
   }
 
   .bottom {
-    margin-top: .3rem;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -344,7 +420,7 @@
   .bottom .right {
     flex-grow: 1;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-left: .3rem;
     color: #aaaaaa;
   }
@@ -355,8 +431,11 @@
   }
 
   .bottom .left {
+    color: #888;
+    padding-left: .8rem;
     display: flex;
     align-items: center;
+    text-overflow: ellipsis;
   }
 
   .bottom .left img {
@@ -403,7 +482,77 @@
     align-items: center;
     justify-content: center;
   }
-
+  /* 更多操作 */
+  .bottomOperation{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 1rem;
+    border-bottom: solid 1px #eee;
+  }
+  .bottomOperation> .more{
+    height: 100%;
+    width: 6.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .bottomOperation> .more:hover .moreOperation {
+    display: block;
+  }
+  .bottomOperation> .more> p{
+    color: #F70057;
+    border: solid 1px #F70057;
+    padding: 1px .2rem;
+  }
+  .bottomOperation> .more> img{
+    height: .4rem;
+    margin-right: .4rem;
+  }
+  .bottomOperation> .more> .moreOperation {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: .7rem;
+    z-index: 99;
+  }
+  .moreOperation>.buttons {
+    width: 2.5rem;
+    margin-top: .4rem;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,0.8);
+  }
+  .moreOperation>.buttons li{
+    height: 1rem;
+    border-bottom: solid 1px #dfdfdf;
+    display: flex;
+    align-items: center;
+    padding: 0 .2rem;
+  }
+  .moreOperation>.buttons li img{
+    height: .4rem;
+  }
+  .moreOperation>.buttons li p{
+    color: #e8e8e8;
+    margin-left: .1rem;
+  }
+  .sanjiao{
+    position: absolute;
+    right: .2rem;
+    top: .1rem;
+    height: 0px;
+    width: 0px;
+    border-top: 0 solid transparent;
+    border-right: .3rem solid transparent;
+    border-left: .3rem solid transparent;
+    border-bottom: .3rem solid rgba(0,0,0,0.8);
+  }
+  /* 透明 */
+  .opc0 {
+    opacity: 0;
+  }
+  /* 更多操作结束 */
   /* */
   /* 动画 */
   .leftOut-enter-active {

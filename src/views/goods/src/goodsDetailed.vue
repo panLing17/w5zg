@@ -851,7 +851,7 @@
           // 订单页需要展示及用到的数据
           let orderData = [{
             skuId: this.$store.state.skuId,
-            storeName: 'xx旗舰店',
+            storeName: '专柜正品',
             storeLocation: this.$store.state.location,
             photo: this.$store.state.skuImg,
             spec: spec,
