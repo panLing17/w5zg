@@ -122,14 +122,17 @@
       })
     },
     deactivated() {
-      this.mescroll.hideTopBtn();
-      this.mescroll.destroy();
+
       // 清除勾选信息
       // this.$store.commit('allCheckedChange', false)
       // 清除勾选数据
       // this.$store.commit('shoppingCartSelectedChange', [])
       // 清除总价格
       // this.$store.commit('computedPriceChange', 0)
+    },
+    beforeDestroy () {
+      this.mescroll.hideTopBtn();
+      this.mescroll.destroy()
     },
     methods: {
       goBack () {
@@ -316,8 +319,8 @@
   /*  */
   .shoppingCartBox {
     background-color: rgb(242, 242, 242);
-    padding-bottom: 3rem;
-    min-height: 100%;
+    padding-bottom: 1.2rem;
+    /*min-height: 100%;*/
   }
 
   .slider {
@@ -441,9 +444,9 @@
 
   /* 上拉刷新下俩加载 */
   #shoppingCartMescroll {
-    padding-top: 1.3rem;
-    top: 0;
-    bottom: 0;
+    /*padding-top: 1.3rem;*/
+    top: $height-header;
+    bottom: $height-footer;
     height: auto;
   }
 </style>

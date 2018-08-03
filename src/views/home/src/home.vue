@@ -11,9 +11,13 @@
         img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
       .banner
-        carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")
-          div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")
-            img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")
+        <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
+          <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
+            <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
+        slider
+          div(v-for="(item, index) in banner" :key="index")
+            a(@click.prevent="goActivity(index)")
+              img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
         //.shanxing
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
@@ -60,6 +64,7 @@
   import {mapState} from 'vuex'
   import store from '../../../vuex/store'
   import shareImg from '../../../assets/img/applogo@2x.png'
+  import Slider from 'components/slider'
 
   export default {
     name: 'home',
@@ -97,7 +102,7 @@
         animateShow: false
       }
     },
-    components: {hotButton, lNews, wActivity, recommend, homeGuide},
+    components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider},
     computed: {
       ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket'])
     },
@@ -649,8 +654,9 @@
 
   /* banner与底部扇形 */
   .banner {
-    height: 4.2rem;
+    max-height: 4rem;
     overflow: hidden;
+    position: relative;
   }
 
   .shanxing {

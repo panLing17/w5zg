@@ -355,7 +355,7 @@
     position: fixed;
     top: 0;
     bottom: 0;
-    height: calc(100vh - $height-footer);
+    height: "calc(100vh - %s)" % $height-footer;
   }
   .myBox {
     /*min-height: calc(100vh - 1.6rem);*/
