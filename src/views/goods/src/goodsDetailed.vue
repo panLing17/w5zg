@@ -25,8 +25,14 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p(v-if="initPriceFlag") <strong style="color:#f70057;font-size:.2rem">￥</strong>{{goodsData.direct_supply_price}}
-          p(v-else) <strong style="color:#70057;font-size:.2rem">￥</strong>{{goodsData.direct_supply_interval}}
+          p(v-if="initPriceFlag")
+            <strong style="color:#f70057;font-size:.2rem">￥</strong>
+            ul.arrayPrice
+              li(v-for="item in $method.arrayPrice(goodsData.direct_supply_price)") {{item}}
+          p(v-else)
+            <strong style="color:#70057;font-size:.2rem">￥</strong>
+            ul.arrayPrice
+              li(v-for="item in $method.arrayPrice(goodsData.direct_supply_interval)") {{item}}
           //.salePrice 统一零售价：<span v-if="initPriceFlag">{{goodsData.retail_price}}</span><span v-else>{{goodsData.retail_interval}}</span>
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         ul.saveMoneyTop
@@ -73,7 +79,7 @@
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .myPrice
         .left 余额:
-          span 现金券 <strong>{{(userData.netcard_balance | price-filter)?(userData.netcard_balance | price-filter):'0'}}</strong>　通用券 <strong>{{(userData.cash_balance | price-filter)?(userData.cash_balance | price-filter):'0'}}</strong>
+          span 现金券 <strong>{{userData.netcard_balance | price-filter}}</strong>　通用券 <strong>{{userData.cash_balance | price-filter}}</strong>
         //img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left(v-if="!initPriceFlag") 规格:
@@ -1520,5 +1526,11 @@
   .goodsDetailContent img{
     float: left;
     max-width: 100%;
+  }
+  .arrayPrice,  .arrayPrice li{
+    display: inline-block;
+  }
+  .arrayPrice li:nth-of-type(2) {
+    font-size: .42rem;
   }
 </style>
