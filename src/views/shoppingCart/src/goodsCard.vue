@@ -43,16 +43,17 @@
           .bottomOperation
             .more
               p(:class="{opc0:i.difference_price<=0}")  比加入时降{{i.difference_price | price-filter}}
-              img(src="../../../assets/img/diandian.png")
-              .moreOperation
-                .sanjiao
-                ul.buttons
-                  li(@click="changeType(i,index)", v-if="i.storage_num>0 && i.carry_type === 1")
-                    img(src="../../../assets/img/shoppingCartChange.png")
-                    p 专柜自提
-                  li(@click="deleteGoods(i.sc_id, index)")
-                    img(src="../../../assets/img/shoppingCartDelete.png")
-                    p 删除
+              .moreRight
+                img(src="../../../assets/img/shoppingCartMore.png")
+                .moreOperation
+                  .sanjiao
+                  ul.buttons
+                    li(@click="changeType(i,index)", v-if="i.storage_num>0 && i.carry_type === 1")
+                      img(src="../../../assets/img/shoppingCartChange.png")
+                      p 专柜自提
+                    li(@click="deleteGoods(i.sc_id, index)")
+                      img(src="../../../assets/img/shoppingCartDelete.png")
+                      p 删除
 
 </template>
 
@@ -360,24 +361,26 @@
     align-items: center;
     justify-content: space-between;
   }
-  .bottomOperation> .more:hover .moreOperation {
+  .moreRight {
+    position: relative;
+  }
+  .bottomOperation> .more>.moreRight:hover .moreOperation {
     display: block;
-
   }
   .bottomOperation> .more> p{
     color: #F70057;
     border: solid 1px #F70057;
     padding: 1px .2rem;
   }
-  .bottomOperation> .more> img{
+  .bottomOperation> .more> .moreRight>img{
     height: .4rem;
     margin-right: .4rem;
   }
-  .bottomOperation> .more> .moreOperation {
+  .bottomOperation> .more .moreRight .moreOperation {
     display: none;
     position: absolute;
     right: 0;
-    top: .8rem;
+    top: .7rem;
     z-index: 99;
   }
   .moreOperation>.buttons {
@@ -393,7 +396,7 @@
     align-items: center;
     padding: 0 .2rem;
   }
-  .moreOperation>.buttons li img{
+  .moreOperation>.buttons>li img{
     height: .4rem;
   }
   .moreOperation>.buttons li p{
