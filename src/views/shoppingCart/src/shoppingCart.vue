@@ -297,6 +297,7 @@
         }, 1000)
       },
       allChecked(e) {
+        this.$store.commit('exitAllCheckedChange', true)
         this.$store.commit('allCheckedChange', e)
       },
       // 前往确认订单或弹出商品不足提示

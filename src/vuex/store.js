@@ -37,6 +37,8 @@ const state = {
   },
   // 购物车全选
   shoppingCartAllChecked: false,
+  // 是否触发购物车全部反选
+  exitAllChecked: true,
   // 购物车已选商品
   shoppingCartSelected: [],
   // 结算价格
@@ -69,6 +71,9 @@ const state = {
 const mutations = {
   transferGive (state, data) {
     state.transfer = data
+  },
+  exitAllCheckedChange (state, data) {
+    state.exitAllChecked = data
   },
   setPosition(state, data){
     let flag = 0

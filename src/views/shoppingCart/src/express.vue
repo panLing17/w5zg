@@ -42,6 +42,9 @@
     },
     watch: {
       allClick(val) {
+        if (!this.$store.state.exitAllChecked) {
+          return
+        }
         let scId = []
         this.goodsList.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
@@ -96,8 +99,24 @@
             }
           })
         })
-        // 获取配送订单信息（然后转入中转，因为运费展示难以计算,如果用户操作过快，选择商品后迅速点击结算可能会有bug）
 
+        // 计算总长度
+        let allGoodsLen = 0
+        this.goodsList.forEach((now)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            allGoodsLen += 1
+          })
+        })
+        // 全选按钮选择
+        if (allGoodsLen === checked.length && allGoodsLen !== 0) {
+          this.$store.commit('allCheckedChange', true)
+        }
+        // 反选全选按钮
+        if (checked.length < allGoodsLen) {
+          this.$store.commit('exitAllCheckedChange', false)
+          this.$store.commit('allCheckedChange', false)
+        }
+        // 获取配送订单信息（然后转入中转，因为运费展示难以计算,如果用户操作过快，选择商品后迅速点击结算可能会有bug）
           let self = this
           let cartId = []
           checked.forEach((now)=>{

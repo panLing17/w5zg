@@ -67,7 +67,8 @@
         animateName: 'leftOut',
         watchFlag: true,
         flag: true,
-        isdefault: false
+        isdefault: false,
+        exitAll: true // 为true才可以由子选框反选全选框
       }
     },
     props: {
@@ -83,6 +84,9 @@
     },
     watch: {
       allClick(val) {
+        if (!this.$store.state.exitAllChecked) {
+          return
+        }
         let scId = []
         this.goodsList.forEach((now) => {
           now.checked = this.allClick
@@ -228,10 +232,10 @@
         })
         // 判断已选数据与总数据长度
         if (checked.length === allGoodsLen) {
-
           this.$store.commit('allCheckedChange', true)
         } else {
-          // this.$store.commit('allCheckedChange', false)
+          this.$store.commit('exitAllCheckedChange', false)
+          this.$store.commit('allCheckedChange', false)
         }
       },
       // 商品数量变化
