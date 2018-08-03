@@ -180,7 +180,7 @@
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
-        disTypeName: '专柜自提',
+        disTypeName: '快递配送',
         selectCity: false,
         selectStoreFlag: false,
         shoppingCartFlag: false,
