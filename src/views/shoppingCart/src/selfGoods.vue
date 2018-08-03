@@ -13,7 +13,9 @@
                   w-checkbox(v-model="i.checked", @change="selectedChange(i.checked,storeItem.store_name,false,i.sc_id)")
                 .img
                   img(:src="i.logo | img-filter")
-                  //p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
+                  p(v-if="i.storage_num === 0")
+                    span 库存
+                    span 不足
                 .info(@click.stop="")
                   .text
                     .name {{i.gi_name}}
@@ -41,16 +43,17 @@
             .bottomOperation
               .more
                 p(:class="{opc0:i.difference_price<=0}") 比加入时降{{i.difference_price | price-filter}}
-                img(src="../../../assets/img/diandian.png")
-                .moreOperation
-                  .sanjiao
-                  ul.buttons
-                    li(@click="changeType(storeIndex,index,i)", v-if="i.storage_num>0")
-                      img(src="../../../assets/img/shoppingCartChange.png")
-                      p 快递配送
-                    li(@click="deleteGoods(i.sc_id, storeIndex, index)")
-                      img(src="../../../assets/img/shoppingCartDelete.png")
-                      p 删除
+                .moreRight
+                  img(src="../../../assets/img/shoppingCartMore.png")
+                  .moreOperation
+                    .sanjiao
+                    ul.buttons
+                      li(@click="changeType(storeIndex,index,i)", v-if="i.storage_num>0")
+                        img(src="../../../assets/img/shoppingCartChange.png")
+                        p 快递配送
+                      li(@click="deleteGoods(i.sc_id, storeIndex, index)")
+                        img(src="../../../assets/img/shoppingCartDelete.png")
+                        p 删除
         .bottom
           .left <img src="../../../assets/img/location.png"/>{{storeItem.store_address}}
           .right
@@ -64,7 +67,8 @@
         animateName: 'leftOut',
         watchFlag: true,
         flag: true,
-        isdefault: false
+        isdefault: false,
+        exitAll: true // 为true才可以由子选框反选全选框
       }
     },
     props: {
@@ -80,6 +84,9 @@
     },
     watch: {
       allClick(val) {
+        if (!this.$store.state.exitAllChecked) {
+          return
+        }
         let scId = []
         this.goodsList.forEach((now) => {
           now.checked = this.allClick
@@ -225,10 +232,10 @@
         })
         // 判断已选数据与总数据长度
         if (checked.length === allGoodsLen) {
-
           this.$store.commit('allCheckedChange', true)
         } else {
-          // this.$store.commit('allCheckedChange', false)
+          this.$store.commit('exitAllCheckedChange', false)
+          this.$store.commit('allCheckedChange', false)
         }
       },
       // 商品数量变化
@@ -329,15 +336,19 @@
 
   .img p {
     padding-left: 2px;
-    font-size: .2rem;
+    font-size: .35rem;
+    letter-spacing: 4px;
     position: absolute;
     bottom: 0;
     left: 0;
-    height: .5rem;
-    line-height: .5rem;
+    height: 100%;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
 
   /*  */
@@ -498,7 +509,10 @@
     align-items: center;
     justify-content: space-between;
   }
-  .bottomOperation> .more:hover .moreOperation {
+  .moreRight {
+    position: relative;
+  }
+  .bottomOperation> .more>.moreRight:hover .moreOperation {
     display: block;
   }
   .bottomOperation> .more> p{
@@ -506,11 +520,11 @@
     border: solid 1px #F70057;
     padding: 1px .2rem;
   }
-  .bottomOperation> .more> img{
+  .bottomOperation> .more> .moreRight>img{
     height: .4rem;
     margin-right: .4rem;
   }
-  .bottomOperation> .more> .moreOperation {
+  .bottomOperation> .more .moreRight .moreOperation {
     display: none;
     position: absolute;
     right: 0;
@@ -530,7 +544,7 @@
     align-items: center;
     padding: 0 .2rem;
   }
-  .moreOperation>.buttons li img{
+  .moreOperation>.buttons>li img{
     height: .4rem;
   }
   .moreOperation>.buttons li p{
