@@ -12,7 +12,9 @@
                 w-checkbox(v-model="i.checked", @change="selectChange(i.checked,i.sc_id)")
               .img
                 img(:src="i.logo | img-filter")
-                // p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
+                p(v-if="i.storage_num === 0")
+                  span 库存
+                  span 不足
               .info(@click.stop="")
                 .text
                   .name {{i.gi_name}}
@@ -195,15 +197,19 @@
   }
   .img p{
     padding-left: 2px;
-    font-size: .2rem;
+    font-size: .35rem;
+    letter-spacing: 4px;
     position: absolute;
     bottom: 0;
     left: 0;
-    height: .5rem;
-    line-height: .5rem;
+    height: 100%;
     width: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   /* 修改规格 */
   .specChange{
