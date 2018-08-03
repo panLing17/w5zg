@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
+import createLogger from 'vuex/dist/logger'
 
 Vue.use(Vuex)
 const state = {
@@ -188,11 +189,14 @@ const actions = {
   }
 }
 const getters = {
-  transfer: state => state.transfer,
+  transfer: state => state.transfer
 }
+const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
   state,
   mutations,
   actions,
-  getters
+  getters,
+  strict: debug,
+  plugins: debug ? [createLogger()] : []
 })
