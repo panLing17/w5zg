@@ -123,10 +123,26 @@
       },
       // 地址变化后
       locationChange() {
-        // 为商品赋值运费
-        // this.getGoodsFreight().then(()=>{
-        //   this.computedFreight()
-        // })
+        let self = this
+        let cartId = []
+        this.transfer.forEach((now)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            cartId.push(sonNow.sc_id)
+          })
+        })
+        cartId = cartId.join(',')
+        console.log(cartId)
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/submitSendList1',
+          params: {
+            scIdArray: cartId,
+            cityNo: self.$store.state.location.city.id
+          }
+        }).then(function (response) {
+          self.$store.commit('transferGive', response.data.data.commList)
+          self.price = response.data.data.totalPrice + response.data.data.totalFreight
+        })
       },
       // 获取每个商品运费
       getGoodsFreight() {
