@@ -5,7 +5,6 @@
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 收藏夹
       .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
-    emptys(v-if="!contLists.length")
     .contList(ref="conts", v-if="contsFlag")
       div
         ul(:class="{zhengS:zhengSFlag}")
@@ -28,6 +27,7 @@
             .righter
               .textLose {{item.gi_name}}
               .lost 该商品已失效，请重新选择
+    emptys(v-else="contsFlag")
     .clearFixed(v-if="zheng != 0")
       .checkAll
         w-checkbox(@change="changeAll", v-model="selectedAll")
@@ -75,7 +75,6 @@
       this.getLists()
       this.judgeAndOrIos()
       this.$nextTick(() => {
-        console.log(window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px')
         this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
       })
     },
@@ -268,17 +267,22 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
-
+  .wrapNav{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
   .navbar{
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
     height: 1.28rem;
     border-bottom: 1px solid #f2f2f2;
     background: rgb(244, 0, 87);
     display: flex;
     align-items: center;
-    z-index: 2;
+    z-index: 1;
   }
   .topLeft{
     padding-left: .36rem;
@@ -299,13 +303,14 @@
   }
   /*内容列表*/
   .contList{
-    position: fixed;
-    top: 1.28rem;
-    bottom: 0;
+    //position: fixed;
+    //top: 1.28rem;
+    //bottom: 0;
+    margin-top: 1.28rem;
     width: 100%;
     height: "calc(100vh - %s)" % $height-header;
     background-color: #f2f2f2;
-    z-index: 1;
+    /*z-index: 1;*/
   }
   .zhengpp{
     margin-top: 0 !important;

@@ -50,6 +50,11 @@
       },
       ...mapState(['position'])
     },
+    watch: {
+      '$route' (to, from) {
+        console.log(to, from)
+      }
+    },
     activated(){
       this.judgeType()
       if (this.number != this.$route.query.num) {
@@ -62,22 +67,18 @@
           }
         })
       }
-
     },
     beforeRouteLeave(to, from, next){
-
-      if (to.path === '/my'){
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'ucMessage/updateMessageStatus',
-          params:{
-            msStatus: '5302'
-          }
-        }).then(function (res) {
-          console.log(res)
-        })
-      }
+      let self = this
+      self.$ajax({
+        method: 'get',
+        url: self.$apiMember + 'ucMessage/updateMessageStatus',
+        params:{
+          msStatus: '5302'
+        }
+      }).then(function (res) {
+        console.log(res)
+      })
       next()
     },
     mounted(){
@@ -196,18 +197,25 @@
 </script>
 
 <style scoped>
+  .wrapNav{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
   .empty{
     width: 100%;
-    font-size: .5rem;
     text-align: center;
     color: #666;
     background-color: #f2f2f2;
-    position: fixed;
-    top: 1.28rem;
-    bottom: 0;
+    /*position: fixed;*/
+    /*top: 1.28rem;*/
+    /*bottom: 0;*/
+    margin-top: 1.28rem;
+    padding-top: 1.06rem;
+    height: calc(100vh - 1.28rem);
   }
   .imgs{
-    margin-top: 1.06rem;
+    /*margin-top: 1.06rem;*/
   }
   .imgs img{
     width: 2.96rem;
@@ -227,6 +235,8 @@
     top: 1.28rem;
     bottom: 0;
     position: fixed;
+    z-index: 100;
+    background-color: #f2f2f2;
   }
   .active{
     font-weight: 600 !important;

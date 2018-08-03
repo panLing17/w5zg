@@ -553,7 +553,6 @@
             'gspec_value': val
           })
         })
-        console.log(specData)
         let self = this
         this.$ajax({
           method: 'post',
@@ -562,7 +561,6 @@
             gc:JSON.stringify(specData)
           }
         }).then(function (response) {
-          console.log(response.data.data)
           // 显示真实sku价格，隐藏spu返回的最低价
           if (initPriceFlag) {
             self.$parent.initPriceFlag = false
@@ -579,7 +577,6 @@
           } else{
             self.nogoods = 0
           }
-          console.log(self.nogoods)
           self.skuId = response.data.data.gsku_id
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)

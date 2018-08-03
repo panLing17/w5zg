@@ -969,7 +969,6 @@
     /*display: flex;
     justify-content: space-between;
     align-items: center;*/
-    font-family: "黑体";
   }
   .center .goodsDetails .wrapAttr .left{
     display: flex;
@@ -995,7 +994,6 @@
     margin-top: .1rem;
     font-size: .35rem;
     color: rgb(153,153,153);
-    font-family: "Verdana";
   }
   .center .goodsDetails .property span.color{
     margin-right: .5rem;

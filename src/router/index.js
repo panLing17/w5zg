@@ -455,12 +455,18 @@ const router = new Router ({
         {
           path: '/collection',
           name: '收藏夹',
-          component: Collection.collection
+          component: Collection.collection,
+          meta: {
+            keepAlive: true
+          }
         },
         {
           path: '/inform',
           name: '通知',
-          component: Inform.inform
+          component: Inform.inform,
+          meta: {
+            keepAlive: true
+          }
         },
         {
           path: '/my',

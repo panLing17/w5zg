@@ -172,6 +172,8 @@
     name: "goods-detailed",
     data () {
       return {
+        k: '',
+        j: '',
         xuanfukuang: '',
         collectSucS: '',
         fiIds: '',
@@ -381,12 +383,16 @@
       // 收藏成功&&取消收藏成功
       collectionSuc(){
         this.collectSucS = true
+        this.k = true
+        this.j = true
         let self = this
         let a = 2
         self.time1 = setInterval(function () {
           a--
           if (a === 0) {
             self.collectSucS = false
+            self.k = false
+            self.j = false
             clearInterval(self.time1)
           }
         },1000)
@@ -398,21 +404,24 @@
       // 收藏
       changeCollect1(){
         if (localStorage.hasOwnProperty('token')) {
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
-            params: {
-              gspuId: self.$route.query.id
-            }
-          }).then(function (res) {
-            if (res.data.data.fiId) {
-              //self.collectFlag = 1
-              self.xuanfukuang = 1
-              self.collectionSuc()
-              self.isCollect()
-            }
-          })
+          console.log(this.k)
+          if (!this.k) {
+            let self = this
+            self.$ajax({
+              method: 'post',
+              url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+              params: {
+                gspuId: self.$route.query.id
+              }
+            }).then(function (res) {
+              if (res.data.data.fiId) {
+                //self.collectFlag = 1
+                self.xuanfukuang = 1
+                self.collectionSuc()
+                self.isCollect()
+              }
+            })
+          }
         } else{
           this.$router.push('/login/login2')
         }
@@ -420,22 +429,24 @@
       },
       // 取消收藏
       changeCollect2(){
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
-          params: {
-            fiId: self.fiIds
-          }
-        }).then(function (res) {
-          console.log(res)
-          if (res.data.code === '081') {
-            //self.collectFlag = 0
-            self.xuanfukuang = 2
-            self.collectionSuc()
-            self.isCollect()
-          }
-        })
+        if (!this.j) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
+            params: {
+              fiId: self.fiIds
+            }
+          }).then(function (res) {
+            console.log(res)
+            if (res.data.code === '081') {
+              //self.collectFlag = 0
+              self.xuanfukuang = 2
+              self.collectionSuc()
+              self.isCollect()
+            }
+          })
+        }
       },
       // 商品是否收藏
       isCollect(){
