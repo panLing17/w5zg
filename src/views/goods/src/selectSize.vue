@@ -15,7 +15,9 @@
             .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
             .store(v-if="$parent.initPriceFlag") 有货
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
-            .size 选择规格
+            .size
+              span(v-if="selectedSpec.length === 0") 选择规格
+              span(v-if="selectedSpec.length > 0")(v-for="spec in selectedSpec", style="margin-right:.2rem") {{spec.gspec_value}}
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-else)
             .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.direct_supply_price | price-filter}}
             .price(v-else) {{0 | price-filter}}
@@ -33,7 +35,7 @@
                   p(style="clear:both")
             .count
               span 购买数量
-              w-counter(v-model="content", :min="1")
+              w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
             .express
               h1 配送方式
               .buttonTab
@@ -79,6 +81,7 @@
         smallPhotoFlag: true,
         content: 1,
         realGoodsData: {},
+        selectedSpec: [],
         // 当前该显示的地址信息
         locationOrAddress: 'location',
         freightPrice: 0 //运费
@@ -222,6 +225,7 @@
       addCart () {
         this.$parent.ofBuy = false
         this.$parent.shoppingCartFlag = true
+        this.close()
         this.confirm()
       },
       isGray (e, index) {
@@ -488,7 +492,6 @@
               relSpecHasSelected = relSpecHasSelected.concat(now)
             }
           })
-          console.log(relSpecHasSelected)
           // 不同级,该置灰的规格集合
           let selectedNotLevelGary = []
           selectedNotLevel.forEach((now)=>{
@@ -578,6 +581,8 @@
             goi_freight: self.realGoodsData.goi_freight
           }
           self.$emit('load',data)
+          self.selectedSpec = data.spec
+          console.log(self.selectedSpec)
 
         })
       },

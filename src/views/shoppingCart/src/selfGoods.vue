@@ -18,7 +18,7 @@
                     span 不足
                 .info(@click.stop="")
                   .text
-                    .name {{i.gi_name}}
+                    .name(@click="goGoodsDetail(i.gspu_id)") {{i.gi_name}}
                     .spec
                       span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
                       img(src="../../../assets/img/ic_page_xljt@2x.png")
@@ -256,24 +256,34 @@
         })
       },
       deleteGoods(id, storeIndex, index) {
-        this.animateName = 'fadeOut'
-        this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
-        if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
-          this.goodsList.splice(storeIndex,1)
-        }
-        let self = this
-        self.$ajax({
-          method: 'delete',
-          url: self.$apiApp + 'shoppingCart/shoppingCart/delete',
-          params: {
-            scIdArray: id
+        this.$confirm({
+          title: '删除购物商品',
+          message: '确定要删除么',
+          confirm: () => {
+            this.animateName = 'fadeOut'
+            this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+            if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
+              this.goodsList.splice(storeIndex,1)
+            }
+            let self = this
+            self.$ajax({
+              method: 'delete',
+              url: self.$apiApp + 'shoppingCart/shoppingCart/delete',
+              params: {
+                scIdArray: id
+              },
+            }).then(function (response) {
+              self.$emit('clear')
+              // let goodsNum = self.$store.state.shoppingCartGoodsNum
+              // goodsNum.carryNum-=1
+              // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+            })
           },
-        }).then(function (response) {
-          self.$emit('clear')
-          // let goodsNum = self.$store.state.shoppingCartGoodsNum
-          // goodsNum.carryNum-=1
-          // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          noConfirm: () => {
+
+          }
         })
+
       }
     }
   }
