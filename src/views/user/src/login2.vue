@@ -213,7 +213,7 @@
           self.loginFlag = true
           if (response && response.data.optSuc) {
             localStorage.setItem('token',response.data.data)
-            self.$router.push('/my')
+            self.$router.go(-1)
           }
         })
       },

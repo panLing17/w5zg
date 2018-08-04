@@ -86,7 +86,7 @@
           // 本地储token
           localStorage.setItem('token',response.data.data)
           // 跳转至首页
-          self.$router.push('/my')
+          self.$router.go(-1)
 
 
         })
