@@ -40,7 +40,8 @@
       }
     },
    created () {
-      this.getData()
+     this.getData()
+     this.getUserData()
    },
     mounted () {
       this.$mescrollInt("mescroll",this.upCallback,() => {}, () => {});
@@ -64,6 +65,18 @@
       this.mescroll.destroy();
     },
     methods: {
+      getUserData () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/currentMember',
+          params: {}
+        }).then(function (response) {
+          if (response) {
+            self.$store.commit('userDataChange', response.data.data)
+          }
+        })
+      },
       getData () {
         this.type = this.$route.query.type
         this.price = this.$route.query.price

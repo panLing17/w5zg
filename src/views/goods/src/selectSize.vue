@@ -184,6 +184,16 @@
     },
     mounted () {
       this.getStoreNum()
+      setTimeout(() => {
+        if (this.selstSizeScroll) {
+          this.selstSizeScroll.refresh()
+        } else {
+          this.selstSizeScroll = new BScroll(this.$refs.selstSizeScroll, {
+            click: true
+          })
+        }
+      },20)
+      this.getFreight()
     },
     methods:{
       // 获取运费
@@ -273,6 +283,18 @@
       },
       // 更改配送方式
       changeExpress (data) {
+        //若所有层级都选择了规格则继续
+        let flag = 0
+        this.spec.forEach((now)=>{
+          if (now.valueIndex === -1) {
+            flag+=1
+          }
+        })
+        if (flag>0) {
+          this.$parent.initPriceFlag = true
+          this.$message.warning('请选择规格')
+          return
+        }
         this.$parent.disTypeName = data
         // 触发选择配送方式组件
         if(data==='专柜自提'&& !this.lock){
