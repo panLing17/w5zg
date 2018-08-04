@@ -5,41 +5,59 @@
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
-          span 专柜体验
+          .left
+            img(src="../../../assets/img/Page1@2x.png")
+          .center 专柜体验
           .right(@click="$router.push('/reservations')")
             img(src="../../../assets/img/ic_yuyue_into.png")
             span 我的预约
-        ul.list
-          li.city(v-for="item in storeList")
-            h1 {{item.cityName}}
+        .content
+          .left(ref="lscroll2")
             ul
-              li(@click="bsId=i.bs_id", v-for="i in item.storeList")
-                .text
-                  h2 {{i.bs_name}}
-                  p {{i.bs_address}}
-                    span(v-for="tags in i.bs_type_name.split('&')") 可{{tags}}
-                .icon
-                  img(src="../../../assets/img/now@2x.png", v-if="bsId === i.bs_id")
-                  img(src="../../../assets/img/past@2x.png", v-else)
-        p(v-if="storeList.length<1").notFindStore 该商品无可选门店或未登录
-        button.ok(@click="addBespeak") 确 认
-
+              li.contentLeftItem(v-for="(item, index) in storeList", :class="{active: index===currentCity}", @click="currentCity=index") {{item.cityName}}
+          .right(ref="rscroll2")
+            ul
+              li.contentRightItem(v-for="item in list", @click="addBespeak(item)")
+                .name
+                  img(src="../../../assets/img/position2.png")
+                  span {{item.bs_name}}
+                .address {{item.bs_address}}
 </template>
 
 <script>
+  import BScroll from 'better-scroll'
   export default {
     name: "store-select",
     data () {
       return {
         // 当前选中的地址的id
         bsId: '',
-        storeList: []
+        storeList: [],
+        currentCity: 0
       }
     },
     props: {
       show: {
         type: Boolean,
         default: false
+      }
+    },
+    computed: {
+      list () {
+        if (this.storeList.length) {
+          setTimeout(() => {
+            if (this.rscroll2) {
+              this.rscroll2.refresh()
+            } else {
+              this.rscroll2 = new BScroll(this.$refs.rscroll2, {
+                click: true
+              })
+            }
+          }, 20)
+          return this.storeList[this.currentCity].storeList
+        } else {
+          return []
+        }
       }
     },
     watch: {
@@ -71,19 +89,25 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiGoods + 'goods/queryStore',
+          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
           params: {
-            gskuId: self.$store.state.skuId,
-            marketId:0,
-            cityNo: self.$store.state.location.city.id,
-            storeType: 1
+            gskuId: self.$store.state.skuId
           },
         }).then(function (response) {
           self.storeList = response.data.data
-
+          setTimeout(() => {
+            if (self.lscroll2) {
+              self.lscroll2.refresh()
+            } else {
+              self.lscroll2 = new BScroll(self.$refs.lscroll2, {
+                click: true
+              })
+            }
+          }, 20)
         })
       },
-      addBespeak () {
+      addBespeak (item) {
+        this.bsId = item.bs_id
         if (!this.bsId) {
           this.$message.warning('请选择门店')
           return
@@ -106,10 +130,6 @@
 </script>
 
 <style scoped>
-  .citySelectBox {
-
-  }
-
   .bg {
     background-color: rgba(0, 0, 0, 0.3);
     width: 100%;
@@ -123,122 +143,86 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 70%;
+    height: 10rem;
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 102;
   }
+
   .title {
+    height: 1.3rem;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 1rem;
-    font-size: .4rem;
-    position: relative;
-    border-bottom: solid 1px #eee;
-  }
-  .title .right{
-    position: absolute;
-    right: .2rem;
-    color: #666666;
-    font-size: .4rem;
-    display: flex;
-    align-items: center;
-  }
-  .title .right img{
-    height: .45rem;
-    margin-right: .15rem;
-  }
-  .tab{
-    display: flex;
-    border-bottom: solid 1px #ccc;
-  }
-  .tab li{
-    width: 3rem;
-    height: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: .3rem;
-    color: rgb(255,128,171);
-  }
-  .selected {
-    color: rgb(245,0,87) !important ;
-  }
-  .list {
-    line-height: .8rem;
-    text-align: center;
-    float: left;
-    width: 10rem;
-    height: 4rem;
-    overflow-y: auto;
-    padding: 0 .4rem;
-  }
-  .list .city {
-    border-bottom: solid 1px #eee;
-  }
-  .city>h1{
-    text-align: left;
-    font-size: .4rem;
-  }
-  .city>ul>li{
-    display: flex ;
     justify-content: space-between;
+    padding: 0 .4rem;
     align-items: center;
-    margin-bottom: .2rem;
+    border-bottom:1px solid rgb(215,215,215);
   }
-  .icon{
-    width: .45rem;
+  .title .left img {
+    width: .586rem;
   }
-  .icon img{
-    width: 100%;
+  .title .center {
+    font-size:.48rem;
+    color:rgb(51,51,51);
   }
-  .text{
-    max-width: 8rem;
+  .title .right {
+    display: inline-flex;
+    align-items: center;
   }
-  .text h2{
-    font-size: .35rem;
-    font-weight: 500;
-    text-align: left;
-    line-height: .5rem;
-    color: #222;
+  .title .right img {
+    width: .4rem;
+    margin-right: .1rem;
   }
-  .text p{
-    font-size: .35rem;
-    line-height: .5rem;
-    text-align: left;
-    color: #aaa;
+  .content {
+    height: 8.7rem;
+    display: flex;
+    overflow: hidden;
   }
-  .text p span{
-    padding: 1px 3px;
-    background-color: rgba(245,0,87,.1);
-    border: solid 1px rgba(245,3,87,1);
-    color: rgb(245,0,87);
-    margin-left: .2rem;
-    border-radius: 3px;
+  .content .left {
+    width: 26%;
+    flex: none;
+    height: 100%;
   }
-  .notFindStore {
-    color: #aaaaaa;
+  .content .right {
+    height: 100%;
+    flex: 1;
+    background: rgb(242,242,242);
+    padding: 0 .32rem 0 .37rem;
+  }
+  .contentLeftItem {
+    min-height: 1.2rem;
     text-align: center;
-  }
-  .ok {
-    width: 100%;
-    height: 1rem;
-    background-color: rgb(245,0,87);
-    border: none;
-    color: white;
+    line-height: 1.2rem;
+    border-bottom: 1px solid rgb(215,215,215);
+    color: rgb(51,51,51);
     font-size: .4rem;
-    position: absolute;
-    bottom: 0;
-    left: 0;
   }
-  .slider {
-    height: 1px;
-    width: 3rem;
-    margin-top: -1px;
-    margin-left: 0;
-    background: rgb(245,0,87);
-    transition: margin-left .6s;
+  .contentLeftItem.active {
+    background: rgb(242,242,242);
+    color:rgb(247,0,87);
+  }
+  .contentLeftItem:last-child, .contentRightItem:last-child {
+    border: none;
+  }
+  .contentRightItem {
+    height: 2.13rem;
+    line-height: .53rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgb(215,215,215);
+  }
+  .name {
+    color: #333;
+    font-size: .37rem;
+  }
+  .name img {
+    width: .26rem;
+    margin-right: .1rem;
+  }
+  .address {
+    color: #666;
+    font-size: .32rem;
   }
 </style>
