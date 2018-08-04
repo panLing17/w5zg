@@ -181,6 +181,16 @@
     },
     mounted () {
       this.getStoreNum()
+      setTimeout(() => {
+        if (this.selstSizeScroll) {
+          this.selstSizeScroll.refresh()
+        } else {
+          this.selstSizeScroll = new BScroll(this.$refs.selstSizeScroll, {
+            click: true
+          })
+        }
+      },20)
+      this.getFreight()
     },
     methods:{
       // 获取运费
