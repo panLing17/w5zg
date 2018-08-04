@@ -133,7 +133,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
+      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -400,12 +400,9 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiGoods + 'goods/queryStore',
+          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
           params: {
-            gskuId: self.$store.state.skuId,
-            marketId:0,
-            cityNo: self.$store.state.location.city.id,
-            storeType: 2
+            gskuId: self.$store.state.skuId
           },
         }).then(function (response) {
           if(response.data.data.length<1){
