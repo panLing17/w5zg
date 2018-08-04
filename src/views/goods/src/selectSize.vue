@@ -33,9 +33,9 @@
                   p(style="clear:both")
             .count
               span 购买数量
-              w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num")
+              w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
             .express
-              h1 配送方式{{realGoodsData.storage_num}}
+              h1 配送方式
               .buttonTab
                 button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
                 button(@click="changeExpress('专柜自提')", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
@@ -212,6 +212,7 @@
       addCart () {
         this.$parent.ofBuy = false
         this.$parent.shoppingCartFlag = true
+        this.close()
         this.confirm()
       },
       isGray (e, index) {
