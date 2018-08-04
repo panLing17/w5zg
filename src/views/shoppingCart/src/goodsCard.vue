@@ -119,21 +119,31 @@
         }
       },
       deleteGoods (id, index) {
-        this.animateName = 'fadeOut'
-        this.list.splice(index,1)
-        let self = this
-        self.$ajax({
-          method: 'delete',
-          url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
-          params: {
-            scIdArray: id
+        this.$confirm({
+          title: '删除购物商品',
+          message: '确定要删除么',
+          confirm: () => {
+            this.animateName = 'fadeOut'
+            this.list.splice(index,1)
+            let self = this
+            self.$ajax({
+              method: 'delete',
+              url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+              params: {
+                scIdArray: id
+              },
+            }).then(function (response) {
+              self.$emit('clearGoods')
+              // let goodsNum = self.$store.state.shoppingCartGoodsNum
+              // goodsNum.sendNum-=1
+              // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+            })
           },
-        }).then(function (response) {
-          self.$emit('clearGoods')
-          // let goodsNum = self.$store.state.shoppingCartGoodsNum
-          // goodsNum.sendNum-=1
-          // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          noConfirm: () => {
+
+          }
         })
+
       },
       // 商品数量变化
       countChange (cartId,skuId,num) {
