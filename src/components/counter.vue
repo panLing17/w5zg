@@ -76,7 +76,7 @@
     border: solid 1px #ddd;
     justify-content: space-between;
   }
-  .counterBox input{
+  .counterBox input {
     outline: none;
     width: 40px;
     height: 30px;
@@ -85,7 +85,7 @@
     text-align: center;
     color: #666;
   }
-  .counterBox span{
+  .counterBox span {
     font-size: 18px;
     width: 30px;
     text-align: center;

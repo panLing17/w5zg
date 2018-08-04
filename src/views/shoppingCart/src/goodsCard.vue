@@ -17,7 +17,7 @@
                   span 不足
               .info(@click.stop="")
                 .text
-                  .name {{i.gi_name}}
+                  .name(@click="goGoodsDetail(i.gspu_id)") {{i.gi_name}}
                   .spec
                     span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
                     img(src="../../../assets/img/ic_page_xljt@2x.png")
