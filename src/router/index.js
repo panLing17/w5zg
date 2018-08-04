@@ -417,6 +417,11 @@ const router = new Router ({
           component: Page.commodityList
         },
         {
+          path: '/paymentResults',
+          name: '支付成功',
+          component: Goods.paymentResults
+        },
+        {
           path: '/shoppingCart',
           name: '购物车',
           component: ShoppingCart.index,
@@ -820,11 +825,6 @@ const router = new Router ({
               meta: {
                 keepAlive: true
               }
-            },
-            {
-              path: '/goods/paymentResults',
-              name: '支付成功',
-              component: Goods.paymentResults
             }
           ]
         }
