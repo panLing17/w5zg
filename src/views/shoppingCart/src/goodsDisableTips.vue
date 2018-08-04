@@ -7,7 +7,7 @@
         .content.mescroll#goodsDisableTips
           .title 抱歉，本单部分商品库存不足或失效，已为您降到最大库存
           ul.goodsList
-            li(v-for="i in goodsList")
+            li(v-for="i in goodsList", v-if="i.status_flag !== 0")
               .img
                 .shade(v-if="i.status_flag !== 0 && i.status_flag !== 1")
                   span(v-if="i.status_flag === 2") 库存不足
