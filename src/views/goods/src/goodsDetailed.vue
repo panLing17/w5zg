@@ -43,7 +43,7 @@
             .label 用券立减
             .text(v-if="initPriceFlag") <span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
             .text(v-else) <span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
-          img(src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
+          img(v-if="goodsData.carry_type===1", src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
         //ul.saveMoneyBottom
           li.gray
             .label 专柜价购买
@@ -87,7 +87,7 @@
         .left(v-else) 规格:
           span 请选择规格
         img(src="../../../assets/img/right.png").right
-      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :hasGoodsFlag="initPriceFlag", ref="disType")
+      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :carryType="goodsData.carry_type", :hasGoodsFlag="initPriceFlag", ref="disType")
       //.distribution(@click="selectCityShow")
         .top
           .left 地址
