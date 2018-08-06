@@ -49,9 +49,12 @@
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
       location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+      // 失效商品提示
+      disableTips(ref="disableTips")
 </template>
 
 <script>
+  import disableTips from '../../shoppingCart/src/goodsDisableTips'
   import goodsCard from './goodsCard'
   import locationSelect from './locationSelect'
   import {mapState} from 'vuex'
@@ -104,7 +107,7 @@
       ...mapState(['giveGoodsAddress']),
       ...mapGetters(['transfer'])
     },
-    components: {goodsCard, locationSelect},
+    components: {goodsCard, locationSelect, disableTips},
     mounted() {
       // mescroll初始化
       this.$mescrollInt("confirmOrderBox", this.upCallback)
@@ -255,11 +258,23 @@
               this.directDistribution()
             }
           } else {
-            if (this.$route.query.since === 'true') {
-              this.shoppingCartSince()
-            } else {
-              this.shoppingCartDistribution()
+            // 将购物车部分进行封装，以便用于回调
+            let fun = ()=>{
+              if (this.$route.query.since === 'true') {
+                this.shoppingCartSince()
+              } else {
+                this.shoppingCartDistribution()
+              }
             }
+            // 当前要提交的商品
+            let data = []
+            this.transfer.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                data.push(sonNow.sc_id)
+              })
+            })
+            data = data.join(',')
+            this.$refs['disableTips'].checkDisableGoods(data, fun)
           }
         } else {
           this.$message.warning('稍安勿躁,请勿重复点击')
