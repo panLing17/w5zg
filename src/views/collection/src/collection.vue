@@ -20,7 +20,7 @@
           li.title
             .left 失效商品共<span>{{indexN}}</span>件
             .right(@click="clearLost") 清空失效商品
-          li(v-for="item in contLists", v-if="item.gi_status === '224'")
+          li(v-for="item in contLists", v-if="item.gi_status !== '221'")
             .lefter
               .mask 失效
               img(:src="item.gi_image_url | img-filter", @click.prevent="")
@@ -271,6 +271,7 @@
     position: fixed;
     top: 0;
     bottom: 0;
+    background-color: #f2f2f2;
   }
   .navbar{
     position: fixed;
