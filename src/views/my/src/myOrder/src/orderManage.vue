@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="backJump()")
+        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
         img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()" v-if="false").search
@@ -125,6 +125,7 @@
             this.$router.push('/my');
           } else {
             this.$router.go(-1);
+
           }
         },
         //跳到搜索订单页面
@@ -146,27 +147,27 @@
           if (item == "全部") {
             this.state = "";
             lineDiv.style.left = 0;
-            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
+            this.$router.replace({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待付款") {
             this.state = 1;
             lineDiv.style.left = "20%";
-            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
+            this.$router.replace({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待发货") {
             this.state = 2;
             lineDiv.style.left = "40%";
-            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
+            this.$router.replace({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "待收货") {
             this.state = 4;
             lineDiv.style.left = "60%";
-            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
+            this.$router.replace({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           if (item == "已完成") {
             this.state = 3;
             lineDiv.style.left = "80%";
-            this.$router.push({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
+            this.$router.replace({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
           //this.request();
           this.mescroll.resetUpScroll( true );
