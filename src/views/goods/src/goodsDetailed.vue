@@ -959,6 +959,7 @@
                 this.$message.warning('请选择收货/自提地址')
               }
             } else {
+              this.selectFlag = false
               // 为配送订单直接进入下一步
               this.expressNext()
             }

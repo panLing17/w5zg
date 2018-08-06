@@ -18,7 +18,7 @@
                 ul.spec
                   li(v-for="item in i.specVOList") {{item.gspec_value}}
                 .storeNum 库存:{{i.storage_num}}
-          .bottom(v-if="$route.path!=='/confirmOrder'")
+          .bottom(v-if="$route.path !== '/confirmOrder'")
             .goShoppingCart(@click="goShoppingCart") 返回购物车
             .next(@click="next", v-if="storeDownGoods | normalGoods") 继续结算
           .bottom(v-else)
@@ -84,6 +84,7 @@
         this.close()
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+        console.log(this.goodsList)
         if (this.$store.state.transfer.length > 0) {
           this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
         } else {
