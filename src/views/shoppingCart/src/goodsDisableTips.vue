@@ -18,9 +18,11 @@
                 ul.spec
                   li(v-for="item in i.specVOList") {{item.gspec_value}}
                 .storeNum 库存:{{i.storage_num}}
-          .bottom
+          .bottom(v-if="$route.path!=='/confirmOrder'")
             .goShoppingCart(@click="goShoppingCart") 返回购物车
             .next(@click="next", v-if="storeDownGoods | normalGoods") 继续结算
+          .bottom(v-else)
+            .goShoppingCart(@click="$router.push('/shoppingCart')") 返回购物车
 
 </template>
 
@@ -88,17 +90,23 @@
           this.$message.error('请勾选商品')
         }
       },
-      checkDisableGoods(array) {
+      // 传入回调代表来自确认订单，没有代表购物车
+      checkDisableGoods(array,fun) {
         let url = 'shoppingCart/checkSubmitCartList'
         let self = this
         let cartId = []
-        array.forEach((now) => {
-          now.shoppingCartVOList.forEach((sonNow) => {
-            cartId.push(sonNow.sc_id)
-          })
+        if (fun) {
+          cartId = array
+        } else {
+          array.forEach((now) => {
+            now.shoppingCartVOList.forEach((sonNow) => {
+              cartId.push(sonNow.sc_id)
+            })
 
-        })
-        cartId = cartId.join(',')
+          })
+          cartId = cartId.join(',')
+        }
+
 
         self.$ajax({
           method: 'get',
@@ -125,16 +133,24 @@
             }
             self.goodsList.push(now)
           })
-          // 去除不能提交的商品，将数据存入
-          array.forEach((now,index) => {
-            now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
-              if (noNormalGoods.includes(sonNow.sc_id)) {
-                console.log(sonNow)
-                array[index].shoppingCartVOList.splice(sonIndex,1)
-              }
+
+          if (fun) {
+            array.split(',').forEach((now)=>{
+
             })
-          })
-          self.$store.commit('transferGive', array)
+          } else {
+            // 去除不能提交的商品，将数据存入
+            array.forEach((now,index) => {
+              now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
+                if (noNormalGoods.includes(sonNow.sc_id)) {
+                  array[index].shoppingCartVOList.splice(sonIndex,1)
+                }
+              })
+            })
+            self.$store.commit('transferGive', array)
+          }
+
+
           if (normalFlag > 0) {
             self.normalGoods = true
           } else {
@@ -147,12 +163,16 @@
             self.storeDownGoods = false
           }
           if (!self.normalGoods) {
-            let since = ''
-            self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-            if (self.$store.state.transfer.length > 0) {
-              self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+            if (fun) {
+              fun()
             } else {
-              self.$message.error('请勾选商品')
+              let since = ''
+              self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+              if (self.$store.state.transfer.length > 0) {
+                self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+              } else {
+                self.$message.error('请勾选商品')
+              }
             }
           } else {
             self.show = true

@@ -8,12 +8,13 @@
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
       .cartTypeTab
         ul
+
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
-            p 专柜自提
-            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
-          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
             p 快递配送
             span(class="animated", :class="{swing:flag}") ({{shoppingCartGoodsNum.sendNum}})
+          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
+            p 专柜自提
+            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
         p(:style="{left:nowTab*50+'%'}")
           span.side
       .content(v-loading="loading")
@@ -66,7 +67,7 @@
         flag: false,
         loading: true,
         isdefault: false,
-        nowTab: 0,
+        nowTab: 1,
         settlementShow: false,
         arrangementFlag: false
       }
@@ -145,9 +146,9 @@
     },
     activated () {
       if (this.$route.path === '/shoppingCart') {
-        this.nowTab = 0
-      } else {
         this.nowTab = 1
+      } else {
+        this.nowTab = 0
       }
       // 获取商品数量
       this.getGoodsNum()
@@ -274,7 +275,7 @@
         this.$store.commit('computedPriceChange', 0)
         //this.$store.commit('shoppingCartSelectedChange', [])
         this.$store.commit('allCheckedChange', false)
-        if (num === 1) {
+        if (num === 0) {
           this.$router.push('/shoppingCart/express')
         } else {
           this.$router.push('/shoppingCart')

@@ -438,7 +438,7 @@
   }
   .leftOut-enter, .leftOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translate(-100%,-1000%) scale(.1,.1);
+    transform: translate(100%,-1000%) scale(.1,.1);
     opacity: 0;
   }
   .fadeOut-enter-active {
