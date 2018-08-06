@@ -92,13 +92,12 @@
           }
         })
       },
-      changeType (data,index) {
+      changeType (data) {
          this.animateName = 'leftOut'
         // 回调参数，执行删除动画效果
-        let fun =()=> {
-          this.list.splice(index,1)
-        }
-        this.$emit('tab',data,fun)
+        this.$store.commit('getSkuId',data.gsku_id)
+        //alert(data.gsku_id)
+        this.$emit('tab',data)
       },
       edit (k,index) {
         this.list[index].editClose = k
@@ -390,7 +389,7 @@
     display: none;
     position: absolute;
     right: 0;
-    top: .7rem;
+    top: .3rem;
     z-index: 99;
   }
   .moreOperation>.buttons {
