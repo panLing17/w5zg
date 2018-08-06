@@ -1,42 +1,45 @@
 <template lang="pug">
   .paymentResults
-    nav-bar(background="white")
-      .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter(slot="center") {{type==0?'支付成功':'支付失败'}}
-      .topRight(slot="right")
+    .header
+      .back(@click="$router.go(-1)")
+        img(src="../../../assets/img/paymentResults2.png")
+      .title 支付结果
     .mescroll#mescroll
       .content
-        .successContent(v-if="type==0")
-          .infoWrapper
-            .price ￥{{price}}
-            .dec 支付成功
-            <!--.git 获得￥200.00元现金券-->
-            .git (品牌商正在备货，请耐心等候)
-            .btnWrapper
-              .left(@click="$router.push('/home')") 返回首页
-              <!--.right() 查看订单-->
-        .errorContent(v-if="type==1")
-          img.icon(src="../../../assets/img/图层15@2x.png")
-          .dec 支付失败
+        .success(v-if="type==0")
+          .iconWrapper
+            img(src="../../../assets/img/paymentResults0.png")
+          .descWrapper
+            .desc1 支付成功
+            .desc2 品牌商开始备货啦，请耐心等候
           .btnWrapper
             .left(@click="$router.push('/home')") 返回首页
-            .right(@click="$router.push('/my/orderManage')") 订单中心
-        img.ewm(src="../../../assets/img/gzh.jpg")
-        .recommendWrapper
-          .recommendTitle 推荐
-          w-recommend(ref="recommend")
+            .right(@click="$router.push('/my/orderManage')") 查看订单
+        .error(v-if="type==1")
+          .iconWrapper
+            img(src="../../../assets/img/paymentResults1.png")
+          .descWrapper
+            .desc1 支付失败
+            .desc2 已为您保留到“待支付”订单中，请尝试重新
+          .btnWrapper
+            .left(@click="$router.push('/home')") 返回首页
+            .right(@click="$router.push('/my/orderManage?id=1')") 订单中心
+        .louceng
+          img(src="../../../assets/img/paymentResults3.png")
+      Recomment(ref="paymentResultsRecomment", background="rgb(243,243,243)")
 </template>
 
 <script>
-
+  import Recomment from './recommend'
   export default {
     name: "paymentResults",
+    components: {
+      Recomment
+    },
     data () {
       return {
         recommendGoods: [],
-        type: 0,
-        price: 0
+        type: 0
       }
     },
    created () {
@@ -65,6 +68,9 @@
       this.mescroll.destroy();
     },
     methods: {
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll( isLock );
+      },
       getUserData () {
         let self = this
         self.$ajax({
@@ -78,13 +84,14 @@
         })
       },
       getData () {
-        this.type = this.$route.query.type
-        this.price = this.$route.query.price
+        if (this.$route.query.type) {
+          this.type = this.$route.query.type
+        }
       },
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
-          self.$refs.recommend.more(curPageData,page.num,page.size)
+          self.$refs.paymentResultsRecomment.more(curPageData,page.num,page.size)
 
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
@@ -115,112 +122,97 @@
 </script>
 
 <style scoped>
+  .paymentResults {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+  }
   .mescroll {
-    position: fixed;
+    position: absolute;
     top: 1.3rem;
     bottom: 0;
     width: 100%;
     height: auto;
   }
-  .paymentResults {
-    background: rgb(242,242,242);
-    width: 100%;
-    height: 100vh;
+  .header {
     position: absolute;
-    z-index: 100;
-  }
-  .errorContent, .successContent {
-    text-align: center;
-    font-size: 0;
-    line-height: 1;
-  }
-  .errorContent {
-    background: #fff;
-    padding-bottom: .45rem;
-  }
-  .icon {
-    width: 1.1rem;
-    margin-top: .58rem;
-  }
-  .dec {
-    font-size: .42rem;
-    color: rgb(51,51,51);
-    font-weight: 400;
-    line-height: 1;
-    margin-top: .48rem;
-  }
-  .btnWrapper {
+    top: 0;
+    left: 0;
     display: flex;
     justify-content: center;
-    margin-top: .9rem;
+    align-items: center;
+    width: 100%;
+    height: 1.3rem;
+    background: rgb(247, 0, 87);
+    color: #fff;
+  }
+  .back {
+    position: absolute;
+    left: .4rem;
+  }
+  .back img {
+    width: .586rem;
+  }
+  .title {
+    font-size: .48rem;
+  }
+  .iconWrapper {
+    font-size: 0;
+    text-align: center;
+    padding: 1.2rem 0 .53rem;
+  }
+  .iconWrapper img {
+    width: 2rem;
+  }
+  .descWrapper {
+    line-height: 1;
+    text-align: center;
+  }
+  .desc1 {
+    font-size: .42rem;
+    color:rgb(51,51,51);
+    margin-bottom: .4rem;
+  }
+  .desc2 {
+    font-size: .32rem;
+    color:rgb(119,119,119);
+  }
+  .error .btnWrapper .right {
+    color: rgb(247,0,87);
+    border: 1px solid rgb(247,0,87);
+  }
+  .btnWrapper {
+    margin-top: .53rem;
+    display: flex;
+    justify-content: center;
   }
   .left, .right {
-    flex: none;
-    width: 2.6rem;
-    height: .93rem;
-    border-radius: .53rem;
-    font-size: .34rem;
-    line-height: .93rem;
+    width: 2.56rem;
+    height: .85rem;
+    border-radius: .5rem;
+    color: #666;
+    border: 1px solid #333;
+    line-height: .85rem;
     text-align: center;
   }
   .left {
-    color: rgb(153,153,153);
-    border: 1px solid rgb(153,153,153);
+    margin-right: .8rem;
   }
-  .right {
-    color: rgb(245,0,87);
-    border: 1px solid rgb(245,0,87);
-    margin-left: 2rem;
+  .louceng {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 1.44rem;
+    background: rgb(243,243,243);
   }
-  .price {
-    font-size: .48rem;
-    color: rgb(51,51,51);
-    padding-top: .72rem;
+  .louceng img {
+    width: 4.18rem;
   }
-  .successContent .dec {
-    color: rgb(245,0,87);
-    padding-bottom: .29rem;
-    margin-top: .4rem;
-  }
-  .git {
-    font-size: .32rem;
-    color: rgb(153,153,153);
-
-  }
-  .infoWrapper {
-    padding-bottom: .48rem;
-    background: #fff;
-  }
-  .recommendTitle {
-    height: .8rem;
-    line-height: .8rem;
-    text-align: center;
-    font-size: .37rem;
-    color: rgb(51,51,51);
-    position: relative;
-  }
-  .recommendTitle:before, .recommendTitle:after {
-    content: '';
-    display: block;
-    width: 1.5rem;
-    height: 2px;
-    background: #ccc;
-    position: absolute;
-    top: 50%;
-
-    transform: translate(-50%, -50%);
-  }
-  .recommendTitle:before {
-    left: 35%;
-  }
-  .recommendTitle:after {
-    right: 20%
-  }
-  .ewm {
-    width: 30%;
-    margin-top: .26rem;
-  }
-  .content {
-    text-align: center;
+  img {
+    pointer-events: none;
   }
 </style>
