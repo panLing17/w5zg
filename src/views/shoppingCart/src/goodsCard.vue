@@ -92,12 +92,15 @@
           }
         })
       },
-      changeType (data) {
+      changeType (data,index) {
          this.animateName = 'leftOut'
         // 回调参数，执行删除动画效果
+        let fun =()=> {
+          this.list.splice(index,1)
+        }
         this.$store.commit('getSkuId',data.gsku_id)
         //alert(data.gsku_id)
-        this.$emit('tab',data)
+        this.$emit('tab',data,fun)
       },
       edit (k,index) {
         this.list[index].editClose = k

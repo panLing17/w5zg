@@ -148,7 +148,10 @@
                 }
               })
             })
+            console.log(noNormalGoods)
+            console.log(array)
             self.$store.commit('transferGive', array)
+            console.log(self.$store.state.transfer)
           }
 
 

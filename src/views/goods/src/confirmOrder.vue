@@ -113,7 +113,6 @@
       this.$mescrollInt("confirmOrderBox", this.upCallback)
       this.getLocation()
       this.computedPrice()
-      this.getExpressGoodsData
       // this.computedFreight()
       // 如果用户不是b请求计算通用券与抵用金额
       if (this.$store.state.userData.member_type !== '092') {
@@ -128,6 +127,7 @@
       locationChange() {
         let self = this
         let cartId = []
+        console.log(this.transfer)
         this.transfer.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
             cartId.push(sonNow.sc_id)
