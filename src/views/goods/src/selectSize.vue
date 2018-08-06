@@ -544,11 +544,13 @@
           ]
         }
         this.spec.forEach((now)=>{
-          let val = now.specValue[now.valueIndex].value
-          specData.specList.push({
-            'gspec_name': now.specName,
-            'gspec_value': val
-          })
+          if (now.valueIndex > -1) {
+            let val = now.specValue[now.valueIndex].value
+            specData.specList.push({
+              'gspec_name': now.specName,
+              'gspec_value': val
+            })
+          }
         })
         let self = this
         this.$ajax({
