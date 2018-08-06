@@ -178,7 +178,7 @@ const actions = {
       params: data,
     }).then(function (response) {
       if (response.data.optSuc){
-        context.commit('userDataChange',response.data.data)
+        localStorage.setItem('token',response.data.data)
       }
     })
   },
