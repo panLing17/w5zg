@@ -8,7 +8,7 @@
         .selectSizeHeader
           .photosBox()
             ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
-              li(v-for="item,index in list")
+              li(v-for="(item,index) in list")
                 img(:src="item.gi_img_url | img-filter", v-if="index===0")
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
             .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
@@ -111,10 +111,10 @@
     },
     computed:{
       list(){
-          // 深度拷贝
-          let obj={};
-          obj=JSON.parse(JSON.stringify(this.photos))
-          return obj
+        //   // 深度拷贝
+        // let obj={};
+        // obj=JSON.parse(JSON.stringify(this.photos))
+        return this.photos.slice()
 
       },
       // 定位地址城市名称
@@ -566,10 +566,12 @@
           }
           // 将sku图片存入store
           self.$store.commit('skuImgSave', response.data.data.logo)
-          // 根据sku切换展示图片
-          let skuGoodsData = self.list[0]
-          skuGoodsData.gi_img_url = response.data.data.logo
-          self.list.splice(0,1,skuGoodsData)
+          if (response.data.data.logo) {
+            // 根据sku切换展示图片
+            let skuGoodsData = self.list[0]
+            skuGoodsData.gi_img_url = response.data.data.logo
+            self.list.splice(0,1,skuGoodsData)
+          }
           self.realGoodsData = response.data.data
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)
