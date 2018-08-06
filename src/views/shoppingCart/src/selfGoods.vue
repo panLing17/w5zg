@@ -51,6 +51,9 @@
                       li(@click="changeType(storeIndex,index,i)", v-if="i.storage_num>0")
                         img(src="../../../assets/img/shoppingCartChange.png")
                         p 快递配送
+                      li(@click="changeStore(storeIndex,index,i)", v-if="i.storage_num>0")
+                        img(src="../../../assets/img/shoppingCartChange.png")
+                        p 提货门店
                       li(@click="deleteGoods(i.sc_id, storeIndex, index)")
                         img(src="../../../assets/img/shoppingCartDelete.png")
                         p 删除
@@ -127,6 +130,18 @@
           }
         }
         this.$emit('tab', data, fun)
+
+      },
+      changeStore(storeIndex, index, data) {
+        this.animateName = 'leftOut'
+        let fun = () => {
+          this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+          if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
+            this.goodsList.splice(storeIndex,1)
+          }
+        }
+        this.$store.commit('getSkuId',data.gsku_id)
+        this.$emit('change', data, fun)
 
       },
       edit(k, index) {
@@ -538,7 +553,7 @@
     display: none;
     position: absolute;
     right: 0;
-    top: .7rem;
+    top: .3rem;
     z-index: 99;
   }
   .moreOperation>.buttons {

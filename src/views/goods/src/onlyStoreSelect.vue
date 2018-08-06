@@ -132,7 +132,8 @@
               data = {
                 // id: sonNow.bs_city_no,
                 id: sonNow.bs_id,
-                name: sonNow.bs_name
+                name: sonNow.bs_name,
+                allData: sonNow
               }
             }
           })
@@ -190,12 +191,12 @@
     display: flex;
     overflow: hidden;
   }
-  .content .left {
+  .content>.left {
     width: 26%;
     flex: none;
     height: 100%;
   }
-  .content .right {
+  .content>.right {
     height: 100%;
     flex: 1;
     background: rgb(242,242,242);

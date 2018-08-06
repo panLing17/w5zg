@@ -10,10 +10,11 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
-    city-select(:show='selectFlag', :goodsList="nowGoodsDataList", @close="selectClose", @submit="submit")
+    onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
 <script>
+  import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import goodsCard from './goodsCard'
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
@@ -26,6 +27,7 @@
         flag: false,
         isdefault: false,
         selectFlag: false,
+        changeStoreFlag: false,
         nowTab: 1,
         nowGoodsId: '',
         goodsList: [],
@@ -33,7 +35,7 @@
         disableGoods: []
       }
     },
-    components:{goodsCard, disableGoods, citySelect},
+    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect},
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
@@ -75,6 +77,34 @@
       // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
+      storeChange (data) {
+        let {
+          bs_city_no: cityId,
+          bs_province_no: provinceId,
+          bs_id: storeId
+        } = data.allData
+        // 执行删除动画
+        this.deleteGoods()
+        // 执行切换请求
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'shoppingCart/shoppingCartDeliveryWays',
+          params: {
+            scId: self.nowGoodsDataList.sc_id,
+            gskuId: self.nowGoodsDataList.gsku_id,
+            provinceNo: provinceId,
+            cityNo: cityId,
+            deliveryWays: 168,
+            bsId: storeId
+          },
+        }).then(function (response) {
+          let goodsNum = self.$store.state.shoppingCartGoodsNum
+          goodsNum.carryNum+=1
+          goodsNum.sendNum-=1
+          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+        })
+      },
       clearGoods (){
         let i = this.goodsList.length
         while(i--) {
@@ -176,7 +206,7 @@
       changeType (data,next,index) {
         this.nowGoodsDataList = data
         // 显示门店选择
-        this.selectFlag = true
+        this.changeStoreFlag = true
         this.deleteGoods = next
         this.flag = true
         setTimeout(()=>{
@@ -190,34 +220,6 @@
       selectClose () {
         // 关闭选择框
         this.selectFlag = false
-      },
-      // 确定选择城市
-      submit (cityId,storeId) {
-        // 关闭选择框
-        this.selectFlag = false
-        if (storeId !== '') {
-          // 执行删除动画
-          this.deleteGoods()
-          // 执行切换请求
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiApp + 'shoppingCart/shoppingCartDeliveryWays',
-            params: {
-              scId: self.nowGoodsDataList.sc_id,
-              gskuId: self.nowGoodsDataList.gsku_id,
-              provinceNo: self.$store.state.location.province.id,
-              cityNo: cityId,
-              deliveryWays: 168,
-              bsId: storeId
-            },
-          }).then(function (response) {
-            let goodsNum = self.$store.state.shoppingCartGoodsNum
-            goodsNum.carryNum+=1
-            goodsNum.sendNum-=1
-            self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
-          })
-        }
       },
       // 清空失效商品
       clearAllDisableGoods () {
