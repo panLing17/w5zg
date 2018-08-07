@@ -73,7 +73,7 @@
         img(src="../../../assets/img/right.png", style="height:.6rem;position:absolute;right:.2rem;top:50%;margin-top:-.3rem", @click="$router.push('/home/headlinesDetail?url=activity%2Fdetail%2F2018%2F04%2F27%2Factivity_detail_2018-04-27-09-34-09-123571.png')")
       .myPrice
         .left 余额:
-          span 现金券 <strong>{{(userData.netcard_balance | price-filter)?(userData.netcard_balance | price-filter):'0'}}</strong>　通用券 <strong>{{(userData.cash_balance | price-filter)?(userData.cash_balance | price-filter):'0'}}</strong>
+          span 现金券 <strong>{{userData.netcard_balance | price-filter}}</strong>　通用券 <strong>{{userData.cash_balance | price-filter}}</strong>
         //img(src="../../../assets/img/right.png").right
       .size(@click="onlySelectSpecFun")
         .left(v-if="!initPriceFlag") 规格:

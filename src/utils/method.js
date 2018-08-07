@@ -31,4 +31,12 @@ function getClientHeight(){
   }
   return clientHeight;
 }
-export default {transformDate, imgUrlFilter, getClientHeight}
+
+function getStyle (el, attr) {
+  if(el.currentStyle) {
+    return el.currentStyle[attr];
+  } else {
+    return getComputedStyle(el, false)[attr];
+  }
+}
+export default {transformDate, imgUrlFilter, getClientHeight, getStyle}

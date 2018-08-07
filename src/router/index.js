@@ -314,6 +314,11 @@ const router = new Router ({
       redirect: '/home',
       children: [
         {
+          path: '/search',
+          name: '新搜索',
+          component: Common.search
+        },
+        {
           path: '/home',
           name: '首页',
           component: Home.index,
