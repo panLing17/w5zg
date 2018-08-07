@@ -45,6 +45,7 @@
           .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
           .right(v-if="dataFlag")
             toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
+      .backCommTicket 确认收货后，本单可返{{netAndCommitCard.backCommTicket}}元通用券
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
@@ -534,6 +535,7 @@
               self.netCardFlag = false
             }
             self.dataFlag = true
+            self.netCardChange()
           })
         } else {
           self.$ajax({
@@ -786,5 +788,14 @@
     outline: none;
     border: none;
 
+  }
+  /* 返通用券 */
+  .backCommTicket {
+    color: rgb(247,0,87);
+    background-color: rgb(255,245,223);
+    text-align: right;
+    height: .8rem;
+    line-height: .8rem;
+    padding: 0 .2rem;
   }
 </style>
