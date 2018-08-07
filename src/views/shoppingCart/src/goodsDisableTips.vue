@@ -20,7 +20,7 @@
                 .storeNum 库存:{{i.storage_num}}
           .bottom(v-if="$route.path !== '/confirmOrder'")
             .goShoppingCart(@click="goShoppingCart") 返回购物车
-            .next(@click="next", v-if="storeDownGoods | normalGoods") 继续结算
+            .next(@click="next", v-if="nextFlag") 继续结算
           .bottom(v-else)
             .goShoppingCart(@click="$router.push('/shoppingCart')") 返回购物车
 
@@ -36,7 +36,7 @@
         goodsList: [],
         show: false,
         normalGoods: false,
-        storeDownGoods: false
+        nextFlag: false
       }
     },
     watch: {
@@ -143,15 +143,39 @@
             // 去除不能提交的商品，将数据存入
             array.forEach((now,index) => {
               now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
+                console.log(index)
                 if (noNormalGoods.includes(sonNow.sc_id)) {
                   array[index].shoppingCartVOList.splice(sonIndex,1)
+                  if(array[index].shoppingCartVOList.length<1){
+                    array.splice(index, 1)
+                  }
                 }
               })
             })
+            let clearFun = () =>{
+              array.forEach((now,index) => {
+                now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
+                  console.log(index)
+                  if (noNormalGoods.includes(sonNow.sc_id)) {
+                    array[index].shoppingCartVOList.splice(sonIndex,1)
+                    if(array[index].shoppingCartVOList.length<1){
+                      array.splice(index, 1)
+                    }
+                  }
+                })
+              })
+              array.forEach((now) => {
+                now.shoppingCartVOList.forEach((sonNow) => {
+                  if (noNormalGoods.includes(sonNow.sc_id)) {
+                    clearFun()
+                  }
+                })
+              })
+            }
+            clearFun()
             console.log(noNormalGoods)
             console.log(array)
             self.$store.commit('transferGive', array)
-            console.log(self.$store.state.transfer)
           }
 
 
@@ -160,12 +184,13 @@
           } else {
             self.normalGoods = false
           }
-            // 再判断有无降库存商品
-          if (downFlag > 0) {
-            self.storeDownGoods = true
+            // 根据可提交商品长度判断是否显示继续提交
+          if(array.length>0){
+            self.nextFlag = true
           } else {
-            self.storeDownGoods = false
+            self.nextFlag = false
           }
+
           if (!self.normalGoods) {
             if (fun) {
               fun()

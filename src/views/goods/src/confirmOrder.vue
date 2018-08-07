@@ -124,7 +124,13 @@
         this.mescroll.endSuccess(1)
       },
       // 地址变化后
-      locationChange() {
+      locationChange(id) {
+        let cityId
+        if (id) {
+          cityId = id
+        } else {
+          cityId = this.$store.state.location.city.id
+        }
         let self = this
         let cartId = []
         console.log(this.transfer)
@@ -140,7 +146,7 @@
           url: self.$apiApp + 'shoppingCart/submitSendList1',
           params: {
             scIdArray: cartId,
-            cityNo: self.$store.state.location.city.id
+            cityNo: cityId
           }
         }).then(function (response) {
           self.$store.commit('transferGive', response.data.data.commList)
@@ -446,6 +452,7 @@
               }
             })
           }
+          self.locationChange(self.$store.state.giveGoodsAddress.ra_city)
         })
       },
       computedPrice() {
