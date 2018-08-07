@@ -90,18 +90,19 @@
     },
     computed: {
       computedPriceText() {
+        // 由于运费算入总价，所以不计算运费
         if (this.netCardFlag && this.commonTicketFlag) {
-          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard) + this.allFreight
+          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard) + this.allFreight - this.allFreight
         } else if (this.commonTicketFlag) {
-          return this.price - this.netAndCommitCard.commTicket + this.allFreight
+          return this.price - this.netAndCommitCard.commTicket + this.allFreight - this.allFreight
         }
         else if (this.netCardFlag) {
-          return this.price - this.netAndCommitCard.netCard + this.allFreight
+          return this.price - this.netAndCommitCard.netCard + this.allFreight - this.allFreight
         }
         else if (this.commonTicketFlag) {
-          return this.price - this.netAndCommitCard.commTicket + this.allFreight
+          return this.price - this.netAndCommitCard.commTicket + this.allFreight - this.allFreight
         } else {
-          return this.price + this.allFreight
+          return this.price + this.allFreight - this.allFreight
         }
       },
       ...mapState(['giveGoodsAddress']),
@@ -133,14 +134,12 @@
         }
         let self = this
         let cartId = []
-        console.log(this.transfer)
         this.transfer.forEach((now)=>{
           now.shoppingCartVOList.forEach((sonNow)=>{
             cartId.push(sonNow.sc_id)
           })
         })
         cartId = cartId.join(',')
-        console.log(cartId)
         self.$ajax({
           method: 'get',
           url: self.$apiApp + 'shoppingCart/submitSendList1',
@@ -151,6 +150,7 @@
         }).then(function (response) {
           self.$store.commit('transferGive', response.data.data.commList)
           self.price = response.data.data.totalPrice + response.data.data.totalFreight
+          self.allFreight = response.data.data.totalFreight
         })
       },
       // 获取每个商品运费
@@ -399,7 +399,6 @@
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
         let cartId = []
-        console.log(this.$store.state.transfer)
         this.$store.state.transfer.forEach((now) => {
           now.shoppingCartVOList.forEach((sonNow) => {
             cartId.push(sonNow.sc_id)
@@ -427,6 +426,40 @@
       },
       // 现金券变化
       netCardChange() {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let self = this
+        if (this.$route.query.type === 'shoppingCart') {
+          let cartId = []
+          this.$store.state.transfer.forEach((now) => {
+            now.shoppingCartVOList.forEach((sonNow) => {
+              cartId.push(sonNow.sc_id)
+            })
+
+          })
+          cartId = cartId.join(',')
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'order/submitOrderCard',
+            params: {
+              gcIdArray: cartId,
+              netCardFlag: netCardFlag
+            }
+          }).then(function (response) {
+            self.netAndCommitCard = response.data.data
+          })
+        } else {
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'order/nowSubmitOrderCard',
+            params: {
+              gskuId: self.$store.state.skuId,
+              netCardFlag: netCardFlag,
+              num: self.content
+            }
+          }).then(function (response) {
+            self.netAndCommitCard = response.data.data
+          })
+        }
       },
       getLocation() {
         let self = this
@@ -452,7 +485,9 @@
               }
             })
           }
-          self.locationChange(self.$store.state.giveGoodsAddress.ra_city)
+          if (self.$route.query.since === 'false') {
+            self.locationChange(self.$store.state.giveGoodsAddress.ra_city)
+          }
         })
       },
       computedPrice() {
@@ -463,7 +498,6 @@
               this.price += sonNow.counter_price * sonNow.goods_num
               this.content += sonNow.goods_num - 0
             })
-
           })
         } else {
           this.transfer.forEach((now) => {

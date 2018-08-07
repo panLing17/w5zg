@@ -23,6 +23,7 @@
             .next(@click="next", v-if="nextFlag") 继续结算
           .bottom(v-else)
             .goShoppingCart(@click="$router.push('/shoppingCart')") 返回购物车
+            .next(v-if="deleteGoodsFlag", @click="disableGoodsDelete") 剔除商品
 
 </template>
 
@@ -35,6 +36,7 @@
       return {
         goodsList: [],
         show: false,
+        deleteGoodsFlag: false,
         normalGoods: false,
         nextFlag: false
       }
@@ -79,6 +81,62 @@
         } else {
           this.selfCarryUpData()
         }
+      },
+      // 删除失效商品
+      disableGoodsDelete () {
+        let self = this
+        let cartId = []
+        this.goodsList.forEach((now)=>{
+            if (now.status_flag.toString() === '0' || now.status_flag.toString() === '1') {
+              cartId.push(now.sc_id)
+            }
+        })
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/checkSubmitCartList',
+          params: {
+            scIdArray: cartId.join(",")
+          }
+        }).then(function (response) {
+          self.goodsList = []
+          // 正常商品购物车ID合集
+          let normalGoods = []
+          // 先判断是否有正常商品
+          response.data.data.forEach((now) => {
+            if (now.status_flag.toString() === '0' || now.status_flag.toString() === '1') {
+              normalGoods.push(now.sc_id)
+            }
+            self.goodsList.push(now)
+          })
+          let newData = self.$store.state.transfer
+
+          let fun = () => {
+            newData.forEach((now,index)=>{
+              now.shoppingCartVOList.forEach((sonNow, sonIndex)=>{
+                if (!normalGoods.includes(sonNow.sc_id)) {
+                  newData[index].shoppingCartVOList.splice(sonIndex,1)
+                  if(newData[index].shoppingCartVOList.length<1){
+                    newData.splice(index, 1)
+                  }
+                }
+              })
+            })
+            newData.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (!normalGoods.includes(sonNow.sc_id)) {
+                  fun()
+                }
+              })
+            })
+          }
+          fun()
+          self.$store.commit('transferGive', newData)
+          // 执行确认订单页计算金额
+          self.$parent.locationChange()
+          self.$parent.getVoucher()
+          // 关闭弹窗
+          self.show = false
+        })
       },
       next() {
         this.close()
@@ -137,7 +195,12 @@
 
           if (fun) {
             array.split(',').forEach((now)=>{
-
+              console.log(noNormalGoods)
+              console.log(now)
+              console.log(noNormalGoods.includes(now-0))
+              if (noNormalGoods.includes(now-0)) {
+                self.deleteGoodsFlag = true
+              }
             })
           } else {
             // 去除不能提交的商品，将数据存入
