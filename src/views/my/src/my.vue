@@ -549,6 +549,9 @@
     padding-bottom: .2rem;
     background-color: rgb(242,242,242);
   }
+  .wrapMyTreasure{
+    padding-bottom: 0;
+  }
 	.myOrderForm,
 	.myTreasure{
 		background-color: #fff;
@@ -640,16 +643,17 @@
   }
   /*推荐*/
   .title{
-    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
+    padding: .37rem 0;
   }
   .title img{
-    width: 55%;
+    width: 4.18rem;
+    height: .58rem;
   }
   .badge {
     padding: 0 .1rem;

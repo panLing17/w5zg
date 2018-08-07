@@ -404,7 +404,6 @@
       // 收藏
       changeCollect1(){
         if (localStorage.hasOwnProperty('token')) {
-          console.log(this.k)
           if (!this.k) {
             let self = this
             self.$ajax({
@@ -415,7 +414,6 @@
               }
             }).then(function (res) {
               if (res.data.data.fiId) {
-                //self.collectFlag = 1
                 self.xuanfukuang = 1
                 self.collectionSuc()
                 self.isCollect()
@@ -440,7 +438,6 @@
           }).then(function (res) {
             console.log(res)
             if (res.data.code === '081') {
-              //self.collectFlag = 0
               self.xuanfukuang = 2
               self.collectionSuc()
               self.isCollect()

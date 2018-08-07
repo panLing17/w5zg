@@ -22,7 +22,7 @@
             .rightB
               .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
               .text(v-if="item.msType !== '802'") {{item.ms_title}}
-              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]?';' + item.gspec_values.toString().split(',')[1]:''}}
+              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]? ';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
                 .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元
@@ -69,16 +69,18 @@
       }
     },
     beforeRouteLeave(to, from, next){
-      let self = this
-      self.$ajax({
-        method: 'get',
-        url: self.$apiMember + 'ucMessage/updateMessageStatus',
-        params:{
-          msStatus: '5302'
-        }
-      }).then(function (res) {
-        console.log(res)
-      })
+      if (to.path === '/my') {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/updateMessageStatus',
+          params:{
+            msStatus: '5302'
+          }
+        }).then(function (res) {
+
+        })
+      }
       next()
     },
     mounted(){

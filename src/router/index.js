@@ -457,7 +457,7 @@ const router = new Router ({
           name: '收藏夹',
           component: Collection.collection,
           meta: {
-            keepAlive: true
+            keepAlive: false
           }
         },
         {
@@ -465,7 +465,7 @@ const router = new Router ({
           name: '通知',
           component: Inform.inform,
           meta: {
-            keepAlive: true
+            keepAlive: false
           }
         },
         {

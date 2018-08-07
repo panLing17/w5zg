@@ -1,8 +1,8 @@
 <template lang="pug">
   .wrapNav
-    nav-bar(background="white")
+    nav-bar(background="#F70057")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
@@ -857,6 +857,7 @@
   .topCenter{
     font-size: .5rem;
     font-weight: 400;
+    color: #fff;
   }
   .topRight img{
     vertical-align: middle;
@@ -1166,31 +1167,31 @@
   }
   .orderNumber .copy{
     position: absolute;
-    top: .3rem;
-    right: .3rem;
-    width: 1.4rem;
-    height: .7rem;
-    background-color: rgb(204,204,204);
-    color: #fff;
+    top: .34rem;
+    right: .4rem;
+    width: 1.46rem;
+    height: .69rem;
+    border: 1px solid #787878;
+    color: #787878;
     text-align: center;
-    line-height: .75rem;
+    line-height: .69rem;
     font-size: .35rem;
     border-radius: .5rem;
   }
   /*订单编号--结束*/
   /*我的推荐--开始*/
   .title{
-    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
-    padding: .2rem 0;
+    padding: .53rem 0;
   }
   .title img{
-    width: 55%;
+    width: 4.18rem;
+    height: .58rem;
   }
   /*我的推荐--结束*/
 

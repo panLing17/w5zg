@@ -70,13 +70,16 @@
     activated() {
       this.zheng = 0
       this.getLists()
+      // this.$nextTick(() => {
+      //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+      // })
     },
     mounted() {
       this.getLists()
-      this.judgeAndOrIos()
-      this.$nextTick(() => {
-        this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
-      })
+      //this.judgeAndOrIos()
+      // this.$nextTick(() => {
+      //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+      // })
     },
     methods: {
       // 调整只有失效商品的样式
@@ -212,6 +215,7 @@
           } else {
             self.contsFlag = true
             self.$nextTick(() => {
+              self.$refs.conts.style.height = window.innerHeight - parseFloat(self.$refs.nav.offsetHeight) + 'px'
               if (!self.cScroll) {
                 self.cScroll = new BScroll(self.$refs.conts, {
                   click: true,
@@ -222,7 +226,6 @@
               }
             })
           }
-
         })
       },
       // 复选框选择
