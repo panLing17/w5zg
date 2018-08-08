@@ -13,7 +13,7 @@
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
             .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
             .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
-            .store(v-if="$parent.initPriceFlag") 有货
+            .store(v-if="$parent.initPriceFlag") {{$parent.goodsData.storage_num>0 ?  '有货' : '无货'}}
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
             .size
               span(v-if="selectedSpec.length === 0") 选择规格

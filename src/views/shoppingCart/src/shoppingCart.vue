@@ -261,11 +261,16 @@
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
-          if (self.nowTab == 0 && response.data.data.carryNum > 0) {
+          if (self.nowTab == 1 && response.data.data.carryNum > 0) {
             self.settlementShow = true
-          } else if (self.nowTab == 1 && response.data.data.sendNum > 0) {
+          }
+          if(self.nowTab == 1 && response.data.data.carryNum === 0){
+            self.settlementShow = false
+          }
+          if (self.nowTab == 0 && response.data.data.sendNum > 0) {
             self.settlementShow = true
-          } else {
+          }
+          if(self.nowTab == 0 && response.data.data.sendNum === 0){
             self.settlementShow = false
           }
         })
@@ -288,6 +293,8 @@
         } else {
           this.settlementShow = false
         }
+        /* 请求购物车上面数量 */
+        this.getGoodsNum()
         /* 关闭整理操作 */
         this.closeArrangement()
       },

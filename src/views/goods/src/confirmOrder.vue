@@ -135,24 +135,42 @@
         }
         let self = this
         let cartId = []
-        this.transfer.forEach((now)=>{
-          now.shoppingCartVOList.forEach((sonNow)=>{
-            cartId.push(sonNow.sc_id)
+        if (this.$route.query.type === 'shoppingCart') {
+          this.transfer.forEach((now)=>{
+            now.shoppingCartVOList.forEach((sonNow)=>{
+              cartId.push(sonNow.sc_id)
+            })
           })
-        })
-        cartId = cartId.join(',')
-        self.$ajax({
-          method: 'get',
-          url: self.$apiApp + 'shoppingCart/submitSendList1',
-          params: {
-            scIdArray: cartId,
-            cityNo: cityId
-          }
-        }).then(function (response) {
-          self.$store.commit('transferGive', response.data.data.commList)
-          self.price = response.data.data.totalPrice + response.data.data.totalFreight
-          self.allFreight = response.data.data.totalFreight
-        })
+          cartId = cartId.join(',')
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/submitSendList1',
+            params: {
+              scIdArray: cartId,
+              cityNo: cityId
+            }
+          }).then(function (response) {
+            self.$store.commit('transferGive', response.data.data.commList)
+            self.price = response.data.data.totalPrice + response.data.data.totalFreight
+            self.allFreight = response.data.data.totalFreight
+          })
+        } else {
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/nowSubmitSendList1',
+            params: {
+              gskuId : self.transfer[0].skuId,
+              num: self.transfer[0].number,
+              cityNo: cityId
+            }
+          }).then(function (response) {
+            let newData = self.transfer
+            newData[0].freight = response.data.data.freight
+            self.price = newData[0].price * newData[0].number + newData[0].freight
+            self.$store.commit('transferGive', newData)
+          })
+        }
+
       },
       // 获取每个商品运费
       getGoodsFreight() {
