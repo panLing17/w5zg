@@ -40,7 +40,7 @@
               h1 配送方式
               .buttonTab
                 button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
-                button(@click="changeExpress('专柜自提')", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
+                button(@click="changeExpress('专柜自提')", v-if="carryType===1", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
             .address
               h1
                 span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
@@ -107,6 +107,10 @@
       lock: {
         type: Boolean,
         default: true
+      },
+      carryType: {
+        type: Number,
+        default: 0
       }
     },
     computed:{
