@@ -13,7 +13,7 @@
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
-        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type!==1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
+        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type===1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
         .goodsName  {{goodsData.gi_name}}
         <!--a(href="tel:4008-947-999")-->
           //.stateChuiNiu(@click="saveMoneyTipsFlag = true")
