@@ -63,8 +63,8 @@
               .freightDesc 运费
               .freightPrice {{freightPrice}}元
         .bottomButton(v-if="onlySelectSpec")
-          .left(@click="goBuy") 立即购买
-          .right(@click="addCart") 加入购物车
+          .left(@click="addCart") 加入购物车
+          .right(@click="goBuy") 立即购买
         .bottomButton(v-else)
           .right(@click="confirm") 确定
 </template>
