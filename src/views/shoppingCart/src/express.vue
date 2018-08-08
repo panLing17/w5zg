@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="clearGoods", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
+    goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="clearGoods", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :checked="i.checked", :storeName="i.si_name", @selectChange="selectChange")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -49,6 +49,7 @@
         }
         let scId = []
         this.goodsList.forEach((now)=>{
+          now.checked = val
           now.shoppingCartVOList.forEach((sonNow)=>{
             sonNow.checked = val
             scId.push(sonNow.sc_id)
@@ -179,6 +180,11 @@
           // 转为数组
           let array = []
           for (let i in response.data.data.commList) {
+            if (response.data.data.commList[i].checked === '011') {
+              response.data.data.commList[i].checked = true
+            } else {
+              response.data.data.commList[i].checked = false
+            }
             response.data.data.commList[i].shoppingCartVOList.forEach((now)=>{
               if (now.checked === '011') {
                 now.checked = true

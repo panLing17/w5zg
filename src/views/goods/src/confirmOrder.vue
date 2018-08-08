@@ -554,6 +554,7 @@
               self.netCardFlag = false
             }
             self.dataFlag = true
+            self.netCardChange()
           })
         }
       },

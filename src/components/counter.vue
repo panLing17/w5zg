@@ -55,6 +55,8 @@
             if (this.msg < this.max) {
               this.$emit('cMsg', this.msg-0+1)
               this.$emit('change')
+            } else {
+              this.$message.warning('库存不足')
             }
           },
           handleFocus(event) {

@@ -2,7 +2,7 @@
   transition( leave-active-class="animated rotateOutUpLeft")
     .goodsCardBox(v-if="list.length>0")
       .title
-        <!---w-checkbox(v-model="isdefault")--->
+        w-checkbox(v-model="checked", @change="storeAllClick")
         p {{storeName}}
       transition-group(tag="div", :name="animate")
         .goodsBox(v-for="(i,index) in list", :key="index")
@@ -77,12 +77,36 @@
       list:{
         type: Array
       },
+      checked:{
+        type: Boolean
+      },
       storeName: String,
       goodsList: {
         type: Array
       }
     },
     methods: {
+      // 按门店选中与反选
+      storeAllClick (flag) {
+        let array = []
+
+        this.list.forEach((now)=>{
+          now.checked = flag
+          array.push(now.sc_id)
+        })
+        console.log(array)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : array.join(','),
+            checked: flag
+          },
+        }).then(function (response) {
+          self.$emit('selectChange')
+        })
+      },
       // 前往商品详情
       goGoodsDetail (id) {
         this.$router.push({
@@ -106,6 +130,19 @@
         this.list[index].editClose = k
       },
       selectChange (checked,id) {
+        // 判断是否全部选中
+        let checkedNum = 0
+        this.list.forEach((now)=>{
+          if (now.checked) {
+            checkedNum += 1
+          }
+        })
+        if (checkedNum === this.list.length) {
+          this.checked = true
+        } else {
+          this.checked = false
+        }
+        // end
         if (id) {
           let self = this
           self.$ajax({
