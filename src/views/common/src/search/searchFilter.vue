@@ -1,0 +1,295 @@
+<template lang="pug">
+  .searchFilter
+    .navWrapper
+      .left
+        .navItem(@click="brandChoose=!brandChoose", :class="{active: brandChoose}")
+          span 品牌
+          img(:src="brandChoose?require('./brandUp.png'):require('./brandDown.png')")
+      .right
+        .navItem
+          span 综合
+        .navItem
+          span 价格
+          img(:src="priceChoose===0?require('./price.png'):priceChoose===1?require('./priceUp.png'):require('./priceDown.png')")
+        .navItem(@click="filterChoose=!filterChoose", :class="{active: filterChoose}")
+          span 筛选
+          img(:src="filterChoose?require('./filter2.png'):require('./filter.png')")
+    .transitionWrapper
+      transition(name="fade")
+        .mask(v-show="brandChoose", @click="brandChoose=!brandChoose")
+      transition(name="fold")
+        .brandWrapper(v-show="brandChoose")
+          scroll.brandContent(:data="brandData", ref="brandContent")
+            ul
+              li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.name}}
+          .btnWrapper
+            .left 重置
+            .right 确定
+    .transitionWrapper
+      transition(name="fade")
+        .mask(v-show="filterChoose", @click="filterChoose=!filterChoose")
+      transition(name="fold")
+        .filterWrapper(v-show="filterChoose")
+          .filterContent
+            .desc 价格区间(元)
+            .inputWrapper
+              .left
+                input(type="number", placeholder="最小金额")
+              .center
+              .right
+                input(type="number", placeholder="最大金额")
+            .btnWrapper
+              ul
+                li(v-for="item in priceArea") {{item}}
+          .bottomBtn
+            .left 重置
+            .right 确定
+</template>
+
+<script>
+  import Scroll from 'components/scroll'
+  export default {
+    name: "searchFilter",
+    data () {
+      return {
+        brandChoose: false,
+        priceChoose: 0,
+        filterChoose: false,
+        brandData: ['曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球'],
+        brandList: [],
+        priceArea: ['0-500', '500-1000', '1000-2000', '2000-5000', '5000以上']
+      }
+    },
+    computed: {
+
+    },
+    watch: {
+      brandChoose (newVal) {
+        if (newVal) {
+          setTimeout(() => {
+            this.$refs.brandContent.refresh()
+          }, 20)
+
+        }
+      }
+    },
+    created () {
+      this._brandDataReset()
+    },
+    methods: {
+      brandCheck(index) {
+        this.brandList.splice(index, 1 , {
+          name: this.brandList[index].name,
+          checked: !this.brandList[index].checked
+        })
+      },
+      _brandDataReset () {
+        this.brandData.forEach(item => {
+          this.brandList.push({
+            name: item,
+            checked: false
+          })
+        })
+      }
+    },
+    components: {
+      Scroll
+    }
+  }
+</script>
+
+<style scoped lang="stylus">
+  .searchFilter {
+    position relative
+  }
+  .navWrapper {
+    height 1.2rem
+    display flex
+    align-items center
+    padding 0 .4rem
+    border-bottom 1px solid rgb(239,239,239)
+    .left {
+      flex none
+    }
+    .right {
+      flex 1
+      display flex
+      justify-content flex-end
+    }
+    .navItem {
+      font-size 0
+      display inline-flex
+      align-items center
+      margin-right 0.8rem
+      &.active {
+        span {
+          color rgb(247,0,87)
+        }
+      }
+      span {
+        font-size .4rem
+        color rgb(51,51,51)
+        line-height .56rem
+      }
+      img {
+        width: .42rem;
+      }
+    }
+    .navItem:last-child {
+      margin 0
+    }
+  }
+
+  .mask {
+    position fixed
+    top 2.5rem
+    bottom 0
+    width 100%
+    background rgba(0,0,0,.5)
+    z-index 10
+  }
+
+  .brandWrapper {
+    position relative
+    max-height 11.57
+    width 100%
+    background #fff
+    z-index 20
+    .brandContent {
+      max-height 10.37rem
+      overflow hidden
+      ul {
+        padding .26rem .346rem 0
+        li {
+          display inline-block
+          width: 2.186rem
+          height .88rem
+          overflow hidden
+          text-align center
+          line-height .88rem
+          text-overflow ellipsis
+          white-space nowrap
+          margin 0 .186rem .186rem 0
+          background rgb(246,246,246)
+          font-size .32rem
+          color #333
+          &.active {
+            color rgb(247,0,87)
+            background url("./brandActive.png") no-repeat
+            background-size 100% 100%
+          }
+        }
+        li:nth-child(4n) {
+          margin-right 0
+        }
+      }
+    }
+    .btnWrapper {
+      height 1.2rem
+      display flex
+      font-size .4rem
+      border-top 1px solid rgb(153,153,153)
+      .left, .right {
+        flex 1
+        text-align center
+        line-height 1.2rem
+      }
+      .left {
+        background #fff
+        color #333
+      }
+      .right {
+        background rgb(247,0,87)
+        color #fff
+      }
+    }
+  }
+  .filterWrapper {
+    position relative
+    z-index 20
+    background #fff
+    .filterContent {
+      padding .32rem 0 .53rem .4rem
+      .desc {
+        margin-bottom .26rem
+        line-height 1
+        font-size .34rem
+        color rgb(119,119,119)
+      }
+      .inputWrapper {
+        display flex
+        align-items center
+        .left, .right {
+          input {
+            width 3.73rem
+            height .8rem
+            border 1px solid rgb(236,236,236)
+            background rgb(246,246,246)
+            text-align center
+            -webkit-appearance: none;
+            border-radius: 0;
+          }
+        }
+        .center {
+          margin 0 .26rem
+          width .66rem
+          height .05rem
+          background rgb(206,206,206)
+        }
+      }
+      .btnWrapper {
+        margin-top .53rem
+        ul {
+          li {
+            display inline-block
+            padding 0 .53rem
+            line-height .8rem
+            border 1px solid rgb(206,206,206)
+            border-radius .4rem
+            color #333
+            font-size .34rem
+            margin 0 .26rem .26rem 0
+          }
+        }
+      }
+    }
+    .bottomBtn {
+      height 1.2rem
+      display flex
+      font-size .4rem
+      border-top 1px solid rgb(153,153,153)
+      .left, .right {
+        flex 1
+        text-align center
+        line-height 1.2rem
+      }
+      .left {
+        background #fff
+        color #333
+      }
+      .right {
+        background rgb(247,0,87)
+        color #fff
+      }
+    }
+  }
+
+  input::placeholder{
+    color: rgb(153,153,153);
+  }
+  .transitionWrapper {
+    overflow hidden
+  }
+  .fold-enter-active, .fold-leave-active {
+    transition: all 0.5s;
+  }
+  .fold-enter, .fold-leave-to {
+    transform: translate3d(0,-100%,0);
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: all 0.5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+</style>
