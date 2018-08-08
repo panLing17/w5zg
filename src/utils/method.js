@@ -39,4 +39,21 @@ function getStyle (el, attr) {
     return getComputedStyle(el, false)[attr];
   }
 }
-export default {transformDate, imgUrlFilter, getClientHeight, getStyle }
+function arrayPrice(value) {
+  let fixNum;
+  let fixedNum;
+  let arr;
+  if (value) {
+    fixNum = new Number(parseFloat(value) + 1).toFixed(2);//四舍五入之前加1
+    fixedNum = new Number(fixNum - 1).toFixed(2);//四舍五入之后减1，再四舍五入一下
+    arr = parseFloat(fixedNum).toString().split('.')
+    if (arr.length === 2) {
+      arr.splice(1, 1, '.' + arr[1])
+    }
+  } else {
+    arr = [0]
+  }
+
+  return arr
+}
+export default {transformDate, imgUrlFilter, getClientHeight, getStyle, arrayPrice }
