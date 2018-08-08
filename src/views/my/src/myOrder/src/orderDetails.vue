@@ -230,36 +230,22 @@
     methods: {
       // 再次购买
       againBuy(item,items){
-        let a ={
-          'cityId': items.city_no,
-          'gspu_id': items.gspu_id,
-          'specList': items.spec_json
+        let deliveryNum = 0
+        if (this.delivery_ways === '自提') {
+          deliveryNum = 168
         }
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/sku/detail',
-          params:{
-            gc:JSON.stringify(a)
-          }
-        }).then(function (res) {
-          let deliveryNum = 0
-          if (self.delivery_ways === '自提') {
-            deliveryNum = 168
-          }
-          if (self.delivery_ways === '快递配送') {
-            deliveryNum = 167
-          }
-          let b ={
-            gskuId: res.data.data.gsku_id,
-            deliveryWays: deliveryNum,
-            province: self.$store.state.location.province.id,
-            city: self.$store.state.location.city.id,
-            storeId: items.si_id,
-            goodsNum: items.goods_num
-          }
-          self.addShoppingCar(b)
-        })
+        if (this.delivery_ways === '快递配送') {
+          deliveryNum = 167
+        }
+        let b ={
+          gskuId: items.gsku_id,
+          deliveryWays: deliveryNum,
+          province: this.$store.state.location.province.id,
+          city: this.$store.state.location.city.id,
+          storeId: items.si_id,
+          goodsNum: items.goods_num
+        }
+        this.addShoppingCar(b)
       },
       addShoppingCar(eve){
         let self = this

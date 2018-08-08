@@ -5,7 +5,7 @@
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 收藏夹
       .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
-    .contList(ref="conts", v-if="contsFlag").mescroll#mescrollConts
+    .contList(ref="conts", v-show="contsFlag").mescroll#mescrollConts
       div
         ul(:class="{zhengS:zhengSFlag}")
           li(v-for="item in contLists", v-if="item.gi_status === '221'")
@@ -27,7 +27,7 @@
             .righter
               .textLose {{item.gi_name}}
               .lost 该商品已失效，请重新选择
-    emptys(v-else="contsFlag")
+    emptys(v-if="!contsFlag")
     .clearFixed(v-if="zheng != 0")
       .checkAll
         w-checkbox(@change="changeAll", v-model="selectedAll")
@@ -37,7 +37,7 @@
 
 <script>
   import {mapState} from 'vuex'
-  import BScroll from 'better-scroll'
+  //import BScroll from 'better-scroll'
   import emptys from './emptys'
   export default {
     name: "collection",
@@ -75,7 +75,7 @@
       this.zheng = 0
       this.getLists()
       this.zhengSFlag = false
-      //this.quchuStyle()
+      this.quchuStyle()
 
       this.position.forEach((now) => {
         if (now.path === this.$route.path) {
@@ -87,7 +87,6 @@
       this.getLists()
       //this.judgeAndOrIos()
 
-
       this.$mescrollInt('mescrollConts', this.upCallback, ()=>{
 
       },(obj)=>{
@@ -95,9 +94,9 @@
           path: this.$route.path,
           y: obj.preScrollY
         })
+        this.quchuStyle()
       })
 
-      //this.quchuStyle()
 
     },
     methods: {
