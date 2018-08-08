@@ -9,7 +9,7 @@
         img.searchImg(src="./search.png", @click.prevent="search")
         img.cancelImg(src="./cancel.png", v-show="query", @click="query=''")
       .right(@click="search") 搜索
-    scroll.searchContent(:data="searchData")
+    scroll.searchContent(:data="searchData", v-show="!associativeQuery.length")
       div
         .hotWrapper
           .blockTitle
@@ -47,7 +47,8 @@
             ul
               li(v-for="item in categoryList") {{item.title}}
                 flag(v-if="item.type", :flag="item.type")
-    associative-query(:data="associativeQuery", @associativeSelect="associativeSelect")
+    // 联想查询
+    associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
 </template>
 
 <script>
@@ -550,6 +551,11 @@
             }
           })
         }
+      }
+    },
+    watch: {
+      query(newQuery) {
+
       }
     },
     components: {

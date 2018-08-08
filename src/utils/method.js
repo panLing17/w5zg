@@ -39,4 +39,4 @@ function getStyle (el, attr) {
     return getComputedStyle(el, false)[attr];
   }
 }
-export default {transformDate, imgUrlFilter, getClientHeight, getStyle}
+export default {transformDate, imgUrlFilter, getClientHeight, getStyle }
