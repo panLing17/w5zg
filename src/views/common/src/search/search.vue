@@ -47,11 +47,13 @@
             ul
               li(v-for="item in categoryList") {{item.title}}
                 flag(v-if="item.type", :flag="item.type")
+    associative-query(:data="associativeQuery", @associativeSelect="associativeSelect")
 </template>
 
 <script>
   import Scroll from 'components/scroll'
   import Flag from './flag'
+  import AssociativeQuery from './associativeQuery'
 
   export default {
     name: "search",
@@ -468,7 +470,8 @@
         horizontalScrollY: false,
         horizontalStopPropagation: true,
         currentCategory: 0,
-        screenWidth: document.documentElement.offsetWidth || document.body.clientWidth
+        screenWidth: document.documentElement.offsetWidth || document.body.clientWidth,
+        associativeQuery: []
       }
     },
     computed: {
@@ -483,20 +486,7 @@
       this._getHistory()
     },
     methods: {
-      _getHistory () {
-        if (localStorage.getItem('token')) {
-          let self =this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiGoods + 'goodsSearch/queryGoodsHistoryList',
-            params: {}
-          }).then(function(res){
-            if (res) {
-              self.history = res.data.data
-            }
-          })
-        }
-      },
+      associativeSelect () {},
       clearHistory () {
         this.$confirm({
           title: '确认',
@@ -522,9 +512,6 @@
       search () {
         alert(1)
       },
-      _saveSearch () {
-
-      },
       categoryChange(item, index, e) {
         if (this.currentCategory === index) {
           return
@@ -549,11 +536,26 @@
             this.$refs.categoryHeader.scrollTo(-totalWidth, 0, 300)
           }
         }
+      },
+      _getHistory () {
+        if (localStorage.getItem('token')) {
+          let self =this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goodsSearch/queryGoodsHistoryList',
+            params: {}
+          }).then(function(res){
+            if (res) {
+              self.history = res.data.data
+            }
+          })
+        }
       }
     },
     components: {
       Scroll,
-      Flag
+      Flag,
+      AssociativeQuery
     }
   }
 </script>
