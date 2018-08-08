@@ -50,11 +50,6 @@
       },
       ...mapState(['position'])
     },
-    watch: {
-      '$route' (to, from) {
-        console.log(to, from)
-      }
-    },
     activated(){
       this.judgeType()
       if (this.number != this.$route.query.num) {
@@ -67,6 +62,10 @@
           }
         })
       }
+    },
+    beforeDestroy(){
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
     },
     beforeRouteLeave(to, from, next){
       if (to.path === '/my') {

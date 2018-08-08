@@ -5,7 +5,7 @@
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 收藏夹
       .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
-    .contList(ref="conts", v-if="contsFlag")
+    .contList(ref="conts", v-if="contsFlag").mescroll#mescrollConts
       div
         ul(:class="{zhengS:zhengSFlag}")
           li(v-for="item in contLists", v-if="item.gi_status === '221'")
@@ -67,21 +67,49 @@
       },
       ...mapState(['collectionCheckedAll','position']),
     },
+    beforeDestroy(){
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
+    },
     activated() {
       this.zheng = 0
       this.getLists()
-      // this.$nextTick(() => {
-      //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
-      // })
+      this.zhengSFlag = false
+      //this.quchuStyle()
+
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0)
+        }
+      })
     },
     mounted() {
       this.getLists()
       //this.judgeAndOrIos()
-      // this.$nextTick(() => {
-      //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
-      // })
+
+
+      this.$mescrollInt('mescrollConts', this.upCallback, ()=>{
+
+      },(obj)=>{
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
+
+      //this.quchuStyle()
+
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll(isLock)
+      },
+      quchuStyle(){
+        let mescrollUpwarp = document.getElementsByClassName('mescroll-upwarp')[0]
+        mescrollUpwarp.style.display = 'none'
+        //this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+      },
       // 调整只有失效商品的样式
       tiaozheng(){
         let x = 0
@@ -214,17 +242,20 @@
             self.contsFlag = false
           } else {
             self.contsFlag = true
-            self.$nextTick(() => {
-              self.$refs.conts.style.height = window.innerHeight - parseFloat(self.$refs.nav.offsetHeight) + 'px'
-              if (!self.cScroll) {
-                self.cScroll = new BScroll(self.$refs.conts, {
-                  click: true,
-                  probeType: 3
-                })
-              } else {
-                self.cScroll.refresh()
-              }
-            })
+            // this.$nextTick(() => {
+            //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+            // })
+            // self.$nextTick(() => {
+            //   self.$refs.conts.style.height = window.innerHeight - parseFloat(self.$refs.nav.offsetHeight) + 'px'
+            //   if (!self.cScroll) {
+            //     self.cScroll = new BScroll(self.$refs.conts, {
+            //       click: true,
+            //       probeType: 3
+            //     })
+            //   } else {
+            //     self.cScroll.refresh()
+            //   }
+            // })
           }
         })
       },
@@ -259,16 +290,25 @@
         } else {
           this.zhengSFlag = false
         }
-        this.$nextTick(()=>{
-          this.cScroll.refresh()
-        })
+        // this.$nextTick(()=>{
+        //   this.cScroll.refresh()
+        // })
       },
 
+      upCallback: function () {
+        this.mescroll.endErr()
+      },
     }
   }
 </script>
 
 <style scoped lang="stylus">
+  #mescrollConts{
+    position: fixed;
+    top: 1.28rem;
+    bottom: 0;
+    height: auto;
+  }
   @import '~assets/stylus/variable.styl'
   .wrapNav{
     position: fixed;
@@ -286,7 +326,6 @@
     background: rgb(244, 0, 87);
     display: flex;
     align-items: center;
-    z-index: 1;
   }
   .topLeft{
     padding-left: .36rem;
@@ -310,9 +349,9 @@
     //position: fixed;
     //top: 1.28rem;
     //bottom: 0;
-    margin-top: 1.28rem;
+    //margin-top: 1.28rem;
     width: 100%;
-    height: "calc(100vh - %s)" % $height-header;
+    //height: "calc(100vh - %s)" % $height-header;
     background-color: #f2f2f2;
     /*z-index: 1;*/
   }
