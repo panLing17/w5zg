@@ -1,22 +1,22 @@
 <template lang="pug">
   .accountUniversalBox
-    nav-bar(background="white")
+    nav-bar(background="#f70057")
       .topLeft(slot="left", @click="$router.go(-1)")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center") 通用券
+        img(src="./back.png", style="width:.586rem")
+      .topCenter(slot="center", style="color:#fff") 通用券
       .topRight(slot="right")
+        img(src="./desc.png", style="width: 2rem")
     .balanceBox
       .balance {{balance | number}}
-      .balanceDec 余额
+      .balanceDec 余额 (元)
     .tabBox
-      .left 消费记录
-      .right
-        ul.list
-          li.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部
-          li.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
-          li.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
+      ul.list
+        li.normalL.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部明细
+        li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
+        li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
+        li.line
     .mescroll#mescroll
-      .detailBox(v-if="!isEmpty")
+      .detailBox(v-show="cashDetail.length")
         ul.detailList
           li(v-for="item in cashDetail", v-if="item.tran_money!=0")
             .block.top
@@ -27,7 +27,9 @@
             .block.bottom
               .left 余额: {{item.trade_balance_money | number}}
               .right {{item.creation_time}}
-      .nodata(v-if="isEmpty") 暂无相关记录
+      .nodata(v-show="!cashDetail.length")
+        img(src="./cash.png")
+        .desc 没有资金流水记录
 </template>
 
 <script>
@@ -58,19 +60,6 @@
         number (value) {
           return Number(value).toFixed(2)
         }
-      },
-      computed: {
-        // 判断数据是否为空
-        isEmpty () {
-          if (this.cashDetail == null || this.cashDetail.length === 0) {
-            return true;
-          }else {
-            return false;
-          }
-        },
-        ...mapState([
-          "userData"
-          ])
       },
       watch: {
         userData (value) {
@@ -142,7 +131,7 @@
     }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
   .mescroll {
     position: fixed;
     top: 6.23rem;
@@ -159,64 +148,83 @@
   }
   .balanceBox {
     width: 100%;
-    height: 4rem;
-    background: url("../../../../../assets/img/coupon@2x.png") no-repeat top center #ff80ab;
-    background-size: auto 100%;
+    height: 5.12rem;
+    /*padding: .42rem .4rem 0;*/
+    background: url("./bg.png") no-repeat bottom center #fff;
+    background-size: 9.2rem 4.69rem;
     position: relative;
     color: #fff;
     text-align: center;
   }
   .balance {
-    line-height: 4rem;
-    font-size: 1rem;
+    position: absolute;
+    top: 1.44rem;
+    width: 100%;
+    font-size: 1.28rem;
     font-weight: 400;
   }
   .balanceDec {
     position: absolute;
-    bottom: .5rem;
+    top: 2.93rem;
     width: 100%;
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .tabBox {
-    display: flex;
-    justify-content: space-between;
-    height: .93rem;
+    height: .96rem;
     background: #fff;
-    padding: 0 .26rem;
     box-sizing: border-box;
-    border-bottom: .013rem solid rgb(153,153,153);
-  }
-  .tabBox .left {
-    flex: none;
-    line-height: .93rem;
-    font-size: .4rem;
-    color: rgb(51,51,51);
-  }
-  .tabBox .right {
-    flex: none;
+    border-bottom: .013rem solid #cecece;
   }
   .tabBox .list {
+    position: relative;
     display: flex;
     align-items: center;
     height: 100%;
   }
-  .tabBox .list .item {
+  .tabBox .item {
+    height: 100%;
     flex: none;
-    width: 1.3rem;
-    height: .66rem;
-    line-height: .66rem;
+    line-height: .96rem;
     text-align: center;
     color: rgb(51,51,51);
     font-size: .4rem;
-    border-radius: .1rem;
-    margin-right: .5rem;
+    position: relative;
   }
-  .tabBox .list .item:last-child {
-    margin: 0;
+  .normalL, .normalR {
+    width: 35%;
+  }
+  .item.special{
+    width: 30%;
+  }
+  .normalL:before, .normalR:before {
+    content: '';
+    width: 1px;
+    height: .66rem;
+    background: #cecece;
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .normalL:before {
+    right: 0;
+  }
+  .normalR:before {
+    left: 0;
   }
   .tabBox .list .item.active {
-    color: #fff;
-    background: #ff80ab;
+    color: #f70057;
+  }
+  .tabBox .list .item.active:after {
+    content: '';
+    width: 1.86rem;
+    height: .08rem;
+    background: #f70057;
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateY(-50%);
   }
   .detailBox {
     background: #fff;
@@ -271,8 +279,15 @@
     transform: translateY(-50%);
     width: 100%;
     text-align: center;
-    color: rgb(153,153,153);
-    font-size: .4rem;
+    font-size: 0;
+    img {
+      width: 2.66rem;
+    }
+    span {
+      color: #777;
+      font-size: .37rem;
+      margin-top: .26rem;
+    }
   }
   img {
     pointer-events: none;
