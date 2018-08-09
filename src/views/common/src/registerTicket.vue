@@ -66,6 +66,9 @@
             self.getUserData()
           }
 
+        }).catch(() => {
+          self.$store.commit('setShowRegisterTicket', false)
+          self.$router.replace('/home')
         })
       },
       getUserData () {

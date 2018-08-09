@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    self-goods.goodsCard( @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
+    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')", @change="clickChangeStore")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -9,13 +9,16 @@
       .title
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
-      disable-goods(:list="disableGoodsList")
+      disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
+    onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
 <script>
+  import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import selfGoods from './selfGoods'
-  import disableGoods from './disableGoods'
-
+  import disableGoods from './sendDisableGoods'
+  import {mapState} from 'vuex'
+  import {bus} from '../../../bus'
   export default {
     name: 'give-self',
     data () {
@@ -23,16 +26,24 @@
         flag: false,
         isdefault: false,
         nowTab: 1,
+        changeStoreFlag: false,
         goodsList: [],
-        disableGoodsList: []
+        disableGoodsList: [],
+        nowGoodsData: {}
       }
     },
-    components: {selfGoods, disableGoods},
+    computed: {
+      ...mapState(['shoppingCartSelected'])
+    },
+    components: {selfGoods, disableGoods, onlyStoreSelect},
     mounted () {
       this.getData()
+      bus.$on('selfCarryUpData',()=>{
+        this.getData()
+      })
     },
     activated () {
-      this.getData()
+       this.getData()
     },
     // beforeRouteEnter (to, from, next) {
     //   next(vm => {
@@ -40,6 +51,27 @@
     //   })
     // },
     methods: {
+      storeChange (data) {
+        let storeId = this.nowGoodsData.sc_id
+        // 执行切换请求
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'shoppingCart/shoppingCartCarryStore',
+          params: {
+            scId: storeId,
+            bsId: data.id
+          },
+        }).then(function (response) {
+          self.$message.success(response.data.msg)
+          self.getData()
+        })
+      },
+      // 用户点击切换自提门店按钮后
+      clickChangeStore (data) {
+        this.changeStoreFlag = true
+        this.nowGoodsData = data
+      },
       tabChange (num) {
         this.nowTab = num
         if (num === 1) {
@@ -52,18 +84,66 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/carryShoppingCartList',
+          url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
           params: {},
         }).then(function (response) {
-          response.data.data.carryList.forEach((now)=>{
-            now.checked = false
-            now.editClose = true
+          // let storeList = []
+          // response.data.data.carryList.forEach((now)=>{
+          //   now.checked = false
+          //   now.editClose = true
+          //   if (storeList.indexOf(now.store_name) === -1) {
+          //     storeList.push(now.store_name)
+          //   }
+          // })
+          // let storeListOfJson = []
+          // storeList.forEach((now)=>{
+          //   storeListOfJson.push({
+          //     checked: false,
+          //     storeName: now,
+          //     goodsList: []
+          //   })
+          // })
+          // storeListOfJson.forEach((now)=>{
+          //   response.data.data.carryList.forEach((goodsNow)=>{
+          //     if (goodsNow.store_name === now.storeName) {
+          //       now.goodsList.push(goodsNow)
+          //     }
+          //   })
+          // })
+
+          // console.log(storeListOfJson)
+            response.data.data.commList.forEach((now)=>{
+              let checkedFlag = 0
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (sonNow.checked !== '011') {
+                  checkedFlag += 1
+                }
+              })
+              if (checkedFlag>0) {
+                now.checked = false
+              } else {
+                now.checked = true
+              }
+              now.editClose = true
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (sonNow.checked === '011') {
+                  sonNow.checked = true
+                } else {
+                  sonNow.checked = false
+                }
+                sonNow.editClose = true
+              })
+            })
+          self.goodsList = response.data.data.commList
+          self.disableGoodsList = response.data.data.failure
+          self.$nextTick(()=>{
+            self.$refs['selfGoods'].computedPrice()
           })
-          self.goodsList = response.data.data.carryList
-          self.disableGoodsList = response.data.data.failureList
+
         })
       },
       changeType (data,fun) {
+        console.log(data)
         this.$confirm({
           title: '更换配送方式',
           message: '确定要更换为快递配送吗？',
@@ -99,7 +179,9 @@
         let self = this
         let list = []
         this.disableGoodsList.forEach((now)=>{
-          list.push(now.sc_id)
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            list.push(sonNow.sc_id)
+          })
         })
         list = list.join(',')
         self.$ajax({

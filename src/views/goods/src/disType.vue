@@ -4,8 +4,8 @@
       .title 配送:
         //h2 选择配送方式
       ul
-        li(@click="selected(0)", :class="{checked:nowType === 0, greyWhite:lock}") 专柜自提
-        li(@click="selected(1)", :class="{checked:nowType === 1}") 快递配送
+        li(@click="$parent.onlySelectSpecFun", :class="{checked:nowType === 1}") 快递配送
+        li(v-if="carryType===1", @click="$parent.onlySelectSpecFun", :class="{checked:nowType === 0, greyWhite:lock}") 专柜自提
       span(v-if="!hasGoodsFlag") {{hasGoods}}
     .address(v-if="nowType === 0", @click="$parent.onlySelectSpecFun") {{transfer.store ? transfer.store.name : '请选择商品规格与配送方式'}}
     .address(v-else, @click="$parent.onlySelectSpecFun") {{giveGoodsAddress.city_name ? giveGoodsAddress.city_name + giveGoodsAddress.county_name + giveGoodsAddress.ra_detailed_addr: '请选择商品规格与配送方式'}}
@@ -19,7 +19,7 @@
     name: "city-select",
     data () {
       return {
-        nowType: 0
+        nowType: 1
       }
     },
     computed:{
@@ -38,6 +38,10 @@
       lock:{
         type: Boolean,
         default: true
+      },
+      carryType: {
+        type: Number,
+        default: 0
       }
     },
     watch:{

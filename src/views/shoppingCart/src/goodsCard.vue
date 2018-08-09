@@ -2,30 +2,35 @@
   transition( leave-active-class="animated rotateOutUpLeft")
     .goodsCardBox(v-if="list.length>0")
       .title
-        <!---w-checkbox(v-model="isdefault")--->
+        w-checkbox(v-model="checked", @change="storeAllClick")
         p {{storeName}}
       transition-group(tag="div", :name="animate")
         .goodsBox(v-for="(i,index) in list", :key="index")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
               .checkbox(@click.stop="")
-                w-checkbox(v-model="i.checked", @change="selectChange")
+                w-checkbox(v-model="i.checked", @change="selectChange(i.checked,i.sc_id)")
               .img
                 img(:src="i.logo | img-filter")
-                p(v-if="i.goods_num > i.storage_num") 仅剩{{i.storage_num}}件
-              .info
+                p(v-if="i.storage_num === 0")
+                  span 库存
+                  span 不足
+              .info(@click.stop="")
                 .text
-                  .name {{i.gi_name}}
+                  .name(@click="goGoodsDetail(i.gspu_id)") {{i.gi_name}}
                   .spec
-                    span(v-for="item in i.specVOList") {{item.gspec_value}}
+                    span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
+                    img(src="../../../assets/img/ic_page_xljt@2x.png")
+                  w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                 .price
-                  span {{i.now_price | price-filter}}
-              .mainRight
+                  span 实付价：{{i.direct_supply_price | price-filter}}
+                  span(style="color:#999;text-decoration:line-through") 专柜价：{{i.counter_price | price-filter}}
+              //.mainRight
                 img(src="../../../assets/img/edit@3x.png", @click.stop="edit(false,index)")
                 p x{{i.goods_num}}
             .main(v-else, key="change")
               .checkbox
-                w-checkbox(v-model="i.checked", @change="selectChange")
+                w-checkbox(v-model="i.checked", @change="selectChange(i.checked,i.sc_id)")
               .img
                 img(:src="i.logo | img-filter")
               .specChange
@@ -35,11 +40,21 @@
                   //img(src="../../../assets/img/next@2x.png")
                 w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
               .specOk(@click="edit(true,index)") 完成
-          .bottom
-            .left(@click="changeType(i,index)") <img src="../../../assets/img/switch@2x.png"/>切换至门店自提
-            .right
-              span {{i.pro_Name}} {{i.city_name}}
-              img(src="../../../assets/img/delete@3x.png", @click="deleteGoods(i.sc_id, index)")
+          .bottomOperation
+            .more
+              p(:class="{opc0:i.difference_price<=0}")  比加入时降{{i.difference_price | price-filter}}
+              .moreRight
+                img(src="../../../assets/img/shoppingCartMore.png")
+                .moreOperation
+                  .sanjiao
+                  ul.buttons
+                    li(@click="changeType(i,index)", v-if="i.storage_num>0 && i.carry_type === 1")
+                      img(src="../../../assets/img/shoppingCartChange.png")
+                      p 专柜自提
+                    li(@click="deleteGoods(i.sc_id, index)")
+                      img(src="../../../assets/img/shoppingCartDelete.png")
+                      p 删除
+
 </template>
 
 <script>
@@ -62,12 +77,36 @@
       list:{
         type: Array
       },
+      checked:{
+        type: Boolean
+      },
       storeName: String,
       goodsList: {
         type: Array
       }
     },
     methods: {
+      // 按门店选中与反选
+      storeAllClick (flag) {
+        let array = []
+
+        this.list.forEach((now)=>{
+          now.checked = flag
+          array.push(now.sc_id)
+        })
+        console.log(array)
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+          params: {
+            scIdArray : array.join(','),
+            checked: flag
+          },
+        }).then(function (response) {
+          self.$emit('selectChange')
+        })
+      },
       // 前往商品详情
       goGoodsDetail (id) {
         this.$router.push({
@@ -83,35 +122,72 @@
         let fun =()=> {
           this.list.splice(index,1)
         }
+        this.$store.commit('getSkuId',data.gsku_id)
+        //alert(data.gsku_id)
         this.$emit('tab',data,fun)
       },
       edit (k,index) {
         this.list[index].editClose = k
       },
-      selectChange () {
-        this.$emit('selectChange')
+      selectChange (checked,id) {
+        // 判断是否全部选中
+        let checkedNum = 0
+        this.list.forEach((now)=>{
+          if (now.checked) {
+            checkedNum += 1
+          }
+        })
+        if (checkedNum === this.list.length) {
+          this.checked = true
+        } else {
+          this.checked = false
+        }
+        // end
+        if (id) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url:self.$apiApp +  'shoppingCart/selectShoppingCart',
+            params: {
+              scIdArray : id,
+              checked: checked
+            },
+          }).then(function (response) {
+            self.$emit('selectChange')
+          })
+        }
       },
       deleteGoods (id, index) {
-        this.animateName = 'fadeOut'
-        this.list.splice(index,1)
-        let self = this
-        self.$ajax({
-          method: 'delete',
-          url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
-          params: {
-            scIdArray: id
+        this.$confirm({
+          title: '删除购物商品',
+          message: '确定要删除么',
+          confirm: () => {
+            this.animateName = 'fadeOut'
+            this.list.splice(index,1)
+            let self = this
+            self.$ajax({
+              method: 'delete',
+              url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+              params: {
+                scIdArray: id
+              },
+            }).then(function (response) {
+              self.$emit('clearGoods')
+              // let goodsNum = self.$store.state.shoppingCartGoodsNum
+              // goodsNum.sendNum-=1
+              // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+            })
           },
-        }).then(function (response) {
-          self.$emit('clearGoods')
-          // let goodsNum = self.$store.state.shoppingCartGoodsNum
-          // goodsNum.sendNum-=1
-          // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+          noConfirm: () => {
+
+          }
         })
+
       },
       // 商品数量变化
       countChange (cartId,skuId,num) {
         // 计算价格
-        this.selectChange()
+        this.$parent.selectChange()
         let self = this
         self.$ajax({
           method: 'post',
@@ -171,15 +247,19 @@
   }
   .img p{
     padding-left: 2px;
-    font-size: .2rem;
+    font-size: .35rem;
+    letter-spacing: 4px;
     position: absolute;
     bottom: 0;
     left: 0;
-    height: .5rem;
-    line-height: .5rem;
+    height: 100%;
     width: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
   }
   /* 修改规格 */
   .specChange{
@@ -217,41 +297,74 @@
     justify-content: center;
   }
   /* 商品描述部分 */
-  .info{
+  .info {
     flex-grow: 1;
     width: 0;
     padding-left: .3rem;
+    padding-right: .5rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
-  .info .text .name{
+  .info .text {
+
+  }
+  .info .text .name {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
+
   .info .text .spec {
-    margin-top: .1rem;
+    display: flex;
+    position: relative;
+    float: left;
+    max-width: 3rem;
+    overflow: hidden;
+
+    align-items: center;
+    padding: .05rem .2rem;
+    margin-top: .2rem;
     color: #999;
+    background-color: #eee;
   }
-  .price{
+
+  .info .text .spec span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .info .text .spec img {
+    width: .2rem;
+    margin-left: .15rem;
+  }
+
+  .info .text .counter {
+    float: right;
+    margin-top: .1rem;
+  }
+
+  .price {
     display: flex;
     justify-content: space-between;
   }
+
   .mainRight {
-    width: 1rem;
+    width: .2rem;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
   }
-  .mainRight>img{
+
+  .mainRight > img {
     width: .5rem;
   }
-  .mainRight>p{
+
+  .mainRight > p {
     font-size: .35rem;
   }
   .bottom{
@@ -281,6 +394,80 @@
     height: .4rem;
     margin-right: .1rem;
   }
+  /* 更多操作 */
+  .bottomOperation{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 1rem;
+    border-bottom: solid 1px #eee;
+  }
+  .bottomOperation> .more{
+    height: 100%;
+    width: 6.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .moreRight {
+    position: relative;
+  }
+  .bottomOperation> .more>.moreRight:hover .moreOperation {
+    display: block;
+  }
+  .bottomOperation> .more> p{
+    color: #F70057;
+    border: solid 1px #F70057;
+    padding: 1px .2rem;
+  }
+  .bottomOperation> .more> .moreRight>img{
+    height: .4rem;
+    margin-right: .4rem;
+  }
+  .bottomOperation> .more .moreRight .moreOperation {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: .3rem;
+    z-index: 99;
+  }
+  .moreOperation>.buttons {
+    width: 2.5rem;
+    margin-top: .4rem;
+    border-radius: 3px;
+    background-color: rgba(0,0,0,0.8);
+  }
+  .moreOperation>.buttons li{
+    height: 1rem;
+    border-bottom: solid 1px #dfdfdf;
+    display: flex;
+    align-items: center;
+    padding: 0 .2rem;
+  }
+  .moreOperation>.buttons>li img{
+    height: .4rem;
+  }
+  .moreOperation>.buttons li p{
+    color: #e8e8e8;
+    margin-left: .1rem;
+  }
+  .sanjiao{
+    position: absolute;
+    right: .2rem;
+    top: .1rem;
+    height: 0px;
+    width: 0px;
+    border-top: 0 solid transparent;
+    border-right: .3rem solid transparent;
+    border-left: .3rem solid transparent;
+    border-bottom: .3rem solid rgba(0,0,0,0.8);
+  }
+  /* 透明 */
+  .opc0 {
+    opacity: 0;
+  }
+  /* 更多操作结束 */
   /* 动画 */
   .leftOut-enter-active {
     transition: all .3s ease;
@@ -290,7 +477,7 @@
   }
   .leftOut-enter, .leftOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
-    transform: translate(-100%,-1000%) scale(.1,.1);
+    transform: translate(100%,-1000%) scale(.1,.1);
     opacity: 0;
   }
   .fadeOut-enter-active {

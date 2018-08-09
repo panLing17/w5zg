@@ -1,25 +1,42 @@
 <template lang="pug">
-  .goodsCardBox
-    .title {{data.storeName}}
-    .main
-      img(:src="data.photo | img-filter")
-      .info
-        .text
-          .name {{data.goodsName}}
-          .spec
-            span(v-for="item in data.spec") {{item.value}}
-        .price
-          span {{data.price | price-filter}}
-          span X{{data.number}}
-    .bottom(v-if="since === 'true'")
-      .left 门店自提
-      //.right {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
-        //img(src="../../../assets/img/next@2x.png")
-    //.bottom(v-else)
-      .left 运费
-      .right
-        span {{data.freight}}元
-        img
+  div
+    .goodsCardBox(v-if="$route.query.type === 'shoppingCart' && data.shoppingCartVOList.length>0")
+      .title {{data.storeName ? data.storeName : data.si_name}}
+      .main(v-for="i in data.shoppingCartVOList")
+        img(:src="i.logo | img-filter")
+        .info
+          .text
+            .name {{i.gi_name}}
+            .spec
+              span(v-for="item in i.specVOList") {{item.value}}
+          .price
+            span {{i.counter_price | price-filter}}
+            span X{{i.goods_num}}
+      .bottom
+        .left(v-if="since === 'true'") {{data.shoppingCartVOList[0].store_address}}
+        .right(v-else) 运费: {{data.freight | price-filter}}
+    .goodsCardBox(v-if="$route.query.type === 'direct'")
+      .title {{data.storeName}}
+      .main
+        img(:src="data.photo | img-filter")
+        .info
+          .text
+            .name {{data.goodsName}}
+            .spec
+              span(v-for="item in data.spec") {{item.value}}
+          .price
+            span {{data.price | price-filter}}
+            span X{{data.number}}
+      .bottom
+        .left(v-if="since === 'true'") 门店自提
+        .right(v-else) 运费: {{data.freight | price-filter}}
+        //.right {{data.storeLocation.province.name}} {{data.storeLocation.city.name}} {{data.storeLocation.store.name}}
+          //img(src="../../../assets/img/next@2x.png")
+      //.bottom(v-else)
+        .left 运费
+        .right
+          span {{data.freight}}元
+          img
 </template>
 
 <script>
@@ -38,7 +55,6 @@
 <style scoped>
   .goodsCardBox {
     background-color: white;
-    padding: 0 .2rem;
   }
 
   .title {
@@ -46,11 +62,14 @@
     height: .8rem;
     display: flex;
     align-items: center;
+    border-bottom: solid 1px #eee;
+    padding: 0 .2rem;
+    margin-bottom: .2rem;
   }
 
   .main {
     height: 2.2rem;
-    padding-bottom: .3rem;
+    padding: 0 .2rem .3rem .2rem;
     display: flex;
   }
 
@@ -93,17 +112,16 @@
   .bottom {
     width: 100%;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: .2rem 0;
+    justify-content: flex-end;
+    padding: .2rem;
     border-top: solid 1px #eee;
   }
   .bottom .left{
-    width: 2rem;
+
   }
   .bottom .right {
-    flex-grow: 1;
-    width: 0;
+    color: #999;
   }
   .bottom .right img{
     height: .4rem;

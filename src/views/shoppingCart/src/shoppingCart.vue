@@ -8,17 +8,18 @@
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
       .cartTypeTab
         ul
+
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
-            p 专柜自提
-            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
-          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
             p 快递配送
             span(class="animated", :class="{swing:flag}") ({{shoppingCartGoodsNum.sendNum}})
+          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
+            p 专柜自提
+            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
         p(:style="{left:nowTab*50+'%'}")
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(@clear="getGoodsNum")
+          router-view(ref="routerView", @clear="getGoodsNum")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
@@ -28,12 +29,28 @@
           w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
           p 全选
         .right
-          .prive 合计：{{computedPrice | price-filter}}
-          .button(@click="goConfirmOrder") 结算({{shoppingCartSelected.length}})
+          .price
+            p (不含运费) 实付：<span>{{computedPrice.allPrice | price-filter}}</span>
+            p 现金券抵扣：{{computedPrice.counterPrice-computedPrice.allPrice | price-filter}}
+          .button(@click="goConfirmOrder") 结算({{allPrice}})
+      .arrangement(v-if="!arrangementFlag", @click="arrangement")
+        img(src="../../../assets/img/pageList.png")
+        p 整理
+    // 整理操作
+    .arrangementButtons(v-if="arrangementFlag")
+      .arrangementLeft
+        w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
+        span 全选
+      .arrangementRight
+        .delete(@click="deleteScGoods") 删除
+        .ok(@click="closeArrangement") 完成
+    // 失效商品提示
+    disableTips(ref="disableTips")
     //cart-guide
 </template>
 
 <script>
+  import disableTips from './goodsDisableTips'
   import goodsCard from './goodsCard'
   import disableGoods from './disableGoods'
   import citySelect from './citySelect'
@@ -50,12 +67,37 @@
         flag: false,
         loading: true,
         isdefault: false,
-        nowTab: 0,
-        settlementShow: false
+        nowTab: 1,
+        settlementShow: false,
+        arrangementFlag: false
       }
     },
-    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend},
-    computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
+    components: {goodsCard, disableGoods, citySelect, cartGuide, recommend, disableTips},
+    computed: {
+      allPrice () {
+        let num = 0
+        if (this.$route.path === '/shoppingCart') {
+          if (this.shoppingCartSelected.length>0) {
+            this.shoppingCartSelected.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                num+=1
+              })
+            })
+          }
+        } else {
+          if (this.shoppingCartSelected.commList) {
+            this.shoppingCartSelected.commList.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                num+=1
+              })
+            })
+          }
+        }
+
+        return num
+      },
+      ...mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position'])
+    },
     mounted() {
       // mescroll初始化
       this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
@@ -104,9 +146,9 @@
     },
     activated () {
       if (this.$route.path === '/shoppingCart') {
-        this.nowTab = 0
-      } else {
         this.nowTab = 1
+      } else {
+        this.nowTab = 0
       }
       // 获取商品数量
       this.getGoodsNum()
@@ -119,11 +161,11 @@
     deactivated() {
 
       // 清除勾选信息
-      this.$store.commit('allCheckedChange', false)
+      // this.$store.commit('allCheckedChange', false)
       // 清除勾选数据
-      this.$store.commit('shoppingCartSelectedChange', [])
+      // this.$store.commit('shoppingCartSelectedChange', [])
       // 清除总价格
-      this.$store.commit('computedPriceChange', 0)
+      // this.$store.commit('computedPriceChange', 0)
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -132,6 +174,49 @@
     methods: {
       goBack () {
         this.$router.go(-1)
+      },
+      // 整理
+      arrangement () {
+        this.arrangementFlag = true
+        this.settlementShow = false
+      },
+      // 关闭整理
+      closeArrangement () {
+        this.arrangementFlag = false
+        this.settlementShow = true
+      },
+      // 批量删除
+      deleteScGoods () {
+        let scId = []
+        let selectedDate = this.shoppingCartSelected
+        if (this.$route.path === '/shoppingCart') {
+          if (selectedDate.length>0) {
+            selectedDate.forEach((now,index)=>{
+              now.shoppingCartVOList.forEach((sonNow,sonIndex)=>{
+                scId.push(sonNow.sc_id)
+              })
+            })
+          }
+        } else {
+          if (selectedDate.commList) {
+            selectedDate.commList.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                scId.push(sonNow.sc_id)
+              })
+            })
+          }
+        }
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url: self.$apiApp + 'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: scId.join(',')
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          self.$refs['routerView'].getData()
+        })
       },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
@@ -176,11 +261,16 @@
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
-          if (self.nowTab == 0 && response.data.data.carryNum > 0) {
+          if (self.nowTab == 1 && response.data.data.carryNum > 0) {
             self.settlementShow = true
-          } else if (self.nowTab == 1 && response.data.data.sendNum > 0) {
+          }
+          if(self.nowTab == 1 && response.data.data.carryNum === 0){
+            self.settlementShow = false
+          }
+          if (self.nowTab == 0 && response.data.data.sendNum > 0) {
             self.settlementShow = true
-          } else {
+          }
+          if(self.nowTab == 0 && response.data.data.sendNum === 0){
             self.settlementShow = false
           }
         })
@@ -188,9 +278,9 @@
       tabChange(num) {
         this.nowTab = num
         this.$store.commit('computedPriceChange', 0)
-        this.$store.commit('shoppingCartSelectedChange', [])
+        //this.$store.commit('shoppingCartSelectedChange', [])
         this.$store.commit('allCheckedChange', false)
-        if (num === 1) {
+        if (num === 0) {
           this.$router.push('/shoppingCart/express')
         } else {
           this.$router.push('/shoppingCart')
@@ -203,6 +293,10 @@
         } else {
           this.settlementShow = false
         }
+        /* 请求购物车上面数量 */
+        this.getGoodsNum()
+        /* 关闭整理操作 */
+        this.closeArrangement()
       },
       changeType() {
         this.flag = true
@@ -211,60 +305,76 @@
         }, 1000)
       },
       allChecked(e) {
+        this.$store.commit('exitAllCheckedChange', true)
         this.$store.commit('allCheckedChange', e)
       },
-      // 前往确认订单
+      // 前往确认订单或弹出商品不足提示
       goConfirmOrder() {
-        let flag = false
-        let data = []
-        this.$store.state.shoppingCartSelected.forEach((now) => {
-          if (now.goods_num > now.storage_num) {
-            flag = true
+        let data = this.$store.state.shoppingCartSelected
+        // this.$store.state.shoppingCartSelected.forEach((now) => {
+        //   let spec = []
+        //   now.specVOList.forEach((n) => {
+        //     spec.push(n.gspec_value)
+        //   })
+        //   data.push({
+        //     si_id: now.si_id,
+        //     skuId: now.gsku_id,
+        //     number: now.goods_num,
+        //     spec: spec,
+        //     price: now.now_price,
+        //     goodsName: now.gi_name,
+        //     storeName: now.store_name,
+        //     photo: now.logo,
+        //     cartId: now.sc_id,
+        //     freight: now.sku_freight,
+        //     storeLocation: {
+        //       province: {
+        //         name: now.pro_Name,
+        //         id: now.province
+        //       },
+        //       city: {
+        //         name: now.city_name,
+        //         id: now.city
+        //       },
+        //       store: {
+        //         name: now.store_name,
+        //         id: now.store_id
+        //       }
+        //     }
+        //   })
+        // })
+
+        // 转为以门店分隔的json数据
+        /*let storeList = []
+        data.forEach((now)=>{
+          if (storeList.indexOf(now.storeName) === -1) {
+            storeList.push(now.storeName)
           }
-          let spec = []
-          now.specVOList.forEach((n) => {
-            spec.push(n.gspec_value)
-          })
-          data.push({
-            si_id: now.si_id,
-            skuId: now.gsku_id,
-            number: now.goods_num,
-            spec: spec,
-            price: now.now_price,
-            goodsName: now.gi_name,
-            storeName: now.store_name,
-            photo: now.logo,
-            cartId: now.sc_id,
-            freight: now.sku_freight,
-            storeLocation: {
-              province: {
-                name: now.pro_Name,
-                id: now.province
-              },
-              city: {
-                name: now.city_name,
-                id: now.city
-              },
-              store: {
-                name: now.store_name,
-                id: now.store_id
-              }
-            }
+        })
+        let storeListOfJson = []
+        storeList.forEach((now)=>{
+          storeListOfJson.push({
+            checked: true,
+            storeName: now,
+            goodsList: []
           })
         })
-        // 如果有大于库存的商品
-        if (flag) {
-          this.$message.error('存在库存不足商品')
-          return
-        }
-        this.$store.commit('transferGive', data)
-        let since = ''
-        this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-        if (this.$store.state.transfer.length > 0) {
-          this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+        storeListOfJson.forEach((now)=>{
+          data.forEach((goodsNow)=>{
+            if (goodsNow.storeName === now.storeName) {
+              now.goodsList.push(goodsNow)
+            }
+          })
+        })*/
+        if (data.commList) {
+          data = data.commList
         } else {
-          this.$message.error('请勾选商品')
+          data = data
         }
+        // this.$store.commit('transferGive', data)
+        this.$refs['disableTips'].checkDisableGoods(data)
+        console.log(data)
+
       },
       // 切换动画hack
       animateHack() {
@@ -402,7 +512,14 @@
     justify-content: flex-end;
     align-items: center;
   }
-
+  .settlement .right .price p{
+    text-align: right
+  }
+  .settlement .right .price span{
+    color:#f70057;
+    font-size: .35rem;
+    font-weight: 600
+  }
   .settlement .right .button {
     width: 3rem;
     height: 100%;
@@ -414,7 +531,64 @@
     align-items: center;
     justify-content: center;
   }
-
+  /* 整理 */
+  .arrangement {
+    font-size .3rem
+    background-color white
+    border solid 1px #eee
+    width 1.2rem
+    height 1.2rem
+    border-radius .6rem
+    position fixed
+    display flex
+    flex-direction column
+    align-items center
+    justify-content center
+    bottom 3rem
+    right .5rem
+    color #999
+  }
+  .arrangement img{
+    width .6rem
+  }
+  .arrangementButtons {
+    position fixed
+    bottom $height-footer
+    display flex
+    width 100%
+    height 1.2rem
+    background-color white
+    justify-content space-between
+    padding 0 .2rem
+  }
+  .arrangementLeft {
+    flex-grow 1
+    width 0
+    align-items center
+    display flex
+  }
+  .arrangementRight {
+    flex-grow 1
+    width 0
+    align-items center
+    display flex
+    justify-content space-between
+  }
+  .arrangementRight div{
+    width 2.3rem
+    height 1rem
+    border-radius .1rem
+    display flex
+    align-items center
+    justify-content center
+    color white
+  }
+  .arrangementRight .delete{
+    background-color #F70057
+  }
+  .arrangementRight .ok{
+    background-color #FF8500
+  }
   /* 上拉刷新下俩加载 */
   #shoppingCartMescroll {
     /*padding-top: 1.3rem;*/

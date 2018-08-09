@@ -20,24 +20,12 @@ Vue.filter('price-filter', function (value) {
     fixedNum = 0
   }
 
-  /*
-  let stringNum = fixedNum.toString().split('.')
-  let newNum
-  if(stringNum[1][0] === '0' && stringNum[1][1] === '0') {
-    newNum = stringNum[0]
+  if (fixedNum>0) {
+    return '￥'+ parseFloat(fixedNum)
+  } else {
+    return '￥'+ 0
   }
-  if(stringNum[1][0] !== '0' && stringNum[1][1] === '0'){
-    newNum = stringNum[0]+'.'+ stringNum[1][0]
-  }
-  if(stringNum[1][0] === '0' && stringNum[1][1] !== '0'){
-    newNum = stringNum[0] + '.' + stringNum[1]
-  }
-  newNum = Number(newNum)
-  return '￥'+ newNum*/
 
-
-
-  return '￥'+ parseFloat(fixedNum)
 })
 
 Vue.filter('price-filter2', function (value) {

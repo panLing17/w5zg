@@ -36,7 +36,7 @@
       },
       max: {
         type: Number,
-        default:5
+        default: 5
       },
       type: {
         type: Array,
