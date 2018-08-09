@@ -19,14 +19,9 @@
       .detailBox(v-show="cashDetail && cashDetail.length")
         ul.detailList
           li(v-for="item in cashDetail", v-if="item.tran_money!=0")
-            .block.top
-              // 订单号
-              .left 订单号: {{item.order_no}}
-              // 交易金额 trade_in_out 126为支出 125为收入
-              .right {{item.trade_in_out==='126'?'-':'+'}}{{item.tran_money | number}}
-            .block.bottom
-              .left 余额: {{item.trade_balance_money | number}}
-              .right {{item.creation_time}}
+            .itemLeft(:style="{background: item.trade_in_out==='125'?'':''}")
+            .itemCenter
+            .itemRight
       .nodata(v-show="!cashDetail || !cashDetail.length")
         img(src="./cash.png")
         .desc 没有资金流水记录
@@ -234,9 +229,10 @@
     box-sizing: border-box;
   }
   .detailList li {
-    height: 2rem;
-    border-bottom: 1px solid #999;
-    position: relative;
+    height: 2.26rem;
+    border-bottom: 1px solid #cecece;
+    display: flex;
+    align-items: center;
   }
   .detailList li:last-child {
     border: none;
