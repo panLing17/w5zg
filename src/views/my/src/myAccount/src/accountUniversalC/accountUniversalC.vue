@@ -19,9 +19,15 @@
       .detailBox(v-show="cashDetail && cashDetail.length")
         ul.detailList
           li(v-for="item in cashDetail", v-if="item.tran_money!=0")
-            .itemLeft(:style="{background: item.trade_in_out==='125'?'':''}")
+            .itemLeft
+              img(:src="item.trade_in_out==='125'?require('./shou.png'):require('./zhi.png')")
             .itemCenter
+              .name {{item.trade_type | tradeType}}
+              .no 订单号：{{item.order_no}}
+              .time {{item.creation_time}}
             .itemRight
+              .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
+              .balancePrice 余额：{{item.trade_balance_money | number}}
       .nodata(v-show="!cashDetail || !cashDetail.length")
         img(src="./cash.png")
         .desc 没有资金流水记录
@@ -53,7 +59,18 @@
       filters: {
         // 保留两位小数点
         number (value) {
-          return Number(value).toFixed(2)
+          return parseFloat(Number(value).toFixed(2))
+        },
+        tradeType (value) {
+          let text = '';
+          switch(value) {
+            case '121': text = '消费记录'; break;
+            case '122': text = '余额提现'; break;
+            case '124': text = '消费退款'; break;
+            case '128': text = '余额入账（返点）'; break;
+            case '127': text = '余额入账（分成）'; break;
+          }
+          return text;
         }
       },
       watch: {
@@ -225,7 +242,7 @@
     background: #fff;
   }
   .detailList {
-    padding: 0 .2rem;
+    padding: 0 .4rem;
     box-sizing: border-box;
   }
   .detailList li {
@@ -233,6 +250,45 @@
     border-bottom: 1px solid #cecece;
     display: flex;
     align-items: center;
+    .itemLeft {
+      font-size 0
+      img {
+        width 1rem
+      }
+    }
+    .itemCenter {
+      flex 1
+      margin 0 .26rem
+      line-height 1
+      .name {
+        font-size .37rem
+        color #333
+        font-weight 400
+      }
+      .no {
+        color #666
+        font-size .32rem
+        margin-top .26rem
+      }
+      .time {
+        font-size .29rem
+        margin-top .16rem
+        color #666
+      }
+    }
+    .itemRight {
+      line-height 1
+      text-align right
+      .price {
+        font-size .42rem
+        font-weight 400
+      }
+      .balancePrice {
+        color #666666
+        font-size .29rem
+        margin-top .21rem
+      }
+    }
   }
   .detailList li:last-child {
     border: none;
