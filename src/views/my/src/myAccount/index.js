@@ -6,6 +6,7 @@ import accountCardC from './src/accountCardC'
 import useDetail from './src/useDetail'
 import cashDetailC from './src/cashDetailC'
 import accountUniversalC from './src/accountUniversalC/accountUniversalC'
+import universalExplain from './src/accountUniversalC/universalExplain'
 import accountB from './src/accountB'
 import accountDetail from './src/accountDetail'
 import accountDetailContent from './src/accountDetailContent'
@@ -20,5 +21,5 @@ import promote from './src/promote'
 import receiveTicketGH from './src/receiveTicketGH'
 
 export default {
-  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue,accountC,receiveTicket,promote, receiveTicketGH
+  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue,accountC,receiveTicket,promote, receiveTicketGH, universalExplain
 }

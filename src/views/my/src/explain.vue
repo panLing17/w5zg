@@ -1,5 +1,5 @@
 <template lang="pug">
-  .explain
+  scroll.explain(:data="data")
     ul
       li.question(v-for="item in data")
         .name {{data.question}}
@@ -8,7 +8,7 @@
 </template>
 
 <script>
-
+  import Scroll from 'components/scroll'
   export default {
     name: "explain",
     props: {
@@ -18,6 +18,9 @@
           return {}
         }
       }
+    },
+    components: {
+      Scroll
     }
   }
 </script>

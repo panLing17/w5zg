@@ -714,6 +714,14 @@ const router = new Router ({
               }
             },
             {
+              path: '/my/accountUniversalC',
+              name: '通用券C',
+              component:MyAccount.accountUniversalC,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
               path: '/my/accountB',
               name: '我的账户B',
               component:MyAccount.accountB,
