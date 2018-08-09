@@ -16,7 +16,7 @@
         li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
         li.line
     .mescroll#mescroll
-      .detailBox(v-show="cashDetail.length")
+      .detailBox(v-show="cashDetail && cashDetail.length")
         ul.detailList
           li(v-for="item in cashDetail", v-if="item.tran_money!=0")
             .block.top
@@ -27,7 +27,7 @@
             .block.bottom
               .left 余额: {{item.trade_balance_money | number}}
               .right {{item.creation_time}}
-      .nodata(v-show="!cashDetail.length")
+      .nodata(v-show="!cashDetail || !cashDetail.length")
         img(src="./cash.png")
         .desc 没有资金流水记录
 </template>
@@ -134,7 +134,7 @@
 <style scoped lang="stylus">
   .mescroll {
     position: fixed;
-    top: 6.23rem;
+    top: 7.38rem;
     bottom: 0;
     width: 100%;
     height: auto;
@@ -224,7 +224,7 @@
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateY(-50%);
+    transform: translateX(-50%);
   }
   .detailBox {
     background: #fff;
@@ -283,7 +283,7 @@
     img {
       width: 2.66rem;
     }
-    span {
+    .desc {
       color: #777;
       font-size: .37rem;
       margin-top: .26rem;
