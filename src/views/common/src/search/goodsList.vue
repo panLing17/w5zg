@@ -1,15 +1,16 @@
 <template lang="pug">
   .goodsList
-    ul
-      li(v-for="item in data")
-        img(:src="item.gi_image_url | img-filter")
+    ul.list
+      li.item(v-for="item in data")
+        .imgWrapper
+          img(:src="item.gi_image_url | img-filter")
         .goodsNameWrapper
           .flag(v-show="item.carry_type===1") 专柜提货
           span {{item.gi_name}}
         .priceWrapper
-          .desc 实付价:
           ul
-            li(v-for="price in $method.arrayPrice(item.direct_supply_price)")
+            li.desc 实付价：￥
+            li.price(v-for="price in $method.arrayPrice(item.direct_supply_price)") {{price}}
 </template>
 
 <script>
@@ -28,21 +29,29 @@
 
 <style scoped lang="stylus">
   .goodsList {
-    ul {
-      li {
+    .list {
+      .item {
         display inline-block
         width calc(50% - 0.065rem)
         margin 0 .13rem .13rem 0
         height 7.2rem
         overflow hidden
-        font-size 0
         background #fff
-        img {
-          width 100%
-          max-height 4.9333rem
+        .imgWrapper {
+          font-size 0
+          height 4.9333rem
+          overflow hidden
+          img {
+            width 100%
+          }
         }
         .goodsNameWrapper {
           padding .21rem .26rem 0
+          overflow : hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
           .flag {
             display inline-block
             line-height .37rem
@@ -57,11 +66,30 @@
             font-size .34rem
             line-height .48rem
             color #333
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
             word-break: break-all;
-            overflow: hidden;
-            text-overflow: ellipsis;
+          }
+        }
+        .priceWrapper {
+          padding .26rem .26rem 0
+          ul {
+            display inline-table
+            li {
+              display table-cell
+              vertical-align bottom
+            }
+            .desc {
+              font-size .24rem
+              color rgb(247,0,87)
+            }
+            li.price {
+              color rgb(247,0,87)
+              font-size .48rem
+              font-weight 400
+              line-height 0.9
+            }
+            li:nth-child(3) {
+              font-size .24rem
+            }
           }
         }
       }

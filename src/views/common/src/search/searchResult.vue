@@ -1,13 +1,14 @@
 <template lang="pug">
   .searchResult
     search-filter
-    scroll.searchResultContent
+    scroll.searchResultContent(ref="searchResultContent", :data="result", :pullup="pullup", @scrollToEnd="loadResult", :listenScroll="listenScroll", @scroll="scroll")
       .resultWrapper
         .noResult(v-show="!result.length")
           img(src="./noResult.png")
           .desc 抱歉，没有找到相关商品
-      goods-list(:data="result")
-
+        goods-list(:data="result")
+        loading(v-show="hasMore")
+    go-top(v-show="", @goTop="goTop")
 </template>
 
 <script>
@@ -15,19 +16,41 @@
   import SearchFilter from './searchFilter'
   import Loading from 'components/loading/loading'
   import GoodsList from './goodsList'
+  import GoTop from 'components/goTop/goTop'
   export default {
     name: "searchResult",
     data () {
       return {
         result: [],
         page: 1,
-        rows: 8
+        rows: 8,
+        pullup: true,
+        hasMore: true,
+        listenScroll: true,
+        goTopShow: false
       }
     },
     created () {
       this._getRecommend()
     },
     methods: {
+      scroll(pos) {
+        if (pos.y > this.$method.getClientHeight()) {
+          this.goTopShow = true
+        } else {
+          this.goTopShow = false
+        }
+      },
+      goTop() {
+        this.$refs.searchResultContent.scrollTo(0,0,300)
+      },
+      loadResult() {
+        if (!this.hasMore) {
+          return
+        }
+        this.page++
+        this._getRecommend()
+      },
       _getRecommend() {
         let self = this
         self.$ajax({
@@ -40,6 +63,10 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           if (response) {
+            if (!response.data.data.length) {
+              self.hasMore = false
+              return
+            }
             self.result = self.result.concat(response.data.data)
           }
         })
@@ -49,7 +76,8 @@
       Scroll,
       SearchFilter,
       Loading,
-      GoodsList
+      GoodsList,
+      GoTop
     }
   }
 </script>
@@ -63,6 +91,7 @@
   .searchResultContent {
     height calc(100vh - 2.5rem)
     background rgb(242,242,242)
+    overflow hidden
   }
   .noResult {
     height 6.34rem
@@ -78,4 +107,5 @@
       line-height 1
     }
   }
+
 </style>
