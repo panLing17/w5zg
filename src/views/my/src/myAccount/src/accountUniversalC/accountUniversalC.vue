@@ -4,7 +4,7 @@
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="./back.png", style="width:.586rem")
       .topCenter(slot="center", style="color:#fff") 通用券
-      .topRight(slot="right")
+      .topRight(slot="right", @click="$router.push('/my/universalExplain')")
         img(src="./desc.png", style="width: 2rem")
     .balanceBox
       .balance {{balance | number}}

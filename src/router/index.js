@@ -714,9 +714,9 @@ const router = new Router ({
               }
             },
             {
-              path: '/my/accountUniversalC',
-              name: '通用券C',
-              component:MyAccount.accountUniversalC,
+              path: '/my/universalExplain',
+              name: '通用券C说明',
+              component:MyAccount.universalExplain,
               meta: {
                 keepAlive: true
               }

@@ -1,10 +1,10 @@
 <template lang="pug">
   scroll.explain(:data="data")
-    ul
+    ul.questionWrapper
       li.question(v-for="item in data")
-        .name {{data.question}}
+        .name Q: {{item.question}}
         ul
-          li.answer(v-for="answer in data.answer")
+          li.answer(v-for="answer in item.answer") {{answer}}
 </template>
 
 <script>
@@ -15,7 +15,7 @@
       data: {
         type: Array,
         default () {
-          return {}
+          return []
         }
       }
     },
@@ -26,5 +26,27 @@
 </script>
 
 <style scoped lang="stylus">
-
+  .explain {
+    height 100%
+    overflow hidden
+    .questionWrapper {
+      padding .26rem .53rem 0
+      .question {
+        margin-bottom .5rem
+        .name {
+          color #333
+          font-size .37rem
+          font-weight bold
+          line-height .58rem
+        }
+        .answer {
+          color #333
+          font-size .32rem
+          line-height .58rem
+          text-align justify
+          word-break break-all
+        }
+      }
+    }
+  }
 </style>
