@@ -61,7 +61,8 @@ export default {
         click: this.click,
         scrollY: this.scrollY,
         scrollX: this.scrollX,
-        stopPropagation: this.stopPropagation
+        stopPropagation: this.stopPropagation,
+        bounce: !this.pullup
       })
       if (this.listenScroll) {
         let me = this

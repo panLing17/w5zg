@@ -1,7 +1,7 @@
 <template lang="pug">
   .goodsList
     ul.list
-      li.item(v-for="item in data")
+      li.item(v-for="item in data", @click="$router.push({path: '/goodsDetailed', query: {id: item.gspu_id}})")
         .imgWrapper
           img(:src="item.gi_image_url | img-filter")
         .goodsNameWrapper
@@ -32,6 +32,7 @@
     .list {
       .item {
         display inline-block
+        vertical-align top
         width calc(50% - 0.065rem)
         margin 0 .13rem .13rem 0
         height 7.2rem
@@ -97,7 +98,7 @@
           }
         }
       }
-      li:nth-child(2n) {
+      .item:nth-child(2n) {
         margin-right 0
       }
     }

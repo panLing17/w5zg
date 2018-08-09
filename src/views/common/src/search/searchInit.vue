@@ -7,10 +7,10 @@
         scroll.hotContent(:data="hot", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
           .twoRow
             ul
-              li(v-for="(item, index) in hot", v-if="index%2===0") {{item.name}}
+              li(v-for="(item, index) in hot", v-if="index%2===0") {{item.search_word}}
                 flag(v-if="item.type", :flag="item.type")
             ul
-              li(v-for="(item, index) in hot", v-if="index%2===1") {{item.name}}
+              li(v-for="(item, index) in hot", v-if="index%2===1") {{item.search_word}}
                 flag(v-if="item.type", :flag="item.type")
       .historyWrapper(v-show="history.length")
         .blockTitle
@@ -470,6 +470,9 @@
         return this.hot.concat(this.categoryList)
       }
     },
+    created() {
+      this._getHotData()
+    },
     methods: {
       clearHistory () {
         this.$confirm({
@@ -515,6 +518,18 @@
           }
         }
       },
+      _getHotData () {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/getHotSearchWord',
+          params: {}
+        }).then(function(res){
+          if (res) {
+            self.history = res.data.data
+          }
+        })
+      },
       _getHistory () {
         if (localStorage.getItem('token')) {
           let self =this
@@ -524,7 +539,7 @@
             params: {}
           }).then(function(res){
             if (res) {
-              self.history = res.data.data
+              self.hot = res.data.data
             }
           })
         }
@@ -538,6 +553,7 @@
 </script>
 
 <style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   .searchContent {
     height: "calc(100vh - %s)" % $height-header;
   }

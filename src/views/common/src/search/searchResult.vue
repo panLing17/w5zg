@@ -1,14 +1,22 @@
 <template lang="pug">
   .searchResult
     search-filter
-    scroll.searchResultContent(ref="searchResultContent", :data="result", :pullup="pullup", @scrollToEnd="loadResult", :listenScroll="listenScroll", @scroll="scroll")
+    scroll.searchResultContent(ref="searchResultContent",
+                              :data="result",
+                              :pullup="pullup",
+                              @scrollToEnd="loadResult",
+                              :listenScroll="listenScroll",
+                              @scroll="scroll",
+                              :probeType="probeType"
+                              )
       .resultWrapper
         .noResult(v-show="!result.length")
           img(src="./noResult.png")
           .desc 抱歉，没有找到相关商品
         goods-list(:data="result")
         loading(v-show="hasMore")
-    go-top(v-show="", @goTop="goTop")
+        no-more(v-show="!hasMore")
+    go-top(v-show="goTopShow", @goTop="goTop")
 </template>
 
 <script>
@@ -17,6 +25,7 @@
   import Loading from 'components/loading/loading'
   import GoodsList from './goodsList'
   import GoTop from 'components/goTop/goTop'
+  import NoMore from 'components/noMore'
   export default {
     name: "searchResult",
     data () {
@@ -27,7 +36,9 @@
         pullup: true,
         hasMore: true,
         listenScroll: true,
-        goTopShow: false
+        goTopShow: false,
+        probeType: 3,
+        currentHeight: document.documentElement.clientHeight || document.body.clientHeight
       }
     },
     created () {
@@ -35,7 +46,7 @@
     },
     methods: {
       scroll(pos) {
-        if (pos.y > this.$method.getClientHeight()) {
+        if (-pos.y > (this.currentHeight - 100)) {
           this.goTopShow = true
         } else {
           this.goTopShow = false
@@ -77,7 +88,8 @@
       SearchFilter,
       Loading,
       GoodsList,
-      GoTop
+      GoTop,
+      NoMore
     }
   }
 </script>

@@ -1,8 +1,8 @@
 <template lang="pug">
-  .searchFilter
+  .searchFilter(@click.stop="", @touchstart.stop="", @touchmove.stop="")
     .navWrapper
       .left
-        .navItem(@click="brandChoose=!brandChoose", :class="{active: brandChoose}")
+        .navItem(@click="brandChange", :class="{active: brandChoose}")
           span 品牌
           img(:src="brandChoose?require('./brandUp.png'):require('./brandDown.png')")
       .right
@@ -11,39 +11,40 @@
         .navItem
           span 价格
           img(:src="priceChoose===0?require('./price.png'):priceChoose===1?require('./priceUp.png'):require('./priceDown.png')")
-        .navItem(@click="filterChoose=!filterChoose", :class="{active: filterChoose}")
+        .navItem(@click="filterChange", :class="{active: filterChoose}")
           span 筛选
           img(:src="filterChoose?require('./filter2.png'):require('./filter.png')")
-    .transitionWrapper
-      transition(name="fade")
-        .mask(v-show="brandChoose", @click="brandChoose=!brandChoose")
-      transition(name="fold")
-        .brandWrapper(v-show="brandChoose")
-          scroll.brandContent(:data="brandData", ref="brandContent")
-            ul
-              li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.name}}
-          .btnWrapper
-            .left 重置
-            .right 确定
-    .transitionWrapper
-      transition(name="fade")
-        .mask(v-show="filterChoose", @click="filterChoose=!filterChoose")
-      transition(name="fold")
-        .filterWrapper(v-show="filterChoose")
-          .filterContent
-            .desc 价格区间(元)
-            .inputWrapper
-              .left
-                input(type="number", placeholder="最小金额")
-              .center
-              .right
-                input(type="number", placeholder="最大金额")
-            .btnWrapper
+    .searchFilterWrapper
+      .transitionWrapper
+        transition(name="fade")
+          .mask(v-show="brandChoose", @click="brandChoose=!brandChoose")
+        transition(name="fold")
+          .brandWrapper(v-show="brandChoose")
+            scroll.brandContent(:data="brandData", ref="brandContent")
               ul
-                li(v-for="item in priceArea") {{item}}
-          .bottomBtn
-            .left 重置
-            .right 确定
+                li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.name}}
+            .btnWrapper
+              .left 重置
+              .right 确定
+      .transitionWrapper
+        transition(name="fade")
+          .mask(v-show="filterChoose", @click="filterChoose=!filterChoose")
+        transition(name="fold")
+          .filterWrapper(v-show="filterChoose")
+            .filterContent
+              .desc 价格区间(元)
+              .inputWrapper
+                .left
+                  input(type="number", placeholder="最小金额")
+                .center
+                .right
+                  input(type="number", placeholder="最大金额")
+              .btnWrapper
+                ul
+                  li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceActive=index") {{item}}
+            .bottomBtn
+              .left 重置
+              .right 确定
 </template>
 
 <script>
@@ -57,11 +58,25 @@
         filterChoose: false,
         brandData: ['曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球'],
         brandList: [],
-        priceArea: ['0-500', '500-1000', '1000-2000', '2000-5000', '5000以上']
+        priceArea: ['0-500', '500-1000', '1000-2000', '2000-5000', '5000以上'],
+        priceActive: -1
       }
     },
     computed: {
 
+    },
+    created() {
+      this.timer = null
+    },
+    deactivated() {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+    },
+    beforeDestroy () {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
     },
     watch: {
       brandChoose (newVal) {
@@ -77,6 +92,33 @@
       this._brandDataReset()
     },
     methods: {
+      filterChange() {
+        if (this.brandChoose) {
+          this.brandChoose = false
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() =>{
+            this.filterChoose = !this.filterChoose
+          }, 500)
+        } else {
+          this.filterChoose = !this.filterChoose
+        }
+      },
+      brandChange () {
+        if (this.filterChoose) {
+          this.filterChoose = false
+          if (this.timer) {
+            clearTimeout(this.timer)
+          }
+          this.timer = setTimeout(() => {
+            this.brandChoose = !this.brandChoose
+          }, 500)
+        } else {
+          this.brandChoose = !this.brandChoose
+        }
+
+      },
       brandCheck(index) {
         this.brandList.splice(index, 1 , {
           name: this.brandList[index].name,
@@ -101,6 +143,9 @@
 <style scoped lang="stylus">
   .searchFilter {
     position relative
+  }
+  .searchFilterWrapper {
+    position absolute
   }
   .navWrapper {
     height 1.2rem
@@ -249,6 +294,10 @@
             color #333
             font-size .34rem
             margin 0 .26rem .26rem 0
+          }
+          li.active {
+            border-color rgb(247,0,87)
+            color rgb(247,0,87)
           }
         }
       }

@@ -14,7 +14,7 @@
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
-    search-result
+    search-result(v-show="query.length")
 </template>
 
 <script>
@@ -27,7 +27,7 @@
       return {
         query: '', //搜索词
         associativeQuery: [],
-        searchResult: ['1']
+        searchResult: []
       }
     },
     methods: {
