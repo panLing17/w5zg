@@ -85,10 +85,14 @@
               color rgb(247,0,87)
               font-size .48rem
               font-weight 400
+
+            }
+            li:nth-child(2) {
               line-height 0.9
             }
             li:nth-child(3) {
               font-size .24rem
+              line-height 1.2
             }
           }
         }
