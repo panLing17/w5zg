@@ -1,5 +1,5 @@
 <template lang="pug">
-  .searchFilter(@click.stop="", @touchstart.stop="", @touchmove.stop="")
+  .searchFilter
     .navWrapper
       .left
         .navItem(@click="brandChange", :class="{active: brandChoose}")
@@ -17,9 +17,9 @@
     .searchFilterWrapper
       .transitionWrapper
         transition(name="fade")
-          .mask(v-show="brandChoose", @click="brandChoose=!brandChoose")
+          .mask(v-show="brandChoose", @click="brandChoose=!brandChoose", @touchmove.prevent="")
         transition(name="fold")
-          .brandWrapper(v-show="brandChoose")
+          .brandWrapper(v-show="brandChoose", @touchmove.prevent="")
             scroll.brandContent(:data="brandData", ref="brandContent")
               ul
                 li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.name}}
@@ -28,9 +28,9 @@
               .right 确定
       .transitionWrapper
         transition(name="fade")
-          .mask(v-show="filterChoose", @click="filterChoose=!filterChoose")
+          .mask(v-show="filterChoose", @click="filterChoose=!filterChoose", @touchmove.prevent="")
         transition(name="fold")
-          .filterWrapper(v-show="filterChoose")
+          .filterWrapper(v-show="filterChoose", @touchmove.prevent="")
             .filterContent
               .desc 价格区间(元)
               .inputWrapper
