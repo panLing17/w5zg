@@ -8,10 +8,10 @@
           .twoRow
             ul
               li(v-for="(item, index) in hot", v-show="index%2===0") {{item.search_word}}
-                flag(v-if="item.type", :flag="item.type")
+                img(v-if="item.pic_url", :src="item.pic_url | img-filter")
             ul
               li(v-for="(item, index) in hot", v-show="index%2===1") {{item.search_word}}
-                flag(v-if="item.type", :flag="item.type")
+                img(v-if="item.pic_url", :src="item.pic_url | img-filter")
       .historyWrapper(v-show="history.length")
         .blockTitle
           .title 历史搜索
@@ -479,8 +479,7 @@
           params: {}
         }).then(function(res){
           if (res) {
-            self.hot = JSON.parse(res.data.data)
-            console.log(self.hot)
+            self.hot = res.data.data
           }
         })
       },
@@ -558,8 +557,11 @@
         line-height: 1;
         margin: 0 .26rem .26rem 0;
         border-radius .42rem
-        i {
-          color: #fff;
+        img {
+          width .4rem
+          position absolute
+          right -0.05rem
+          bottom .5rem
         }
       }
     }
