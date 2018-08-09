@@ -7,10 +7,10 @@
         scroll.hotContent(:data="hot", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
           .twoRow
             ul
-              li(v-for="(item, index) in hot", v-if="index%2===0") {{item.search_word}}
+              li(v-for="(item, index) in hot", v-show="index%2===0") {{item.search_word}}
                 flag(v-if="item.type", :flag="item.type")
             ul
-              li(v-for="(item, index) in hot", v-if="index%2===1") {{item.search_word}}
+              li(v-for="(item, index) in hot", v-show="index%2===1") {{item.search_word}}
                 flag(v-if="item.type", :flag="item.type")
       .historyWrapper(v-show="history.length")
         .blockTitle
@@ -45,56 +45,12 @@
   export default {
     name: "searchInit",
     created () {
+      this._getHotData()
       this._getHistory()
     },
     data () {
       return {
-        hot: [
-          {
-            name: '雅诗兰黛',
-            type: null
-          },
-          {
-            name: '阿迪达斯',
-            type: null
-          },
-          {
-            name: '水之月',
-            type: null
-          },
-          {
-            name: '耐克',
-            type: 1
-          },
-          {
-            name: '费雪',
-            type: null
-          },
-          {
-            name: '自然堂',
-            type: null
-          },
-          {
-            name: '面膜',
-            type: null
-          },
-          {
-            name: '口红',
-            type: 2
-          },
-          {
-            name: '洗面奶',
-            type: null
-          },
-          {
-            name: '奶粉',
-            type: null
-          },
-          {
-            name: '尿不湿',
-            type: null
-          }
-        ],
+        hot: [],
         history: [],
         category: [
           {
@@ -470,9 +426,6 @@
         return this.hot.concat(this.categoryList)
       }
     },
-    created() {
-      this._getHotData()
-    },
     methods: {
       clearHistory () {
         this.$confirm({
@@ -526,7 +479,8 @@
           params: {}
         }).then(function(res){
           if (res) {
-            self.history = res.data.data
+            self.hot = JSON.parse(res.data.data)
+            console.log(self.hot)
           }
         })
       },
@@ -539,7 +493,9 @@
             params: {}
           }).then(function(res){
             if (res) {
-              self.hot = res.data.data
+              if (res.data.data.length) {
+                self.history = res.data.data
+              }
             }
           })
         }
