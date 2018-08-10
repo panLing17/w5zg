@@ -13,7 +13,7 @@
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
             .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
             .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
-            .store(v-if="$parent.initPriceFlag") {{$parent.goodsData.storage_num>0 ?  '有货' : '无货'}}
+            .store(v-if="$parent.initPriceFlag") 有货
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
             .size
               span(v-if="selectedSpec.length === 0") 选择规格
@@ -129,7 +129,6 @@
         // let obj={};
         // obj=JSON.parse(JSON.stringify(this.photos))
         return this.photos.slice()
-
       },
       // 定位地址城市名称
       locationCityName() {
@@ -398,7 +397,7 @@
         this.$emit('buy')
       },*/
       // 校验库存与获得skuId（此请求每次挂载后都会执行）
-      getStoreNum (e,key,index, disable, i_gray, item_valueIndex, ccc) {
+      getStoreNum (e,key,index, disable, item_valueIndex, oIndex, ccc) {
         console.log(ccc)
         let date = new Date()
         // 为置灰直接弹出，没有操作
