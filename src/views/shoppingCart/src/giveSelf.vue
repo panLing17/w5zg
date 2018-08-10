@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
+    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')", @change="clickChangeStore")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -10,13 +10,15 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
-    specChange
+    specChange(ref="specChange")
+    onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
 <script>
-  import specChange from './specChange'
+  import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
+  import specChange from './specChange'
   import {mapState} from 'vuex'
   import {bus} from '../../../bus'
   export default {
@@ -26,14 +28,16 @@
         flag: false,
         isdefault: false,
         nowTab: 1,
+        changeStoreFlag: false,
         goodsList: [],
-        disableGoodsList: []
+        disableGoodsList: [],
+        nowGoodsData: {}
       }
     },
     computed: {
       ...mapState(['shoppingCartSelected'])
     },
-    components: {selfGoods, disableGoods, specChange},
+    components: {selfGoods, disableGoods, onlyStoreSelect, specChange},
     mounted () {
       this.getData()
       bus.$on('selfCarryUpData',()=>{
@@ -49,6 +53,31 @@
     //   })
     // },
     methods: {
+      openSpecChange (id, spec) {
+        this.$refs['specChange'].show = true
+        this.$refs['specChange'].init(id, spec)
+      },
+      storeChange (data) {
+        let storeId = this.nowGoodsData.sc_id
+        // 执行切换请求
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'shoppingCart/shoppingCartCarryStore',
+          params: {
+            scId: storeId,
+            bsId: data.id
+          },
+        }).then(function (response) {
+          self.$message.success(response.data.msg)
+          self.getData()
+        })
+      },
+      // 用户点击切换自提门店按钮后
+      clickChangeStore (data) {
+        this.changeStoreFlag = true
+        this.nowGoodsData = data
+      },
       tabChange (num) {
         this.nowTab = num
         if (num === 1) {
@@ -120,6 +149,7 @@
         })
       },
       changeType (data,fun) {
+        console.log(data)
         this.$confirm({
           title: '更换配送方式',
           message: '确定要更换为快递配送吗？',

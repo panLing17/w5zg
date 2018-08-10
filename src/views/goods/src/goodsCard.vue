@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    .goodsCardBox(v-if="$route.query.type === 'shoppingCart'")
+    .goodsCardBox(v-if="$route.query.type === 'shoppingCart' && data.shoppingCartVOList.length>0")
       .title {{data.storeName ? data.storeName : data.si_name}}
       .main(v-for="i in data.shoppingCartVOList")
         img(:src="i.logo | img-filter")
@@ -15,7 +15,7 @@
       .bottom
         .left(v-if="since === 'true'") {{data.shoppingCartVOList[0].store_address}}
         .right(v-else) 运费: {{data.freight | price-filter}}
-    .goodsCardBox(v-else)
+    .goodsCardBox(v-if="$route.query.type === 'direct'")
       .title {{data.storeName}}
       .main
         img(:src="data.photo | img-filter")

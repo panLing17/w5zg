@@ -339,14 +339,6 @@ const router = new Router ({
               component: Home.scanSuccess
             },
             {
-              path: '/home/searchHistory',
-              name: '搜索历史',
-              component: Home.searchHistory,
-              meta: {
-                keepAlive: true
-              }
-            },
-            {
               path: '/home/activities',
               name: '活动',
               component: Home.activities
@@ -408,23 +400,28 @@ const router = new Router ({
               component: Acitivity.twoLevel
             }
           ]
-        }, {
+        },
+        {
+          path: '/home/searchHistory',
+          name: '搜索历史',
+          component: Home.searchHistory
+        },
+        {
           path: '/page',
           name: '分类',
-          component: Page.index,
-          children: [
-            {
-              path: '/',
-              name: '分类',
-              component: Page.page
-            },
-            {
-              path: '/page/commodityList',
-              name: '商品列表',
-              component: Page.commodityList
-            }
-          ]
-        }, {
+          component: Page.page,
+        },
+        {
+          path: '/page/commodityList',
+          name: '商品列表',
+          component: Page.commodityList
+        },
+        {
+          path: '/paymentResults',
+          name: '支付成功',
+          component: Goods.paymentResults
+        },
+        {
           path: '/shoppingCart',
           name: '购物车',
           component: ShoppingCart.index,
@@ -432,10 +429,11 @@ const router = new Router ({
             {
               path: '/',
               name: '购物车',
+              redirect: '/shoppingCart/express',
               component: ShoppingCart.shoppingCart,
               children: [
                 {
-                  path: '/',
+                  path: '/shoppingCart/self',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
                 },
@@ -828,11 +826,6 @@ const router = new Router ({
               meta: {
                 keepAlive: true
               }
-            },
-            {
-              path: '/goods/paymentResults',
-              name: '支付成功',
-              component: Goods.paymentResults
             }
           ]
         }
@@ -856,7 +849,11 @@ router.beforeEach ((to, from, next) => {
       _hmt.push(['_trackPageview', to.path +'/1'])
     }
   } else {
-    _hmt.push(['_trackPageview', to.path])
+    if (to.query.road_id) {
+      _hmt.push(['_trackPageview', to.path + '?road_id=' + to.query.road_id])
+    } else {
+      _hmt.push(['_trackPageview', to.path])
+    }
   }
 
 
@@ -933,7 +930,7 @@ router.afterEach((to, from) => {
     sharePhoto: getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
     shareTitle: '万物直供商城正品保障',
     shareDesc: '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买',
-    link: getLocationHref() + '/#' + to.fullPath
+    link: getLocationHref() + '/?#' + to.fullPath
   })
 })
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="clearGoods", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :storeName="i.si_name", @selectChange="selectChange")
+    goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="clearGoods", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :checked="i.checked", :storeName="i.si_name", @selectChange="selectChange")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -10,11 +10,12 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
-    city-select(:show='selectFlag', :goodsList="nowGoodsDataList", @close="selectClose", @submit="submit")
     specChange(ref="specChange")
+    onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
 <script>
+  import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import goodsCard from './goodsCard'
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
@@ -28,6 +29,7 @@
         flag: false,
         isdefault: false,
         selectFlag: false,
+        changeStoreFlag: false,
         nowTab: 1,
         nowGoodsId: '',
         goodsList: [],
@@ -35,7 +37,7 @@
         disableGoods: []
       }
     },
-    components:{goodsCard, disableGoods, citySelect, specChange},
+    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect,specChange},
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
@@ -44,8 +46,12 @@
     },
     watch: {
       allClick(val) {
+        if (!this.$store.state.exitAllChecked) {
+          return
+        }
         let scId = []
         this.goodsList.forEach((now)=>{
+          now.checked = val
           now.shoppingCartVOList.forEach((sonNow)=>{
             sonNow.checked = val
             scId.push(sonNow.sc_id)
@@ -78,6 +84,34 @@
         this.$refs['specChange'].show = true
         this.$refs['specChange'].init(id, spec)
       },
+      storeChange (data) {
+        let {
+          bs_city_no: cityId,
+          bs_province_no: provinceId,
+          bs_id: storeId
+        } = data.allData
+        // 执行删除动画
+        this.deleteGoods()
+        // 执行切换请求
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'shoppingCart/shoppingCartDeliveryWays',
+          params: {
+            scId: self.nowGoodsDataList.sc_id,
+            gskuId: self.nowGoodsDataList.gsku_id,
+            provinceNo: provinceId,
+            cityNo: cityId,
+            deliveryWays: 168,
+            bsId: storeId
+          },
+        }).then(function (response) {
+          let goodsNum = self.$store.state.shoppingCartGoodsNum
+          goodsNum.carryNum+=1
+          goodsNum.sendNum-=1
+          self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
+        })
+      },
       clearGoods (){
         let i = this.goodsList.length
         while(i--) {
@@ -102,8 +136,24 @@
             }
           })
         })
-        // 获取配送订单信息（然后转入中转，因为运费展示难以计算,如果用户操作过快，选择商品后迅速点击结算可能会有bug）
 
+        // 计算总长度
+        let allGoodsLen = 0
+        this.goodsList.forEach((now)=>{
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            allGoodsLen += 1
+          })
+        })
+        // 全选按钮选择
+        if (allGoodsLen === checked.length && allGoodsLen !== 0) {
+          this.$store.commit('allCheckedChange', true)
+        }
+        // 反选全选按钮
+        if (checked.length < allGoodsLen) {
+          this.$store.commit('exitAllCheckedChange', false)
+          this.$store.commit('allCheckedChange', false)
+        }
+        // 获取配送订单信息（然后转入中转，因为运费展示难以计算,如果用户操作过快，选择商品后迅速点击结算可能会有bug）
           let self = this
           let cartId = []
           checked.forEach((now)=>{
@@ -136,6 +186,11 @@
           // 转为数组
           let array = []
           for (let i in response.data.data.commList) {
+            if (response.data.data.commList[i].checked === '011') {
+              response.data.data.commList[i].checked = true
+            } else {
+              response.data.data.commList[i].checked = false
+            }
             response.data.data.commList[i].shoppingCartVOList.forEach((now)=>{
               if (now.checked === '011') {
                 now.checked = true
@@ -163,7 +218,7 @@
       changeType (data,next,index) {
         this.nowGoodsDataList = data
         // 显示门店选择
-        this.selectFlag = true
+        this.changeStoreFlag = true
         this.deleteGoods = next
         this.flag = true
         setTimeout(()=>{
@@ -177,34 +232,6 @@
       selectClose () {
         // 关闭选择框
         this.selectFlag = false
-      },
-      // 确定选择城市
-      submit (cityId,storeId) {
-        // 关闭选择框
-        this.selectFlag = false
-        if (storeId !== '') {
-          // 执行删除动画
-          this.deleteGoods()
-          // 执行切换请求
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiApp + 'shoppingCart/shoppingCartDeliveryWays',
-            params: {
-              scId: self.nowGoodsDataList.sc_id,
-              gskuId: self.nowGoodsDataList.gsku_id,
-              provinceNo: self.$store.state.location.province.id,
-              cityNo: cityId,
-              deliveryWays: 168,
-              bsId: storeId
-            },
-          }).then(function (response) {
-            let goodsNum = self.$store.state.shoppingCartGoodsNum
-            goodsNum.carryNum+=1
-            goodsNum.sendNum-=1
-            self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
-          })
-        }
       },
       // 清空失效商品
       clearAllDisableGoods () {

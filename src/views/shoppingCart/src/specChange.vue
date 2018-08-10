@@ -7,41 +7,65 @@
         .content.mescroll#specChange
           .topData
             .topImg
-              img
+              img(:src="spcGoodsData.logo | img-filter")
             .topText
-              .price {{168 | price-filter}}
+              .price {{spcGoodsData.direct_supply_price | price-filter}}
                 span(@click="close") X
               .selectedSpec 粉色 3.5g
-              .haveGoods 有货
+              .haveGoods {{spcGoodsData.storage_num>0 ? '有货' : '无货'}}
           ul.specList
             li.specItem(v-for="(i,specIndex) in spec")
               .valueName {{i.specName}}
               ul.valueList
-                li(@click="specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index}") {{item.value}}
+                li(@click="i.valueIndex=index;specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index}") {{item.value}}
                 p.clearBoth
           .emitGoods
             .emitGoodsTitle 配送方式
             ul.emitGoodsButtons
-              li(:class="{checked:emitType === 'express'}", @click="emitType = express") 快递配送
-              li(:class="{checked:emitType === 'counter'}", @click="emitType = express") 专柜自提
+              li(:class="{checked:emitType === 'express'}", @click="emitType = 'express'") 快递配送
+              li(:class="{checked:emitType === 'counter'}", @click="emitType = 'counter'") 专柜自提
               p.clearBoth
+          .address
+            .expressAddress(@click="openSelectLocation", v-if="emitType === 'express'")
+              .text
+                img(src="../../../assets/img/location.png")
+                span {{location.province.name}}
+                span {{location.city.name}}
+              img.more(src="../../../assets/img/more.png")
+            .selfAddress(@click="openStoreSelect", v-if="emitType === 'counter'")
+              .text
+                img(src="../../../assets/img/location.png")
+                span {{counterText}}
+              img.more(src="../../../assets/img/more.png")
           .bottomButton
             .confirm(@click="submit") 确定
+    location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="storeChange")
 </template>
 
 <script>
   import {bus} from '../../../bus'
-
+  import {mapState} from 'vuex'
+  import locationSelect from '../../goods/src/locationSelect'
+  import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   export default {
     name: "specChange",
     data() {
       return {
+        spcGoodsData: {},
+        logo: '',
         spuId: '',
+        skuId: '',
+        storeId: '',
         spec: [],
         show: false,
         emitType: 'express',
+        counterText: '请选择门店',
         normalGoods: false,
-        storeDownGoods: false
+        storeDownGoods: false,
+        locationFlag: false,
+        locationList: [],
+        onlyStoreSelect: false
       }
     },
     watch: {
@@ -62,6 +86,8 @@
         }
       }
     },
+    computed:{...mapState(['location','giveGoodsAddress'])},
+    components:{locationSelect,onlyStoreSelect},
     mounted() {
     },
     methods: {
@@ -75,6 +101,55 @@
       },
       close() {
         this.show = false
+      },
+      // 点击spec
+      specClick () {
+        // 获取选中的规格
+        let specData = {
+          //'W5MALLTOKEN': localStorage.getItem('token'),
+          'cityId': this.$store.state.location.city.id,
+          'gspu_id': this.spuId,
+          'specList': [
+          ]
+        }
+        this.spec.forEach((now)=>{
+          if (now.valueIndex > -1) {
+            let val = now.specValue[now.valueIndex].value
+            specData.specList.push({
+              'gspec_name': now.specName,
+              'gspec_value': val
+            })
+          }
+        })
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/sku/detail',
+          params: {
+            gc:JSON.stringify(specData)
+          }
+        }).then(function (response) {
+          // 将sku图片存入store
+          self.$store.commit('skuImgSave', response.data.data.logo)
+          if (response.data.data.logo) {
+            // 根据sku切换展示图片
+            self.logo = response.data.data.logo
+          }
+          self.skuId = response.data.data.gsku_id
+          /*// 派发此组件load事件 (用于返回库存与规格)
+          let data = {
+            maxStoreNum: self.realGoodsData.storage_num,
+            spec: specData.specList,
+            counter_price: self.realGoodsData.counter_price ? self.realGoodsData.counter_price : 0,
+            retail_price: self.realGoodsData.retail_price ? self.realGoodsData.retail_price : 0,
+            direct_supply_price: self.realGoodsData.direct_supply_price ? self.realGoodsData.direct_supply_price : 0,
+            goi_freight: self.realGoodsData.goi_freight
+          }
+          self.$emit('load',data)
+          self.selectedSpec = data.spec
+          console.log(self.selectedSpec)*/
+
+        })
       },
       // 改造格式
       specGray (spec, graySpec, checkedSpec) {
@@ -91,9 +166,15 @@
         return spec
       },
       // 将传入数组按当前已选规格进行选入，并返回改动后数据
-      returnSelectedJson (oldData, defaultSpec) {
+      returnSelectedJson (oldData, allData) {
+        // 储存skuid
+        this.skuId = allData.gsku_id
+
+        this.spcGoodsData = allData
+        console.log(allData)
+        // 默认选
         let specValueList = []
-        defaultSpec.forEach((now)=>{
+        allData.specVOList.forEach((now)=>{
           specValueList.push(now.gspec_value)
         })
 
@@ -125,36 +206,113 @@
         })
       },
       submit (id) {
-        /* 获取选中规格 */
-        let specData = {
-          //'W5MALLTOKEN': localStorage.getItem('token'),
-          'cityId': this.$store.state.location.city.id,
-          'gspu_id': this.spuId,
-          'specList': [
-          ]
+        let type
+        if (this.emitType === 'express') {
+          type = 167
+        } else {
+          type = 168
         }
-        this.spec.forEach((now)=>{
-          let val = now.specValue[now.valueIndex].value
-          specData.specList.push({
-            'gspec_name': now.specName,
-            'gspec_value': val
-          })
-        })
-
         let self = this
         this.$ajax({
           method: 'post',
-          url: self.$apiGoods + 'goods/sku/detail',
+          url: self.$apiApp + 'shoppingCart/updateShoppingCart',
           params: {
-            gc: JSON.stringify(specData)
+            scId: self.spcGoodsData.sc_id,
+            gskuId: self.skuId,
+            provinceNo: self.$store.state.location.province.id,
+            cityNo: self.$store.state.location.city.id,
+            deliveryWays: type,
+            bsId: self.storeId
           }
         }).then(function (response) {
-          if (response.data.data.storage_num>0) {
-
-          } else {
-            self.$message.error('库存不足')
+          self.$message.success('修改成功')
+          self.close()
+          self.$parent.getData()
+        })
+      },
+      // 打开地址选择
+      openSelectLocation () {
+        if (this.emitType === 'counter') {
+          this.onlyStoreSelect = true
+        } else {
+          this.locationFlag = true
+          let self = this
+          this.$ajax({
+            method: 'get',
+            url: self.$apiMember + 'receivingAddress/addresses',
+            params: {
+              cityNo: self.$store.state.location.city.id
+            }
+          }).then(function (response) {
+            if (response.data.data.length>0) {
+              self.locationList = response.data.data
+            }
+          })
+        }
+      },
+      // 关闭选择
+      locationSelectClose () {
+        this.locationFlag = false
+      },
+      // 打开门店选择
+      openStoreSelect () {
+        this.$store.commit('getSkuId',this.skuId)
+        this.onlyStoreSelect = true
+      },
+      getStoreLocation () {
+        let self = this
+        this.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'receivingAddress/addresses',
+          params: {
+            cityNo: self.$store.state.location.city.id
+          }
+        }).then(function (response) {
+          if (response.data.data.length > 0) {
+            self.locationList = response.data.data
+            self.locationList.forEach((now) => {
+              if (now.ra_default === '011') {
+                let {
+                  city_name,
+                  county_name,
+                  province_name,
+                  ra_city,
+                  ra_county,
+                  ra_province
+                } = now
+                let location = {
+                  province: {
+                    name: province_name,
+                    id: ra_province
+                  },
+                  city: {
+                    name: city_name,
+                    id: ra_city
+                  },
+                  area: {
+                    name: county_name,
+                    id: ra_county
+                  }
+                }
+                self.$store.commit('getLocation', location)
+                // 延时赋值收货地址，防止选择城市处同时监听到两个变化
+                setTimeout(() => {
+                  self.$store.commit('giveGoodsAddressChange', now)
+                }, 500)
+                self.$emit('selected')
+              }
+            })
           }
         })
+      },
+      // 选择地址变化后
+      locationChange (data) {
+        console.log(data)
+      },
+      // 选择门店变化后
+      storeChange (data) {
+        this.storeId = data.id
+        this.counterText = data.name
       }
     }
   }
@@ -169,7 +327,7 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 101;
+    z-index: 100;
   }
 
   .main {
@@ -180,7 +338,7 @@
     bottom: 0;
     padding-bottom: $height-footer;
     left: 0;
-    z-index: 105;
+    z-index: 101;
     overflow: auto;
   }
   .content{
@@ -199,6 +357,10 @@
     width:2rem;
     height:2rem
     border:solid 1px #eee
+  }
+  .topImg img {
+    width 100%
+    height 100%
   }
   .topText{
     width 0
@@ -271,6 +433,27 @@
     border: solid 1px #333;
     color: #333;
     border-radius: .1rem;
+  }
+  /* 地址 */
+  .address {
+    padding: .2rem;
+    margin-top: .2rem
+  }
+  .address>div{
+    display: flex;
+    justify-content: space-between;
+    background-color:#eee;
+    padding: .1rem .2rem;
+  }
+  .address img{
+    height: .4rem
+  }
+  .address .text{
+    display flex
+    align-items center
+  }
+  .address .text>span{
+    margin-left .2rem
   }
   /* 选中状态 */
   .checked{
