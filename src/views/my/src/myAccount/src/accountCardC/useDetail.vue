@@ -1,23 +1,24 @@
 <template lang="pug">
   .useDetailBox
-    .totalPrice
+    .totalPrice(v-show="selectType==0")
       span.desc 可用总额：
-      span.price
+      span.price {{totalBalance}}
       span.desc 元
-    ul.contentList(v-if="!isEmpty")
-      li.item(v-for="(item,index) in data")
-        p.info ID: {{item.tn_serial_number}}
-        p.info.last {{item.tn_created_time}}
-        p.balance(:style="{'color':balanceColor}")
-          span.left 余额
-          span.right ￥{{item.tn_balance | number}}
-        p.total 总额 ￥{{item.tn_amount | number}}
-        p.dec.first 商户ID：{{item.tn_contract_id}}
-        p.dec.last {{item.tn_end_time}} 前使用
-        img.icon(:src="iconImg(index)")
-        img.bg(:src="bgImg")
-    .nodata(v-if="isEmpty")
-      img(src="../../../../../../assets/img/noCard.png")
+    ul.contentList(v-show="data && data.length")
+      li.item(v-for="(item, index) in data")
+        .left(:style="{'background-image': selectType==0?'url(' + require('./redBg.png') + ')':'url(' + require('./grayBg.png') + ')'}")
+          .balance
+            .icon ￥
+            span {{item.tn_balance | number}}
+          .balanceDesc 可用余额
+        .right(:style="{'background-image': selectType==0?'url(' + require('./keyong.png') + ')':selectType==1?'url(' + require('./yishiyong.png') + ')':'url(' + require('./yiguoqi.png') + ')'}")
+          .totalBalance 面额：￥{{item.tn_amount | number}}
+          .desc1 领券：{{item.tn_created_time}}
+          .desc2 有效期：{{item.tn_end_time}}
+          .no 券号：{{item.tn_serial_number}}
+    .noData(v-show="!data")
+      img(src="./noResult.png")
+      .noDataDesc {{selectType==0?'没有可用的现金券哦！':selectType==1?'您没有已使用的现金券！':'您没有已过期的现金券！'}}
 </template>
 
 <script>
@@ -26,7 +27,19 @@
       data () {
         return {
           selectType: 0,
-          data: null
+          data: []
+        }
+      },
+      computed: {
+        totalBalance () {
+          let t = 0
+          if (this.data) {
+            this.data.forEach(item => {
+              console.log(t)
+              t += item.tn_balance
+            })
+          }
+          return t
         }
       },
       created () {
@@ -49,40 +62,6 @@
           }
         }
       },
-      computed : {
-        // 判断数据是否为空
-        isEmpty () {
-          if (this.data == null || this.data.length === 0) {
-            return true;
-          }else {
-            return false;
-          }
-        },
-        bgImg () {
-          let img = '';
-          switch (parseInt(this.selectType)) {
-            case 0:
-              img = require('../../../../../../assets/img/ff80ab@2x.png');
-              break;
-            case 1:
-              img = require('../../../../../../assets/img/cccccc@2x.png');
-              break;
-            case 2:
-              img = require('../../../../../../assets/img/999999@2x.png');
-              break;
-          }
-          return img;
-        },
-        balanceColor () {
-          let col = '';
-          if (parseInt(this.selectType) === 0) {
-            col = 'rgb(245,0,87)';
-          }else {
-            col = 'rgb(153,153,153)';
-          }
-          return col;
-        }
-      },
       methods: {
         // 1未使用 0已使用 2已失效
         getData (status) {
@@ -93,23 +72,11 @@
             url: this.$apiTransaction + 'netcard/netcards',
             params: {status:status}
           }).then(function (response) {
-            _this.data = response.data.data;
-          })
-        },
-        iconImg(index) {
-          let img = '';
-          if (this.selectType == 0) {
-            if (this.data[index].tn_amount == this.data[index].tn_balance ) {
-              img = require('../../../../../../assets/img/unused@2x.png');
-            }else {
-              img = require('../../../../../../assets/img/someues@2x.png');
+            if (response.data.data.length) {
+              _this.data = response.data.data;
             }
-          }else if (this.selectType == 1) {
-            img = require('../../../../../../assets/img/havebeenuesd@2x.png');
-          }else {
-            img = require('../../../../../../assets/img/outofdate@2x.png');
-          }
-          return img;
+
+          })
         }
       }
     }
@@ -123,84 +90,86 @@
     height: calc(100vh - 2.43rem);
     overflow: auto;
   }
-  .item {
-    background: #fff;
+  .contentList {
     margin-top: .26rem;
-    border-radius: .3rem;
-    position: relative;
   }
-  .info {
-    color: rgb(153,153,153);
-    font-size: .32rem;
-    padding: .26rem .26rem 0 0;
-    text-align: right;
+  .item {
+    height: 2.93rem;
+    display: flex;
+    background: #fff;
+    margin-bottom: .26rem;
   }
-  .info.last {
-    padding-top: .18rem;
-  }
-  .icon {
-    position: absolute;
-    top: .26rem;
-    left: .26rem;
-    width: 1rem;
+  .item .left {
+    flex: none;
+    width: 3rem;
+    background-size: 100% 100%;
+    line-height: 1;
   }
   .balance {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    margin-top: .3rem;
-    padding-right: .8rem;
-    box-sizing: border-box;
-  }
-  .balance .left {
-    font-size: .32rem;
-    line-height: .32rem;
-  }
-  .balance .right {
-    line-height: .7rem;
-    font-size: .8rem;
-    font-weight: 400;
-    margin-left: .16rem;
-    letter-spacing: -0.05rem;
-  }
-  .bg {
-    width: 100%;
-    position: absolute;
-    top: 1.2rem;
-    left: 0;
-  }
-  .total {
-    width: 100%;
-    text-align: center;
-    position: absolute;
-    top: 2.3rem;
-    z-index: 110;
+    margin-top: .96rem;
     color: #fff;
-    font-size: .48rem;
     font-weight: 400;
   }
-  .dec {
-    color: rgb(153,153,153);
+  .icon {
     font-size: .32rem;
-    padding: .16rem 0 0 .26rem;
   }
-  .dec.first {
-    padding-top: 1rem;
+  .balance span {
+    font-size: .53rem;
   }
-  .dec.last {
-    padding-bottom: .26rem;
-  }
-  .nodata {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-    width: 100%;
+  .balanceDesc {
     text-align: center;
-    color: rgb(153,153,153);
+    color: #fff;
+    margin-top: .21rem;
+    font-size: .32rem;
   }
-  .nodata img {
+  .item .right {
+    flex: 1;
+    padding-left: .53rem;
+    line-height: 1;
+    position: relative;
+    background-size: 100% 100%;
+  }
+  .totalBalance {
+    margin-top: .58rem;
+    color: #666;
+    font-size: .37rem;
+    font-weight: 400;
+  }
+  .desc1, .desc2 {
+    color: #777;
+    font-size: .29rem;
+  }
+  .desc1 {
+    margin-top: .21rem;
+  }
+  .desc2 {
+    margin-top: .13rem;
+  }
+  .no {
+    height: .61rem;
+    position: absolute;
+    bottom: 0;
+    left: .53rem;
+    line-height: .61rem;
+    width: 100%;
+    color: #999;
+    font-size: .29rem;
+  }
+  .noData {
+    font-size: 0;
+    text-align: center;
+  }
+  .noData img {
+    margin-top: 1.33rem;
     width: 2.6rem;
+  }
+  .noDataDesc {
+    margin-top: .26rem;
+    color: #777;
+    font-size: .37rem;
   }
   img {
     pointer-events: none;
