@@ -68,15 +68,14 @@
       this.mescroll.destroy()
     },
     beforeRouteLeave(to, from, next){
-      console.log(this.$route.query.num)
-      let types = 0
-      if (this.$route.query.num === 0) {
-        types = ''
-      }
-      if (this.$route.query.num === 1) {
-        types = 802
-      }
       if (to.path === '/my') {
+        let types = 0
+        if (this.$route.query.num === 0) {
+          types = ''
+        }
+        if (this.$route.query.num === 1) {
+          types = 802
+        }
         let self = this
         self.$ajax({
           method: 'get',
@@ -84,10 +83,14 @@
           params:{
             msType: types
           }
-        }).then(function (res) {
+        }).then( (res)=> {
           console.log('111')
+          self.mescroll.resetUpScroll()
           next()
         })
+        next(false)
+      } else {
+        next()
       }
 
     },
