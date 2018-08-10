@@ -141,8 +141,7 @@
     },
     activated () {
       this.collectionNumCheck()
-      this.reachGoodsNumCheck()
-      this.informNumCheck()
+
       this.getUserData()
       this.getFootmarkNum()
       this.getOrderCount()
@@ -156,6 +155,8 @@
       // window.addEventListener('scroll',this.judgeScroll,true);
       // 改变下拉刷新的样式
       // this.changeStyles();
+      this.reachGoodsNumCheck()
+      this.informNumCheck()
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn()

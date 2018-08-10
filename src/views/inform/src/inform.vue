@@ -85,10 +85,11 @@
             msType: types
           }
         }).then(function (res) {
-
+          console.log('111')
+          next()
         })
       }
-      next()
+
     },
     mounted(){
       this.judgeType()
