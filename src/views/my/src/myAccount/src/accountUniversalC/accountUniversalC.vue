@@ -6,16 +6,16 @@
       .topCenter(slot="center", style="color:#fff") 通用券
       .topRight(slot="right", @click="$router.push('/my/universalExplain')")
         img(src="./desc.png", style="width: 2rem")
-    .balanceBox
-      .balance {{balance | number}}
-      .balanceDec 余额 (元)
-    .tabBox
-      ul.list
-        li.normalL.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部明细
-        li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
-        li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
-        li.line
     .mescroll#mescroll
+      .balanceBox(ref="balanceBox")
+        .balance {{balance | number}}
+        .balanceDec 余额 (元)
+      .tabBox(:class="{active: navActive}")
+        ul.list
+          li.normalL.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部明细
+          li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
+          li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
+          li.line
       .detailBox(v-show="cashDetail && cashDetail.length")
         ul.detailList
           li(v-for="item in cashDetail", v-if="item.tran_money!=0")
@@ -43,14 +43,21 @@
           cashDetail: null,
           itemActive: 0,
           balance: 0.00,
-          tradeType: ''
+          tradeType: '',
+          navActive: ''
         }
       },
       created () {
         this.getBalance();
       },
       mounted () {
-        this.$mescrollInt("mescroll",this.upCallback);
+        this.$mescrollInt("mescroll",this.upCallback, ()=>{}, (mescroll, y, isUp) =>{
+          if (y >= this.$refs.balanceBox.offsetHeight) {
+            this.navActive = true
+          } else {
+            this.navActive = false
+          }
+        });
       },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
@@ -96,7 +103,7 @@
           let _this = this;
           let form = {
             page: pageNum,
-            rows: pageSize
+            rows: 10
           };
           if (this.tradeType.trim().length !== 0) {
             form.type = this.tradeType
@@ -146,7 +153,7 @@
 <style scoped lang="stylus">
   .mescroll {
     position: fixed;
-    top: 7.38rem;
+    top: 1.3rem;
     bottom: 0;
     width: 100%;
     height: auto;
@@ -186,6 +193,12 @@
     background: #fff;
     box-sizing: border-box;
     border-bottom: .013rem solid #cecece;
+    width: 100%;
+  }
+  .tabBox.active {
+    position fixed
+    top: 1.3rem;
+    left: 0;
   }
   .tabBox .list {
     position: relative;
