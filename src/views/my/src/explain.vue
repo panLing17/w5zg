@@ -1,6 +1,7 @@
 <template lang="pug">
   scroll.explain(:data="data")
     ul.questionWrapper
+      slot
       li.question(v-for="item in data")
         .name Q: {{item.question}}
         ul

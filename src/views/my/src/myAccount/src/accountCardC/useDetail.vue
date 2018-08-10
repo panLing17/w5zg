@@ -19,9 +19,11 @@
     .noData(v-show="!data")
       img(src="./noResult.png")
       .noDataDesc {{selectType==0?'没有可用的现金券哦！':selectType==1?'您没有已使用的现金券！':'您没有已过期的现金券！'}}
+    no-more(v-show="data && data.length")
 </template>
 
 <script>
+  import NoMore from 'components/noMore'
     export default {
       name: "useDetail",
       data () {
@@ -78,6 +80,9 @@
 
           })
         }
+      },
+      components: {
+        NoMore
       }
     }
 </script>
@@ -85,13 +90,13 @@
 <style scoped>
   .useDetailBox {
     padding: 0.26rem .4rem 0;
-    box-sizing: border-box;
-    margin-top: 2.26rem;
-    height: calc(100vh - 2.43rem);
-    overflow: auto;
+    /*margin-top: 2.26rem;*/
+    min-height: calc(100vh - 2.43rem);
+    overflow-x: hidden;
   }
   .contentList {
     margin-top: .26rem;
+    min-height: calc(100vh - 4.04rem);
   }
   .item {
     height: 2.93rem;

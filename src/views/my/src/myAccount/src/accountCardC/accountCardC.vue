@@ -4,7 +4,7 @@
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="./back.png", style="width:.586rem")
       .topCenter(slot="center", style="color:#fff;") 现金券
-      .topRight(slot="right")
+      .topRight(slot="right", @click="$router.push('/my/accountCardCExplain')")
         img(src="./desc.png", style="width: 2rem")
         <!--p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="$router.push('/my/cashDetailC')") 明细-->
     .tabBox
@@ -12,8 +12,8 @@
         li.tabItem.l(:class="{'active':listActive===0}",@click="tabChange(0)") 可用
         li.tabItem.c(:class="{'active':listActive===1}",@click="tabChange(1)") 已使用
         li.tabItem.r(:class="{'active':listActive===2}",@click="tabChange(2)") 已过期
-    transition(name="fade", mode="out-in")
-      router-view.mescroll#Mescroll
+    .mescroll#Mescroll
+      router-view
 </template>
 
 <script>
@@ -40,13 +40,21 @@
 </script>
 
 <style scoped>
+  .mescroll {
+    position: fixed;
+    top: 2.26rem;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    background: rgb(242,242,242);
+  }
   .accountCardBox {
     background: rgb(242,242,242);
     width: 100%;
     height: 100vh;
     position: absolute;
     z-index: 100;
-    overflow: auto;
   }
   .tabBox {
     height: .96rem;
