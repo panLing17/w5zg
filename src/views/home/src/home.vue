@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    .homeHeader
+    .homeHeader(:class="{active: homeHeaderActive}")
       .homeHeaderLeft(@click="$router.push('/page')")
         img.fenleiImg(src="../../../assets/img/fenlei@2x.png")
       .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
@@ -10,7 +10,7 @@
       .homeHeaderRight(@click="$router.push('/service')")
         img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      .banner
+      .banner(ref="banner")
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
@@ -25,9 +25,9 @@
         <!--img.areaImg(src="../../../assets/img/trading.png")-->
       <!--.member(@click="showAnimate")-->
         <!--img.memberImg(src="../../../assets/img/menber.png")-->
-      .title1
+      //.title1
       w-activity(:listData="activityGoods")
-      .title2
+      //.title2
       recommend(ref="recommend")
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
@@ -99,7 +99,8 @@
         ],
         banner: [],
         type: '',
-        animateShow: false
+        animateShow: false,
+        homeHeaderActive: false
       }
     },
     components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider},
@@ -132,11 +133,12 @@
           }
         })
       }, (obj) => {
-        if (obj.preScrollY>100) {
-          this.navBarBg = 'rgba(255,255,255,1)'
+        if (obj.preScrollY>this.$refs.banner.offsetHeight) {
+          this.homeHeaderActive = true
         } else {
-          this.navBarBg = 'rgba(255,255,255,1)'
+          this.homeHeaderActive = false
         }
+
 
         this.$store.commit('setPosition', {
           path: this.$route.path,
@@ -437,8 +439,11 @@
     align-items: center;
     height: 1.3rem;
     overflow: hidden;
-    background: #fff;
+    /*background: #fff;*/
     width: 100%;
+  }
+  .homeHeader.active {
+    background: #f70057;
   }
   .homeHeaderLeft {
     padding: 0 .26rem 0 .4rem;
@@ -454,7 +459,7 @@
     display: block;
     text-align: center;
     font-size: 10px;
-    color: rgb(102, 102, 102);
+    color: #fff;
     line-height: 1;
     margin-top: .05rem;
   }
@@ -589,7 +594,7 @@
 
   .homeBox {
     background: #f2f2f2;
-    padding-top: 1.3rem;
+    /*padding-top: 1.3rem;*/
     padding-bottom: 2rem;
     min-height: 100vh;
   }

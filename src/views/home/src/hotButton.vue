@@ -79,7 +79,7 @@
   }
 
   .box > ul > li > img {
-    width: 1rem;
+    width: 100%;
   }
   .box > ul > li > span {
     display: block;
