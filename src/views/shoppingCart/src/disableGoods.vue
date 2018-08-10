@@ -21,7 +21,8 @@
           .bottom
             .right
               span 商品已过期
-              img
+            .left
+              img(@click="deleteDisableGoods(i.sc_id)", src="../../../assets/img/searchHistory_clear.png")
 </template>
 
 <script>

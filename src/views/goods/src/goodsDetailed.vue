@@ -13,7 +13,7 @@
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
-        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
+        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type===1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
         .goodsName  {{goodsData.gi_name}}
         <!--a(href="tel:4008-947-999")-->
           //.stateChuiNiu(@click="saveMoneyTipsFlag = true")
@@ -25,8 +25,14 @@
           .salePrice 统一零售价：<span>{{goodsData.retail_interval}}　专柜价：{{goodsData.counter_interval}}</span>
         .price(v-else)
           span 实付价
-          p(v-if="initPriceFlag") <strong style="color:#f70057;font-size:.2rem">￥</strong>{{goodsData.direct_supply_price}}
-          p(v-else) <strong style="color:#70057;font-size:.2rem">￥</strong>{{goodsData.direct_supply_interval}}
+          p(v-if="initPriceFlag")
+            <strong style="color:#f70057;font-size:.2rem">￥</strong>
+            ul.arrayPrice
+              li(v-for="item in $method.arrayPrice(goodsData.direct_supply_price)") {{item}}
+          p(v-else)
+            <strong style="color:#70057;font-size:.2rem">￥</strong>
+            ul.arrayPrice
+              li(v-for="item in $method.arrayPrice(goodsData.direct_supply_interval)") {{item}}
           //.salePrice 统一零售价：<span v-if="initPriceFlag">{{goodsData.retail_price}}</span><span v-else>{{goodsData.retail_interval}}</span>
       .saveMoney(v-if="userData.member_type !== '092'", @click="cardTipsFlag=true")
         ul.saveMoneyTop
@@ -37,7 +43,7 @@
             .label 用券立减
             .text(v-if="initPriceFlag") <span>{{(goodsData.counter_price-goodsData.direct_supply_price) | price-filter}}</span>
             .text(v-else) <span>{{(makeMoney.useCardEconomyPrice ? makeMoney.useCardEconomyPrice : 0) | price-filter}}</span>
-          img(src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
+          img(v-if="goodsData.carry_type===1", src="../../../assets/img/yuyue@2x.png", @click.stop="yuyueShow")
         //ul.saveMoneyBottom
           li.gray
             .label 专柜价购买
@@ -81,7 +87,7 @@
         .left(v-else) 规格:
           span 请选择规格
         img(src="../../../assets/img/right.png").right
-      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :hasGoodsFlag="initPriceFlag", ref="disType")
+      dis-type(@selectType="selectDis", :lock="disableCabinet", :hasGoods="maxStoreNum>0 ? '有货' : '无货'", :carryType="goodsData.carry_type", :hasGoodsFlag="initPriceFlag", ref="disType")
       //.distribution(@click="selectCityShow")
         .top
           .left 地址
@@ -133,18 +139,17 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
-    onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false")
+    onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="locationChange")
     bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
     // 选择收货地址
     location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
-
     // 新手教程
     //goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
@@ -193,7 +198,7 @@
         selectFlag: false,
         selectSizeShow: false,
         disTypeFlag: false,
-        disTypeName: '专柜自提',
+        disTypeName: '快递配送',
         selectCity: false,
         selectStoreFlag: false,
         shoppingCartFlag: false,
@@ -239,7 +244,6 @@
       }
     },
     computed:{
-
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -496,12 +500,9 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiGoods + 'goods/queryStore',
+          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
           params: {
-            gskuId: self.$store.state.skuId,
-            marketId:0,
-            cityNo: self.$store.state.location.city.id,
-            storeType: 2
+            gskuId: self.$store.state.skuId
           },
         }).then(function (response) {
           if(response.data.data.length<1){
@@ -771,7 +772,6 @@
             })
           })
           self.spec = newData
-          console.log(self.spec)
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
         })
@@ -932,7 +932,6 @@
           this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
         }
         if (this.shoppingCartFlag) {
-
           // 如果操作来自添加购物车按钮
           let self = this
           this.$ajax({
@@ -1031,7 +1030,6 @@
         this.price = data.price
         this.content = data.content
         this.selectedSpec = data.spec
-        console.log('spec3333333333333')
         // 仅选规格 --------------------------------------------------------------------
         /*if (this.onlySelectSpec) {
           this.selectFlag = false
@@ -1071,6 +1069,7 @@
                 this.$message.warning('请选择收货/自提地址')
               }
             } else {
+              this.selectFlag = false
               // 为配送订单直接进入下一步
               this.expressNext()
             }
@@ -1095,7 +1094,6 @@
         this.price = data.price
         this.content = data.content
         this.selectedSpec = data.spec
-        console.log('spec4444444444')
         // 打开类型选择
         // this.disTypeFlag = true
         // 关闭规格选择
@@ -1625,7 +1623,7 @@
   .buttons .left{
     flex-grow: 1.5;
     width: 0;
-    background: #FF8500;
+    background: #ff8500;
     font-size: .4rem;
     color: white;
   }
@@ -1659,5 +1657,11 @@
   .goodsDetailContent img{
     float: left;
     max-width: 100%;
+  }
+  .arrayPrice,  .arrayPrice li{
+    display: inline-block;
+  }
+  .arrayPrice li:nth-of-type(2) {
+    font-size: .42rem;
   }
 </style>

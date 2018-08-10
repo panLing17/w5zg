@@ -68,13 +68,21 @@
       this.mescroll.destroy()
     },
     beforeRouteLeave(to, from, next){
+      console.log(this.$route.query.num)
+      let types = 0
+      if (this.$route.query.num === 0) {
+        types = ''
+      }
+      if (this.$route.query.num === 1) {
+        types = 802
+      }
       if (to.path === '/my') {
         let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'ucMessage/updateMessageStatus',
           params:{
-            msStatus: '5302'
+            msType: types
           }
         }).then(function (res) {
 
@@ -209,12 +217,13 @@
     text-align: center;
     color: #666;
     background-color: #f2f2f2;
-    /*position: fixed;*/
-    /*top: 1.28rem;*/
-    /*bottom: 0;*/
-    margin-top: 1.28rem;
+    position: fixed;
+    top: 1.28rem;
+    bottom: 0;
+    /*margin-top: 1.28rem;*/
     padding-top: 1.06rem;
     height: calc(100vh - 1.28rem);
+    z-index: 200;
   }
   .imgs{
     /*margin-top: 1.06rem;*/

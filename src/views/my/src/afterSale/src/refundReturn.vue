@@ -6,68 +6,70 @@
       .topCenter(slot="center") 申请退款
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png")
-    .content
-      .center
-        .image
-          img(:src="goodsList.logo | img-filter")
-        .goodsDetails
-          .words {{goodsList.goods_name}}
-          .property
-            span(v-for="item in goodsList.spec_json") {{item.gspec_value}}
-          .count x
-            span {{goodsList.goods_num}}
-    .goodsStatus(@click="$refs.statusChoose.showPop()" )
-      ul
-        li 货物状态
-        li
-          span {{statusType===0?'仅退款':'退货退款'}}
-          img(src="../../../../../assets/img/right.png")
-    .returnType(@click="$refs.returnStyleChoose.showPop()" v-if="returnTypeShow")
-      ul
-        li 退货方式
-        li
-          span {{returnStyleType===0?'快递退货':'门店退货'}}
-          img(src="../../../../../assets/img/right.png")
-    .refundReason(@click="$refs.reasonTypeChoose.showPop()")
-      ul
-        li {{reasonTitle}}
-        li.special {{reasonText}}
-          img(src="../../../../../assets/img/right.png")
-    .amount
-      .top
-        ul
-          li.num 数量
-          li.addSub
-            .sub(@click="sub()") -
-            .input {{count}}
-            .add(@click="add()") +
-      .bottom
-        ul
-          li.money
-            .left 现金退款:
-            .right {{price.price | price-filter}}
-          li.money
-            .left 现金券退款:
-            .right {{price.cardPrice | price-filter}}
-          li.money
-            .left 通用券退款:
-            .right {{price.ticketPrice | price-filter}}
-          li.total
-            .arrow
-            .left 退款总金额:
-            .right {{price.price + price.cardPrice + price.ticketPrice | price-filter}}
-          li.freight (含运费￥0)
-    .refundExplain
-      ul
-        li 退款说明:
-        li
-          input(placeholder="请输入···", v-model="desc")
-    .upload
-      .up
-        span 上传凭证
-        span (最多可上传9张图片)
-      w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr")
-    .submit(@click="dataCheck") 提交
+    .contentWrapper(ref="refundReturn")
+      div
+        .content
+          .center
+            .image
+              img(:src="goodsList.logo | img-filter")
+            .goodsDetails
+              .words {{goodsList.goods_name}}
+              .property
+                span(v-for="item in goodsList.spec_json") {{item.gspec_value}}
+              .count x
+                span {{goodsList.goods_num}}
+        .goodsStatus(@click="$refs.statusChoose.showPop()" )
+          ul
+            li 货物状态
+            li
+              span {{statusType===0?'仅退款':'退货退款'}}
+              img(src="../../../../../assets/img/right.png")
+        .returnType(@click="$refs.returnStyleChoose.showPop()" v-if="returnTypeShow")
+          ul
+            li 退货方式
+            li
+              span {{returnStyleType===0?'快递退货':'门店退货'}}
+              img(src="../../../../../assets/img/right.png")
+        .refundReason(@click="$refs.reasonTypeChoose.showPop()")
+          ul
+            li {{reasonTitle}}
+            li.special {{reasonText}}
+              img(src="../../../../../assets/img/right.png")
+        .amount
+          .top
+            ul
+              li.num 数量
+              li.addSub
+                .sub(@click="sub()") -
+                .input {{count}}
+                .add(@click="add()") +
+          .bottom
+            ul
+              li.money
+                .left 现金退款:
+                .right {{price.price | price-filter}}
+              li.money
+                .left 现金券退款:
+                .right {{price.cardPrice | price-filter}}
+              li.money
+                .left 通用券退款:
+                .right {{price.ticketPrice | price-filter}}
+              li.total
+                .arrow
+                .left 退款总金额:
+                .right {{price.price + price.cardPrice + price.ticketPrice | price-filter}}
+              li.freight (含运费￥0)
+        .refundExplain
+          ul
+            li 退款说明:
+            li
+              input(placeholder="请输入···", v-model="desc")
+        .upload
+          .up
+            span 上传凭证
+            span (最多可上传9张图片)
+          w-upload(url="goodsRejected/rejectedImage", :max="9", @success="getImageArr")
+        .submit(@click="dataCheck") 提交
     pop1(ref="statusChoose", :data="statusData", title="货物状态", @selected="statusTypeChange")
     pop1(ref="returnStyleChoose", :data="returnStyleData", title="退货方式", @selected="returnStyleChange")
     pop2(ref="reasonTypeChoose", :data="reasonData", :title="reasonTitle", item-key="rgr_reson", @selected="reasonTypeChange")
@@ -75,6 +77,7 @@
 <script>
   import pop1 from './pop1'
   import pop2 from './pop2'
+  import BScroll from 'better-scroll'
 
   export default {
     name: 'refundReturn',
@@ -101,6 +104,11 @@
       }
     },
     mounted () {
+      setTimeout(() => {
+        this.refundReturnScroll = new BScroll(this.$refs.refundReturn, {
+          click: true
+        })
+      }, 20)
     },
     created () {
       // 获取退款原因列表
@@ -267,7 +275,8 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   .refundReturn{
     width: 100%;
     min-height: 100vh;
@@ -522,5 +531,9 @@
     top: 50%;
     right: 0;
     transform: translateY(-50%);
+  }
+  .contentWrapper {
+    height: "calc(100vh - %s)" % $height-header;
+    overflow hidden
   }
 </style>

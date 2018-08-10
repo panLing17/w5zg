@@ -4,82 +4,95 @@
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       //.main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
-      .main(v-show="show").mescroll#selectSize
-        .photosBox()
-          ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
-            li(v-for="item,index in list")
-              img(:src="item.gi_img_url | img-filter", v-if="index===0")
-        .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
-          .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
-          .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
-          .store(v-if="$parent.initPriceFlag") 有货
-          .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
-          .size 选择规格
-        .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-else)
-          .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.direct_supply_price | price-filter}}
-          .price(v-else) {{0 | price-filter}}
-          .store 库存{{realGoodsData.storage_num}}
-          .size 选择 颜色 尺寸
-
-        ul.spec
-          li(v-for="(item,fatherIndex) in spec")
-            .title {{item.specName}}
-            ul.content
-              li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
-              p(style="clear:both")
-        .count
-          span 购买数量
-          w-counter(v-model="content", :min="1")
-        .express
-          h1 配送方式
-          .buttonTab
-            button(@click="changeExpress('专柜自提')", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
-            button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
-        .address
-          h1
-            span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
-            span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
-          p(@click="changeLocation")
-            span(v-if="expressType === '专柜自提'")
-              img(src="../../../assets/img/location.png")
-              i(v-if="transfer.store") {{transfer.store.name}}
-              i(v-else) 请选择商品规格与配送方式
-            span(v-if="locationOrAddress !== 'location' && expressType !== '专柜自提'")
-              img(src="../../../assets/img/location.png")
-              i(v-if="giveGoodsAddress.city_name") {{giveGoodsAddress.city_name}}{{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
-              i(v-else) 请选择地址
-            span(v-if="locationOrAddress === 'location' && expressType !== '专柜自提'")
-              img(src="../../../assets/img/location.png")
-              i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
-              i(v-else) 请选择地址
-            img(src="../../../assets/img/more@2x.png")
+      .main(v-show="show")#selectSize
+        .selectSizeHeader
+          .photosBox()
+            ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
+              li(v-for="(item,index) in list")
+                img(:src="item.gi_img_url | img-filter", v-if="index===0")
+          .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
+            .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
+            .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
+            .store(v-if="$parent.initPriceFlag") 有货
+            .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
+            .size
+              span(v-if="selectedSpec.length === 0") 选择规格
+              span(v-if="selectedSpec.length > 0")(v-for="spec in selectedSpec", style="margin-right:.2rem") {{spec.gspec_value}}
+          .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-else)
+            .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.direct_supply_price | price-filter}}
+            .price(v-else) {{0 | price-filter}}
+            .store 库存{{realGoodsData.storage_num}}
+            .size 选择 颜色 尺寸
+          .headerClose(@click="close")
+            img(src="../../../assets/img/Group10@2x.png")
+        .selectSizeContent(ref="selstSizeScroll")
+          div(style="padding-bottom: .8rem;")
+            ul.spec
+              li(v-for="(item,fatherIndex) in spec")
+                .title {{item.specName}}
+                ul.content
+                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
+                  p(style="clear:both")
+            .count
+              span 购买数量
+              w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
+            .express
+              h1 配送方式
+              .buttonTab
+                button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
+                button(@click="changeExpress('专柜自提')", v-if="carryType===1", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
+            .address
+              h1
+                span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
+                span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
+              p(@click="changeLocation")
+                span(v-if="expressType === '专柜自提'")
+                  img(src="../../../assets/img/location.png")
+                  i(v-if="transfer.store") {{transfer.store.name}}
+                  i(v-else) 请选择商品规格与配送方式
+                span(v-if="locationOrAddress !== 'location' && expressType !== '专柜自提'")
+                  img(src="../../../assets/img/location.png")
+                  i(v-if="giveGoodsAddress.city_name") {{giveGoodsAddress.city_name}}{{giveGoodsAddress.county_name}} {{giveGoodsAddress.ra_detailed_addr}}
+                  i(v-else) 请选择地址
+                span(v-if="locationOrAddress === 'location' && expressType !== '专柜自提'")
+                  img(src="../../../assets/img/location.png")
+                  i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
+                  i(v-else) 请选择地址
+                img(src="../../../assets/img/more@2x.png")
+            .freight(v-show="expressType=='快递配送'")
+              .freightDesc 运费
+              .freightPrice {{freightPrice}}元
         .bottomButton(v-if="onlySelectSpec")
-          .left(@click="goBuy", v-if="nogoods === 0") 立即购买
-          .right(@click="addCart", v-if="nogoods === 0") 加入购物车
-          .right(v-if="nogoods === 1", @click="reachInform()") 到货通知
+          .left(v-if="noGoodsL", @click="goBuy") 立即购买
+          .right(v-if="noGoodsL", @click="addCart") 加入购物车
+          .right2(v-if="noGoodsE", @click="reachInform()") 到货通知
         .bottomButton(v-else)
-          .right(@click="confirm", v-if="nogoods === 0") 确定
-          .right(v-if="nogoods === 1", @click="reachInform()") 到货通知
+          .right(v-if="noGoodsL",@click="confirm") 确定
+          .right2(v-if="noGoodsE", @click="reachInform()") 到货通知
         .notice(v-if="noticeFlag") 如果30天内到货，会通过系统消息提醒您
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import {bus} from '../../../bus'
+  import {mapState, mapGetters} from 'vuex'
+  import BScroll from 'better-scroll'
   export default {
     name: "city-select",
     data () {
       return {
+        noGoodsE: false,
+        noGoodsL: true,
+        skuIds: '',
         noticeFlag: '',
-        skuId: '',
+        // skuId: '',
         startY: '',
         moveY: '',
         smallPhotoFlag: true,
         content: 1,
-        nogoods: 0,
         realGoodsData: {},
+        selectedSpec: [],
         // 当前该显示的地址信息
         locationOrAddress: 'location',
+        freightPrice: 0 //运费
       }
     },
     props: {
@@ -102,14 +115,19 @@
       lock: {
         type: Boolean,
         default: true
+      },
+      carryType: {
+        type: Number,
+        default: 0
       }
     },
     computed:{
       list(){
-        // 深度拷贝
-        let obj={};
-        obj=JSON.parse(JSON.stringify(this.photos))
-        return obj
+        //   // 深度拷贝
+        // let obj={};
+        // obj=JSON.parse(JSON.stringify(this.photos))
+        return this.photos.slice()
+
       },
       // 定位地址城市名称
       locationCityName() {
@@ -119,9 +137,29 @@
       addressCityName() {
         return this.giveGoodsAddress.city_name
       },
-      ...mapState(['userData','giveGoodsAddress','location', 'transfer'])
+      ...mapState(['userData','giveGoodsAddress','location', 'skuId']),
+      ...mapGetters(['transfer'])
     },
     watch:{
+      spec (newSpec) {
+        if (newSpec) {
+          setTimeout(() => {
+            if (this.selstSizeScroll) {
+              this.selstSizeScroll.refresh()
+            } else {
+              this.selstSizeScroll = new BScroll(this.$refs.selstSizeScroll, {
+                click: true
+              })
+            }
+          },20)
+        }
+      },
+      skuId () {
+        this.getFreight()
+      },
+      content () {
+        this.getFreight()
+      },
       // 若定位城市变化，则显示定位相关地址信息
       locationCityName() {
         this.locationOrAddress = 'location'
@@ -132,32 +170,52 @@
       },
       show(e){
         if (e) {
+          this.getFreight()
+          setTimeout(() => {
+            if (this.selstSizeScroll) {
+              this.selstSizeScroll.refresh()
+            } else {
+              this.selstSizeScroll = new BScroll(this.$refs.selstSizeScroll, {
+                click: true
+              })
+            }
+          },20)
           // mescroll初始化
-          this.getLocation()
-          this.$mescrollInt("selectSize",this.upCallback)
-          this.mescroll.setBounce(false)
-          setTimeout(()=>{
-            this.mescroll.hideUpScroll()
-          },500)
-          this.mescroll.lockDownScroll(true)
-        } else {
-          this.mescroll.hideTopBtn();
-          this.mescroll.destroy()
+        //   this.getLocation()
+        //   this.$mescrollInt("selectSize",this.upCallback)
+        //   this.mescroll.setBounce(false)
+        //   setTimeout(()=>{
+        //     this.mescroll.hideUpScroll()
+        //   },500)
+        //   this.mescroll.lockDownScroll(true)
+        // } else {
+        //   this.mescroll.hideTopBtn();
+        //   this.mescroll.destroy()
         }
       }
     },
     mounted () {
       this.getStoreNum()
+      setTimeout(() => {
+        if (this.selstSizeScroll) {
+          this.selstSizeScroll.refresh()
+        } else {
+          this.selstSizeScroll = new BScroll(this.$refs.selstSizeScroll, {
+            click: true
+          })
+        }
+      },20)
+      this.getFreight()
     },
     methods:{
       reachInform(){
-        console.log(this.skuId)
+        console.log(this.skuIds)
         let self =this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
           params: {
-            gsku_id: self.skuId
+            gsku_id: self.skuIds
           }
         }).then(function (res) {
           console.log(res)
@@ -174,6 +232,25 @@
           }
         })
       },
+      // 获取运费
+      getFreight () {
+        let self = this
+        if (this.skuId) {
+          this.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'freight/api/getFreightByType',
+            params: {
+              skuId: this.skuId,
+              count: this.content,
+              cityNo: this.$store.state.location.city.id
+            }
+          }).then(function (response) {
+              if (response) {
+                self.freightPrice = response.data.data.freight
+              }
+          })
+        }
+      },
       // 立即购买
       goBuy () {
         this.$parent.ofBuy = true
@@ -184,6 +261,7 @@
       addCart () {
         this.$parent.ofBuy = false
         this.$parent.shoppingCartFlag = true
+        this.close()
         this.confirm()
       },
       isGray (e, index) {
@@ -241,6 +319,18 @@
       },
       // 更改配送方式
       changeExpress (data) {
+        //若所有层级都选择了规格则继续
+        let flag = 0
+        this.spec.forEach((now)=>{
+          if (now.valueIndex === -1) {
+            flag+=1
+          }
+        })
+        if (flag>0) {
+          this.$parent.initPriceFlag = true
+          this.$message.warning('请选择规格')
+          return
+        }
         this.$parent.disTypeName = data
         // 触发选择配送方式组件
         if(data==='专柜自提'&& !this.lock){
@@ -365,11 +455,13 @@
               self.list.splice(0,1,skuGoodsData)
               self.realGoodsData = response.data.data
               if (self.realGoodsData.storage_num<=0) {
-                self.nogoods = 1
+                self.noGoodsL = false
+                self.noGoodsE = true
               } else{
-                self.nogoods = 0
+                self.noGoodsL = true
+                self.noGoodsE = false
               }
-              self.skuId = response.data.data.gsku_id
+              self.skuIds = response.data.data.gsku_id
               // vuex中保存skuId
               self.$store.commit('getSkuId',response.data.data.gsku_id)
               // 派发此组件load事件 (用于返回库存与规格)
@@ -494,7 +586,6 @@
               relSpecHasSelected = relSpecHasSelected.concat(now)
             }
           })
-          console.log(relSpecHasSelected)
           // 不同级,该置灰的规格集合
           let selectedNotLevelGary = []
           selectedNotLevel.forEach((now)=>{
@@ -547,11 +638,13 @@
           ]
         }
         this.spec.forEach((now)=>{
-          let val = now.specValue[now.valueIndex].value
-          specData.specList.push({
-            'gspec_name': now.specName,
-            'gspec_value': val
-          })
+          if (now.valueIndex > -1) {
+            let val = now.specValue[now.valueIndex].value
+            specData.specList.push({
+              'gspec_name': now.specName,
+              'gspec_value': val
+            })
+          }
         })
         let self = this
         this.$ajax({
@@ -567,17 +660,19 @@
           }
           // 将sku图片存入store
           self.$store.commit('skuImgSave', response.data.data.logo)
-          // 根据sku切换展示图片
-          let skuGoodsData = self.list[0]
-          skuGoodsData.gi_img_url = response.data.data.logo
-          self.list.splice(0,1,skuGoodsData)
+          if (response.data.data.logo) {
+            // 根据sku切换展示图片
+            let skuGoodsData = self.list[0]
+            skuGoodsData.gi_img_url = response.data.data.logo
+            self.list.splice(0,1,skuGoodsData)
+          }
           self.realGoodsData = response.data.data
           if (self.realGoodsData.storage_num<=0) {
-            self.nogoods = 1
+            self.noGoods = false
           } else{
-            self.nogoods = 0
+            self.noGoods = true
           }
-          self.skuId = response.data.data.gsku_id
+          self.skuIds = response.data.data.gsku_id
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)
           // 派发此组件load事件 (用于返回库存与规格)
@@ -590,9 +685,10 @@
             goi_freight: self.realGoodsData.goi_freight
           }
           self.$emit('load',data)
+          self.selectedSpec = data.spec
+          console.log(self.selectedSpec)
 
         })
-
       },
       buy () {
         // 判断用户类型，小B显示直供价，小C显示专柜价
@@ -672,16 +768,16 @@
   }
 
   .main {
-    padding-top: .2rem;
-    padding-bottom: 1.5rem;
+    /*padding-top: .2rem;*/
+    /*padding-bottom: 1.5rem;*/
     background-color: white;
     width: 100%;
-    height: 70%;
+    height: 10rem;
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 102;
-    overflow-y: auto;
+    /*overflow-y: auto;*/
   }
   .bottomButton {
     position: fixed;
@@ -712,10 +808,21 @@
     font-size: .4rem;
     color: white;
   }
+  .bottomButton .right2{
+    flex-grow: 1;
+    height: 100%;
+    background: rgb(244,0,87);
+    font-size: .4rem;
+    color: white;
+  }
   /* 商品图片部分 */
   .photosBox {
-    overflow-x: auto;
-    width: 100%;
+    width: 3.28rem;
+    height: 3.28rem;
+    overflow: hidden;
+    position: absolute;
+    left: .26rem;
+    bottom: .26rem;
   }
   .photosBox .photos{
     display: flex;
@@ -725,22 +832,23 @@
   /* 缩小后样式 */
   .smallPhoto {
     justify-content: flex-start !important;
-    padding-left: .2rem;
+    /*padding-left: .2rem;*/
   }
   .smallPhoto li{
-    height: 2rem !important;
-    width: 2rem !important;
+    height: 3.28rem !important;
+    width: 3.28rem !important;
   }
   .photos li{
     /*transition: width .3s, height .3s;*/
-    height: 5rem;
-    width: 5rem;
-    border-radius: .3rem;
-    overflow: hidden;
+    /*height: 5rem;*/
+    /*width: 5rem;*/
+    /*border-radius: .3rem;*/
+    /*overflow: hidden;*/
   }
   .photos li img {
     width: 100%;
     height: 100%;
+    border-radius: .13rem;
   }
   /* 商品数据部分 */
   .goodsData{
@@ -773,7 +881,7 @@
     height: 2rem !important;
     position: absolute;
     align-items: flex-start;
-    left: 2.4rem;
+    left: 4rem;
     top: 0;
   }
   .smallGoodsData .price{
@@ -781,15 +889,14 @@
   }
   /* 规格部分 */
   .spec{
-    border-top:1px solid #eee;
-    margin-top: .5rem;
+    padding-top: .5rem;
   }
   .spec>li{
-    margin-top: .4rem;
+    margin-bottom: .4rem;
   }
   .spec>li .title{
     font-size: .4rem;
-    padding-left: .2rem;
+    padding-left: .4rem;
   }
   .spec .content{
     margin-top: .3rem;
@@ -819,7 +926,7 @@
     border-bottom: solid 1px #eee;
     margin-top: .5rem;
     font-size: .4rem;
-    padding: .2rem;
+    padding: .4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -827,7 +934,7 @@
   /* 配送方式 */
   .express {
     margin-top: .4rem;
-    padding: 0 .2rem;
+    padding: 0 .4rem;
   }
   .express>h1{
     font-size: .42rem;
@@ -843,11 +950,11 @@
     padding: .15rem .4rem;
     border-radius: 5px;
     margin-right: .3rem;
+    outline: none;
   }
   .checked {
-    color: white !important;
-    border: none !important;
-    background: rgb(246,0,88) !important;
+    color: rgb(246,0,88) !important;
+    border: 1px solid rgb(246,0,88)!important;
   }
   .lockNoChecked {
     color: white !important;
@@ -857,7 +964,7 @@
   /* 配送地址 */
   .address {
     margin-top: .4rem;
-    padding: 0 .2rem;
+    padding: 0 .4rem;
   }
   .address>h1{
     display: flex;
@@ -888,5 +995,38 @@
   }
   .address img {
     height: .5rem;
+  }
+
+  .selectSizeHeader {
+    height: 2.88rem;
+    position: relative;
+    border-bottom:1px solid #eee;
+  }
+  .selectSizeContent {
+    height: 5.92rem;
+    overflow: hidden;
+  }
+  .headerClose {
+    position: absolute;
+    top: .4rem;
+    right: .4rem;
+  }
+  .headerClose img {
+    width: .586rem;
+  }
+  .freight {
+    height: 1rem;
+    padding: .26rem 0 0 .4rem;
+    display: flex;
+  }
+  .freightDesc {
+    font-size: .42rem;
+    color:rgb(51,51,51);
+    font-weight: bold;
+  }
+  .freightPrice {
+    margin-left: .3rem;
+    font-size:.4rem;
+    color:rgb(102,102,102);
   }
 </style>

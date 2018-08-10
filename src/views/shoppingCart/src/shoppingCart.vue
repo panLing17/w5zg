@@ -9,16 +9,16 @@
       .cartTypeTab
         ul
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
-            p 专柜自提
-            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
-          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
             p 快递配送
             span(class="animated", :class="{swing:flag}") ({{shoppingCartGoodsNum.sendNum}})
+          li(@click="tabChange(1)", :class="{tabChecked:nowTab===1}")
+            p 专柜自提
+            span(class="animated", :class="{rubberBand:flag}") ({{shoppingCartGoodsNum.carryNum}})
         p(:style="{left:nowTab*50+'%'}")
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(@clear="getGoodsNum", @scroll="scrollToTop")
+          router-view(@clear="getGoodsNum", @scroll="scrollToTop", ref="routerView")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
@@ -31,7 +31,18 @@
           .price
             p (不含运费) 实付：<span>{{computedPrice.allPrice | price-filter}}</span>
             p 现金券抵扣：{{computedPrice.counterPrice-computedPrice.allPrice | price-filter}}
-          .button(@click="goConfirmOrder") 结算
+          .button(@click="goConfirmOrder") 结算({{allPrice}})
+      .arrangement(v-if="!arrangementFlag", @click="arrangement")
+        img(src="../../../assets/img/pageList.png")
+        p 整理
+    // 整理操作
+    .arrangementButtons(v-if="arrangementFlag")
+      .arrangementLeft
+        w-checkbox(v-model="shoppingCartAllChecked", @change="allChecked")
+        span 全选
+      .arrangementRight
+        .delete(@click="deleteScGoods") 删除
+        .ok(@click="closeArrangement") 完成
     // 失效商品提示
     disableTips(ref="disableTips")
     //cart-guide
@@ -55,12 +66,37 @@
         flag: false,
         loading: true,
         isdefault: false,
-        nowTab: 0,
-        settlementShow: false
+        nowTab: 1,
+        settlementShow: false,
+        arrangementFlag: false
       }
     },
     components: {goodsCard, disableGoods, citySelect, cartGuide, recommend, disableTips},
-    computed: mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position']),
+    computed: {
+      allPrice () {
+        let num = 0
+        if (this.$route.path === '/shoppingCart') {
+          if (this.shoppingCartSelected.length>0) {
+            this.shoppingCartSelected.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                num+=1
+              })
+            })
+          }
+        } else {
+          if (this.shoppingCartSelected.commList) {
+            this.shoppingCartSelected.commList.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                num+=1
+              })
+            })
+          }
+        }
+
+        return num
+      },
+      ...mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position'])
+    },
     mounted() {
       // mescroll初始化
       this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
@@ -109,9 +145,9 @@
     },
     activated () {
       if (this.$route.path === '/shoppingCart') {
-        this.nowTab = 0
-      } else {
         this.nowTab = 1
+      } else {
+        this.nowTab = 0
       }
       // 获取商品数量
       this.getGoodsNum()
@@ -146,6 +182,49 @@
       },
       goBack () {
         this.$router.go(-1)
+      },
+      // 整理
+      arrangement () {
+        this.arrangementFlag = true
+        this.settlementShow = false
+      },
+      // 关闭整理
+      closeArrangement () {
+        this.arrangementFlag = false
+        this.settlementShow = true
+      },
+      // 批量删除
+      deleteScGoods () {
+        let scId = []
+        let selectedDate = this.shoppingCartSelected
+        if (this.$route.path === '/shoppingCart') {
+          if (selectedDate.length>0) {
+            selectedDate.forEach((now,index)=>{
+              now.shoppingCartVOList.forEach((sonNow,sonIndex)=>{
+                scId.push(sonNow.sc_id)
+              })
+            })
+          }
+        } else {
+          if (selectedDate.commList) {
+            selectedDate.commList.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                scId.push(sonNow.sc_id)
+              })
+            })
+          }
+        }
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url: self.$apiApp + 'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: scId.join(',')
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          self.$refs['routerView'].getData()
+        })
       },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
@@ -204,7 +283,7 @@
         this.$store.commit('computedPriceChange', 0)
         //this.$store.commit('shoppingCartSelectedChange', [])
         this.$store.commit('allCheckedChange', false)
-        if (num === 1) {
+        if (num === 0) {
           this.$router.push('/shoppingCart/express')
         } else {
           this.$router.push('/shoppingCart')
@@ -217,6 +296,8 @@
         } else {
           this.settlementShow = false
         }
+        /* 关闭整理操作 */
+        this.closeArrangement()
       },
       changeType() {
         this.flag = true
@@ -225,6 +306,7 @@
         }, 1000)
       },
       allChecked(e) {
+        this.$store.commit('exitAllCheckedChange', true)
         this.$store.commit('allCheckedChange', e)
       },
       // 前往确认订单或弹出商品不足提示
@@ -450,7 +532,64 @@
     align-items: center;
     justify-content: center;
   }
-
+  /* 整理 */
+  .arrangement {
+    font-size .3rem
+    background-color white
+    border solid 1px #eee
+    width 1.2rem
+    height 1.2rem
+    border-radius .6rem
+    position fixed
+    display flex
+    flex-direction column
+    align-items center
+    justify-content center
+    bottom 3rem
+    right .5rem
+    color #999
+  }
+  .arrangement img{
+    width .6rem
+  }
+  .arrangementButtons {
+    position fixed
+    bottom $height-footer
+    display flex
+    width 100%
+    height 1.2rem
+    background-color white
+    justify-content space-between
+    padding 0 .2rem
+  }
+  .arrangementLeft {
+    flex-grow 1
+    width 0
+    align-items center
+    display flex
+  }
+  .arrangementRight {
+    flex-grow 1
+    width 0
+    align-items center
+    display flex
+    justify-content space-between
+  }
+  .arrangementRight div{
+    width 2.3rem
+    height 1rem
+    border-radius .1rem
+    display flex
+    align-items center
+    justify-content center
+    color white
+  }
+  .arrangementRight .delete{
+    background-color #F70057
+  }
+  .arrangementRight .ok{
+    background-color #FF8500
+  }
   /* 上拉刷新下俩加载 */
   #shoppingCartMescroll {
     /*padding-top: 1.3rem;*/

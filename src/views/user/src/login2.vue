@@ -46,8 +46,10 @@
 <script>
   import BScroll from 'better-scroll'
   import Agreement from '@/views/common/src/agreement'
+  import {getUserData} from 'assets/js/mixin'
   export default {
     name: "login2",
+    mixins: [getUserData],
     components: {
       Agreement
     },
@@ -212,8 +214,9 @@
         }).then(function (response) {
           self.loginFlag = true
           if (response && response.data.optSuc) {
+            self.getUserData()
             localStorage.setItem('token',response.data.data)
-            self.$router.push('/my')
+            self.$router.go(-1)
           }
         })
       },

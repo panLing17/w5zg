@@ -429,6 +429,11 @@ const router = new Router ({
           component: Page.commodityList
         },
         {
+          path: '/paymentResults',
+          name: '支付成功',
+          component: Goods.paymentResults
+        },
+        {
           path: '/shoppingCart',
           name: '购物车',
           component: ShoppingCart.index,
@@ -849,11 +854,6 @@ const router = new Router ({
               meta: {
                 keepAlive: true
               }
-            },
-            {
-              path: '/goods/paymentResults',
-              name: '支付成功',
-              component: Goods.paymentResults
             }
           ]
         }
@@ -958,7 +958,7 @@ router.afterEach((to, from) => {
     sharePhoto: getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
     shareTitle: '万物直供商城正品保障',
     shareDesc: '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买',
-    link: getLocationHref() + '/#' + to.fullPath
+    link: getLocationHref() + '/?#' + to.fullPath
   })
 })
 

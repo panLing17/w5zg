@@ -7,9 +7,9 @@
         .content.mescroll#goodsDisableTips
           .title 抱歉，本单部分商品库存不足或失效，已为您降到最大库存
           ul.goodsList
-            li(v-for="i in goodsList")
+            li(v-for="i in goodsList", v-if="i.status_flag !== 0")
               .img
-                .shade(v-if="i.status_flag !== 0")
+                .shade(v-if="i.status_flag !== 0 && i.status_flag !== 1")
                   span(v-if="i.status_flag === 2") 库存不足
                   span(v-if="i.status_flag === 3") 失效
                 img(:src="i.logo | img-filter")
@@ -18,9 +18,12 @@
                 ul.spec
                   li(v-for="item in i.specVOList") {{item.gspec_value}}
                 .storeNum 库存:{{i.storage_num}}
-          .bottom
+          .bottom(v-if="$route.path !== '/confirmOrder'")
             .goShoppingCart(@click="goShoppingCart") 返回购物车
-            .next(@click="next") 继续结算
+            .next(@click="next", v-if="nextFlag") 继续结算
+          .bottom(v-else)
+            .goShoppingCart(@click="$router.push('/shoppingCart')") 返回购物车
+            .next(v-if="deleteGoodsFlag", @click="disableGoodsDelete") 剔除商品
 
 </template>
 
@@ -33,8 +36,9 @@
       return {
         goodsList: [],
         show: false,
+        deleteGoodsFlag: false,
         normalGoods: false,
-        storeDownGoods: false
+        nextFlag: false
       }
     },
     watch: {
@@ -78,28 +82,90 @@
           this.selfCarryUpData()
         }
       },
+      // 删除失效商品
+      disableGoodsDelete () {
+        let self = this
+        let cartId = []
+        this.goodsList.forEach((now)=>{
+            if (now.status_flag.toString() === '0' || now.status_flag.toString() === '1') {
+              cartId.push(now.sc_id)
+            }
+        })
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/checkSubmitCartList',
+          params: {
+            scIdArray: cartId.join(",")
+          }
+        }).then(function (response) {
+          self.goodsList = []
+          // 正常商品购物车ID合集
+          let normalGoods = []
+          // 先判断是否有正常商品
+          response.data.data.forEach((now) => {
+            if (now.status_flag.toString() === '0' || now.status_flag.toString() === '1') {
+              normalGoods.push(now.sc_id)
+            }
+            self.goodsList.push(now)
+          })
+          let newData = self.$store.state.transfer
+
+          let fun = () => {
+            newData.forEach((now,index)=>{
+              now.shoppingCartVOList.forEach((sonNow, sonIndex)=>{
+                if (!normalGoods.includes(sonNow.sc_id)) {
+                  newData[index].shoppingCartVOList.splice(sonIndex,1)
+                  if(newData[index].shoppingCartVOList.length<1){
+                    newData.splice(index, 1)
+                  }
+                }
+              })
+            })
+            newData.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                if (!normalGoods.includes(sonNow.sc_id)) {
+                  fun()
+                }
+              })
+            })
+          }
+          fun()
+          self.$store.commit('transferGive', newData)
+          // 执行确认订单页计算金额
+          self.$parent.locationChange()
+          self.$parent.getVoucher()
+          // 关闭弹窗
+          self.show = false
+        })
+      },
       next() {
         this.close()
         let since = ''
         this.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+        console.log(this.goodsList)
         if (this.$store.state.transfer.length > 0) {
           this.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
         } else {
           this.$message.error('请勾选商品')
         }
       },
-      checkDisableGoods(array) {
-        this.$store.commit('transferGive', array)
+      // 传入回调代表来自确认订单，没有代表购物车
+      checkDisableGoods(array,fun) {
         let url = 'shoppingCart/checkSubmitCartList'
         let self = this
         let cartId = []
-        array.forEach((now) => {
-          now.shoppingCartVOList.forEach((sonNow) => {
-            cartId.push(sonNow.sc_id)
-          })
+        if (fun) {
+          cartId = array
+        } else {
+          array.forEach((now) => {
+            now.shoppingCartVOList.forEach((sonNow) => {
+              cartId.push(sonNow.sc_id)
+            })
 
-        })
-        cartId = cartId.join(',')
+          })
+          cartId = cartId.join(',')
+        }
+
 
         self.$ajax({
           method: 'get',
@@ -111,6 +177,8 @@
           self.goodsList = []
           let normalFlag = 0
           let downFlag = 0
+          // 不正常商品购物车ID合集
+          let noNormalGoods = []
           // 先判断是否有正常商品
           response.data.data.forEach((now) => {
             if (now.status_flag.toString() !== '0') {
@@ -119,26 +187,84 @@
             if (now.status_flag.toString() !== '1') {
               downFlag += 1
             }
+            if (now.status_flag.toString() !== '0' && now.status_flag.toString() !== '1') {
+              noNormalGoods.push(now.sc_id)
+            }
             self.goodsList.push(now)
           })
+
+          if (fun) {
+            array.split(',').forEach((now)=>{
+              console.log(noNormalGoods)
+              console.log(now)
+              console.log(noNormalGoods.includes(now-0))
+              if (noNormalGoods.includes(now-0)) {
+                self.deleteGoodsFlag = true
+              }
+            })
+          } else {
+            // 去除不能提交的商品，将数据存入
+            array.forEach((now,index) => {
+              now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
+                console.log(index)
+                if (noNormalGoods.includes(sonNow.sc_id)) {
+                  array[index].shoppingCartVOList.splice(sonIndex,1)
+                  if(array[index].shoppingCartVOList.length<1){
+                    array.splice(index, 1)
+                  }
+                }
+              })
+            })
+            let clearFun = () =>{
+              array.forEach((now,index) => {
+                now.shoppingCartVOList.forEach((sonNow, sonIndex) => {
+                  console.log(index)
+                  if (noNormalGoods.includes(sonNow.sc_id)) {
+                    array[index].shoppingCartVOList.splice(sonIndex,1)
+                    if(array[index].shoppingCartVOList.length<1){
+                      array.splice(index, 1)
+                    }
+                  }
+                })
+              })
+              array.forEach((now) => {
+                now.shoppingCartVOList.forEach((sonNow) => {
+                  if (noNormalGoods.includes(sonNow.sc_id)) {
+                    clearFun()
+                  }
+                })
+              })
+            }
+            clearFun()
+            console.log(noNormalGoods)
+            console.log(array)
+            self.$store.commit('transferGive', array)
+          }
+
+
           if (normalFlag > 0) {
             self.normalGoods = true
           } else {
             self.normalGoods = false
           }
-            // 再判断有无降库存商品
-          if (downFlag > 0) {
-            self.storeDownGoods = true
+            // 根据可提交商品长度判断是否显示继续提交
+          if(array.length>0){
+            self.nextFlag = true
           } else {
-            self.storeDownGoods = false
+            self.nextFlag = false
           }
-          if (!self.normalGoods || !self.storeDownGoods) {
-            let since = ''
-            self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
-            if (self.$store.state.transfer.length > 0) {
-              self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+
+          if (!self.normalGoods) {
+            if (fun) {
+              fun()
             } else {
-              self.$message.error('请勾选商品')
+              let since = ''
+              self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+              if (self.$store.state.transfer.length > 0) {
+                self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
+              } else {
+                self.$message.error('请勾选商品')
+              }
             }
           } else {
             self.show = true
@@ -239,12 +365,14 @@
 
   /* 底部按钮 */
   .bottom {
+    background-color: white;
     border-top: 1px solid #ddd;
     width: 100%;
     height: 1.2rem;
     line-height: 1.2rem;
     text-align: center;
     position: absolute;
+    z-index: 10;
     bottom: 0;
     left: 0;
     display: flex;

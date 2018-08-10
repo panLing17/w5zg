@@ -124,6 +124,7 @@
             this.$router.push('/my');
           } else {
             this.$router.go(-1);
+
           }
         },
         //跳到搜索订单页面

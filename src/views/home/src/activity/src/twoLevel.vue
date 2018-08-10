@@ -11,7 +11,7 @@
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
             li.brandItem(v-for="(item, index) in brandList", :key="index", @click="toNext(0, index)")
               img.brandImg(:src="item.image | img-filter")
-              .brandName {{item.title}}
+              <!--.brandName {{item.title}}-->
           .noData(v-if="noDataShow.brand") 暂无大牌推荐
           .more(v-if="brand.show", :class="{down: !brand.status, up: brand.status}", @click="dropCheck(0)") 更多品牌
         .block

@@ -1,6 +1,6 @@
 <template lang="pug">
   .expressBox(:class="{minHeight: goodsList.length>0}")
-    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')")
+    self-goods.goodsCard(ref="selfGoods", @tab="changeType", :goodsList="goodsList", @clear="$emit('clear')", @change="clickChangeStore")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods
       .zeroDesc1 购物车是空的！
@@ -10,9 +10,11 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
+    onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
 <script>
+  import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
   import {mapState} from 'vuex'
@@ -24,14 +26,16 @@
         flag: false,
         isdefault: false,
         nowTab: 1,
+        changeStoreFlag: false,
         goodsList: [],
-        disableGoodsList: []
+        disableGoodsList: [],
+        nowGoodsData: {}
       }
     },
     computed: {
       ...mapState(['shoppingCartSelected'])
     },
-    components: {selfGoods, disableGoods},
+    components: {selfGoods, disableGoods, onlyStoreSelect},
     mounted () {
       this.getData()
       bus.$on('selfCarryUpData',()=>{
@@ -39,8 +43,7 @@
       })
     },
     activated () {
-      this.swap()
-      // this.getData()
+       this.getData()
     },
     // beforeRouteEnter (to, from, next) {
     //   next(vm => {
@@ -48,36 +51,26 @@
     //   })
     // },
     methods: {
-      swap () {
-        if (this.$store.state.informGoods) {
-          this.$emit('scroll')
-          let topIndex = {}
-          let self = this
-          this.goodsList.forEach((now, index)=> {
-            now.shoppingCartVOList.forEach((sonNow, i) => {
-              if (self.$store.state.informGoods && self.$store.state.informGoods.rel_id == sonNow.sc_id && self.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
-                self.$store.commit('setInformGoods', null)
-                topIndex = {
-                  first: index,
-                  second: i
-                }
-              }
-            })
-          })
-          // 交换位置
-          if (topIndex) {
-            let temp = this.goodsList[topIndex.first].shoppingCartVOList[0]
-            if (topIndex.second != 0) {
-              this.goodsList[topIndex.first].shoppingCartVOList.splice(0, 1, this.goodsList[topIndex.first].shoppingCartVOList[topIndex.second])
-              this.goodsList[topIndex.first].shoppingCartVOList.splice(topIndex.second, 1, temp)
-            }
-            if (topIndex.first != 0) {
-              temp = this.goodsList[0]
-              this.goodsList.splice(0, 1, this.goodsList[topIndex.first])
-              this.goodsList.splice(topIndex.first, 1, temp)
-            }
-          }
-        }
+      storeChange (data) {
+        let storeId = this.nowGoodsData.sc_id
+        // 执行切换请求
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiApp + 'shoppingCart/shoppingCartCarryStore',
+          params: {
+            scId: storeId,
+            bsId: data.id
+          },
+        }).then(function (response) {
+          self.$message.success(response.data.msg)
+          self.getData()
+        })
+      },
+      // 用户点击切换自提门店按钮后
+      clickChangeStore (data) {
+        this.changeStoreFlag = true
+        this.nowGoodsData = data
       },
       tabChange (num) {
         this.nowTab = num
@@ -213,7 +206,9 @@
         let self = this
         let list = []
         this.disableGoodsList.forEach((now)=>{
-          list.push(now.sc_id)
+          now.shoppingCartVOList.forEach((sonNow)=>{
+            list.push(sonNow.sc_id)
+          })
         })
         list = list.join(',')
         self.$ajax({
