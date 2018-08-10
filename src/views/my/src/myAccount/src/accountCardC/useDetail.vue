@@ -1,5 +1,9 @@
 <template lang="pug">
   .useDetailBox
+    .totalPrice
+      span.desc 可用总额：
+      span.price
+      span.desc 元
     ul.contentList(v-if="!isEmpty")
       li.item(v-for="(item,index) in data")
         p.info ID: {{item.tn_serial_number}}
@@ -13,7 +17,7 @@
         img.icon(:src="iconImg(index)")
         img.bg(:src="bgImg")
     .nodata(v-if="isEmpty")
-      img(src="../../../../../assets/img/noCard.png")
+      img(src="../../../../../../assets/img/noCard.png")
 </template>
 
 <script>
@@ -30,7 +34,7 @@
       },
       filters: {
         number(value) {
-          return Number(value).toFixed(2);
+          return parseFloat(Number(value).toFixed(2));
         }
       },
       watch: {
@@ -58,13 +62,13 @@
           let img = '';
           switch (parseInt(this.selectType)) {
             case 0:
-              img = require('../../../../../assets/img/ff80ab@2x.png');
+              img = require('../../../../../../assets/img/ff80ab@2x.png');
               break;
             case 1:
-              img = require('../../../../../assets/img/cccccc@2x.png');
+              img = require('../../../../../../assets/img/cccccc@2x.png');
               break;
             case 2:
-              img = require('../../../../../assets/img/999999@2x.png');
+              img = require('../../../../../../assets/img/999999@2x.png');
               break;
           }
           return img;
@@ -96,14 +100,14 @@
           let img = '';
           if (this.selectType == 0) {
             if (this.data[index].tn_amount == this.data[index].tn_balance ) {
-              img = require('../../../../../assets/img/unused@2x.png');
+              img = require('../../../../../../assets/img/unused@2x.png');
             }else {
-              img = require('../../../../../assets/img/someues@2x.png');
+              img = require('../../../../../../assets/img/someues@2x.png');
             }
           }else if (this.selectType == 1) {
-            img = require('../../../../../assets/img/havebeenuesd@2x.png');
+            img = require('../../../../../../assets/img/havebeenuesd@2x.png');
           }else {
-            img = require('../../../../../assets/img/outofdate@2x.png');
+            img = require('../../../../../../assets/img/outofdate@2x.png');
           }
           return img;
         }
@@ -113,9 +117,9 @@
 
 <style scoped>
   .useDetailBox {
-    padding: 0 .2rem;
+    padding: 0.26rem .4rem 0;
     box-sizing: border-box;
-    margin-top: 2.43rem;
+    margin-top: 2.26rem;
     height: calc(100vh - 2.43rem);
     overflow: auto;
   }
@@ -200,5 +204,22 @@
   }
   img {
     pointer-events: none;
+  }
+  .totalPrice {
+    height: 1.33rem;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 .53rem;
+  }
+  .desc {
+    color: #333;
+    font-size: .37rem;
+  }
+  .price {
+    color: #f70057;
+    font-size: .42rem;
+    font-weight: bold;
+    margin-left: .2rem;
   }
 </style>

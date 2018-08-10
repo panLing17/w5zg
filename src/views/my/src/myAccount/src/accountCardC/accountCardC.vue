@@ -1,17 +1,17 @@
 <template lang="pug">
   .accountCardBox
-    nav-bar(background="white", style="position: fixed; z-index: 200;")
+    nav-bar(background="#f70057", style="position: fixed; z-index: 200;")
       .topLeft(slot="left", @click="$router.go(-1)")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center") 现金券
+        img(src="./back.png", style="width:.586rem")
+      .topCenter(slot="center", style="color:#fff;") 现金券
       .topRight(slot="right")
-        p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="$router.push('/my/cashDetailC')") 明细
+        img(src="./desc.png", style="width: 2rem")
+        <!--p(style="color:#f50057; font-size: .4rem; font-weight: normal;", @click="$router.push('/my/cashDetailC')") 明细-->
     .tabBox
       ul.tabList
-        li.tabItem(:class="{'active':listActive===0}",@click="tabChange(0)") 未使用
-        li.tabItem(:class="{'active':listActive===1}",@click="tabChange(1)") 已使用
-        li.tabItem(:class="{'active':listActive===2}",@click="tabChange(2)") 已过期
-        li.line(:style="{'left':listActive*33.33+'%'}")
+        li.tabItem.l(:class="{'active':listActive===0}",@click="tabChange(0)") 可用
+        li.tabItem.c(:class="{'active':listActive===1}",@click="tabChange(1)") 已使用
+        li.tabItem.r(:class="{'active':listActive===2}",@click="tabChange(2)") 已过期
     transition(name="fade", mode="out-in")
       router-view.mescroll#Mescroll
 </template>
@@ -49,39 +49,61 @@
     overflow: auto;
   }
   .tabBox {
-    height: .93rem;
-    padding: 0 .2rem;
-    box-sizing: border-box;
+    height: .96rem;
     background: #fff;
     position: fixed;
     top: 1.3rem;
     left: 0;
     width: 100%;
     z-index: 150;
+    border-bottom: 1px solid #cecece;
   }
   .tabList {
     display: flex;
-    position: relative;
   }
   .tabItem {
-    flex: 1;
-    width: 100%;
     height: 100%;
-    line-height: .93rem;
+    line-height: .96rem;
     color: rgb(51,51,51);
     font-size: .4rem;
     text-align: center;
+    position: relative;
+  }
+  .l, .r {
+    width: 35%;
+  }
+  .l:before, .r:before {
+    content: '';
+    width: 1px;
+    height: .66rem;
+    background: #cecece;
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .l:before {
+    right: 0;
+  }
+  .r:before {
+    left: 0;
+  }
+  .c {
+    width: 30%;
   }
   .tabItem.active {
     color: rgb(245,0,87);
   }
-  .line {
-    width: 33.33%;
-    height: .053rem;
-    background: rgb(245,0,87);
+  .tabItem.active:after {
+    content: '';
+    width: 1.17rem;
+    height: .08rem;
+    background: #f70057;
+    display: block;
     position: absolute;
     bottom: 0;
-    transition: all 0.5s;
+    left: 50%;
+    transform: translateX(-50%);
   }
   img {
     pointer-events: none;
