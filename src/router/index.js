@@ -429,10 +429,11 @@ const router = new Router ({
             {
               path: '/',
               name: '购物车',
+              redirect: '/shoppingCart/express',
               component: ShoppingCart.shoppingCart,
               children: [
                 {
-                  path: '/',
+                  path: '/shoppingCart/self',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
                 },
