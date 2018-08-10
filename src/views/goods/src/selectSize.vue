@@ -13,7 +13,7 @@
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
             .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
             .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
-            .store(v-if="$parent.initPriceFlag") 有货
+            .store(v-if="$parent.initPriceFlag") {{$parent.goodsData.storage_num>0 ?  '有货' : '无货'}}
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
             .size
               span(v-if="selectedSpec.length === 0") 选择规格
@@ -31,7 +31,7 @@
               li(v-for="(item,fatherIndex) in spec")
                 .title {{item.specName}}
                 ul.content
-                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
+                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc')") {{i.value}}
                   p(style="clear:both")
             .count
               span 购买数量
@@ -63,8 +63,8 @@
               .freightDesc 运费
               .freightPrice {{freightPrice}}元
         .bottomButton(v-if="onlySelectSpec")
-          .left(v-if="noGoodsL", @click="goBuy") 立即购买
-          .right(v-if="noGoodsL", @click="addCart") 加入购物车
+          .left(v-if="noGoodsL1", @click="goBuy") 立即购买
+          .right(v-if="noGoodsL2", @click="addCart") 加入购物车
           .right2(v-if="noGoodsE", @click="reachInform()") 到货通知
         .bottomButton(v-else)
           .right(v-if="noGoodsL",@click="confirm") 确定
@@ -80,6 +80,8 @@
     data () {
       return {
         noGoodsE: false,
+        noGoodsL1: true,
+        noGoodsL2: true,
         noGoodsL: true,
         skuIds: '',
         noticeFlag: '',
@@ -396,7 +398,8 @@
         this.$emit('buy')
       },*/
       // 校验库存与获得skuId（此请求每次挂载后都会执行）
-      getStoreNum (e,key,index, disable) {
+      getStoreNum (e,key,index, disable, i_gray, item_valueIndex, ccc) {
+        console.log(ccc)
         let date = new Date()
         // 为置灰直接弹出，没有操作
         if (disable) {
@@ -454,12 +457,16 @@
               skuGoodsData.gi_img_url = response.data.data.logo
               self.list.splice(0,1,skuGoodsData)
               self.realGoodsData = response.data.data
-              if (self.realGoodsData.storage_num<=0) {
-                self.noGoodsL = false
-                self.noGoodsE = true
-              } else{
-                self.noGoodsL = true
-                self.noGoodsE = false
+              if (ccc === 'suc') {
+                if (self.realGoodsData.storage_num<=0) {
+                  self.noGoodsL1 = false
+                  self.noGoodsL2 = false
+                  self.noGoodsE = true
+                } else{
+                  self.noGoodsL1 = true
+                  self.noGoodsL2 = true
+                  self.noGoodsE = false
+                }
               }
               self.skuIds = response.data.data.gsku_id
               // vuex中保存skuId
@@ -667,10 +674,14 @@
             self.list.splice(0,1,skuGoodsData)
           }
           self.realGoodsData = response.data.data
-          if (self.realGoodsData.storage_num<=0) {
-            self.noGoods = false
-          } else{
-            self.noGoods = true
+          if (ccc === 'suc') {
+            if (self.realGoodsData.storage_num<=0) {
+              self.noGoodsL = false
+              self.noGoodsE = true
+            } else{
+              self.noGoodsL = true
+              self.noGoodsE = false
+            }
           }
           self.skuIds = response.data.data.gsku_id
           // vuex中保存skuId
@@ -840,10 +851,6 @@
   }
   .photos li{
     /*transition: width .3s, height .3s;*/
-    /*height: 5rem;*/
-    /*width: 5rem;*/
-    /*border-radius: .3rem;*/
-    /*overflow: hidden;*/
   }
   .photos li img {
     width: 100%;
