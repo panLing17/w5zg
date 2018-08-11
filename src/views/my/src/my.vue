@@ -93,9 +93,12 @@
               img(src="../../../assets/img/daohuotongzhi@2x.png")
               .badge(v-if="reachGoodsNum && reachGoodsNum!==0", :class="{top: reachGoodsNum.toString().length>3}") {{reachGoodsNum.toString().length>3?'999':reachGoodsNum}}
               .words 到货通知
-            li(@click="$router.push('/service')")
+            li(@click="$router.push('/service')").service
               img(src="../../../assets/img/service2@2x.png")
               .words 客服中心
+            li(@click="$router.push('/cProblems')").cProblem
+              img(src="../../../assets/img/cProblems.png")
+              .words 常见问题
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(ref="recommend")
@@ -624,6 +627,12 @@
   }
   .myTreasure ul.bottom li:nth-child(5){
     margin-right: 0;
+  }
+  .myTreasure ul.bottom li.service{
+    margin-right: .57rem;
+  }
+  .myTreasure ul.bottom li.cProblem{
+
   }
 	.myTreasure ul.bottom li img{
 		width: .96rem;

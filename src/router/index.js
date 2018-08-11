@@ -42,6 +42,9 @@ import Collection from '../views/collection/index.js'
 //通知
 import Inform from '../views/inform/index.js'
 
+// 常见问题
+import CProblems from '../views/cProblems/index.js'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -456,6 +459,11 @@ const router = new Router ({
               ]
             }
           ]
+        },
+        {
+          path: '/cProblems',
+          name: '收藏夹',
+          component: CProblems.cProblem
         },
         {
           path: '/collection',
