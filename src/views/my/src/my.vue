@@ -136,6 +136,17 @@
     },
     components: {myGuide, recommend},
     computed: mapState(['userData', 'position']),
+    watch:{
+      '$route'(to,from) {
+        if (from.path === '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0)
+            }
+          })
+        }
+      }
+    },
     created () {
       this.getOrderCount()
     },
@@ -146,11 +157,7 @@
       this.getFootmarkNum()
       this.getOrderCount()
       this.getNetcardsCount()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0)
-        }
-      })
+
       // 判断页面是否向上滚动
       // window.addEventListener('scroll',this.judgeScroll,true);
       // 改变下拉刷新的样式

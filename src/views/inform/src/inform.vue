@@ -50,18 +50,33 @@
       },
       ...mapState(['position'])
     },
+    watch:{
+      '$route'(to,from) {
+        if (from.path === '/my') {
+          this.mescroll.resetUpScroll()
+        }
+        if (from.path === '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0)
+            }
+          })
+        }
+      }
+    },
     activated(){
       this.judgeType()
       if (this.number != this.$route.query.num) {
         this.number = this.$route.query.num
         this.mescroll.resetUpScroll()
-      } else {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
       }
+      // else {
+      //   this.position.forEach((now) => {
+      //     if (now.path === this.$route.path) {
+      //       this.mescroll.scrollTo(now.y, 0)
+      //     }
+      //   })
+      // }
     },
     beforeDestroy(){
       this.mescroll.hideTopBtn()
