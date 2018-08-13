@@ -63,13 +63,13 @@
               .freightDesc 运费
               .freightPrice {{freightPrice}}元
         .bottomButton(v-if="onlySelectSpec")
-          .left(v-if="noGoodsL1", @click="goBuy") 立即购买
-          .right(v-if="noGoodsL2", @click="addCart") 加入购物车
-          .right2(v-if="noGoodsE", @click="reachInform()") 到货通知
+          .left(v-show="noGoodsL", @click="goBuy") 立即购买
+          .right(v-show="noGoodsL", @click="addCart") 加入购物车
+          .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
         .bottomButton(v-else)
-          .right(v-if="noGoodsL",@click="confirm") 确定
-          .right2(v-if="noGoodsE", @click="reachInform()") 到货通知
-        .notice(v-if="noticeFlag") 如果30天内到货，会通过系统消息提醒您
+          .right(v-show="noGoodsL",@click="confirm") 确定
+          .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
+        .notice(v-show="noticeFlag") 如果30天内到货，会通过系统消息提醒您
 </template>
 
 <script>
@@ -80,8 +80,6 @@
     data () {
       return {
         noGoodsE: false,
-        noGoodsL1: true,
-        noGoodsL2: true,
         noGoodsL: true,
         skuIds: '',
         noticeFlag: '',
@@ -458,12 +456,10 @@
               self.realGoodsData = response.data.data
               if (ccc === 'suc') {
                 if (self.realGoodsData.storage_num<=0) {
-                  self.noGoodsL1 = false
-                  self.noGoodsL2 = false
+                  self.noGoodsL = false
                   self.noGoodsE = true
                 } else{
-                  self.noGoodsL1 = true
-                  self.noGoodsL2 = true
+                  self.noGoodsL = true
                   self.noGoodsE = false
                 }
               }
