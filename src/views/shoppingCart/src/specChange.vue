@@ -86,12 +86,12 @@
             this.selfCarryUpData()
           }*/
           this.$parent.$parent.settlementShow = false
-          this.$parent.$parent.mescroll.lockDownScroll( true )
+          this.$parent.$parent.mescroll.destroy();
         } else {
           this.mescroll.hideTopBtn();
           this.mescroll.destroy();
           this.$parent.$parent.settlementShow = true
-          this.$parent.$parent.mescroll.lockDownScroll( false )
+          this.$parent.$parent.mescrollInt()
         }
       }
     },

@@ -107,15 +107,7 @@
     mounted() {
       this.getUserDat()
       // mescroll初始化
-      this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      }, (obj) => {
-
-      })
+      this.mescrollInt()
       // 动画hack
       this.animateHack()
       if (this.$route.path === '/shoppingCart/self') {
@@ -186,6 +178,17 @@
       this.mescroll.destroy()
     },
     methods: {
+      mescrollInt () {
+        this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }, (obj) => {
+
+        })
+      },
       goBack () {
         this.$router.go(-1)
       },
