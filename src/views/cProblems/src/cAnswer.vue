@@ -64,7 +64,9 @@
   }
   .cont ul li{
     background-color: #fff;
-    margin-bottom: .05rem;
+  }
+  .cont ul li:last-child{
+    margin-bottom: 0;
   }
   .cont ul li .up{
     padding: .34rem .4rem .32rem;
@@ -73,6 +75,7 @@
     align-items: center;
     color: #333;
     font-size: .4rem;
+    border-bottom: .05rem solid #f2f2f2;
   }
   .cont ul li .down{
     background-color: #f2f2f2;
