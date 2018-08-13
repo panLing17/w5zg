@@ -752,6 +752,8 @@
           // 改造格式
           let newData = self.specGray(response.data.data)
           let informGoods = self.$store.state.informGoods
+          //let informGoods = {gspec_values: "150ml, 黑色"}
+          //console.log(informGoods)
           newData.forEach((now)=>{
             now.valueIndex = -1
             now.specValue.forEach((sonNow, sonIndex)=>{
@@ -762,7 +764,9 @@
               //   now.valueIndex = -1
               // }
               if (informGoods) {
-                let s = informGoods.gspec_values.split(',').slice(0, informGoods.gspec_values.split(',').length-1)
+                //console.log(informGoods.gspec_values.split(','))
+                let s = informGoods.gspec_values.split(',')
+                //console.log(s)
                 s.forEach((item) => {
                   if (sonNow.value.trim() === item.trim()) {
                     now.valueIndex = sonIndex
