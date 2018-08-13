@@ -2,7 +2,6 @@
   div
     nav-bar(background="rgb(247,0,87)" color="white")
       .topLeft(slot="left")
-
       .topCenter(slot="center", style="color:white") 购物车
       .topRight(slot="right")
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")

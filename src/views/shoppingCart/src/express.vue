@@ -10,6 +10,7 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
+    specChange(ref="specChange")
     onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
@@ -19,6 +20,7 @@
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
   import {mapState} from 'vuex'
+  import specChange from './specChange'
   import {bus} from '../../../bus'
   export default {
     name: 'express',
@@ -35,7 +37,7 @@
         disableGoods: []
       }
     },
-    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect},
+    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect,specChange},
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
@@ -78,6 +80,10 @@
       // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
+      openSpecChange (id, spec) {
+        this.$refs['specChange'].show = true
+        this.$refs['specChange'].init(id, spec)
+      },
       storeChange (data) {
         let {
           bs_city_no: cityId,

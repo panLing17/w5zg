@@ -19,7 +19,7 @@
                 .info(@click.stop="")
                   .text
                     .name(@click="goGoodsDetail(i.gspu_id)") {{i.gi_name}}
-                    .spec
+                    .spec(@click="openSpecChange(i.gspu_id, i)")
                       span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
                       img(src="../../../assets/img/ic_page_xljt@2x.png")
                     w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
@@ -112,6 +112,10 @@
       }
     },
     methods: {
+      // 打开修改规格
+      openSpecChange (id,spec) {
+        this.$parent.openSpecChange(id, spec)
+      },
       // 前往商品详情
       goGoodsDetail(id) {
         this.$router.push({
