@@ -4,11 +4,25 @@
       .topLeft
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 现金券
+    .cont
+      ul
+        li
+          .up
+            .left 什么是现金券？
+            .right
+              img(src="")
+              img(src="")
+          .down 顾客在万物直供商城购物，本商城自动抵扣现金券最高额，顾客仅支付用券后余额。
 </template>
 
 <script>
     export default {
-        name: "cAnswer"
+        name: "cAnswer",
+        data() {
+          return{
+            contList:[{title:'什么是现金券？'},{title:'现金券的作用'},{title:'如何得到现金券'}]
+          }
+        }
     }
 </script>
 
@@ -16,7 +30,7 @@
   .wrapNav{
     width: 100%;
     height: 100vh;
-    background-color: #f2f2f2;
+    background-color: #fff;
     position: fixed;
   }
   .navbar{
@@ -39,5 +53,15 @@
   .topCenter{
     margin-left: 3.4rem;
     font-size: .48rem;
+  }
+  .cont{
+    margin-top: 1.28rem;
+  }
+  .cont ul{
+    padding-top: .16rem;
+    background-color: #f2f2f2;
+  }
+  .cont ul li{
+    background-color: #fff;
   }
 </style>
