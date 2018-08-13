@@ -12,7 +12,8 @@
             .right
               img(src="../../../assets/img/zhankai@2x.png", v-if="!item.ansFlag")
               img(src="../../../assets/img/shouqi@2x.png", v-if="item.ansFlag")
-          .down(v-if="item.ansFlag") 顾客在万物直供商城购物，本商城自动抵扣现金券最高额，顾客仅支付用券后余额。
+          transition(name="slideInDown")
+            .down(v-if="item.ansFlag") 顾客在万物直供商城购物，本商城自动抵扣现金券最高额，顾客仅支付用券后余额。
 </template>
 
 <script>
@@ -82,5 +83,14 @@
   .cont li .right img{
     width: .58rem;
     height: .58rem;
+  }
+  .slideInDown-enter-active,
+  .slideInDown-leave-active{
+    transition: all .2s ease-out;
+  }
+  .slideInDown-enter,
+  .slideInDown-leave-to{
+    transform: translateY(-5px);
+    opacity: 0;
   }
 </style>
