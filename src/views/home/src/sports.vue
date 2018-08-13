@@ -93,7 +93,7 @@
           }
 
           if (w5zgApp) {
-            w5zgApp.share()
+            w5zgApp.share('标题','内容','图片','分享地址')
             return
           }
 

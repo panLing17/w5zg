@@ -119,8 +119,8 @@
       ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket', 'recommendAdvert'])
     },
     created() {
-      this.bannerLoadCount = 0
       this.adSub = 0
+      console.log(window.navigator)
     },
     activated () {
       // 首页分享
