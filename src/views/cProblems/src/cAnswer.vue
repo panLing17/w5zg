@@ -65,9 +65,6 @@
   .cont ul li{
     background-color: #fff;
   }
-  .cont ul li:last-child{
-    margin-bottom: 0;
-  }
   .cont ul li .up{
     padding: .34rem .4rem .32rem;
     display: flex;
