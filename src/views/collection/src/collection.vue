@@ -1,13 +1,12 @@
 <template lang="pug">
   .wrapNav
-    .navbar
+    .navbar(ref="nav")
       .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 收藏夹
       .topRight(@click="zhengli", v-if="buzheng") {{zheng == 0 ?'整理':'完成'}}
-    .empty(v-if="isEmpty") 暂无收藏
-    .contList(ref="conts", v-else="isEmpty")
-      div(:class="{zhengpP:zhengPFlag}")
+    .contList(ref="conts", v-show="contsFlag").mescroll#mescrollConts
+      div
         ul(:class="{zhengS:zhengSFlag}")
           li(v-for="item in contLists", v-if="item.gi_status === '221'")
             .checkbox(v-if="zheng != 0")
@@ -21,13 +20,14 @@
           li.title
             .left 失效商品共<span>{{indexN}}</span>件
             .right(@click="clearLost") 清空失效商品
-          li(v-for="item in contLists", v-if="item.gi_status === '224'")
+          li(v-for="item in contLists", v-if="item.gi_status !== '221'")
             .lefter
               .mask 失效
               img(:src="item.gi_image_url | img-filter", @click.prevent="")
             .righter
               .textLose {{item.gi_name}}
               .lost 该商品已失效，请重新选择
+    emptys(v-if="!contsFlag")
     .clearFixed(v-if="zheng != 0")
       .checkAll
         w-checkbox(@change="changeAll", v-model="selectedAll")
@@ -37,11 +37,14 @@
 
 <script>
   import {mapState} from 'vuex'
-  import BScroll from 'better-scroll'
+  //import BScroll from 'better-scroll'
+  import emptys from './emptys'
   export default {
     name: "collection",
+    components:{emptys},
     data() {
       return {
+        contsFlag: true,
         buzheng: '',
         zhengppFlag: false,
         zhengPFlag: false,
@@ -53,7 +56,6 @@
         selectedAll: '',
         contLists: [],
         lostList: [{}, {}]
-
       }
     },
     computed: {
@@ -63,24 +65,57 @@
         }
         return false
       },
-      ...mapState(['collectionCheckedAll']),
+      ...mapState(['collectionCheckedAll','position']),
+    },
+    beforeDestroy(){
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
     },
     activated() {
       this.zheng = 0
       this.getLists()
+      this.zhengSFlag = false
+      this.quchuStyle()
+
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0)
+        }
+      })
     },
     mounted() {
       this.getLists()
-      this.judgeAndOrIos()
+      //this.judgeAndOrIos()
+
+      this.$mescrollInt('mescrollConts', this.upCallback, ()=>{
+
+      },(obj)=>{
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+        this.quchuStyle()
+      })
+
+
     },
     methods: {
+      // 锁定或者解锁上拉加载
+      lockUpDown (isLock) {
+        this.mescroll.lockUpScroll(isLock)
+      },
+      quchuStyle(){
+        let mescrollUpwarp = document.getElementsByClassName('mescroll-upwarp')[0]
+        mescrollUpwarp.style.display = 'none'
+        //this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+      },
       // 调整只有失效商品的样式
       tiaozheng(){
         let x = 0
         let rel
         this.contLists.forEach((item)=>{
           if (item.gi_status === '221') {
-            x+=1
+            x += 1
           }
         })
         rel = x
@@ -107,7 +142,7 @@
       },
       // 去商品详情
       gotoGoods(item){
-        if (this.zheng ==0) {
+        if (this.zheng == 0) {
           this.$router.push({path:'/goodsDetailed',query:{id:item.gspu_id}})
         }
       },
@@ -116,7 +151,7 @@
         let arr = []
         let b
         this.contLists.forEach((item) => {
-          if (item.gi_status === '224') {
+          if (item.gi_status !== '221') {
             arr.push(item.fi_id)
           }
         })
@@ -130,7 +165,6 @@
             fiIdArray: b
           }
         }).then(function (res) {
-          console.log(res)
           if (res.data.code === '081') {
             self.getLists()
             self.deleteFlag = 0
@@ -150,7 +184,6 @@
       },
       // 删除收藏商品
       deleteGoods() {
-        console.log(this.judgeSelect())
         if (this.judgeSelect()) {
           let arr = []
           let b
@@ -169,7 +202,6 @@
               fiIdArray: b
             }
           }).then(function (res) {
-            console.log(res)
             if (res.data.code === '081') {
               self.zheng = 0
               self.zhengSFlag = false
@@ -186,7 +218,6 @@
           url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteList',
           params: {}
         }).then(function (res) {
-          console.log(res.data.data)
           for (let i = 0; i < res.data.data.length; i++) {
             if (res.data.data[i].gi_status === '221') {
               res.data.data[i].selected = false
@@ -195,7 +226,7 @@
           self.contLists = res.data.data
           let a = 0
           self.contLists.forEach((item) => {
-            if (item.gi_status === '224') {
+            if (item.gi_status !== '221') {
               a += 1
             }
           })
@@ -206,17 +237,25 @@
             self.deleteFlag = 0
           }
           self.tiaozheng()
-          console.log(self.contLists)
-          self.$nextTick(() => {
-            if (!self.cScroll) {
-              self.cScroll = new BScroll(self.$refs.conts, {
-                click: true,
-                probeType: 3
-              })
-            } else {
-              self.cScroll.refresh()
-            }
-          })
+          if (self.contLists.length === 0) {
+            self.contsFlag = false
+          } else {
+            self.contsFlag = true
+            // this.$nextTick(() => {
+            //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
+            // })
+            // self.$nextTick(() => {
+            //   self.$refs.conts.style.height = window.innerHeight - parseFloat(self.$refs.nav.offsetHeight) + 'px'
+            //   if (!self.cScroll) {
+            //     self.cScroll = new BScroll(self.$refs.conts, {
+            //       click: true,
+            //       probeType: 3
+            //     })
+            //   } else {
+            //     self.cScroll.refresh()
+            //   }
+            // })
+          }
         })
       },
       // 复选框选择
@@ -250,43 +289,48 @@
         } else {
           this.zhengSFlag = false
         }
-        this.$nextTick(()=>{
-          this.cScroll.refresh()
-        })
-      }
+        // this.$nextTick(()=>{
+        //   this.cScroll.refresh()
+        // })
+      },
+
+      upCallback: function () {
+        this.mescroll.endErr()
+      },
     }
   }
 </script>
 
 <style scoped lang="stylus">
-  @import '~assets/stylus/variable.styl'
-  .empty{
+  #mescrollConts{
     position: fixed;
     top: 1.28rem;
     bottom: 0;
-    width: 100%;
-    line-height: 100vh;
-    font-size: .5rem;
-    text-align: center;
-    color: #666;
+    height: auto;
+  }
+  @import '~assets/stylus/variable.styl'
+  .wrapNav{
+    position: fixed;
+    top: 0;
+    bottom: 0;
     background-color: #f2f2f2;
-    height: "calc(100vh - %s)" % $height-header;
   }
   .navbar{
     position: fixed;
     top: 0;
+    left: 0;
     width: 100%;
     height: 1.28rem;
     border-bottom: 1px solid #f2f2f2;
     background: rgb(244, 0, 87);
     display: flex;
     align-items: center;
-    z-index: 1;
   }
   .topLeft{
     padding-left: .36rem;
     padding-top: .1rem;
   }
+
   .topCenter{
     margin-left: 3.7rem;
     font-size: .48rem;
@@ -301,12 +345,14 @@
   }
   /*内容列表*/
   .contList{
-    position: fixed;
-    top: 1.28rem;
-    bottom: 0;
+    //position: fixed;
+    //top: 1.28rem;
+    //bottom: 0;
+    //margin-top: 1.28rem;
     width: 100%;
-    height: "calc(100vh - %s)" % $height-header;
+    //height: "calc(100vh - %s)" % $height-header;
     background-color: #f2f2f2;
+    /*z-index: 1;*/
   }
   .zhengpp{
     margin-top: 0 !important;

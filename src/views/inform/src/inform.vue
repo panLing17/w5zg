@@ -4,7 +4,10 @@
       .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter 通知
-    .empty(v-if="isEmpty") 暂无通知
+    .empty(v-if="!contLists.length")
+      .imgs
+        img(src="../../../assets/img/Group 7@2x.png")
+      .goToHome(@click="$router.push('/home')") 去商城首页
     .contList.mescroll#collectMescroll
       ul
         li(v-for="item in contLists")
@@ -19,7 +22,7 @@
             .rightB
               .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
               .text(v-if="item.msType !== '802'") {{item.ms_title}}
-              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]?';' + item.gspec_values.toString().split(',')[1]:''}}
+              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]? ';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
                 .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元
@@ -47,37 +50,71 @@
       },
       ...mapState(['position'])
     },
-    activated(){
-      this.judgeType()
-      if (this.number != this.$route.query.num) {
-        this.number = this.$route.query.num
-        this.mescroll.resetUpScroll()
-      } else {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
+    watch:{
+      '$route'(to,from) {
+        if (from.path === '/my') {
+          console.log(this.$route.query.num)
+          this.$store.commit('setInformNum', this.$route.query.num)
+          this.judgeType()
+          this.mescroll.resetUpScroll()
+        }
+        if (from.path === '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0)
+            }
+          })
+        }
       }
+    },
+    activated(){
+      //this.judgeType()
 
+      // if (this.number != this.$route.query.num) {
+      //   this.number = this.$route.query.num
+      //   this.mescroll.resetUpScroll()
+      // }
+      // else {
+      //   this.position.forEach((now) => {
+      //     if (now.path === this.$route.path) {
+      //       this.mescroll.scrollTo(now.y, 0)
+      //     }
+      //   })
+      // }
+    },
+    beforeDestroy(){
+      this.mescroll.hideTopBtn()
+      this.mescroll.destroy()
     },
     beforeRouteLeave(to, from, next){
-
-      if (to.path === '/my'){
+      if (to.path === '/my') {
+        let types = 0
+        if (this.$store.state.informNum === 0) {
+          types = ''
+        }
+        if (this.$store.state.informNum === 1) {
+          types = 802
+        }
         let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'ucMessage/updateMessageStatus',
           params:{
-            msStatus: '5302'
+            msType: types
           }
-        }).then(function (res) {
-          console.log(res)
+        }).then( (res)=> {
+          console.log('111')
+          //self.mescroll.resetUpScroll()
+          next()
         })
+        next(false)
+      } else {
+        next()
       }
-      next()
+
     },
     mounted(){
+      this.$store.commit('setInformNum', this.$route.query.num)
       this.judgeType()
       this.$mescrollInt('collectMescroll', this.upCallback, ()=>{
 
@@ -140,7 +177,8 @@
                     }
                   })
                 }
-              })            }
+              })
+            }
           })
 
         } else if (e.msType === '802') {
@@ -193,20 +231,47 @@
 </script>
 
 <style scoped>
+  .wrapNav{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
   .empty{
     width: 100%;
-    line-height: 100vh;
-    font-size: .5rem;
     text-align: center;
     color: #666;
+    background-color: #f2f2f2;
     position: fixed;
     top: 1.28rem;
     bottom: 0;
+    /*margin-top: 1.28rem;*/
+    padding-top: 1.06rem;
+    height: calc(100vh - 1.28rem);
+    z-index: 200;
+  }
+  .imgs{
+    /*margin-top: 1.06rem;*/
+  }
+  .imgs img{
+    width: 2.96rem;
+    height: 3.38rem;
+  }
+  .goToHome{
+    width: 4.26rem;
+    height: 1.17rem;
+    line-height: 1.17rem;
+    margin: .74rem auto 0;
+    background-color: #F70057;
+    border-radius: .26rem;
+    color: #fff;
+    font-size: .4rem;
   }
   #collectMescroll{
     top: 1.28rem;
     bottom: 0;
     position: fixed;
+    z-index: 100;
+    background-color: #f2f2f2;
   }
   .active{
     font-weight: 600 !important;

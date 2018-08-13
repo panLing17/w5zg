@@ -139,11 +139,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-<<<<<<< .merge_file_a07948
-      select-size(v-if="selectSizeShow", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
-=======
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
->>>>>>> .merge_file_a04700
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -154,7 +150,6 @@
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
     // 选择收货地址
     location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
-
     // 新手教程
     //goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
@@ -182,6 +177,8 @@
     name: "goods-detailed",
     data () {
       return {
+        k: '',
+        j: '',
         xuanfukuang: '',
         collectSucS: '',
         fiIds: '',
@@ -247,7 +244,6 @@
       }
     },
     computed:{
-
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -391,12 +387,16 @@
       // 收藏成功&&取消收藏成功
       collectionSuc(){
         this.collectSucS = true
+        this.k = true
+        this.j = true
         let self = this
         let a = 2
         self.time1 = setInterval(function () {
           a--
           if (a === 0) {
             self.collectSucS = false
+            self.k = false
+            self.j = false
             clearInterval(self.time1)
           }
         },1000)
@@ -408,21 +408,22 @@
       // 收藏
       changeCollect1(){
         if (localStorage.hasOwnProperty('token')) {
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
-            params: {
-              gspuId: self.$route.query.id
-            }
-          }).then(function (res) {
-            if (res.data.data.fiId) {
-              //self.collectFlag = 1
-              self.xuanfukuang = 1
-              self.collectionSuc()
-              self.isCollect()
-            }
-          })
+          if (!this.k) {
+            let self = this
+            self.$ajax({
+              method: 'post',
+              url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+              params: {
+                gspuId: self.$route.query.id
+              }
+            }).then(function (res) {
+              if (res.data.data.fiId) {
+                self.xuanfukuang = 1
+                self.collectionSuc()
+                self.isCollect()
+              }
+            })
+          }
         } else{
           this.$router.push('/login/login2')
         }
@@ -430,22 +431,23 @@
       },
       // 取消收藏
       changeCollect2(){
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
-          params: {
-            fiId: self.fiIds
-          }
-        }).then(function (res) {
-          console.log(res)
-          if (res.data.code === '081') {
-            //self.collectFlag = 0
-            self.xuanfukuang = 2
-            self.collectionSuc()
-            self.isCollect()
-          }
-        })
+        if (!this.j) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
+            params: {
+              fiId: self.fiIds
+            }
+          }).then(function (res) {
+            console.log(res)
+            if (res.data.code === '081') {
+              self.xuanfukuang = 2
+              self.collectionSuc()
+              self.isCollect()
+            }
+          })
+        }
       },
       // 商品是否收藏
       isCollect(){
@@ -749,10 +751,9 @@
         }).then(function (response) {
           // 改造格式
           let newData = self.specGray(response.data.data)
-<<<<<<< .merge_file_a07948
           let informGoods = self.$store.state.informGoods
-=======
->>>>>>> .merge_file_a04700
+          //let informGoods = {gspec_values: "150ml, 黑色"}
+          //console.log(informGoods)
           newData.forEach((now)=>{
             now.valueIndex = -1
             now.specValue.forEach((sonNow, sonIndex)=>{
@@ -763,7 +764,9 @@
               //   now.valueIndex = -1
               // }
               if (informGoods) {
-                let s = informGoods.gspec_values.split(',').slice(0, informGoods.gspec_values.split(',').length-1)
+                //console.log(informGoods.gspec_values.split(','))
+                let s = informGoods.gspec_values.split(',')
+                //console.log(s)
                 s.forEach((item) => {
                   if (sonNow.value.trim() === item.trim()) {
                     now.valueIndex = sonIndex
@@ -773,7 +776,6 @@
             })
           })
           self.spec = newData
-          console.log(self.spec)
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
         })
@@ -1032,7 +1034,6 @@
         this.price = data.price
         this.content = data.content
         this.selectedSpec = data.spec
-        console.log('spec3333333333333')
         // 仅选规格 --------------------------------------------------------------------
         /*if (this.onlySelectSpec) {
           this.selectFlag = false
@@ -1097,7 +1098,6 @@
         this.price = data.price
         this.content = data.content
         this.selectedSpec = data.spec
-        console.log('spec4444444444')
         // 打开类型选择
         // this.disTypeFlag = true
         // 关闭规格选择
@@ -1627,7 +1627,7 @@
   .buttons .left{
     flex-grow: 1.5;
     width: 0;
-    background: #FF8500;
+    background: #ff8500;
     font-size: .4rem;
     color: white;
   }

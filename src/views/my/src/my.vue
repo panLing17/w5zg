@@ -136,26 +136,34 @@
     },
     components: {myGuide, recommend},
     computed: mapState(['userData', 'position']),
+    watch:{
+      '$route'(to,from) {
+        if (from.path === '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0)
+            }
+          })
+        }
+      }
+    },
     created () {
       this.getOrderCount()
     },
     activated () {
       this.collectionNumCheck()
-      this.reachGoodsNumCheck()
-      this.informNumCheck()
+
       this.getUserData()
       this.getFootmarkNum()
       this.getOrderCount()
       this.getNetcardsCount()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0)
-        }
-      })
+
       // 判断页面是否向上滚动
       // window.addEventListener('scroll',this.judgeScroll,true);
       // 改变下拉刷新的样式
       // this.changeStyles();
+      this.reachGoodsNumCheck()
+      this.informNumCheck()
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn()
@@ -549,6 +557,9 @@
     padding-bottom: .2rem;
     background-color: rgb(242,242,242);
   }
+  .wrapMyTreasure{
+    padding-bottom: 0;
+  }
 	.myOrderForm,
 	.myTreasure{
 		background-color: #fff;
@@ -640,16 +651,17 @@
   }
   /*推荐*/
   .title{
-    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
+    padding: .37rem 0;
   }
   .title img{
-    width: 55%;
+    width: 4.18rem;
+    height: .58rem;
   }
   .badge {
     padding: 0 .1rem;

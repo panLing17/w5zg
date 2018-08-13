@@ -46,24 +46,34 @@
       location: Array
     },
     mounted () {
+      setTimeout(() => {
+        if (this.locationSelectScroll) {
+          this.locationSelectScroll.refresh()
+        }else {
+          this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
+        }
+      }, 20)
     },
     watch:{
       show (val) {
         if (val) {
-          // mescroll初始化
-          this.$mescrollInt("locationSelect", this.upCallback)
-          this.mescroll.lockDownScroll(true)
+          //   // mescroll初始化
+          //   this.$mescrollInt("locationSelect",this.upCallback)
+          //   this.mescroll.lockDownScroll(true)
+          //   setTimeout(()=>{
+          //     this.mescroll.hideUpScroll()
+          //   },500)
+          // } else {
+          //   this.mescroll.hideTopBtn();
+          //   this.mescroll.destroy()
+          // }
           setTimeout(() => {
-            this.mescroll.hideUpScroll()
-          }, 500)
-        } else {
-          this.mescroll.hideTopBtn();
-          this.mescroll.destroy()
-        }
-        if (this.locationSelectScroll) {
-          this.locationSelectScroll.refresh()
-        } else {
-          this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
+            if (this.locationSelectScroll) {
+              this.locationSelectScroll.refresh()
+            }else {
+              this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
+            }
+          }, 20)
         }
       }
     },
@@ -150,8 +160,7 @@
   /*-------------*/
   .locationList {
     /*overflow-y: auto;*/
-
-    /*height: 7.42rem;*/
+    height: 7.42rem;
     padding: 0 .53rem;
     overflow: hidden;
   }
@@ -197,8 +206,17 @@
   }
   .button {
     /*height: 1.5rem;*/
-    margin-top: .3rem;
-    width: 100%;
+    /*width: 100%;*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+  }
+  .moren {
+    color: rgb(245,0,87);
+    margin-right: .1rem;
+  }
+  .btn {
+    height: 1.28rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -206,26 +224,6 @@
     background: rgb(245,0,87);
     color: #fff;
     font-size: .48rem;
-  }
-  .btn img {
-    margin-right: .2rem;
-    width: .37rem;
-  }
-  .moren {
-    color: rgb(245,0,87);
-    margin-right: .1rem;
-  }
-  .btn {
-    height: 1rem;
-    width: 7rem;
-    border-radius: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    background: rgb(245,0,87);
-    color: #fff;
-    font-size: .4rem;
   }
   .btn img {
     margin-right: .2rem;

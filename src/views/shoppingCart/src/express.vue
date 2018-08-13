@@ -10,7 +10,6 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
-    specChange(ref="specChange")
     onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
@@ -20,7 +19,6 @@
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
   import {mapState} from 'vuex'
-  import specChange from './specChange'
   import {bus} from '../../../bus'
   export default {
     name: 'express',
@@ -37,7 +35,7 @@
         disableGoods: []
       }
     },
-    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect,specChange},
+    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect},
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
@@ -80,10 +78,6 @@
       // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
-      openSpecChange (id, spec) {
-        this.$refs['specChange'].show = true
-        this.$refs['specChange'].init(id, spec)
-      },
       storeChange (data) {
         let {
           bs_city_no: cityId,
@@ -183,12 +177,17 @@
           url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
           params: {},
         }).then(function (response) {
+          console.log(response.data.data.commList)
           // 转为数组
           let array = []
           let topIndex = {}
           for (let i in response.data.data.commList) {
-<<<<<<< .merge_file_a07548
-            response.data.data.commList[i].shoppingCartVOList.forEach((now, index)=>{
+            if (response.data.data.commList[i].checked === '011') {
+              response.data.data.commList[i].checked = true
+            } else {
+              response.data.data.commList[i].checked = false
+            }
+            response.data.data.commList[i].shoppingCartVOList.forEach((now, index) => {
               // 如果是降价通知过来的，需将商品第一个显示
               if (self.$store.state.informGoods) {
                 if (self.$store.state.informGoods.rel_id == now.sc_id && self.$store.state.informGoods.gspu_id == now.gspu_id) {
@@ -200,14 +199,6 @@
                   }
                 }
               }
-=======
-            if (response.data.data.commList[i].checked === '011') {
-              response.data.data.commList[i].checked = true
-            } else {
-              response.data.data.commList[i].checked = false
-            }
-            response.data.data.commList[i].shoppingCartVOList.forEach((now)=>{
->>>>>>> .merge_file_a06316
               if (now.checked === '011') {
                 now.checked = true
               } else {

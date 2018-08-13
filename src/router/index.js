@@ -289,11 +289,11 @@ const router = new Router ({
         keepAlive: true
       }
     },
-    {
-      path: '/collection',
-      name: '收藏夹',
-      component: Collection.collection
-    },
+    // {
+    //   path: '/collection',
+    //   name: '收藏夹',
+    //   component: Collection.collection
+    // },
 
     // {
     //   path: '/marketing/rankingList',
@@ -416,20 +416,12 @@ const router = new Router ({
         {
           path: '/home/searchHistory',
           name: '搜索历史',
-<<<<<<< .merge_file_a06844
           component: Home.searchHistory,
-=======
-          component: Home.searchHistory
->>>>>>> .merge_file_a08104
         },
         {
           path: '/page',
           name: '分类',
-<<<<<<< .merge_file_a06844
           component: Page.page
-=======
-          component: Page.page,
->>>>>>> .merge_file_a08104
         },
         {
           path: '/page/commodityList',
@@ -437,14 +429,11 @@ const router = new Router ({
           component: Page.commodityList
         },
         {
-<<<<<<< .merge_file_a06844
-=======
           path: '/paymentResults',
           name: '支付成功',
           component: Goods.paymentResults
         },
         {
->>>>>>> .merge_file_a08104
           path: '/shoppingCart',
           name: '购物车',
           component: ShoppingCart.index,
@@ -452,11 +441,10 @@ const router = new Router ({
             {
               path: '/',
               name: '购物车',
-              redirect: '/shoppingCart/express',
               component: ShoppingCart.shoppingCart,
               children: [
                 {
-                  path: '/shoppingCart/self',
+                  path: '/',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
                 },
@@ -470,9 +458,20 @@ const router = new Router ({
           ]
         },
         {
+          path: '/collection',
+          name: '收藏夹',
+          component: Collection.collection,
+          meta: {
+            keepAlive: false
+          }
+        },
+        {
           path: '/inform',
           name: '通知',
-          component: Inform.inform
+          component: Inform.inform,
+          meta: {
+            keepAlive: false
+          }
         },
         {
           path: '/my',

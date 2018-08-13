@@ -10,7 +10,6 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
-    specChange(ref="specChange")
     onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
@@ -18,7 +17,6 @@
   import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
-  import specChange from './specChange'
   import {mapState} from 'vuex'
   import {bus} from '../../../bus'
   export default {
@@ -37,7 +35,7 @@
     computed: {
       ...mapState(['shoppingCartSelected'])
     },
-    components: {selfGoods, disableGoods, onlyStoreSelect, specChange},
+    components: {selfGoods, disableGoods, onlyStoreSelect},
     mounted () {
       this.getData()
       bus.$on('selfCarryUpData',()=>{
@@ -45,8 +43,7 @@
       })
     },
     activated () {
-      // this.swap()
-      this.getData()
+       this.getData()
     },
     // beforeRouteEnter (to, from, next) {
     //   next(vm => {
@@ -54,42 +51,6 @@
     //   })
     // },
     methods: {
-<<<<<<< .merge_file_a07080
-      swap () {
-        if (this.$store.state.informGoods) {
-          this.$emit('scroll')
-          let topIndex = {}
-          let self = this
-          this.goodsList.forEach((now, index)=> {
-            now.shoppingCartVOList.forEach((sonNow, i) => {
-              if (self.$store.state.informGoods && self.$store.state.informGoods.rel_id == sonNow.sc_id && self.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
-                self.$store.commit('setInformGoods', null)
-                topIndex = {
-                  first: index,
-                  second: i
-                }
-              }
-            })
-          })
-          // 交换位置
-          if (topIndex) {
-            let temp = this.goodsList[topIndex.first].shoppingCartVOList[0]
-            if (topIndex.second != 0) {
-              this.goodsList[topIndex.first].shoppingCartVOList.splice(0, 1, this.goodsList[topIndex.first].shoppingCartVOList[topIndex.second])
-              this.goodsList[topIndex.first].shoppingCartVOList.splice(topIndex.second, 1, temp)
-            }
-            if (topIndex.first != 0) {
-              temp = this.goodsList[0]
-              this.goodsList.splice(0, 1, this.goodsList[topIndex.first])
-              this.goodsList.splice(topIndex.first, 1, temp)
-            }
-          }
-        }
-=======
-      openSpecChange (id, spec) {
-        this.$refs['specChange'].show = true
-        this.$refs['specChange'].init(id, spec)
-      },
       storeChange (data) {
         let storeId = this.nowGoodsData.sc_id
         // 执行切换请求
@@ -110,7 +71,6 @@
       clickChangeStore (data) {
         this.changeStoreFlag = true
         this.nowGoodsData = data
->>>>>>> .merge_file_a07240
       },
       tabChange (num) {
         this.nowTab = num
@@ -211,7 +171,6 @@
         })
       },
       changeType (data,fun) {
-        console.log(data)
         this.$confirm({
           title: '更换配送方式',
           message: '确定要更换为快递配送吗？',
