@@ -10,6 +10,7 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
+    specChange(ref="specChange")
     onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
@@ -17,6 +18,7 @@
   import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
+  import specChange from './specChange'
   import {mapState} from 'vuex'
   import {bus} from '../../../bus'
   export default {
@@ -35,7 +37,7 @@
     computed: {
       ...mapState(['shoppingCartSelected'])
     },
-    components: {selfGoods, disableGoods, onlyStoreSelect},
+    components: {selfGoods, disableGoods, onlyStoreSelect, specChange},
     mounted () {
       this.getData()
       bus.$on('selfCarryUpData',()=>{
@@ -51,6 +53,10 @@
     //   })
     // },
     methods: {
+      openSpecChange (id, spec) {
+        this.$refs['specChange'].show = true
+        this.$refs['specChange'].init(id, spec)
+      },
       storeChange (data) {
         let storeId = this.nowGoodsData.sc_id
         // 执行切换请求

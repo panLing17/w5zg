@@ -752,8 +752,7 @@
           // 改造格式
           let newData = self.specGray(response.data.data)
           let informGoods = self.$store.state.informGoods
-          //let informGoods = {gspec_values: "150ml, 黑色"}
-          //console.log(informGoods)
+          console.log(newData)
           newData.forEach((now)=>{
             now.valueIndex = -1
             now.specValue.forEach((sonNow, sonIndex)=>{
