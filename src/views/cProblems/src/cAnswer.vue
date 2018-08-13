@@ -6,13 +6,13 @@
       .topCenter 现金券
     .cont
       ul
-        li
+        li(v-for="item in contList")
           .up
-            .left 什么是现金券？
-            .right
-              img(src="")
-              img(src="")
-          .down 顾客在万物直供商城购物，本商城自动抵扣现金券最高额，顾客仅支付用券后余额。
+            .left {{item.title}}
+            .right(@click="item.ansFlag = !item.ansFlag")
+              img(src="../../../assets/img/zhankai@2x.png", v-if="!item.ansFlag")
+              img(src="../../../assets/img/shouqi@2x.png", v-if="item.ansFlag")
+          .down(v-if="item.ansFlag") 顾客在万物直供商城购物，本商城自动抵扣现金券最高额，顾客仅支付用券后余额。
 </template>
 
 <script>
@@ -20,7 +20,7 @@
         name: "cAnswer",
         data() {
           return{
-            contList:[{title:'什么是现金券？'},{title:'现金券的作用'},{title:'如何得到现金券'}]
+            contList: [{title:'什么是现金券？', ansFlag: false},{title:'现金券的作用', ansFlag: false},{title:'如何得到现金券', ansFlag: false}]
           }
         }
     }
@@ -63,5 +63,24 @@
   }
   .cont ul li{
     background-color: #fff;
+    margin-bottom: .05rem;
+  }
+  .cont ul li .up{
+    padding: .34rem .4rem .32rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #333;
+    font-size: .4rem;
+  }
+  .cont ul li .down{
+    background-color: #f2f2f2;
+    padding: .34rem .4rem;
+    color: #666;
+    font-size: .37rem;
+  }
+  .cont li .right img{
+    width: .58rem;
+    height: .58rem;
   }
 </style>
