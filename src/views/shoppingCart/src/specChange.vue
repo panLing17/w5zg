@@ -73,6 +73,12 @@
         if (val) {
           // mescroll初始化
           this.$mescrollInt("specChange", this.upCallback)
+          this.mescroll.lockDownScroll( true )
+          setTimeout(()=>{
+            this.mescroll.endUpScroll(false)
+          },200)
+
+          this.$parent.$parent.mescroll.lockDownScroll( true )
           /*if (this.$route.path === '/shoppingCart/express') {
             this.expressUpData()
           } else {
@@ -83,6 +89,7 @@
           this.mescroll.hideTopBtn();
           this.mescroll.destroy();
           this.$parent.$parent.settlementShow = true
+          this.$parent.$parent.mescroll.lockDownScroll( false )
         }
       }
     },
