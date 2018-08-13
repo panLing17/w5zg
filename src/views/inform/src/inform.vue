@@ -50,18 +50,37 @@
       },
       ...mapState(['position'])
     },
-    activated(){
-      this.judgeType()
-      if (this.number != this.$route.query.num) {
-        this.number = this.$route.query.num
-        this.mescroll.resetUpScroll()
-      } else {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
+    watch:{
+      '$route'(to,from) {
+        if (from.path === '/my') {
+          console.log(this.$route.query.num)
+          this.$store.commit('setInformNum', this.$route.query.num)
+          this.judgeType()
+          this.mescroll.resetUpScroll()
+        }
+        if (from.path === '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0)
+            }
+          })
+        }
       }
+    },
+    activated(){
+      //this.judgeType()
+
+      // if (this.number != this.$route.query.num) {
+      //   this.number = this.$route.query.num
+      //   this.mescroll.resetUpScroll()
+      // }
+      // else {
+      //   this.position.forEach((now) => {
+      //     if (now.path === this.$route.path) {
+      //       this.mescroll.scrollTo(now.y, 0)
+      //     }
+      //   })
+      // }
     },
     beforeDestroy(){
       this.mescroll.hideTopBtn()
@@ -70,10 +89,10 @@
     beforeRouteLeave(to, from, next){
       if (to.path === '/my') {
         let types = 0
-        if (this.$route.query.num === 0) {
+        if (this.$store.state.informNum === 0) {
           types = ''
         }
-        if (this.$route.query.num === 1) {
+        if (this.$store.state.informNum === 1) {
           types = 802
         }
         let self = this
@@ -85,7 +104,7 @@
           }
         }).then( (res)=> {
           console.log('111')
-          self.mescroll.resetUpScroll()
+          //self.mescroll.resetUpScroll()
           next()
         })
         next(false)
@@ -95,6 +114,7 @@
 
     },
     mounted(){
+      this.$store.commit('setInformNum', this.$route.query.num)
       this.judgeType()
       this.$mescrollInt('collectMescroll', this.upCallback, ()=>{
 
