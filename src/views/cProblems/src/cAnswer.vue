@@ -7,9 +7,9 @@
     .cont
       ul
         li(v-for="item in contList")
-          .up
+          .up(@click="item.ansFlag = !item.ansFlag")
             .left {{item.title}}
-            .right(@click="item.ansFlag = !item.ansFlag")
+            .right
               img(src="../../../assets/img/zhankai@2x.png", v-if="!item.ansFlag")
               img(src="../../../assets/img/shouqi@2x.png", v-if="item.ansFlag")
           .down(v-if="item.ansFlag") 顾客在万物直供商城购物，本商城自动抵扣现金券最高额，顾客仅支付用券后余额。
