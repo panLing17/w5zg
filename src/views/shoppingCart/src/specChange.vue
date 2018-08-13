@@ -3,8 +3,8 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-show="show")
-        .content.mescroll#specChange
+      .main(v-show="show").mescroll#specChange
+        .content
           .topData
             .topImg
               img(:src="spcGoodsData.logo | img-filter")
@@ -39,7 +39,8 @@
               img.more(src="../../../assets/img/more.png")
           .bottomButton
             .confirm(@click="submit") 确定
-    location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    // location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    location-select(:show="locationFlag", :origin="'confirm'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="storeChange")
 </template>
 
@@ -73,23 +74,25 @@
         if (val) {
           // mescroll初始化
           this.$mescrollInt("specChange", this.upCallback)
-          this.mescroll.lockDownScroll( true )
+          // this.mescroll.lockDownScroll( true )
           setTimeout(()=>{
+            this.mescroll.lockDownScroll( true )
             this.mescroll.endUpScroll(false)
           },200)
 
-          this.$parent.$parent.mescroll.lockDownScroll( true )
+          // this.$parent.$parent.mescroll.lockDownScroll( true )
           /*if (this.$route.path === '/shoppingCart/express') {
             this.expressUpData()
           } else {
             this.selfCarryUpData()
           }*/
           this.$parent.$parent.settlementShow = false
+          this.$parent.$parent.mescroll.destroy();
         } else {
           this.mescroll.hideTopBtn();
           this.mescroll.destroy();
           this.$parent.$parent.settlementShow = true
-          this.$parent.$parent.mescroll.lockDownScroll( false )
+          this.$parent.$parent.mescrollInt()
         }
       }
     },
@@ -357,7 +360,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 75%;
+    height: 70%;
     position: fixed;
     bottom: 0;
     padding-bottom: $height-footer;

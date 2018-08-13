@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-show="show")
+      .main.mescroll#locationSelect(v-show="show")
         .title
           img(src="../../../assets/img/Page1@2x.png", @click="close")
         .locationList(ref="locationList")
@@ -51,20 +51,22 @@
       show (val) {
         if (val) {
           // mescroll初始化
-          this.$mescrollInt("locationSelect", this.upCallback)
+          this.$mescrollInt("locationSelect",this.upCallback)
           this.mescroll.lockDownScroll(true)
-          setTimeout(() => {
+          setTimeout(()=>{
             this.mescroll.hideUpScroll()
-          }, 500)
+          },500)
         } else {
           this.mescroll.hideTopBtn();
           this.mescroll.destroy()
         }
-        if (this.locationSelectScroll) {
-          this.locationSelectScroll.refresh()
-        } else {
-          this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
-        }
+        /*setTimeout(() => {
+          if (this.locationSelectScroll) {
+            this.locationSelectScroll.refresh()
+          }else {
+            this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
+          }
+        }, 20)*/
       }
     },
     methods:{
@@ -136,6 +138,7 @@
     bottom: 0;
     left: 0;
     z-index: 104;
+    padding-bottom: 2rem;
   }
   .title {
     height: 1.3rem;
@@ -150,7 +153,6 @@
   /*-------------*/
   .locationList {
     /*overflow-y: auto;*/
-
     /*height: 7.42rem;*/
     padding: 0 .53rem;
     overflow: hidden;
@@ -202,14 +204,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    background: rgb(245,0,87);
-    color: #fff;
-    font-size: .48rem;
-  }
-  .btn img {
-    margin-right: .2rem;
-    width: .37rem;
   }
   .moren {
     color: rgb(245,0,87);
