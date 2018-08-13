@@ -43,22 +43,25 @@
 <style scoped>
   .activities {
     width: 100%;
-    height: 6rem;
+    /*height: 6rem;*/
     position: relative;
   }
   .goodsList {
     width: 100%;
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0;
   }
   .goodsList li{
-    float: left;
+    /*float: left;*/
     width: 50%;
-    height: 3rem;
+    /*height: 3.3rem;*/
     position: relative;
   }
   .goodsList li img {
     width: 100%;
-    height: 100%;
+    /*height: 100%;*/
     pointer-events: none;
   }
   /* 十字线 */

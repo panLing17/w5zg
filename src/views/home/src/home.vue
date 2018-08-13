@@ -10,15 +10,17 @@
       .homeHeaderRight(@click="$router.push('/service')")
         img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      .banner(ref="banner")
+      .banner(ref="banner", v-if="banner && banner.length")
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
         slider
-          div(v-for="(item, index) in banner" :key="index")
-            a(@click.prevent="goActivity(index)")
+          div(v-for="(item, index) in banner")
+            a(@click.prevent="goActivity(item)")
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
         //.shanxing
+      .firstFloorADList(v-if="firstFloor && firstFloor.length", @click="goActivity(firstFloor[0])")
+        img(:src="firstFloor[0].ac_phone_image | img-filter", @click.prevent="")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
       <!--.tradingArea(@click="$router.push('/searchTradingArea')")-->
@@ -28,7 +30,12 @@
       //.title1
       w-activity(:listData="activityGoods")
       //.title2
-      recommend(ref="recommend")
+      .secondFloor(v-if="secondFloor && secondFloor.length")
+        slider
+          div(v-for="(item, index) in secondFloor")
+            a(@click.prevent="goActivity(item)")
+              img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
+      goods-list(:data="goodsList")
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
@@ -65,6 +72,7 @@
   import store from '../../../vuex/store'
   import shareImg from '../../../assets/img/applogo@2x.png'
   import Slider from 'components/slider'
+  import GoodsList from './goodsList/goodsList'
 
   export default {
     name: 'home',
@@ -100,12 +108,19 @@
         banner: [],
         type: '',
         animateShow: false,
-        homeHeaderActive: false
+        homeHeaderActive: false,
+        goodsList: [],
+        firstFloor: [],
+        secondFloor: []
       }
     },
-    components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider},
+    components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
     computed: {
-      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket'])
+      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket', 'recommendAdvert'])
+    },
+    created() {
+      this.bannerLoadCount = 0
+      this.adSub = 0
     },
     activated () {
       // 首页分享
@@ -182,6 +197,8 @@
           self.news = response.data.data.headlineList
           self.activityGoods = response.data.data.fourActList
           self.hotButton = response.data.data.tenActList
+          self.firstFloor = response.data.data.firstFloorADList
+          self.secondFloor = response.data.data.secondFloorAdList
           self.loadingFlag = 4
         })
       },
@@ -303,8 +320,27 @@
       upCallback: function (page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          self.$refs.recommend.more(curPageData, page.num, page.size)
+          // self.$refs.recommend.more(curPageData, page.num, page.size)
+          self.goodsList = self.goodsList.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
+          if (self.adSub<self.recommendAdvert.advert.length) {
+            if (page.num%2===1) {
+              setTimeout(() =>{
+
+                self.$advert(self.recommendAdvert.advert[self.adSub])
+              }, 20)
+            }
+          }
+
+          if (self.adSub<self.recommendAdvert.tags.length) {
+            if (page.num%2===0) {
+              setTimeout(() =>{
+                self.$adTag(self.recommendAdvert.tags[self.adSub].data)
+                self.adSub++
+              }, 20)
+            }
+          }
+
         }, function () {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
@@ -387,41 +423,41 @@
       goSearch() {
         this.$router.push('/search')
       },
-      goActivity(index) {
-        switch (this.banner[index].ac_inlink_type) {
+      goActivity(item) {
+        switch (item.ac_inlink_type) {
           // 跳三级
           case '145':
             this.$router.push({
               path: '/home/sports',
-              query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}
+              query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
             });
             break;
           // 跳二级
           case '144':
             this.$router.push({
               path: '/home/largeCollection',
-              query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}
+              query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
             });
             break;
           // 外部
           case '143':
-            window.location.href = this.banner[index].ac_outlink;
+            window.location.href = item.ac_outlink;
             break;
           // 店铺
           case '142':
-            this.$router.push({path: '/goodsDetailed', query: {id: this.banner[index].ac_inlink}});
+            this.$router.push({path: '/goodsDetailed', query: {id: item.ac_inlink}});
             break;
           // 商品
           case '141':
-            this.$router.push({path: '/goodsDetailed', query: {id: this.banner[index].ac_inlink}});
+            this.$router.push({path: '/goodsDetailed', query: {id: item.ac_inlink}});
             break;
           // 跳二级模板2
           case '148':
-            this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}})
+            this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title}})
             break;
           // 跳3级页面模板2
           case '149':
-            this.$router.push({ path: '/activity', query: { actId: this.banner[index].ac_id, title: this.banner[index].ac_title, parentType: '363'}});
+            this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363'}});
             break;
         }
       }
@@ -822,6 +858,22 @@
     margin-bottom: .2rem;
     font-size: 0;
   }
+  .firstFloorADList {
+    font-size: 0;
+    max-height: 2.4rem;
+    overflow: hidden;
+  }
+  .firstFloorADList img {
+    width: 100%;
+  }
+  .secondFloor {
+    max-height: 2.4rem;
+    overflow: hidden;
+    position: relative;
+    margin: 0.13rem 0;
+  }
+
+
   .animateWrapper {
     position: fixed;
     top: 0;

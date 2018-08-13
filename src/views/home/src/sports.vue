@@ -4,7 +4,8 @@
       .topLeft(slot="left", @click="back")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 8rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
     .mescroll#sportsMescroll
       .content
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
@@ -28,7 +29,8 @@
           recommendGoods: [],
           parentId: null,
           parentType: null,
-          isEmpty: false
+          isEmpty: false,
+          shareShow: false
         }
       },
       components: {
@@ -47,6 +49,7 @@
         ...mapState(['userData', 'position'])
       },
         created () {
+        this.showShare()
         this.getParmas();
         // 获取banner
         this.getBanner();
@@ -81,11 +84,36 @@
       //   next()
       // },
       methods: {
+        shareClick () {
+          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
+            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'share', title: '分享活动页', content: '特卖特卖', img: 'http://img1.imgtn.bdimg.com/it/u=845959696,1894336107&fm=27&gp=0.jpg'});
+            if (results2) {
+              return
+            }
+          }
+
+          if (w5zgApp) {
+            w5zgApp.share()
+            return
+          }
+
+        },
+        showShare () {
+          if ((window.webkit && window.webkit.messageHandlers.iosMessage) || w5zgApp) {
+            this.shareShow = true
+          }
+        },
         // 锁定或者解锁上拉加载
         lockUpDown (isLock) {
           this.mescroll.lockUpScroll( isLock );
         },
         back () {
+          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
+            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'back'});
+            if (results2) {
+              return
+            }
+          }
           if (window.history.length<=2) {
             this.$router.push('/home')
           } else {

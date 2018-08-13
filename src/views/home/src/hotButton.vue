@@ -47,9 +47,9 @@
 <style scoped>
   .box {
     width: 100%;
-    height: 4.2rem;
+    /*height: 4.2rem;*/
     background: white;
-    padding: .2rem 0;
+    /*padding: .2rem 0;*/
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -61,6 +61,7 @@
   }
 
   .box > ul > li {
+    margin-bottom: .13rem;
     width: 20%;
     height: 100%;
     display: flex;
@@ -83,7 +84,7 @@
   }
   .box > ul > li > span {
     display: block;
-    margin-top: .2rem;
+    margin-top: .13rem;
     font-size: .32rem;
     font-style: normal;
     line-height: 1;
