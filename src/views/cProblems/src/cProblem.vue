@@ -21,7 +21,7 @@
           .right
             img(src="../../../assets/img/Shape Copy@2x.png")
       ul
-        li
+        li(@click="$router.push('/cAnswers')")
           .left
             img(src="../../../assets/img/moneys.png")
             .words 现金券

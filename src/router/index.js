@@ -461,9 +461,20 @@ const router = new Router ({
           ]
         },
         {
+          path: '/cAnswers',
+          name: '收藏夹',
+          component: CProblems.cAnswer,
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
           path: '/cProblems',
           name: '收藏夹',
-          component: CProblems.cProblem
+          component: CProblems.cProblem,
+          meta: {
+            keepAlive: true
+          }
         },
         {
           path: '/collection',
