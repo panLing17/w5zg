@@ -39,7 +39,8 @@
               img.more(src="../../../assets/img/more.png")
           .bottomButton
             .confirm(@click="submit") 确定
-    location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    // location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    location-select(:show="locationFlag", :origin="'confirm'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="storeChange")
 </template>
 
