@@ -11,7 +11,7 @@
             .topText
               .price {{spcGoodsData.direct_supply_price | price-filter}}
                 span(@click="close") X
-              .selectedSpec 粉色 3.5g
+              .selectedSpec {{selectedSpecShow}}
               .haveGoods {{spcGoodsData.storage_num>0 ? '有货' : '无货'}}
           ul.specList
             li.specItem(v-for="(i,specIndex) in spec")
@@ -86,7 +86,19 @@
         }
       }
     },
-    computed:{...mapState(['location','giveGoodsAddress'])},
+    computed:{
+      selectedSpecShow () {
+        let spec = ''
+        this.spec.forEach((now)=>{
+          if (now.valueIndex > -1) {
+            let val = now.specValue[now.valueIndex].value
+            spec += val + ' '
+          }
+        })
+        return spec
+      },
+      ...mapState(['location','giveGoodsAddress'])
+    },
     components:{locationSelect,onlyStoreSelect},
     mounted() {
     },
@@ -136,6 +148,7 @@
             self.logo = response.data.data.logo
           }
           self.skuId = response.data.data.gsku_id
+          self.spcGoodsData.direct_supply_price = response.data.data.direct_supply_price
           /*// 派发此组件load事件 (用于返回库存与规格)
           let data = {
             maxStoreNum: self.realGoodsData.storage_num,
@@ -210,6 +223,10 @@
         if (this.emitType === 'express') {
           type = 167
         } else {
+          if (!this.storeId) {
+            this.$message.warning('请选择门店')
+            return
+          }
           type = 168
         }
         let self = this
