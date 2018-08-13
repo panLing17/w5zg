@@ -55,6 +55,8 @@
             if (this.msg < this.max) {
               this.$emit('cMsg', this.msg-0+1)
               this.$emit('change')
+            } else {
+              this.$message.warning('库存不足')
             }
           },
           handleFocus(event) {
@@ -72,22 +74,26 @@
     width: 80px;
     line-height: 30px;
     display: flex;
-    border-radius: 10px;
-    border: solid 1px #aaa;
+    border-radius: 1px;
+    border: solid 1px #ddd;
     justify-content: space-between;
   }
-  .counterBox input{
+  .counterBox input {
     outline: none;
-    width: 30px;
+    width: 40px;
     height: 30px;
     background: none;
     border: none;
     text-align: center;
+    color: #666;
   }
-  .counterBox span{
+  .counterBox span {
     font-size: 18px;
     width: 30px;
     text-align: center;
     color: rgb(150,150,150);
+    border: solid 1px #eee;
+    border-top: none;
+    border-bottom: none;
   }
 </style>

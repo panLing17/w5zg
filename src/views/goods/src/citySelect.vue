@@ -4,9 +4,9 @@
       .bg(v-show="show", @click="close", @touchmove.prevent="")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-show="show", @touchmove.prevent="")
-        .title
-          span 配送至
-          img(src="../../../assets/img/cancle@3x.png", @click="close")
+        <!--.title-->
+          <!--span 配送至-->
+          <!--img(src="../../../assets/img/cancle@3x.png", @click="close")-->
         .tabBox
           transition-group(enter-active-class="animated bounceInLeft", leave-active-class="animated fadeOut").tab
             li(v-if="selectType > 0 || selectType === 0 ", :class="{selected:selectType === 0}", key="0", @click="tab(0)") {{provinceName}}
@@ -289,7 +289,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 12.5rem;
+    height: 11.5rem;
     position: fixed;
     bottom: 0;
     left: 0;

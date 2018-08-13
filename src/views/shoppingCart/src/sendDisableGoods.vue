@@ -1,6 +1,6 @@
 <template lang="pug">
   transition( leave-active-class="animated flipOutX")
-    .goodsCardBox
+    .goodsCardBox(v-if="list.shoppingCartVOList.length>0")
       .title
         p {{list.si_name ? list.si_name : list.store_name}}
         // img(src="../../../assets/img/searchHistory_clear.png")
@@ -22,6 +22,8 @@
             .right
               span 商品已过期
               img
+            .left
+              img(@click="deleteDisableGoods(i.sc_id,index)", src="../../../assets/img/searchHistory_clear.png")
 </template>
 
 <script>
@@ -39,6 +41,32 @@
       changeType () {
         this.$emit('tab')
         this.list.splice(0,1)
+      },
+      deleteDisableGoods (id, index) {
+        this.$confirm({
+          title: '删除失效商品',
+          message: '确定要删除么',
+          confirm: () => {
+            /*this.list.shoppingCartVOList.splice(index,1)*/
+            let self = this
+            self.$ajax({
+              method: 'delete',
+              url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+              params: {
+                scIdArray: id
+              },
+            }).then(function (response) {
+              self.$emit('clear')
+              self.disableGoods = []
+              self.$message.success('删除成功')
+              self.$parent.getData()
+            })
+          },
+          noConfirm: () => {
+
+          }
+        })
+
       }
     }
   }
@@ -113,7 +141,7 @@
   .bottom{
     margin-top: .3rem;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     height: .8rem;
     border-top: solid 1px rgb(250,250,250);

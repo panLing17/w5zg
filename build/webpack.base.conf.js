@@ -2,6 +2,7 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
@@ -13,12 +14,21 @@ module.exports = {
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',
+<<<<<<< .merge_file_a05936
     // publicPath: process.env.NODE_ENV === 'production'
     //   ? config.build.assetsPublicPath
     //   : config.dev.assetsPublicPath
     publicPath: process.env.NODE_ENV === 'production'
       ? 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/w5mall-web/'
       : config.dev.assetsPublicPath
+=======
+   /* publicPath: process.env.NODE_ENV === 'production'
+      ? config.build.assetsPublicPath
+      : config.dev.assetsPublicPath*/
+     publicPath: process.env.NODE_ENV === 'production'
+       ? 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/w5mall-web/'
+       : config.dev.assetsPublicPath
+>>>>>>> .merge_file_a05948
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],

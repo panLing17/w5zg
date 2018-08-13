@@ -31,7 +31,7 @@
           p(@click="$router.push('/my/localAdd')") 添加收货地址
       goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
       .allPrice
-        .goodsNum 共计{{content}}件商品，运费{{allFreight}}
+        .goodsNum 共计{{content}}件商品
         .price
           span 合计
           p {{price | price-filter}}
@@ -45,13 +45,17 @@
           .left 通用券 <span>可抵扣{{netAndCommitCard.commTicket}}</span>
           .right(v-if="dataFlag")
             toggle-button(v-model="commonTicketFlag", color="rgb(244,0,87)", :disabled="netAndCommitCard.commTicket === 0")
+      .backCommTicket 确认收货后，本单可返{{netAndCommitCard.backCommTicket}}元通用券
     .submit
       .left 实付：{{computedPriceText | price-filter}}
       .right(@click="submit") 提交订单
       location-select(:show="flag", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+      // 失效商品提示
+      disableTips(ref="disableTips")
 </template>
 
 <script>
+  import disableTips from '../../shoppingCart/src/goodsDisableTips'
   import goodsCard from './goodsCard'
   import locationSelect from './locationSelect'
   import {mapState} from 'vuex'
@@ -87,30 +91,30 @@
     },
     computed: {
       computedPriceText() {
+        // 由于运费算入总价，所以不计算运费
         if (this.netCardFlag && this.commonTicketFlag) {
-          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard) + this.allFreight
+          return this.price - (this.netAndCommitCard.commTicket + this.netAndCommitCard.netCard) + this.allFreight - this.allFreight
         } else if (this.commonTicketFlag) {
-          return this.price - this.netAndCommitCard.commTicket + this.allFreight
+          return this.price - this.netAndCommitCard.commTicket + this.allFreight - this.allFreight
         }
         else if (this.netCardFlag) {
-          return this.price - this.netAndCommitCard.netCard + this.allFreight
+          return this.price - this.netAndCommitCard.netCard + this.allFreight - this.allFreight
         }
         else if (this.commonTicketFlag) {
-          return this.price - this.netAndCommitCard.commTicket + this.allFreight
+          return this.price - this.netAndCommitCard.commTicket + this.allFreight - this.allFreight
         } else {
-          return this.price + this.allFreight
+          return this.price + this.allFreight - this.allFreight
         }
       },
       ...mapState(['giveGoodsAddress']),
       ...mapGetters(['transfer'])
     },
-    components: {goodsCard, locationSelect},
+    components: {goodsCard, locationSelect, disableTips},
     mounted() {
       // mescroll初始化
       this.$mescrollInt("confirmOrderBox", this.upCallback)
       this.getLocation()
       this.computedPrice()
-      this.getExpressGoodsData
       // this.computedFreight()
       // 如果用户不是b请求计算通用券与抵用金额
       if (this.$store.state.userData.member_type !== '092') {
@@ -122,11 +126,51 @@
         this.mescroll.endSuccess(1)
       },
       // 地址变化后
-      locationChange() {
-        // 为商品赋值运费
-        // this.getGoodsFreight().then(()=>{
-        //   this.computedFreight()
-        // })
+      locationChange(id) {
+        let cityId
+        if (id) {
+          cityId = id
+        } else {
+          cityId = this.$store.state.location.city.id
+        }
+        let self = this
+        let cartId = []
+        if (this.$route.query.type === 'shoppingCart') {
+          this.transfer.forEach((now)=>{
+            now.shoppingCartVOList.forEach((sonNow)=>{
+              cartId.push(sonNow.sc_id)
+            })
+          })
+          cartId = cartId.join(',')
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/submitSendList1',
+            params: {
+              scIdArray: cartId,
+              cityNo: cityId
+            }
+          }).then(function (response) {
+            self.$store.commit('transferGive', response.data.data.commList)
+            self.price = response.data.data.totalPrice + response.data.data.totalFreight
+            self.allFreight = response.data.data.totalFreight
+          })
+        } else {
+          self.$ajax({
+            method: 'get',
+            url: self.$apiApp + 'shoppingCart/nowSubmitSendList1',
+            params: {
+              gskuId : self.transfer[0].skuId,
+              num: self.transfer[0].number,
+              cityNo: cityId
+            }
+          }).then(function (response) {
+            let newData = self.transfer
+            newData[0].freight = response.data.data.freight
+            self.price = newData[0].price * newData[0].number + newData[0].freight
+            self.$store.commit('transferGive', newData)
+          })
+        }
+
       },
       // 获取每个商品运费
       getGoodsFreight() {
@@ -239,11 +283,23 @@
               this.directDistribution()
             }
           } else {
-            if (this.$route.query.since === 'true') {
-              this.shoppingCartSince()
-            } else {
-              this.shoppingCartDistribution()
+            // 将购物车部分进行封装，以便用于回调
+            let fun = ()=>{
+              if (this.$route.query.since === 'true') {
+                this.shoppingCartSince()
+              } else {
+                this.shoppingCartDistribution()
+              }
             }
+            // 当前要提交的商品
+            let data = []
+            this.transfer.forEach((now)=>{
+              now.shoppingCartVOList.forEach((sonNow)=>{
+                data.push(sonNow.sc_id)
+              })
+            })
+            data = data.join(',')
+            this.$refs['disableTips'].checkDisableGoods(data, fun)
           }
         } else {
           this.$message.warning('稍安勿躁,请勿重复点击')
@@ -362,7 +418,6 @@
         let commonTicketFlag = this.commonTicketFlag ? '011' : '012'
         let self = this
         let cartId = []
-        console.log(this.$store.state.transfer)
         this.$store.state.transfer.forEach((now) => {
           now.shoppingCartVOList.forEach((sonNow) => {
             cartId.push(sonNow.sc_id)
@@ -390,6 +445,40 @@
       },
       // 现金券变化
       netCardChange() {
+        let netCardFlag = this.netCardFlag ? '011' : '012'
+        let self = this
+        if (this.$route.query.type === 'shoppingCart') {
+          let cartId = []
+          this.$store.state.transfer.forEach((now) => {
+            now.shoppingCartVOList.forEach((sonNow) => {
+              cartId.push(sonNow.sc_id)
+            })
+
+          })
+          cartId = cartId.join(',')
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'order/submitOrderCard',
+            params: {
+              gcIdArray: cartId,
+              netCardFlag: netCardFlag
+            }
+          }).then(function (response) {
+            self.netAndCommitCard = response.data.data
+          })
+        } else {
+          self.$ajax({
+            method: 'get',
+            url: self.$apiTransaction + 'order/nowSubmitOrderCard',
+            params: {
+              gskuId: self.$store.state.skuId,
+              netCardFlag: netCardFlag,
+              num: self.content
+            }
+          }).then(function (response) {
+            self.netAndCommitCard = response.data.data
+          })
+        }
       },
       getLocation() {
         let self = this
@@ -415,6 +504,9 @@
               }
             })
           }
+          if (self.$route.query.since === 'false') {
+            self.locationChange(self.$store.state.giveGoodsAddress.ra_city)
+          }
         })
       },
       computedPrice() {
@@ -425,7 +517,6 @@
               this.price += sonNow.counter_price * sonNow.goods_num
               this.content += sonNow.goods_num - 0
             })
-
           })
         } else {
           this.transfer.forEach((now) => {
@@ -462,6 +553,7 @@
               self.netCardFlag = false
             }
             self.dataFlag = true
+            self.netCardChange()
           })
         } else {
           self.$ajax({
@@ -480,6 +572,7 @@
               self.netCardFlag = false
             }
             self.dataFlag = true
+            self.netCardChange()
           })
         }
       },
@@ -714,5 +807,14 @@
     outline: none;
     border: none;
 
+  }
+  /* 返通用券 */
+  .backCommTicket {
+    color: rgb(247,0,87);
+    background-color: rgb(255,245,223);
+    text-align: right;
+    height: .8rem;
+    line-height: .8rem;
+    padding: 0 .2rem;
   }
 </style>
