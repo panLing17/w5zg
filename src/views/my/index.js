@@ -14,6 +14,7 @@ import aboutUs from './src/aboutUs'
 import footMark from './src/footMark'
 
 
+
 export default {
   index,my,settings,userinfo,nickname,accountBind,accountSafety,updatePassword1,updatePassword2,localAdmin,localAdd,feedback,aboutUs,footMark
 }

@@ -1,8 +1,8 @@
 <template lang="pug">
   .wrapNav
-    nav-bar(background="white")
+    nav-bar(background="#F70057")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
@@ -32,8 +32,8 @@
             span.num {{item.order_no}}
           .right
             span.orderStatus {{item.orderInfoStatus}}
-        .center(v-for="items in item.orderDetail" @click="$router.push({path:'/goodsDetailed',query:{id:items.gspu_id}})")
-          .wrapGoods
+        .center(v-for="items in item.orderDetail")
+          .wrapGoods(@click="$router.push({path:'/goodsDetailed',query:{id:items.gspu_id}})")
             .image
               img(:src="items.logo | img-filter" @click.prevent="")
             .goodsDetails
@@ -46,8 +46,9 @@
                   .amount
                     span.nums x{{items.goods_num}}
                 .right
-                  .price 可抵扣最低价格: <span>{{items.sale_price | price-filter}}</span>
+                  .price 实付价:<span>{{items.sale_price | price-filter}}</span>
                   .cartPrice 专柜价: {{items.sale_price | price-filter}}
+          .buyAgainBtn(@click="againBuy(item,items)", v-if="item.orderInfo_status === '已完成'") <span>再次购买</span>
         .wrapDownner
           .wrapFreight
             span(v-if="delivery_ways === '快递配送'") 运费：{{item.freight | price-filter}}
@@ -227,6 +228,37 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 再次购买
+      againBuy(item,items){
+        let deliveryNum = 0
+        if (this.delivery_ways === '自提') {
+          deliveryNum = 168
+        }
+        if (this.delivery_ways === '快递配送') {
+          deliveryNum = 167
+        }
+        let b ={
+          gskuId: items.gsku_id,
+          deliveryWays: deliveryNum,
+          province: this.$store.state.location.province.id,
+          city: this.$store.state.location.city.id,
+          storeId: items.si_id,
+          goodsNum: items.goods_num
+        }
+        this.addShoppingCar(b)
+      },
+      addShoppingCar(eve){
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods+ 'goods/shoppingCart/add',
+          params: eve
+        }).then(function (response) {
+          if (response.data.code = '081') {
+            self.$message.success('添加购物车成功')
+          }
+        })
+      },
       // 判断是否超过7天退货中
       judgeRefund () {
         let self = this;
@@ -811,6 +843,7 @@
   .topCenter{
     font-size: .5rem;
     font-weight: 400;
+    color: #fff;
   }
   .topRight img{
     vertical-align: middle;
@@ -841,11 +874,11 @@
   .consignee .addressee{
     margin-top: -.1rem;
     margin-left: .2rem;
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .consignee .addressee span.man strong{
     margin-left: .2rem;
-    font-size: .4rem;
+    font-size: .37rem;
     font-weight: 400;
   }
   .consignee .addressee span.phone{
@@ -854,7 +887,7 @@
   .address{
     margin-top: .2rem;
     margin-left: .45rem;
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .address strong{
     display: inline-block;
@@ -871,31 +904,33 @@
     padding-bottom: .2rem;
   }
   .content .top{
-    height: .8rem;
     border-bottom: 1px solid rgb(242,242,242);
     background-color: #fff;
     display: flex;
     justify-content: space-between;
-    padding: 0 .3rem;
-    line-height: .8rem;
+    padding: .32rem .3rem;
   }
   .top .left{
     color: rgb(51,51,51);
-    font-size: .35rem;
+    font-size: .37rem;
   }
   .top .left span.orderNum{
     margin-right: .2rem;
   }
   .top .right{
-    font-size: .4rem;
+    font-size: .37rem;
     color: rgb(244,0,87);
   }
   .center{
-    background-color: #fff;
+    background-color: #f2f2f2;
     padding: .3rem .3rem .2rem;
     /*border-bottom: 1px solid rgb(242,242,242);*/
     /*display: flex;*/
     position: relative;
+    margin-bottom: .13rem;
+  }
+  .center:last-child{
+    margin-bottom: 0;
   }
   .center .wrapGoods{
     display: flex;
@@ -906,25 +941,32 @@
   .center .image img{
     width: 2.5rem;
     border-radius: .2rem;
+    vertical-align: top;
   }
   .center .goodsDetails{
     width: 0;
     flex-grow: 1;
     margin-left: .3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .center .goodsDetails .wrapAttr{
     width: 100%;
     /*display: flex;
     justify-content: space-between;
     align-items: center;*/
-    font-family: "黑体";
   }
   .center .goodsDetails .wrapAttr .left{
     display: flex;
     align-items: center;
   }
   .center .goodsDetails .wrapAttr .right{
-    margin-top: .2rem;
+    border-top: 1px solid #D7D7D7;
+    margin-top: .1rem;
+    padding-top: .2rem;
+    display: flex;
+    align-items: center;
   }
   .center .goodsDetails .words{
     font-size: .35rem;
@@ -939,7 +981,6 @@
     margin-top: .1rem;
     font-size: .35rem;
     color: rgb(153,153,153);
-    font-family: "Verdana";
   }
   .center .goodsDetails .property span.color{
     margin-right: .5rem;
@@ -951,17 +992,32 @@
     color: rgb(153,153,153);
   }
   .center .goodsDetails .price{
-    margin-top: .05rem;
-    font-size: .35rem;
+    font-size: .29rem;
   }
   .center .goodsDetails .price span{
     color: rgb(244,0,87);
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .center .goodsDetails .cartPrice{
     color: rgb(153,153,153);
-    font-size: .35rem;
+    font-size: .26rem;
     text-decoration: line-through;
+    margin-left: .24rem;
+  }
+  .buyAgainBtn{
+    text-align: right;
+    padding-top: .26rem;
+  }
+  .buyAgainBtn span{
+    display: inline-block;
+    width: 1.8rem;
+    height: .7rem;
+    border-radius: .8rem;
+    border: 1px solid #F70057;
+    text-align: center;
+    line-height: .7rem;
+    font-size: .35rem;
+    color: #F70057;
   }
   .wrapDownner{
     padding: .2rem .3rem;
@@ -1039,25 +1095,29 @@
     background-color: #fff;
   }
   .total ul{
-    padding: .2rem .3rem .1rem;
+    padding: .2rem .3rem;
     color: rgb(153,153,153);
     font-size: .35rem;
   }
   .total ul li{
     display: flex;
     justify-content: space-between;
+    margin-bottom: .3rem;
+  }
+  .total ul li:last-child{
+    margin-bottom: 0;
   }
   .total .bottoms{
-    padding: 0 .3rem;
+    padding: .26rem .3rem;
     border-top: 1px solid rgb(242,242,242);
-    height: .8rem;
-    line-height: .8rem;
-    font-size: .4rem;
+    font-size: .37rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
   .total .bottoms span.money{
     color: rgb(244,0,87);
+    font-size: .53rem;
   }
   /*总商品的统计--结束*/
   /*返现金券--开始*/
@@ -1083,37 +1143,41 @@
   .orderNumber ul li{
     font-size: .35rem;
     color: rgb(153,153,153);
+    margin-bottom: .3rem;
+  }
+  .orderNumber ul li:last-child{
+    margin-bottom: 0;
   }
   .orderNumber ul li span{
     margin-right: .2rem;
   }
   .orderNumber .copy{
     position: absolute;
-    top: .3rem;
-    right: .3rem;
-    width: 1.4rem;
-    height: .7rem;
-    background-color: rgb(204,204,204);
-    color: #fff;
+    top: .34rem;
+    right: .4rem;
+    width: 1.46rem;
+    height: .69rem;
+    border: 1px solid #787878;
+    color: #787878;
     text-align: center;
-    line-height: .75rem;
+    line-height: .69rem;
     font-size: .35rem;
     border-radius: .5rem;
   }
   /*订单编号--结束*/
   /*我的推荐--开始*/
   .title{
-    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
-    padding: .2rem 0;
+    padding: .53rem 0;
   }
   .title img{
-    width: 55%;
+    width: 4.18rem;
+    height: .58rem;
   }
   /*我的推荐--结束*/
 
