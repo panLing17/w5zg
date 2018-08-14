@@ -39,8 +39,9 @@
               img.more(src="../../../assets/img/more.png")
           .bottomButton
             .confirm(@click="submit") 确定
-    // location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
-    location-select(:show="locationFlag", :origin="'confirm'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
+    city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
+    // location-select(:show="locationFlag", :origin="'confirm'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="storeChange")
 </template>
 
@@ -49,6 +50,7 @@
   import {mapState} from 'vuex'
   import locationSelect from '../../goods/src/locationSelect'
   import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
+  import citySelect from '../../goods/src/citySelect'
   export default {
     name: "specChange",
     data() {
@@ -66,7 +68,8 @@
         storeDownGoods: false,
         locationFlag: false,
         locationList: [],
-        onlyStoreSelect: false
+        onlyStoreSelect: false,
+        selectCity: false
       }
     },
     watch: {
@@ -109,7 +112,7 @@
       },
       ...mapState(['location','giveGoodsAddress'])
     },
-    components:{locationSelect,onlyStoreSelect},
+    components:{locationSelect, onlyStoreSelect, citySelect},
     mounted() {
     },
     methods: {
@@ -123,6 +126,16 @@
       },
       close() {
         this.show = false
+      },
+      // 其他城市选择后
+      cityChange (data) {
+        this.$store.commit('getLocation',data)
+        this.selectCity = false
+        this.locationFlag = false
+      },
+      // 关闭选择其他城市
+      selectCityOpen(){
+        this.selectCity = true
       },
       // 点击spec
       specClick () {
@@ -159,6 +172,7 @@
           }
           self.skuId = response.data.data.gsku_id
           self.spcGoodsData.direct_supply_price = response.data.data.direct_supply_price
+          self.spcGoodsData.storage_num = response.data.data.storage_num
           /*// 派发此组件load事件 (用于返回库存与规格)
           let data = {
             maxStoreNum: self.realGoodsData.storage_num,
@@ -255,6 +269,7 @@
           self.$message.success('修改成功')
           self.close()
           self.$parent.getData()
+          self.$parent.$parent.getGoodsNum()
         })
       },
       // 打开地址选择
