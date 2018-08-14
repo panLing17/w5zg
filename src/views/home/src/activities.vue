@@ -56,7 +56,7 @@
   .goodsList li{
     /*float: left;*/
     width: 50%;
-    /*height: 3.3rem;*/
+    max-height: 3.3rem;
     position: relative;
   }
   .goodsList li img {
