@@ -35,6 +35,9 @@
         color #000
         font-size .32rem
         text-align center
+        text-overflow ellipsis
+        overflow hidden
+        white-space nowrap
         &:nth-child(4n)
           margin-right 0
 </style>

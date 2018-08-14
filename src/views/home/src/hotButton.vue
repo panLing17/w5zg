@@ -49,7 +49,7 @@
     width: 100%;
     /*height: 4.2rem;*/
     background: white;
-    /*padding: .2rem 0;*/
+    padding: .24rem 0 .16rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

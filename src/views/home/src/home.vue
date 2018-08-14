@@ -2,15 +2,20 @@
   div
     .homeHeader(:class="{active: homeHeaderActive}")
       .homeHeaderLeft(@click="$router.push('/page')")
-        img.fenleiImg(src="../../../assets/img/fenlei@2x.png")
+        img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
+        .activeHeaderLeft(v-show="homeHeaderActive")
+          img.fenleiImg(src="../../../assets/img/fenlei@2x.png", @click.prevent="")
       .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
         input.headerSearchInput(type="text", placeholder="请输入商品类别 例如: 男装")
-        img.searchImg(src="../../../assets/img/ic_home_search@2x.png")
+        img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->
-      .homeHeaderRight(@click="$router.push('/service')")
-        img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
+      .homeHeaderRight(@click="$router.push({path:'/inform',query:{num:0}})")
+        .infoCount(v-show="informNum>0") {{informNum.toString().length>2?'99':informNum}}
+        img.headerImg(src="../../../assets/img/xiaoxi1.png", v-show="!homeHeaderActive", @click.prevent="")
+        .activeHeaderRight(v-show="homeHeaderActive")
+          img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png", @click.prevent="")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      .banner(ref="banner", v-if="banner && banner.length")
+      .banner(v-if="banner && banner.length")
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
@@ -111,7 +116,8 @@
         homeHeaderActive: false,
         goodsList: [],
         firstFloor: [],
-        secondFloor: []
+        secondFloor: [],
+        informNum: 0
       }
     },
     components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
@@ -130,6 +136,7 @@
           this.mescroll.scrollTo(now.y, 0);
         }
       })
+      this.informNumCheck()
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn();
@@ -148,7 +155,7 @@
           }
         })
       }, (obj) => {
-        if (obj.preScrollY>this.$refs.banner.offsetHeight) {
+        if (obj.preScrollY>60) {
           this.homeHeaderActive = true
         } else {
           this.homeHeaderActive = false
@@ -179,12 +186,26 @@
       //this.judgeCityNum()
       // 首页分享
       // this.loadShare()
+      this.informNumCheck()
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      //获取消息条数
+      informNumCheck(){
+        if (localStorage.getItem('token')) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+            params: {}
+          }).then(function (res) {
+            self.informNum = res.data.data.messageNum
+          })
+        }
+      },
       //一次性获取所有活动数据
       getAllActivity () {
         let self = this
@@ -323,23 +344,21 @@
           // self.$refs.recommend.more(curPageData, page.num, page.size)
           self.goodsList = self.goodsList.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
-          if (self.adSub<self.recommendAdvert.advert.length) {
-            if (page.num%2===1) {
-              setTimeout(() =>{
 
-                self.$advert(self.recommendAdvert.advert[self.adSub])
-              }, 20)
-            }
+          if (page.num%2===1) {
+            setTimeout(() =>{
+              self.$advert(self.recommendAdvert.advert[self.adSub%self.recommendAdvert.advert.length])
+            }, 20)
           }
 
-          if (self.adSub<self.recommendAdvert.tags.length) {
-            if (page.num%2===0) {
-              setTimeout(() =>{
-                self.$adTag(self.recommendAdvert.tags[self.adSub].data)
-                self.adSub++
-              }, 20)
-            }
+
+          if (page.num%2===0) {
+            setTimeout(() =>{
+              self.$adTag(self.recommendAdvert.tags[self.adSub%self.recommendAdvert.tags.length].data)
+              self.adSub++
+            }, 20)
           }
+
 
         }, function () {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -466,6 +485,18 @@
 </script>
 
 <style scoped>
+  .infoCount {
+    width: .426rem;
+    height: .32rem;
+    background: #f70057;
+    border-radius: .16rem;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    color: #fff;
+    font-size: .24rem;
+  }
   .homeHeader {
     position: absolute;
     top: 0;
@@ -473,29 +504,40 @@
     z-index: 100;
     display: flex;
     align-items: center;
-    height: 1.3rem;
+    height: 1rem;
     overflow: hidden;
     /*background: #fff;*/
     width: 100%;
+    padding: 0 .26rem;
   }
   .homeHeader.active {
-    background: #f70057;
+    background: #fff;
+    box-shadow: 0 3px 10px -5px #5E5E5E;
+    /*padding: 0 .53rem;*/
   }
-  .homeHeaderLeft {
-    padding: 0 .26rem 0 .4rem;
+  .headerImg {
+    width: 1rem;
+  }
+  .homeHeaderLeft, .homeHeaderRight {
     font-size: 0;
+    height: 1rem;
+    width: 1rem;
+    text-align: center;
   }
-  .homeHeaderLeft:after {
+  .homeHeaderRight {
+    position: relative;
+  }
+  .activeHeaderLeft:after {
     content: '分类';
   }
-  .homeHeaderRight:after {
+  .activeHeaderRight:after {
     content: '客服';
   }
-  .homeHeaderLeft:after, .homeHeaderRight:after {
+  .activeHeaderLeft:after, .activeHeaderRight:after {
     display: block;
     text-align: center;
     font-size: 10px;
-    color: #fff;
+    color: #666;
     line-height: 1;
     margin-top: .05rem;
   }
@@ -503,13 +545,11 @@
     width: .58rem;
     pointer-events: none;
   }
-  .homeHeaderRight {
-    padding: 0 .4rem 0 .26rem;
-    font-size: 0;
-  }
+
   .homeHeaderCenter {
+    margin: 0 .4rem;
     flex: 1;
-    height: .77rem;
+    height: .8rem;
     border-radius: .4rem;
     border: 1px solid rgb(236,236,236);
     position: relative;
