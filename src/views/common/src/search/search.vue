@@ -14,7 +14,7 @@
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
-    search-result(v-show="query.length", :page="page", :rows="rows")
+    search-result(v-show="showResult", :page="page", :rows="rows", :data="searchResult")
 </template>
 
 <script>
@@ -27,7 +27,8 @@
       return {
         query: '', //搜索词
         associativeQuery: [],
-        searchResult: [],
+        searchResult: {},
+        showResult: false,
         page: 1,
         rows: 6
       }
@@ -37,7 +38,7 @@
       onSubmit () {
         return false
       },
-      search () {
+      search (e, sortFieldType,sortType) {
         let self =this
         self.$ajax({
           method: 'post',
@@ -47,19 +48,36 @@
             page: this.page,
             rows: this.rows,
             city_no: 100100,
-            searchRuleConstant: 1
+            searchRuleConstant: 1,
+            sortFieldType: sortFieldType || 0,
+            sortType: sortType || 2,
           }
         }).then(function(res){
           if (res) {
             self.page++
-            self.hot = res.data.data
+            self.searchResult = res.data.data
+            self.associativeQuery = []
           }
         })
       }
     },
     watch: {
       query(newQuery) {
-
+        if (newQuery.length) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'essuggest/searchSuggest',
+            params: {
+              keywords: this.query,
+              size: 10
+            }
+          }).then(function(res){
+            if (res && res.data.data) {
+              self.associativeQuery = res.data.data
+            }
+          })
+        }
       }
     },
     components: {

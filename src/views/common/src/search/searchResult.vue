@@ -36,6 +36,12 @@
       rows: {
         type: Number,
         default: 6
+      },
+      data: {
+        type: Object,
+        default () {
+          return {}
+        }
       }
     },
     data () {

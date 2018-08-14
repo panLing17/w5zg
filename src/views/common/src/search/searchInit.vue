@@ -47,370 +47,13 @@
     created () {
       this._getHotData()
       this._getHistory()
+      this._getCategory()
     },
     data () {
       return {
         hot: [],
         history: [],
-        category: [
-          {
-            name: '超市',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '美妆个护',
-            list: [
-              {
-                title: '自然堂',
-                type: null
-              },
-              {
-                title: '水之密语',
-                type: null
-              },
-              {
-                title: '海飞丝',
-                type: null
-              },
-              {
-                title: '黑人',
-                type: 1
-              },
-              {
-                title: '欧莱雅',
-                type: null
-              },
-              {
-                title: '潘婷',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '运动户外',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '母婴用品',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '鞋靴箱包',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '女鞋',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '男装',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '女装',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          },
-          {
-            name: '玩具',
-            list: [
-              {
-                title: '面包',
-                type: null
-              },
-              {
-                title: '干脆面',
-                type: null
-              },
-              {
-                title: '薯片',
-                type: null
-              },
-              {
-                title: '沐浴露',
-                type: 1
-              },
-              {
-                title: '洗发水',
-                type: null
-              },
-              {
-                title: '酒',
-                type: null
-              },
-              {
-                title: '饮料',
-                type: 2
-              },
-              {
-                title: '水果',
-                type: null
-              },
-              {
-                title: '蔬菜',
-                type: null
-              }
-            ]
-          }
-        ],
+        category: [],
         horizontalScrollX: true,
         horizontalScrollY: false,
         horizontalStopPropagation: true,
@@ -420,7 +63,8 @@
     },
     computed: {
       categoryList () {
-        return this.category[this.currentCategory].list
+        return []
+        // return this.category[this.currentCategory].list
       },
       searchData () {
         return this.hot.concat(this.categoryList)
@@ -498,6 +142,18 @@
             }
           })
         }
+      },
+      _getCategory () {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/getHotGoodClass',
+          params: {}
+        }).then(function(res){
+          if (res) {
+            self.category = res.data.data
+          }
+        })
       }
     },
     components: {
