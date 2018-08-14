@@ -3,7 +3,7 @@
     .navbar
       .topLeft
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter 现金券
+      .topCenter {{titleName}}
     .cont
       ul
         li(v-for="item in contList")
@@ -17,14 +17,46 @@
 </template>
 
 <script>
-    export default {
-        name: "cAnswer",
-        data() {
-          return{
-            contList: [{title:'什么是现金券？', ansFlag: false},{title:'现金券的作用', ansFlag: false},{title:'如何得到现金券', ansFlag: false}]
-          }
+  export default {
+    name: "cAnswer",
+    data() {
+      return{
+        contList: [{title:'什么是现金券？', ansFlag: false}, {title:'现金券的作用', ansFlag: false}, {title:'如何得到现金券', ansFlag: false}],
+        titleName: ''
+      }
+    },
+    activated() {
+      this.showTitle()
+    },
+    mounted() {
+      this.showTitle()
+    },
+    methods:{
+      showTitle(){
+        console.log(this.$route.query.flag)
+        let rel = parseInt(this.$route.query.flag)
+        let x = ''
+        switch (rel) {
+          case 1:
+            x = '专柜提货与专柜配送'
+            break
+          case 2:
+            x = '实付价与专柜价'
+            break
+          case 3:
+            x = '现金券'
+            break
+          case 4:
+            x = '通用券'
+            break
+          case 5:
+            x = '退换货政策'
+            break
         }
+        this.titleName = x
+      }
     }
+  }
 </script>
 
 <style scoped>
@@ -52,8 +84,10 @@
     padding-top: .1rem;
   }
   .topCenter{
-    margin-left: 3.4rem;
     font-size: .48rem;
+    width: 60%;
+    text-align: center;
+    margin-left: 1.2rem;
   }
   .cont{
     margin-top: 1.28rem;

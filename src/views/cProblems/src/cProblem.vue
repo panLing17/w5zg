@@ -8,33 +8,33 @@
         img(src="../../../assets/img/msg.png", @click="$router.push('/service')")
     .cont
       ul
-        li
+        li(@click="$router.push({path:'/cAnswers',query:{flag:1}})")
           .left
             img(src="../../../assets/img/deliverys.png")
             .words 专柜提货与专柜配送
           .right
             img(src="../../../assets/img/Shape Copy@2x.png")
-        li
+        li(@click="$router.push({path:'/cAnswers',query:{flag:2}})")
           .left
             img(src="../../../assets/img/prices.png")
             .words 实付价与专柜价
           .right
             img(src="../../../assets/img/Shape Copy@2x.png")
       ul
-        li(@click="$router.push('/cAnswers')")
+        li(@click="$router.push({path:'/cAnswers',query:{flag:3}})")
           .left
             img(src="../../../assets/img/moneys.png")
             .words 现金券
           .right
             img(src="../../../assets/img/Shape Copy@2x.png")
-        li
+        li(@click="$router.push({path:'/cAnswers',query:{flag:4}})")
           .left
             img(src="../../../assets/img/commons.png")
             .words 通用券
           .right
             img(src="../../../assets/img/Shape Copy@2x.png")
       ul
-        li
+        li(@click="$router.push({path:'/cAnswers',query:{flag:5}})")
           .left
             img(src="../../../assets/img/returns.png")
             .words 退换货政策
@@ -44,7 +44,18 @@
 
 <script>
     export default {
-        name: "cProblem"
+      name: "cProblem",
+      data() {
+        return{
+
+        }
+      },
+      mounted() {
+
+      },
+      methods:{
+
+      }
     }
 </script>
 
