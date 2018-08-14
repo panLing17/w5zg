@@ -531,7 +531,7 @@
     content: '分类';
   }
   .activeHeaderRight:after {
-    content: '客服';
+    content: '消息';
   }
   .activeHeaderLeft:after, .activeHeaderRight:after {
     display: block;

@@ -22,7 +22,7 @@
     padding .18rem .26rem 0
     background rgb(246,246,246)
     ul
-      max-height 3.2rem
+      max-height 3.18rem
       overflow hidden
       li
         display inline-block
