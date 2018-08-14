@@ -26,7 +26,7 @@
       }
     },
     activated() {
-      this.showTitle()
+      // this.showTitle()
     },
     mounted() {
       this.showTitle()

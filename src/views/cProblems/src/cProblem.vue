@@ -84,7 +84,7 @@
   padding-top: .1rem;
 }
 .topCenter{
-  margin-left: 3.4rem;
+  margin-left: 3.2rem;
   font-size: .48rem;
 }
 .topRight{

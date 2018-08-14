@@ -473,7 +473,7 @@ const router = new Router ({
           name: '收藏夹',
           component: CProblems.cProblem,
           meta: {
-            keepAlive: true
+            keepAlive: false
           }
         },
         {
