@@ -8,7 +8,6 @@
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
       .cartTypeTab
         ul
-
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
             p 快递配送
             span(class="animated", :class="{swing:flag}") ({{shoppingCartGoodsNum.sendNum}})
@@ -19,7 +18,7 @@
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(ref="routerView", @clear="getGoodsNum")
+          router-view(@clear="getGoodsNum", @scroll="scrollToTop", ref="routerView")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
@@ -152,11 +151,16 @@
       }
       // 获取商品数量
       this.getGoodsNum()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
-        }
-      })
+      if (!this.scroll) {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      } else {
+        this.scroll = false
+      }
+
     },
     deactivated() {
 
@@ -172,6 +176,10 @@
       this.mescroll.destroy()
     },
     methods: {
+      scrollToTop () {
+        this.scroll = true
+        this.mescroll.scrollTo(0, 0)
+      },
       goBack () {
         this.$router.go(-1)
       },
