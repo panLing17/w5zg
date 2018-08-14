@@ -45,9 +45,9 @@
   export default {
     name: "searchInit",
     created () {
-      this._getHotData()
-      this._getHistory()
-      this._getCategory()
+      // this._getHotData()
+      // this._getHistory()
+      // this._getCategory()
     },
     data () {
       return {

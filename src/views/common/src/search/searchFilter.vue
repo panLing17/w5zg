@@ -2,7 +2,7 @@
   .searchFilter
     .navWrapper
       .left
-        .navItem(@click="brandChange", :class="{active: brandChoose}")
+        .navItem(@click="brandChange", :class="{active: brandChoose}", v-show="brandData.length")
           span 品牌
           img(:src="brandChoose?require('./brandUp.png'):require('./brandDown.png')")
       .right
@@ -22,7 +22,7 @@
           .brandWrapper(v-show="brandChoose", @touchmove.prevent="")
             scroll.brandContent(:data="brandData", ref="brandContent")
               ul
-                li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.name}}
+                li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.bi_name}}
             .btnWrapper
               .left 重置
               .right 确定
@@ -43,7 +43,7 @@
                 ul
                   li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceActive=index") {{item}}
             .bottomBtn
-              .left 重置
+              .left(@click="") 重置
               .right 确定
 </template>
 
@@ -51,12 +51,19 @@
   import Scroll from 'components/scroll'
   export default {
     name: "searchFilter",
+    props: {
+      brandData: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
     data () {
       return {
         brandChoose: false,
         priceChoose: 0,
         filterChoose: false,
-        brandData: ['曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球','曼秀乐敦','阿迪达斯','雅诗兰黛','兰蔻','Dior','一叶子','ONLY','红地球'],
         brandList: [],
         priceArea: ['0-500', '500-1000', '1000-2000', '2000-5000', '5000以上'],
         priceActive: -1
@@ -79,6 +86,15 @@
       }
     },
     watch: {
+      brandData (newVal) {
+        if (newVal.length) {
+          this.brandList = []
+          this.brandData.forEach(item => {
+            item.checked = false
+            this.brandList.push(item)
+          })
+        }
+      },
       brandChoose (newVal) {
         if (newVal) {
           setTimeout(() => {
@@ -87,9 +103,6 @@
 
         }
       }
-    },
-    created () {
-      this._brandDataReset()
     },
     methods: {
       filterChange() {
@@ -120,18 +133,9 @@
 
       },
       brandCheck(index) {
-        this.brandList.splice(index, 1 , {
-          name: this.brandList[index].name,
-          checked: !this.brandList[index].checked
-        })
-      },
-      _brandDataReset () {
-        this.brandData.forEach(item => {
-          this.brandList.push({
-            name: item,
-            checked: false
-          })
-        })
+        let temp = this.brandList[index]
+        temp.checked = !this.brandList[index].checked
+        this.brandList.splice(index, 1 , temp)
       }
     },
     components: {
@@ -146,6 +150,7 @@
   }
   .searchFilterWrapper {
     position absolute
+    width 100%
   }
   .navWrapper {
     height 1.2rem
@@ -196,7 +201,7 @@
 
   .brandWrapper {
     position relative
-    max-height 11.57
+    max-height 11.57rem
     width 100%
     background #fff
     z-index 20

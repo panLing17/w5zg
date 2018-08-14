@@ -5,16 +5,16 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="search", @enter="search", placeholder="请输入商品类别 例如: 男装", v-model="query")
-        img.searchImg(src="./search.png", @click.prevent="search")
+          input(type="search", @search="dataReset", @enter="dataReset", placeholder="请输入商品类别 例如: 男装", v-model="query")
+        img.searchImg(src="./search.png", @click.prevent="dataReset")
         img.cancelImg(src="./cancel.png", v-show="query", @click="query=''")
       .right(@click="search") 搜索
     // 未搜索时
-    search-init(v-show="!query.length && !searchResult.length")
+    search-init(v-show="!showResult && !searchResult.length")
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
-    search-result(v-show="showResult", :page="page", :rows="rows", :data="searchResult")
+    search-result(v-show="showResult", :page="page", :rows="rows", :result="searchResult", @loadMore="search", :hasMore="hasMore")
 </template>
 
 <script>
@@ -27,14 +27,21 @@
       return {
         query: '', //搜索词
         associativeQuery: [],
-        searchResult: {},
+        searchResult: {
+          aggs: [],
+          rows: []
+        },
         showResult: false,
         page: 1,
-        rows: 6
+        rows: 6,
+        hasMore: true
       }
     },
     methods: {
-      associativeSelect () {},
+      associativeSelect (item) {
+        this.query = item
+        this.dataReset()
+      },
       onSubmit () {
         return false
       },
@@ -54,11 +61,25 @@
           }
         }).then(function(res){
           if (res) {
+            if (!res.data.data.rows.length || res.data.data.rows.length < self.rows) {
+              self.hasMore = false
+            }
             self.page++
-            self.searchResult = res.data.data
+            self.searchResult.rows = self.searchResult.rows.concat(res.data.data.rows)
+            self.searchResult.aggs = res.data.data.aggs
             self.associativeQuery = []
+            self.showResult = true
           }
         })
+      },
+      dataReset () {
+        this.searchResult = {
+          aggs: [],
+          rows: []
+        }
+        this.page = 1
+        this.hasMore = true
+        this.search()
       }
     },
     watch: {
@@ -70,7 +91,7 @@
             url: self.$apiGoods + 'essuggest/searchSuggest',
             params: {
               keywords: this.query,
-              size: 10
+              size: 100
             }
           }).then(function(res){
             if (res && res.data.data) {

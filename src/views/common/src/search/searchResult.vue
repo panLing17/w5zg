@@ -1,8 +1,8 @@
 <template lang="pug">
   .searchResult
-    search-filter
+    search-filter(:brandData="result.aggs")
     scroll.searchResultContent(ref="searchResultContent",
-                              :data="result",
+                              :data="result.rows",
                               :pullup="pullup",
                               @scrollToEnd="loadResult",
                               :listenScroll="listenScroll",
@@ -10,10 +10,10 @@
                               :probeType="probeType"
                               )
       .resultWrapper
-        .noResult(v-show="!result.length")
+        .noResult(v-show="!result && !result.rows.length")
           img(src="./noResult.png")
           .desc 抱歉，没有找到相关商品
-        goods-list(:data="result")
+        goods-list(:data="result.rows")
         loading(v-show="hasMore")
         no-more(v-show="!hasMore")
     go-top(v-show="goTopShow", @goTop="goTop")
@@ -37,18 +37,23 @@
         type: Number,
         default: 6
       },
-      data: {
+      result: {
         type: Object,
         default () {
-          return {}
+          return {
+            rows: [],
+            aggs: []
+          }
         }
+      },
+      hasMore: {
+        type: Boolean,
+        default: true
       }
     },
     data () {
       return {
-        result: [],
         pullup: true,
-        hasMore: true,
         listenScroll: true,
         goTopShow: false,
         probeType: 3,
@@ -56,7 +61,7 @@
       }
     },
     created () {
-      this._getRecommend()
+
     },
     methods: {
       scroll(pos) {
@@ -73,28 +78,7 @@
         if (!this.hasMore) {
           return
         }
-        this.page++
-        this._getRecommend()
-      },
-      _getRecommend() {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goodsSearch/goodsRecommendationList',
-          params: {
-            page: this.page,
-            rows: this.rows
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function (response) {
-          if (response) {
-            if (!response.data.data.length) {
-              self.hasMore = false
-              return
-            }
-            self.result = self.result.concat(response.data.data)
-          }
-        })
+        this.$emit('loadMore')
       }
     },
     components: {
