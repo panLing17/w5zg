@@ -28,11 +28,19 @@
   import NoMore from 'components/noMore'
   export default {
     name: "searchResult",
+    props: {
+      page: {
+        type: Number,
+        default: 1
+      },
+      rows: {
+        type: Number,
+        default: 6
+      }
+    },
     data () {
       return {
         result: [],
-        page: 1,
-        rows: 8,
         pullup: true,
         hasMore: true,
         listenScroll: true,

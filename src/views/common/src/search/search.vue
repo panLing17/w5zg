@@ -14,7 +14,7 @@
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
-    search-result(v-show="query.length")
+    search-result(v-show="query.length", :page="page", :rows="rows")
 </template>
 
 <script>
@@ -27,7 +27,9 @@
       return {
         query: '', //搜索词
         associativeQuery: [],
-        searchResult: []
+        searchResult: [],
+        page: 1,
+        rows: 6
       }
     },
     methods: {
@@ -36,7 +38,23 @@
         return false
       },
       search () {
-        alert(1)
+        let self =this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goodsSearch/v2/spus',
+          params: {
+            keywords: this.query,
+            page: this.page,
+            rows: this.rows,
+            city_no: 100100,
+            searchRuleConstant: 1
+          }
+        }).then(function(res){
+          if (res) {
+            self.page++
+            self.hot = res.data.data
+          }
+        })
       }
     },
     watch: {
