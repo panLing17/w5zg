@@ -45,17 +45,6 @@
 <script>
     export default {
       name: "cProblem",
-      data() {
-        return{
-
-        }
-      },
-      mounted() {
-
-      },
-      methods:{
-
-      }
     }
 </script>
 
