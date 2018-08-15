@@ -4,7 +4,7 @@
       .topLeft
         img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter {{titleName}}
-    .cont
+    .cont.mescroll#contM
       ul
         li(v-for="item in contList")
           .up(@click="item.ansFlag = !item.ansFlag")
@@ -149,8 +149,9 @@
     mounted() {
       this.showTitle()
       this.queList()
+      this.$mescrollInt('contM', this.upCallback)
     },
-    methods:{
+    methods: {
       showTitle(){
         console.log(this.$route.query.flag)
         let rel = parseInt(this.$route.query.flag)
@@ -195,12 +196,20 @@
             break
         }
         this.contList = y
-      }
+      },
+      upCallback: function () {
+        this.mescroll.endErr()
+      },
     }
   }
 </script>
 
 <style scoped>
+  #contM{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+  }
   .wrapNav{
     width: 100%;
     height: 100vh;
