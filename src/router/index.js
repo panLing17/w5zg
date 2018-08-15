@@ -728,6 +728,14 @@ const router = new Router ({
               ]
             },
             {
+              path: '/my/accountCardCExplain',
+              name: '我的现金券C说明',
+              component: MyAccount.accountCardCExplain,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
               path: '/my/cashDetailC',
               name: '现金券明细C',
               component:MyAccount.cashDetailC,
@@ -739,6 +747,14 @@ const router = new Router ({
               path: '/my/accountUniversalC',
               name: '通用券C',
               component:MyAccount.accountUniversalC,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: '/my/universalExplain',
+              name: '通用券C说明',
+              component:MyAccount.universalExplain,
               meta: {
                 keepAlive: true
               }

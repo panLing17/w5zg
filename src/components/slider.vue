@@ -55,6 +55,9 @@ export default {
     })
   },
   methods: {
+    refresh () {
+      this.slider.refresh()
+    },
     addClass (el, className) {
       if (this.hasClass(el, className)) {
         return
@@ -73,6 +76,7 @@ export default {
     _setSliderWidth (isResize) {
       this.children = this.$refs.sliderGroup.children
       let width = 0
+
       let sliderWidth = this.$refs.slider.clientWidth
       for (let i = 0; i < this.children.length; i++) {
         let child = this.children[i]
@@ -80,7 +84,6 @@ export default {
         child.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-
       if (this.loop && !isResize) {
         width += 2 * sliderWidth
       }
@@ -99,13 +102,13 @@ export default {
           threshold: 0.3,
           speed: 400
         }
-      })
-
+    })
       for (let i = 0; i < this.$refs.sliderGroup.getElementsByTagName('img').length; i++) {
         this.$refs.sliderGroup.getElementsByTagName('img')[i].onerror = (ev) => {
           ev.target.style.height = '1px'
         }
       }
+
       this.slider.on('scrollEnd', () => {
         let pageIndex = this.slider.getCurrentPage().pageX
         this.currentPageIndex = pageIndex
@@ -135,6 +138,7 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .slider
     min-height: 1px
+    width: 100%
     .slider-group
       position: relative
       overflow: hidden
