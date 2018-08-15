@@ -5,8 +5,8 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="dataReset", @enter="dataReset", placeholder="请输入商品类别 例如: 男装", v-model="query")
-        img.searchImg(src="./search.png", @click.prevent="dataReset")
+          input(type="search", @search="dataReset({})", @enter="dataReset({})", placeholder="请输入商品类别 例如: 男装", v-model="query")
+        img.searchImg(src="./search.png", @click.prevent="dataReset({})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="query=''")
       .right(@click="search") 搜索
     // 未搜索时
@@ -14,7 +14,18 @@
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
-    search-result(v-show="showResult", :page="page", :rows="rows", :result="searchResult", :hasMore="hasMore", @loadMore="search", @brandSearch="brandSearch" )
+    search-result(
+                  ref="searchResult",
+                  v-show="showResult",
+                  :page="page",
+                  :rows="rows",
+                  :result="searchResult",
+                  :hasMore="hasMore",
+                  :sortFieldType="sortFieldType",
+                  @loadMore="search()",
+                  @brandSearch="brandSearch",
+                  @priceSearch="priceSearch"
+                  )
 </template>
 
 <script>
@@ -34,21 +45,31 @@
         showResult: false,
         page: 1,
         rows: 6,
-        hasMore: true
+        hasMore: true,
+        sortFieldType: 0,
+        bi_id: '',
+        sortType: 2
       }
     },
     methods: {
-      brandSearch(biArr) {
+      priceSearch(priceChoose) {
+        let price = priceChoose===1 ? 2 : 1
+        this.dataReset({sortType: price, sortFieldType: 3})
 
+      },
+      brandSearch(biArr) {
+        this.dataReset({bi_id: biArr})
       },
       associativeSelect (item) {
         this.query = item
-        this.dataReset()
+        this.dataReset({})
       },
       onSubmit () {
         return false
       },
-      search ({sortFieldType=0, sortType=2, bi_id=''}) {
+      search () {
+        //关闭过滤器
+        this.$refs.searchResult.closeFilter()
         let self =this
         self.$ajax({
           method: 'post',
@@ -59,9 +80,9 @@
             rows: this.rows,
             city_no: 100100,
             searchRuleConstant: 1,
-            sortFieldType: sortFieldType,
-            sortType: sortType,
-            bi_id: bi_id
+            sortFieldType: this.sortFieldType,
+            sortType: this.sortType,
+            bi_id: this.bi_id
           }
         }).then(function(res){
           if (res) {
@@ -76,13 +97,17 @@
           }
         })
       },
-      dataReset () {
+      dataReset ({sortType=2, bi_id='', sortFieldType=0}) {
+        // console.log(sortType)
         this.searchResult = {
           aggs: [],
           rows: []
         }
         this.page = 1
         this.hasMore = true
+        this.sortType = sortType
+        this.bi_id = bi_id
+        this.sortFieldType = sortFieldType
         this.search()
       }
     },

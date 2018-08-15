@@ -1,6 +1,12 @@
 <template lang="pug">
   .searchResult
-    search-filter(:brandData="result.aggs", @brandSearch="brandSearch")
+    search-filter(
+                  ref="searchFilter",
+                  :brandData="result.aggs",
+                  :sortFieldType="sortFieldType",
+                  @brandSearch="brandSearch",
+                  @priceSearch="priceSearch"
+                  )
     scroll.searchResultContent(ref="searchResultContent",
                               :data="result.rows",
                               :pullup="pullup",
@@ -44,11 +50,15 @@
             rows: [],
             aggs: []
           }
-        }
+        },
       },
       hasMore: {
         type: Boolean,
         default: true
+      },
+      sortFieldType: {
+        type: Number,
+        default: 0
       }
     },
     data () {
@@ -64,6 +74,12 @@
 
     },
     methods: {
+      priceSearch(priceChoose) {
+        this.$emit('priceSearch', priceChoose)
+      },
+      closeFilter() {
+        this.$refs.searchFilter.closeFilter()
+      },
       brandSearch(biArr) {
         this.$emit('brandSearch', biArr)
       },

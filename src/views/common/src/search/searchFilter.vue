@@ -6,9 +6,9 @@
           span 品牌
           img(:src="brandChoose?require('./brandUp.png'):require('./brandDown.png')")
       .right
-        .navItem
+        .navItem(:class="{active: sortFieldType===0}")
           span 综合
-        .navItem
+        .navItem(@click="priceSelected")
           span 价格
           img(:src="priceChoose===0?require('./price.png'):priceChoose===1?require('./priceUp.png'):require('./priceDown.png')")
         .navItem(@click="filterChange", :class="{active: filterChoose}")
@@ -57,6 +57,10 @@
         default() {
           return []
         }
+      },
+      sortFieldType: {
+        type: Number,
+        default: 0
       }
     },
     data () {
@@ -105,7 +109,19 @@
       }
     },
     methods: {
+      priceSelected() {
+        this.priceChoose = ++this.priceChoose%3
+        if (this.priceChoose===0) {
+          return
+        }
+        this.$emit('priceSearch', this.priceChoose)
+      },
+      closeFilter() {
+        this.brandChoose = false
+        this.filterChoose = false
+      },
       brandSearch() {
+        this.brandChoose = false
         let biArr = ''
         this.brandList.forEach(item => {
           if (item.checked) {
@@ -116,7 +132,6 @@
           return
         }
         biArr = biArr.substring(0, biArr.length-1)
-        console.log(biArr)
         this.$emit('brandSearch', biArr)
       },
       brandReset() {
