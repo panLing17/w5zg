@@ -53,12 +53,16 @@
     },
     methods: {
       priceSearch(priceChoose) {
-        let price = priceChoose===1 ? 2 : 1
-        this.dataReset({sortType: price, sortFieldType: 3})
+        let price = priceChoose===2 ? 1 : 2
+        let sortFieldType = 3
+        if (priceChoose === 0) {
+          sortFieldType = 0
+        }
+        this.dataReset({sortType: price, bi_id: this.bi_id, sortFieldType: sortFieldType})
 
       },
       brandSearch(biArr) {
-        this.dataReset({bi_id: biArr})
+        this.dataReset({sortType: this.sortType, bi_id: biArr, sortFieldType:this.sortFieldType})
       },
       associativeSelect (item) {
         this.query = item
@@ -98,7 +102,6 @@
         })
       },
       dataReset ({sortType=2, bi_id='', sortFieldType=0}) {
-        // console.log(sortType)
         this.searchResult = {
           aggs: [],
           rows: []

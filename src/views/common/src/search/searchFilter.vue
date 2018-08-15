@@ -153,9 +153,6 @@
       },
       priceSelected() {
         this.priceChoose = ++this.priceChoose%3
-        if (this.priceChoose===0) {
-          return
-        }
         this.$emit('priceSearch', this.priceChoose)
       },
       closeFilter() {
