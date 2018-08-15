@@ -289,6 +289,23 @@ const router = new Router ({
         keepAlive: true
       }
     },
+    {
+      path: '/activity',
+      name: '活动集合',
+      component: Acitivity.activity,
+      children: [
+        {
+          path: '',
+          name: '活动集合内容',
+          component: Acitivity.activityContent
+        }
+      ]
+    },
+    {
+      path: '/twoLevel',
+      name: '新二级活动',
+      component: Acitivity.twoLevel
+    },
     // {
     //   path: '/collection',
     //   name: '收藏夹',
@@ -393,23 +410,6 @@ const router = new Router ({
               path: '/home/sports',
               name: '三级活动',
               component: Home.sports
-            },
-            {
-              path: '/activity',
-              name: '活动集合',
-              component: Acitivity.activity,
-              children: [
-                {
-                  path: '',
-                  name: '活动集合内容',
-                  component: Acitivity.activityContent
-                }
-              ]
-            },
-            {
-              path: '/twoLevel',
-              name: '新二级活动',
-              component: Acitivity.twoLevel
             }
           ]
         },

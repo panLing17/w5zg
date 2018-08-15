@@ -126,7 +126,6 @@
     },
     created() {
       this.adSub = 0
-      console.log(window.navigator)
     },
     activated () {
       // 首页分享

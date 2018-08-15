@@ -29,8 +29,7 @@
           recommendGoods: [],
           parentId: null,
           parentType: null,
-          isEmpty: false,
-          shareShow: false
+          isEmpty: false
         }
       },
       components: {
@@ -75,50 +74,13 @@
           }
         })
       },
-      // beforeRouteEnter (to, from , next) {
-      //   to.meta.keepAlive = false
-      //   next();
-      // },
-      // beforeRouteLeave (to, from, next) {
-      //   to.meta.keepAlive = true
-      //   next()
-      // },
       methods: {
-        shareClick () {
-          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
-            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'share', title: '分享活动页', content: '特卖特卖', img: 'http://img1.imgtn.bdimg.com/it/u=845959696,1894336107&fm=27&gp=0.jpg'});
-            if (results2) {
-              return
-            }
-          }
-
-          if (w5zgApp) {
-            w5zgApp.share('标题','内容','图片','分享地址')
-            return
-          }
-
-        },
-        showShare () {
-          if ((window.webkit && window.webkit.messageHandlers.iosMessage) || w5zgApp) {
-            this.shareShow = true
-          }
-        },
         // 锁定或者解锁上拉加载
         lockUpDown (isLock) {
           this.mescroll.lockUpScroll( isLock );
         },
         back () {
-          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
-            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'back'});
-            if (results2) {
-              return
-            }
-          }
-          if (window.history.length<=2) {
-            this.$router.push('/home')
-          } else {
-            this.$router.go(-1)
-          }
+          this.$method.back.apply(this)
         },
         getParmas () {
           this.parentId = this.$route.query.actId;
