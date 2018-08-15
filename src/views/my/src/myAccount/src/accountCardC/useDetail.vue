@@ -37,7 +37,6 @@
           let t = 0
           if (this.data) {
             this.data.forEach(item => {
-              console.log(t)
               t += item.tn_balance
             })
           }
