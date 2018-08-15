@@ -2,7 +2,7 @@
   .wrapNav
     .navbar
       .topLeft
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="back")
       .topCenter 常见问题
       .topRight
         img(src="../../../assets/img/msg.png", @click="$router.push('/service')")
@@ -45,6 +45,11 @@
 <script>
     export default {
       name: "cProblem",
+      methods: {
+        back() {
+          this.$method.back.apply(this)
+        }
+      }
     }
 </script>
 
