@@ -11,9 +11,9 @@
         .navItem(@click="priceSelected")
           span 价格
           img(:src="priceChoose===0?require('./price.png'):priceChoose===1?require('./priceUp.png'):require('./priceDown.png')")
-        .navItem(@click="filterChange", :class="{active: filterChoose}")
-          span 筛选
-          img(:src="filterChoose?require('./filter2.png'):require('./filter.png')")
+        <!--.navItem(@click="filterChange", :class="{active: filterChoose}")-->
+          <!--span 筛选-->
+          <!--img(:src="filterChoose?require('./filter2.png'):require('./filter.png')")-->
     .searchFilterWrapper
       .transitionWrapper
         transition(name="fade")
@@ -35,16 +35,16 @@
               .desc 价格区间(元)
               .inputWrapper
                 .left
-                  input(type="number", placeholder="最小金额")
+                  input(type="number", placeholder="最小金额", v-model="minNum")
                 .center
                 .right
-                  input(type="number", placeholder="最大金额")
+                  input(type="number", placeholder="最大金额", v-model="maxNum")
               .btnWrapper
                 ul
-                  li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceActive=index") {{item}}
+                  li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceChange(index, item)") {{item.min}}{{item.max?'-'+item.max:' 以上'}}
             .bottomBtn
-              .left() 重置
-              .right 确定
+              .left(@click="priceReset") 重置
+              .right(@click="priceFilter") 确定
 </template>
 
 <script>
@@ -69,8 +69,30 @@
         priceChoose: 0,
         filterChoose: false,
         brandList: [],
-        priceArea: ['0-500', '500-1000', '1000-2000', '2000-5000', '5000以上'],
-        priceActive: -1
+        priceArea: [
+          {
+            min: 0,
+            max: 500
+          },
+          {
+            min: 500,
+            max: 1000
+          },
+          {
+            min: 1000,
+            max: 2000
+          },
+          {
+            min: 2000,
+            max: 5000
+          },
+          {
+            min: 5000
+          }
+          ],
+        priceActive: -1,
+        minNum: '',
+        maxNum: ''
       }
     },
     computed: {
@@ -109,6 +131,26 @@
       }
     },
     methods: {
+      priceFilter() {
+        this.filterChoose = false
+        if (this.minNum.trim().length===0) {
+          return
+        }
+        if (parseFloat(this.minNum)>parseFloat(this.maxNum)) {
+          [this.minNum, this.maxNum] = [this.maxNum, this.minNum]
+        }
+        this.$emit('priceFilter', )
+      },
+      priceReset() {
+        this.priceActive = -1
+        this.minNum = ''
+        this.maxNum = ''
+      },
+      priceChange(index, item) {
+        this.priceActive = index
+        this.minNum = item.min
+        this.maxNum = item.max?item.max:''
+      },
       priceSelected() {
         this.priceChoose = ++this.priceChoose%3
         if (this.priceChoose===0) {

@@ -16,12 +16,12 @@
                               :probeType="probeType"
                               )
       .resultWrapper
-        .noResult(v-show="!result && !result.rows.length")
+        .noResult(v-show="!result.rows.length")
           img(src="./noResult.png")
           .desc 抱歉，没有找到相关商品
         goods-list(:data="result.rows")
         loading(v-show="hasMore")
-        no-more(v-show="!hasMore")
+        no-more(v-show="!hasMore && result.rows.length")
     go-top(v-show="goTopShow", @goTop="goTop")
 </template>
 
