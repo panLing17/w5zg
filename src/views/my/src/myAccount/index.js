@@ -2,10 +2,12 @@ import grantCard from './src/grantCard'
 import grantCardRandom from './src/grantCardRandom'
 import accountCashB from './src/accountCashB'
 import cashDetailB from './src/cashDetailB'
-import accountCardC from './src/accountCardC'
-import useDetail from './src/useDetail'
+import accountCardC from './src/accountCardC/accountCardC'
+import accountCardCExplain from './src/accountCardC/accountCardCExplain'
+import useDetail from './src/accountCardC/useDetail'
 import cashDetailC from './src/cashDetailC'
-import accountUniversalC from './src/accountUniversalC'
+import accountUniversalC from './src/accountUniversalC/accountUniversalC'
+import universalExplain from './src/accountUniversalC/universalExplain'
 import accountB from './src/accountB'
 import accountDetail from './src/accountDetail'
 import accountDetailContent from './src/accountDetailContent'
@@ -20,5 +22,5 @@ import promote from './src/promote'
 import receiveTicketGH from './src/receiveTicketGH'
 
 export default {
-  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue,accountC,receiveTicket,promote, receiveTicketGH
+  grantCard,accountCashB,cashDetailB,grantCardRandom,accountCardC,useDetail,cashDetailC,accountUniversalC,accountB,accountDetail,accountDetailContent,withdrawals,chooseBankCard,addBankCard,addBankConfirm,revenue,accountC,receiveTicket,promote, receiveTicketGH, universalExplain, accountCardCExplain
 }
