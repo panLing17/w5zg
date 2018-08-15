@@ -5,7 +5,7 @@
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right", @click="shareClick")
-        img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
+        img(v-if="shareShow", src="../../../../../assets/img/shareImg.png", style="width: .58rem")
     .mescroll#twoLevelMescroll
       .contentWrapper
         .block
