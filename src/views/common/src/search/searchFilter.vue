@@ -24,8 +24,8 @@
               ul
                 li(v-for="(item, index) in brandList", :class="{active: item.checked}", @click="brandCheck(index)") {{item.bi_name}}
             .btnWrapper
-              .left 重置
-              .right 确定
+              .left(@click="brandReset") 重置
+              .right(@click="brandSearch") 确定
       .transitionWrapper
         transition(name="fade")
           .mask(v-show="filterChoose", @click="filterChoose=!filterChoose", @touchmove.prevent="")
@@ -43,7 +43,7 @@
                 ul
                   li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceActive=index") {{item}}
             .bottomBtn
-              .left(@click="") 重置
+              .left() 重置
               .right 确定
 </template>
 
@@ -105,6 +105,26 @@
       }
     },
     methods: {
+      brandSearch() {
+        let biArr = ''
+        this.brandList.forEach(item => {
+          if (item.checked) {
+            biArr += item.bi_id+','
+          }
+        })
+        if (!biArr.length) {
+          return
+        }
+        biArr = biArr.substring(0, biArr.length-1)
+        console.log(biArr)
+        this.$emit('brandSearch', biArr)
+      },
+      brandReset() {
+        this.brandList.forEach((item, index) => {
+          item.checked = false
+          this.brandList.splice(index, 1, item)
+        })
+      },
       filterChange() {
         if (this.brandChoose) {
           this.brandChoose = false

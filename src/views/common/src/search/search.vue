@@ -14,7 +14,7 @@
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
-    search-result(v-show="showResult", :page="page", :rows="rows", :result="searchResult", @loadMore="search", :hasMore="hasMore")
+    search-result(v-show="showResult", :page="page", :rows="rows", :result="searchResult", :hasMore="hasMore", @loadMore="search", @brandSearch="brandSearch" )
 </template>
 
 <script>
@@ -38,6 +38,9 @@
       }
     },
     methods: {
+      brandSearch(biArr) {
+
+      },
       associativeSelect (item) {
         this.query = item
         this.dataReset()
@@ -45,7 +48,7 @@
       onSubmit () {
         return false
       },
-      search (e, sortFieldType,sortType) {
+      search ({sortFieldType=0, sortType=2, bi_id=''}) {
         let self =this
         self.$ajax({
           method: 'post',
@@ -56,8 +59,9 @@
             rows: this.rows,
             city_no: 100100,
             searchRuleConstant: 1,
-            sortFieldType: sortFieldType || 0,
-            sortType: sortType || 2,
+            sortFieldType: sortFieldType,
+            sortType: sortType,
+            bi_id: bi_id
           }
         }).then(function(res){
           if (res) {

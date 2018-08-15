@@ -1,6 +1,6 @@
 <template lang="pug">
   .searchResult
-    search-filter(:brandData="result.aggs")
+    search-filter(:brandData="result.aggs", @brandSearch="brandSearch")
     scroll.searchResultContent(ref="searchResultContent",
                               :data="result.rows",
                               :pullup="pullup",
@@ -64,6 +64,9 @@
 
     },
     methods: {
+      brandSearch(biArr) {
+        this.$emit('brandSearch', biArr)
+      },
       scroll(pos) {
         if (-pos.y > (this.currentHeight - 100)) {
           this.goTopShow = true
