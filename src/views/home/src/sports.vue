@@ -19,10 +19,12 @@
 <script>
   import {mapState} from 'vuex'
   import recommend from './recommend'
+  import {activityShare} from 'assets/js/mixin.js'
   // 引入bus
 
     export default {
       name: "sports",
+      mixins:[activityShare],
       data () {
         return {
           banner: [],

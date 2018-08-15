@@ -4,7 +4,8 @@
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
     .mescroll#largeMescroll
       .content(ref="largeConllection")
         ul.list
@@ -14,8 +15,10 @@
 </template>
 
 <script>
+  import {activityShare} from 'assets/js/mixin.js'
     export default {
       name: "largeCollection",
+      mixins:[activityShare],
       data () {
         return {
           bankList: []

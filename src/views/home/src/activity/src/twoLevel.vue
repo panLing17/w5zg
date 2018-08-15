@@ -4,7 +4,8 @@
       .topLeft(slot="left", @click="back")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
     .mescroll#twoLevelMescroll
       .contentWrapper
         .block
@@ -30,8 +31,10 @@
 
 <script>
   import recommend from '../../recommend'
+  import {activityShare} from 'assets/js/mixin.js'
   export default {
     name: 'twoLevel',
+    mixins:[activityShare],
     components: { recommend },
     data () {
       return {

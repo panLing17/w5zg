@@ -35,15 +35,15 @@ export const activityShare = {
       }
     },
     created() {
-      this.getShareContent()
       this.showShare()
+      this.getShareContent()
     },
     methods: {
       getShareContent() {
         if (!this.$route.query.shId) {
-          self.shareTitle = '万物直供商城正品保障'
-          self.shareContent = '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买'
-          self.shareImg = ''
+          this.shareTitle = '万物直供商城正品保障'
+          this.shareContent = '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买'
+          this.shareImg = ''
           return
         }
         let self = this
@@ -68,7 +68,6 @@ export const activityShare = {
         })
       },
       showShare () {
-
         if (typeof w5zgApp !== 'undefined') {
           this.shareShow = true
         }
@@ -83,8 +82,10 @@ export const activityShare = {
             return
           }
         }
-
         if (typeof w5zgApp !== 'undefined') {
+          if (this.shareTitle == '') {
+            return
+          }
           w5zgApp.share(this.shareTitle,this.shareContent,this.shareImg,this.shareUrl)
           return
         }
