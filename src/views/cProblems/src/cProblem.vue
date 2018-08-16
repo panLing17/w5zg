@@ -2,10 +2,10 @@
   .wrapNav
     .navbar
       .topLeft
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="back")
       .topCenter 常见问题
       .topRight
-        img(src="../../../assets/img/msg.png", @click="$router.push('/service')")
+        img(src="../../../assets/img/msg.png", @click="goTo")
     .cont
       ul
         li(@click="$router.push({path:'/cAnswers',query:{flag:1}})")
@@ -45,16 +45,17 @@
 <script>
     export default {
       name: "cProblem",
-      data() {
-        return{
-
+      methods: {
+        back() {
+          this.$method.back.apply(this)
+        },
+        goTo() {
+          if (typeof w5zgApp !== 'undefined') {
+            w5zgApp.toCustomService()
+            return
+          }
+          this.$router.push('/service')
         }
-      },
-      mounted() {
-
-      },
-      methods:{
-
       }
     }
 </script>
