@@ -6,9 +6,15 @@
       .topCenter(slot="center", style="color:#fff") 通用券
       .topRight(slot="right", @click="$router.push('/my/universalExplain')")
         img(src="./desc.png", style="width: 2rem")
-    scroll.content(:data="cashDetail", :pullup="pullup", @scrollToEnd="loadMore")
+    .tabBox.active(v-show="tabBoxActive")
+      ul.list
+        li.normalL.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部明细
+        li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
+        li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
+        li.line
+    scroll.content(ref="scroll", :data="cashDetail", :pullup="pullup", @scrollToEnd="loadMore", :probeType="probeType", @scroll="scroll", :listenScroll="listenScroll")
       div
-        .balanceBox
+        .balanceBox(ref="balanceBox")
           .balance {{balance | number2}}
           .balanceDec 余额 (元)
         .tabBox
@@ -17,18 +23,20 @@
             li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
             li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
             li.line
-        .detailBox
+        .detailBox(ref="detailBox")
           ul.detailList
             li(v-for="item in cashDetail", v-if="item.tran_money!=0")
               .itemLeft
                 img(:src="item.trade_in_out==='125'?require('./shou.png'):require('./zhi.png')")
               .itemCenter
-                .name {{item.trade_in_out==='125'?'退款':'购物'}}
+                .name {{item.trade_type | tradeType}}
                 .no 订单号：{{item.order_no}}
                 .time {{item.creation_time}}
               .itemRight
                 .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
                 .balancePrice 余额：{{item.trade_balance_money | number}}
+        loading(v-show="hasMore")
+        no-more(v-show="!hasMore && cashDetail.length")
           .nodata(v-show="!cashDetail.length")
             img(src="./cash.png")
             .desc 没有资金流水记录
@@ -36,6 +44,8 @@
 
 <script>
   import Scroll from 'components/scroll'
+  import Loading from 'components/loading/loading'
+  import NoMore from 'components/noMore'
   export default {
       name: "accountUniversalC",
       data () {
@@ -46,14 +56,21 @@
           tradeType: '',
           pullup: true,
           page: 1,
-          rows: 10
+          rows: 10,
+          hasMore: true,
+          probeType: 3,
+          tabBoxActive: false,
+          listenScroll: true
         }
       },
       components: {
-        Scroll
+        Scroll,
+        Loading,
+        NoMore
       },
       created () {
         this.getBalance();
+        this.getData()
       },
       mounted () {
 
@@ -77,6 +94,7 @@
             case '124': text = '消费退款'; break;
             case '128': text = '余额入账（返点）'; break;
             case '127': text = '余额入账（分成）'; break;
+            case '1211': text = '取消订单'; break;
           }
           return text;
         }
@@ -87,14 +105,26 @@
         }
       },
       methods: {
+        scroll(pos) {
+          console.log(-pos.y+'==========='+this.$refs.balanceBox.offsetHeight)
+          if (-pos.y >= this.$refs.balanceBox.offsetHeight) {
+            this.tabBoxActive = true
+          }else {
+            this.tabBoxActive = false
+          }
+        },
         loadMore() {
-
+          if (!this.hasMore) {
+            return
+          }
+          this.page++
+          this.getData()
         },
         getData() {
-          let _this = this;
+          let self = this;
           let form = {
-            page: pageNum,
-            rows: pageSize
+            page: this.page,
+            rows: this.rows
           };
           if (this.tradeType.trim().length !== 0) {
             form.type = this.tradeType
@@ -105,45 +135,15 @@
             params: form
           }).then(function (response) {
             if (response) {
-              self.cashDetail = response.data.data.rows
-            }
-          })
-        },
-        upCallback: function(page) {
-          let self = this;
-          this.getListDataFromNet(page.num, page.size, function(curPageData) {
-            if(page.num === 1){
-              self.cashDetail = [];
-            }
-            self.cashDetail = self.cashDetail.concat(curPageData)
-            self.mescroll.endSuccess(curPageData.length)
-          }, function() {
-            //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-            self.mescroll.endErr();
-          })
-        },
-        getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-          let _this = this;
-          let form = {
-            page: pageNum,
-            rows: pageSize
-          };
-          if (this.tradeType.trim().length !== 0) {
-            form.type = this.tradeType
-          }
-          this.$ajax({
-            method: 'get',
-            url: this.$apiTransaction + 'logAccount/logs',
-            params: form
-          }).then(function (response) {
-            if (response.data.code === '081') {
-              if (response.data.data && response.data.data.rows) {
-                successCallback&&successCallback(response.data.data.rows);
-              }else {
-                successCallback&&successCallback([]);
+              if (response.data.data) {
+                self.cashDetail = self.cashDetail.concat(response.data.data.rows)
+                if (self.cashDetail.length === 0 || self.cashDetail.length<self.rows) {
+                  self.hasMore = false
+                }
+              } else {
+                self.hasMore = false
               }
-            } else {
-              _this.mescroll.endErr();
+
             }
           })
         },
@@ -166,7 +166,12 @@
               this.tradeType = '126'
               break;
           }
+          this.hasMore = true
+          this.page = 1
           this.cashDetail = []
+          this.tabBoxActive = false
+          this.getData()
+
         }
       }
     }
@@ -180,6 +185,11 @@
     width: 100%;
     height: auto;
   }
+    .content {
+      height: calc(100vh - 1.3rem);
+      overflow hidden
+      position relative
+    }
   .accountUniversalBox {
     background: rgb(242,242,242);
     width: 100%;
@@ -211,10 +221,17 @@
     font-size: .37rem;
   }
   .tabBox {
+    width: 100%;
     height: .96rem;
     background: #fff;
     box-sizing: border-box;
     border-bottom: .013rem solid #cecece;
+  }
+  .tabBox.active {
+    position absolute
+    top 1.3rem
+    left 0
+    z-index 10
   }
   .tabBox .list {
     position: relative;
@@ -269,6 +286,7 @@
   }
   .detailBox {
     background: #fff;
+    min-height: calc(100vh - 8.9rem);
   }
   .detailList {
     padding: 0 .4rem;

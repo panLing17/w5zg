@@ -76,7 +76,7 @@
               .words 收藏夹
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
-              .badge(v-if="netcardCount!==0", :class="{top: netcardCount.toString().length>3}") {{netcardCount.toString().length>3?'999':netcardCount}}
+              <!--.badge(v-if="netcardCount!==0", :class="{top: netcardCount.toString().length>3}") {{netcardCount.toString().length>3?'999':netcardCount}}-->
               .words 现金券
             li(v-if="userData.member_type === '091'", @click="goAllCard")
               img(src="../../../assets/img/my_cashcoupon@2x.png")
@@ -156,7 +156,7 @@
       this.getUserData()
       this.getFootmarkNum()
       this.getOrderCount()
-      this.getNetcardsCount()
+      // this.getNetcardsCount()
 
       // 判断页面是否向上滚动
       // window.addEventListener('scroll',this.judgeScroll,true);
@@ -327,7 +327,7 @@
             self.getUserInfo()
           }
           if (response.data.data.member_type === '091') {
-            self.getNetcardsCount()
+            // self.getNetcardsCount()
             if (response.data.data.reg_present === '11') {
               self.$store.commit('setShowRegisterTicket', false)
             } else {
