@@ -69,7 +69,8 @@
         .bottomButton(v-else)
           .right(v-show="noGoodsL",@click="confirm") 确定
           .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
-        .notice(v-show="noticeFlag") 如果30天内到货，会通过系统消息提醒您
+        .notice(v-show="noticeFlag")
+          div 如果30天内到货，会通过系统消息提醒您
 </template>
 
 <script>
@@ -755,10 +756,18 @@
   .notice{
     position: fixed;
     width: 100%;
-    bottom: 1.29rem;
-    background-color: rgba(0,0,0,.3);
-    color: #fff;
+    bottom: 1.82rem;
+  }
+  .notice div{
+    width: 8.8rem;
+    height: .93rem;
+    border-radius: .9rem;
+    margin: 0 auto;
     text-align: center;
+    line-height: .93rem;
+    background-color: rgba(0,0,0,.6);
+    color: #fff;
+    font-size: .4rem;
   }
   .selectSizeBox {
   }
