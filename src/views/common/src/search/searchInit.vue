@@ -32,11 +32,11 @@
         scroll.categoryHeader(ref="categoryHeader", :data="category", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
           div
             ul(ref="categoryList")
-              li(v-for="(item, index) in category", :class="{active: currentCategory===index}", @click="categoryChange(item, index, $event)") {{item.name}}
+              li(v-for="(item, index) in category", :class="{active: currentCategory===index}", @click="categoryChange(item, index, $event)") {{item.gc_name}}
         .categoryContent
           ul
-            li(v-for="item in categoryList") {{item.title}}
-              img(v-if="item.pic_url", :src="item.pic_url | img-filter")
+            li(v-for="item in categoryList", @click="wordSearch(item)") {{item.gc_name}}
+              img(v-if="item.gc_icon_url", :src="item.gc_icon_url | img-filter")
 </template>
 
 <script>
@@ -63,8 +63,12 @@
     },
     computed: {
       categoryList () {
-        return []
-        // return this.category[this.currentCategory].list
+        if(this.category.length) {
+          return this.category[this.currentCategory].nextStepList
+        } else {
+          return []
+        }
+
       },
       searchData () {
         return this.hot.concat(this.categoryList)
@@ -264,6 +268,12 @@
         line-height: 1;
         font-size: .34rem;
         color: #333;
+        img {
+          width .4rem
+          position absolute
+          right -0.05rem
+          bottom .5rem
+        }
       }
     }
   }

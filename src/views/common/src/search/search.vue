@@ -64,10 +64,12 @@
       wordSearch(item) {
         if (item.search_word) {
           this.query = item.search_word
+        } else if (item.gc_name){
+          this.query = item.gc_name
         } else {
           this.query = item
         }
-        this.search()
+        this.dataReset({})
       },
       priceSearch(priceChoose) {
         let price = priceChoose===2 ? 1 : 2
