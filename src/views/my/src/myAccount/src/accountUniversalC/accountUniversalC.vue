@@ -7,7 +7,7 @@
       .topRight(slot="right", @click="$router.push('/my/universalExplain')")
         img(src="./desc.png", style="width: 2rem")
     .balanceBox
-      .balance {{balance | number}}
+      .balance {{balance | number2}}
       .balanceDec 余额 (元)
     .tabBox
       ul.list
@@ -15,34 +15,32 @@
         li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
         li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
         li.line
-    .mescroll#mescroll
-      .detailBox(v-show="cashDetail && cashDetail.length")
-        ul.detailList
-          li(v-for="item in cashDetail", v-if="item.tran_money!=0")
-            .itemLeft
-              img(:src="item.trade_in_out==='125'?require('./shou.png'):require('./zhi.png')")
-            .itemCenter
-              .name {{item.trade_type | tradeType}}
-              .no 订单号：{{item.order_no}}
-              .time {{item.creation_time}}
-            .itemRight
-              .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
-              .balancePrice 余额：{{item.trade_balance_money | number}}
-      .nodata(v-show="!cashDetail || !cashDetail.length")
-        img(src="./cash.png")
-        .desc 没有资金流水记录
+    .detailBox(v-show="cashDetail && cashDetail.length")
+      ul.detailList
+        li(v-for="item in cashDetail", v-if="item.tran_money!=0")
+          .itemLeft
+            img(:src="item.trade_in_out==='125'?require('./shou.png'):require('./zhi.png')")
+          .itemCenter
+            .name {{item.trade_in_out==='125'?'退款':'购物'}}
+            .no 订单号：{{item.order_no}}
+            .time {{item.creation_time}}
+          .itemRight
+            .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
+            .balancePrice 余额：{{item.trade_balance_money | number}}
+    .nodata(v-show="!cashDetail || !cashDetail.length")
+      img(src="./cash.png")
+      .desc 没有资金流水记录
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-
+  import Scroll from 'components/'
   export default {
       name: "accountUniversalC",
       data () {
         return {
           cashDetail: null,
           itemActive: 0,
-          balance: 0.00,
+          balance: 0,
           tradeType: ''
         }
       },
@@ -50,13 +48,15 @@
         this.getBalance();
       },
       mounted () {
-        this.$mescrollInt("mescroll",this.upCallback);
+
       },
       beforeDestroy () {
-        this.mescroll.hideTopBtn();
-        this.mescroll.destroy();
+
       },
       filters: {
+        number2 (value) {
+          return Number(value).toFixed(2)
+        },
         // 保留两位小数点
         number (value) {
           return parseFloat(Number(value).toFixed(2))
@@ -118,7 +118,9 @@
           })
         },
         getBalance () {
-          this.balance = this.$store.state.userData.cash_balance;
+          if (this.$store.state.userData) {
+            this.balance = this.$store.state.userData.cash_balance;
+          }
         },
         // 过滤
         itemChange (index) {
@@ -135,9 +137,6 @@
               break;
           }
           this.cashDetail = []
-          this.mescroll.scrollTo( 0, 300 );
-          this.mescroll.destroy();
-          this.$mescrollInt("mescroll",this.upCallback);
         }
       }
     }
