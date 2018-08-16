@@ -70,7 +70,7 @@ function back() {
   this.$router.go(-1)
 }
 
-function goActivity(item) {
+function goActivity(data) {
   switch (data.url_type) {
     // 跳外链
     case '143': window.location.href = data.url + '?shId=' + data.sh_id; break;
