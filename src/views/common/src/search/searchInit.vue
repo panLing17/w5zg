@@ -7,10 +7,10 @@
         scroll.hotContent(:data="hot", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
           .twoRow
             ul
-              li(v-for="(item, index) in hot", v-show="index%2===0") {{item.search_word}}
+              li(v-for="(item, index) in hot", v-show="index%2===0", @click="wordSearch(item)") {{item.search_word}}
                 img(v-if="item.pic_url", :src="item.pic_url | img-filter")
             ul
-              li(v-for="(item, index) in hot", v-show="index%2===1") {{item.search_word}}
+              li(v-for="(item, index) in hot", v-show="index%2===1", @click="wordSearch(item)") {{item.search_word}}
                 img(v-if="item.pic_url", :src="item.pic_url | img-filter")
       .historyWrapper(v-show="history.length")
         .blockTitle
@@ -20,9 +20,9 @@
         scroll.hotContent(:style="{height:history.length>6?'2.37rem':'1.4rem'}", :data="history", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
           .twoRow(v-if="history.length>6")
             ul
-              li(v-for="(item, index) in history", v-if="index%2===0") {{item}}
+              li(v-for="(item, index) in history", v-if="index%2===0", @click="wordSearch(item)") {{item}}
             ul
-              li(v-for="(item, index) in history", v-if="index%2===1") {{item}}
+              li(v-for="(item, index) in history", v-if="index%2===1", @click="wordSearch(item)") {{item}}
           .oneRow(v-else)
             ul
               li(v-for="item in history") {{item}}
@@ -36,7 +36,7 @@
         .categoryContent
           ul
             li(v-for="item in categoryList") {{item.title}}
-              flag(v-if="item.type", :flag="item.type")
+              img(v-if="item.pic_url", :src="item.pic_url | img-filter")
 </template>
 
 <script>
@@ -71,6 +71,9 @@
       }
     },
     methods: {
+      wordSearch(item) {
+        this.$emit('wordSearch', item)
+      },
       clearHistory () {
         this.$confirm({
           title: '确认',

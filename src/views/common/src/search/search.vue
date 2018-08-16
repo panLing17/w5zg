@@ -7,10 +7,10 @@
         form(@submit.prevent="onSubmit")
           input(type="search", @search="dataReset({})", @enter="dataReset({})", placeholder="请输入商品类别 例如: 男装", v-model="query")
         img.searchImg(src="./search.png", @click.prevent="dataReset({})")
-        img.cancelImg(src="./cancel.png", v-show="query", @click="query=''")
+        img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="search") 搜索
     // 未搜索时
-    search-init(v-show="!showResult && !searchResult.length")
+    search-init(v-show="searchInit", @wordSearch="wordSearch")
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
@@ -42,6 +42,7 @@
           aggs: [],
           rows: []
         },
+        searchInit: true,
         showResult: false,
         page: 1,
         rows: 6,
@@ -52,6 +53,22 @@
       }
     },
     methods: {
+      cancelQuery() {
+        this.query = ''
+        this.searchResult = {
+          aggs: [],
+          rows: []
+        }
+        this.searchInit = true
+      },
+      wordSearch(item) {
+        if (item.search_word) {
+          this.query = item.search_word
+        } else {
+          this.query = item
+        }
+        this.search()
+      },
       priceSearch(priceChoose) {
         let price = priceChoose===2 ? 1 : 2
         let sortFieldType = 3
@@ -72,6 +89,7 @@
         return false
       },
       search () {
+        this.searchInit = false
         //关闭过滤器
         this.$refs.searchResult.closeFilter()
         let self =this
@@ -128,6 +146,9 @@
           }).then(function(res){
             if (res && res.data.data) {
               self.associativeQuery = res.data.data
+              if (self.associativeQuery.length) {
+                self.searchInit = false
+              }
             }
           })
         }
