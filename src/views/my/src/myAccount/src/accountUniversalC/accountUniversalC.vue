@@ -6,7 +6,7 @@
       .topCenter(slot="center", style="color:#fff") 通用券
       .topRight(slot="right", @click="$router.push('/my/universalExplain')")
         img(src="./desc.png", style="width: 2rem")
-    scroll.content(:data="cashDetail")
+    scroll.content(:data="cashDetail", :pullup="pullup", @scrollToEnd="loadMore")
       div
         .balanceBox
           .balance {{balance | number2}}
@@ -17,7 +17,7 @@
             li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
             li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
             li.line
-        .detailBox(v-show="cashDetail && cashDetail.length")
+        .detailBox
           ul.detailList
             li(v-for="item in cashDetail", v-if="item.tran_money!=0")
               .itemLeft
@@ -29,9 +29,9 @@
               .itemRight
                 .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
                 .balancePrice 余额：{{item.trade_balance_money | number}}
-        .nodata(v-show="!cashDetail || !cashDetail.length")
-          img(src="./cash.png")
-          .desc 没有资金流水记录
+          .nodata(v-show="!cashDetail.length")
+            img(src="./cash.png")
+            .desc 没有资金流水记录
 </template>
 
 <script>
@@ -40,10 +40,13 @@
       name: "accountUniversalC",
       data () {
         return {
-          cashDetail: null,
+          cashDetail: [],
           itemActive: 0,
           balance: 0,
-          tradeType: ''
+          tradeType: '',
+          pullup: true,
+          page: 1,
+          rows: 10
         }
       },
       components: {
@@ -84,6 +87,28 @@
         }
       },
       methods: {
+        loadMore() {
+
+        },
+        getData() {
+          let _this = this;
+          let form = {
+            page: pageNum,
+            rows: pageSize
+          };
+          if (this.tradeType.trim().length !== 0) {
+            form.type = this.tradeType
+          }
+          this.$ajax({
+            method: 'get',
+            url: this.$apiTransaction + 'logAccount/logs',
+            params: form
+          }).then(function (response) {
+            if (response) {
+              self.cashDetail = response.data.data.rows
+            }
+          })
+        },
         upCallback: function(page) {
           let self = this;
           this.getListDataFromNet(page.num, page.size, function(curPageData) {
@@ -329,13 +354,11 @@
     color: rgb(153,153,153);
   }
   .nodata {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
+    margin-top: 1.6rem;
     width: 100%;
     text-align: center;
     font-size: 0;
+    background: rgb(242,242,242);
     img {
       width: 2.66rem;
     }
