@@ -6,34 +6,36 @@
       .topCenter(slot="center", style="color:#fff") 通用券
       .topRight(slot="right", @click="$router.push('/my/universalExplain')")
         img(src="./desc.png", style="width: 2rem")
-    .balanceBox
-      .balance {{balance | number2}}
-      .balanceDec 余额 (元)
-    .tabBox
-      ul.list
-        li.normalL.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部明细
-        li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
-        li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
-        li.line
-    .detailBox(v-show="cashDetail && cashDetail.length")
-      ul.detailList
-        li(v-for="item in cashDetail", v-if="item.tran_money!=0")
-          .itemLeft
-            img(:src="item.trade_in_out==='125'?require('./shou.png'):require('./zhi.png')")
-          .itemCenter
-            .name {{item.trade_in_out==='125'?'退款':'购物'}}
-            .no 订单号：{{item.order_no}}
-            .time {{item.creation_time}}
-          .itemRight
-            .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
-            .balancePrice 余额：{{item.trade_balance_money | number}}
-    .nodata(v-show="!cashDetail || !cashDetail.length")
-      img(src="./cash.png")
-      .desc 没有资金流水记录
+    scroll.content(:data="cashDetail")
+      div
+        .balanceBox
+          .balance {{balance | number2}}
+          .balanceDec 余额 (元)
+        .tabBox
+          ul.list
+            li.normalL.item(:class="{'active':itemActive===0}", @click="itemChange(0)") 全部明细
+            li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
+            li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
+            li.line
+        .detailBox(v-show="cashDetail && cashDetail.length")
+          ul.detailList
+            li(v-for="item in cashDetail", v-if="item.tran_money!=0")
+              .itemLeft
+                img(:src="item.trade_in_out==='125'?require('./shou.png'):require('./zhi.png')")
+              .itemCenter
+                .name {{item.trade_in_out==='125'?'退款':'购物'}}
+                .no 订单号：{{item.order_no}}
+                .time {{item.creation_time}}
+              .itemRight
+                .price(:style="{color: item.trade_in_out==='125'?'#f70057':'#019f69'}") {{item.trade_in_out==='125'?'+':'-'}}{{item.tran_money | number}}
+                .balancePrice 余额：{{item.trade_balance_money | number}}
+        .nodata(v-show="!cashDetail || !cashDetail.length")
+          img(src="./cash.png")
+          .desc 没有资金流水记录
 </template>
 
 <script>
-  import Scroll from 'components/'
+  import Scroll from 'components/scroll'
   export default {
       name: "accountUniversalC",
       data () {
@@ -43,6 +45,9 @@
           balance: 0,
           tradeType: ''
         }
+      },
+      components: {
+        Scroll
       },
       created () {
         this.getBalance();
