@@ -21,20 +21,21 @@
     },
     methods: {
       toNext (i) {
-        switch (i.url_type) {
-          // 跳外链
-          case '143': window.location.href = i.url + '?shId=' + i.sh_id; break;
-          // 跳3级页面 361代表从1级跳3级
-          case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: i.id, title: i.title, shId: i.sh_id}}); break;
-          // 跳商品详情页 取relate_id
-          case '141': this.$router.push({ path: '/goodsDetailed', query: { id: i.relate_id }}); break;
-          // 跳2级页面
-          case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: i.id, title: i.title, shId: i.sh_id}}); break;
-          // 跳3级页面模板2
-          case '149': this.$router.push({ path: '/activity', query: { actId: i.id, title: i.title, parentType: '361', shId: i.sh_id}}); break;
-          // 跳三级页面模板2
-          case '148': this.$router.push({path: '/twoLevel', query: {parentType: '361',actId: i.id, title: i.title, shId: i.sh_id}}); break;
-        }
+        this.$method.goActivity.call(this, i)
+        // switch (i.url_type) {
+        //   // 跳外链
+        //   case '143': window.location.href = i.url + '?shId=' + i.sh_id; break;
+        //   // 跳3级页面 361代表从1级跳3级
+        //   case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: i.id, title: i.title, shId: i.sh_id}}); break;
+        //   // 跳商品详情页 取relate_id
+        //   case '141': this.$router.push({ path: '/goodsDetailed', query: { id: i.relate_id }}); break;
+        //   // 跳2级页面
+        //   case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: i.id, title: i.title, shId: i.sh_id}}); break;
+        //   // 跳3级页面模板2
+        //   case '149': this.$router.push({ path: '/activity', query: { actId: i.id, title: i.title, parentType: '361', shId: i.sh_id}}); break;
+        //   // 跳三级页面模板2
+        //   case '148': this.$router.push({path: '/twoLevel', query: {parentType: '361',actId: i.id, title: i.title, shId: i.sh_id}}); break;
+        // }
       }
     }
   }

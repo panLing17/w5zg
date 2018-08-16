@@ -43,7 +43,7 @@ export const activityShare = {
         if (!this.$route.query.shId) {
           this.shareTitle = '万物直供商城正品保障'
           this.shareContent = '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买'
-          this.shareImg = ''
+          this.shareImg = 'https://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/logo/applogo@2x.png'
           return
         }
         let self = this
