@@ -4,28 +4,24 @@
       .hotWrapper
         .blockTitle
           .title 热搜词
-        scroll.hotContent(:data="hot", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
-          .twoRow
+        .hotContent
+          .twoRow(ref="moreContent", :style="{'max-height': hotHeight}")
             ul
-              li(v-for="(item, index) in hot", v-show="index%2===0", @click="wordSearch(item)") {{item.search_word}}
+              li(v-for="(item, index) in hot", @click="wordSearch(item)") {{item.search_word}}
                 img(v-if="item.pic_url", :src="item.pic_url | img-filter")
-            ul
-              li(v-for="(item, index) in hot", v-show="index%2===1", @click="wordSearch(item)") {{item.search_word}}
-                img(v-if="item.pic_url", :src="item.pic_url | img-filter")
+          .moreWrapper(v-show="hotMoreShow", @click="hotMoreClick")
+            img(:src="hotMore?require('./more2.png'):require('./more1.png')")
       .historyWrapper(v-show="history.length")
         .blockTitle
           .title 历史搜索
           .clear(@click="clearHistory")
             img(src="./clear.png")
-        scroll.hotContent(:style="{height:history.length>6?'2.37rem':'1.4rem'}", :data="history", :scrollX="horizontalScrollX", :scrollY="horizontalScrollY", :stopPropagation="horizontalStopPropagation")
-          .twoRow(v-if="history.length>6")
+        .hotContent
+          .twoRow(ref="moreContent2", :style="{'max-height': historyHeight}")
             ul
-              li(v-for="(item, index) in history", v-if="index%2===0", @click="wordSearch(item)") {{item}}
-            ul
-              li(v-for="(item, index) in history", v-if="index%2===1", @click="wordSearch(item)") {{item}}
-          .oneRow(v-else)
-            ul
-              li(v-for="item in history") {{item}}
+              li(v-for="(item, index) in history", @click="wordSearch(item)") {{item}}
+          .moreWrapper(v-show="historyMoreShow", @click="historyMoreClick")
+            img(:src="historyMore?require('./more4.png'):require('./more3.png')")
       .categoryWrapper
         .blockTitle
           .title 热门分类
@@ -45,6 +41,9 @@
   export default {
     name: "searchInit",
     created () {
+      this.minHeight = parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize')) * 2.22
+      this.hotHeight2 = ''
+      this.historyHeight2 = ''
       this._getHotData()
       this._getHistory()
       this._getCategory()
@@ -58,7 +57,13 @@
         horizontalScrollY: false,
         horizontalStopPropagation: true,
         currentCategory: 0,
-        screenWidth: document.documentElement.offsetWidth || document.body.clientWidth
+        screenWidth: document.documentElement.offsetWidth || document.body.clientWidth,
+        hotMore: false,
+        hotHeight: 'none',
+        hotMoreShow: false,
+        historyMore: false,
+        historyHeight: 'none',
+        historyMoreShow: false
       }
     },
     computed: {
@@ -74,7 +79,25 @@
         return this.hot.concat(this.categoryList)
       }
     },
+    mounted() {
+    },
     methods: {
+      hotMoreClick() {
+        if (!this.hotMore) {
+          this.hotHeight = this.hotHeight2
+        } else {
+          this.hotHeight = '2.2rem'
+        }
+        this.hotMore = !this.hotMore
+      },
+      historyMoreClick() {
+        if (!this.historyMore) {
+          this.historyHeight = this.historyHeight2
+        } else {
+          this.historyHeight = '2.2rem'
+        }
+        this.historyMore = !this.historyMore
+      },
       wordSearch(item) {
         this.$emit('wordSearch', item)
       },
@@ -126,11 +149,18 @@
         let self =this
         self.$ajax({
           method: 'get',
-          url: self.$apiGoods + 'goodsSearch/getHotSearchWord',
+          url: self.$apiGoods + 'goodsSearch/v2/getHotSearchWord',
           params: {}
         }).then(function(res){
           if (res) {
             self.hot = res.data.data
+            self.$nextTick(()=>{
+              if (self.$refs.moreContent.offsetHeight > self.minHeight) {
+                self.hotHeight2 = self.$refs.moreContent.offsetHeight + 'px'
+                self.hotHeight = '2.22rem'
+                self.hotMoreShow = true
+              }
+            })
           }
         })
       },
@@ -145,6 +175,13 @@
             if (res) {
               if (res.data.data.length) {
                 self.history = res.data.data
+                self.$nextTick(() => {
+                  if (self.$refs.moreContent2.offsetHeight > self.minHeight) {
+                    self.historyHeight2 = self.$refs.moreContent2.offsetHeight + 'px'
+                    self.historyHeight = '2.22rem'
+                    self.historyMoreShow = true
+                  }
+                })
               }
             }
           })
@@ -154,7 +191,7 @@
         let self =this
         self.$ajax({
           method: 'get',
-          url: self.$apiGoods + 'goodsSearch/getHotGoodClass',
+          url: self.$apiGoods + 'goodsSearch/v2/getHotGoodClass',
           params: {}
         }).then(function(res){
           if (res) {
@@ -199,27 +236,25 @@
   }
   .hotContent {
     width: 100%;
-    height: 2.37rem;
-    overflow: hidden;
   }
-  .twoRow, .oneRow {
-    position: absolute;
-    ul:nth-child(2) {
-      top: 1.12rem;
-    }
+  .twoRow {
+    overflow hidden
+    transition all 0.5s
     ul {
-      white-space: nowrap;
-      padding-left: .4rem;
+      padding: 0 .4rem
       li {
         display: inline-block;
         position relative
-        padding:.186rem .426rem;
+        padding:0 .426rem;
         background: #f6f6f6;
         color: #333;
         font-size: .34rem;
-        line-height: 1;
+        line-height: .85rem;
         margin: 0 .26rem .26rem 0;
         border-radius .42rem
+        white-space nowrap
+        overflow hidden
+        text-overflow ellipsis
         img {
           width .4rem
           position absolute
@@ -275,6 +310,12 @@
           bottom .5rem
         }
       }
+    }
+  }
+  .moreWrapper {
+    font-size: 0;
+    img{
+      width: 100%;
     }
   }
 </style>

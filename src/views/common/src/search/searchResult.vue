@@ -5,10 +5,11 @@
                   :brandData="result.aggs",
                   :sortFieldType="sortFieldType",
                   @brandSearch="brandSearch",
-                  @priceSearch="priceSearch"
+                  @priceSearch="priceSearch",
+                  @priceFilter="priceFilter"
                   )
     scroll.searchResultContent(ref="searchResultContent",
-                              :data="result.rows",
+                              :data="list",
                               :pullup="pullup",
                               @scrollToEnd="loadResult",
                               :listenScroll="listenScroll",
@@ -20,6 +21,12 @@
           img(src="./noResult.png")
           .desc 抱歉，没有找到相关商品
         goods-list(:data="result.rows")
+        .floor(v-show="likesResult.length")
+          img(src="./jinsi.png")
+        goods-list(:data="likesResult")
+        .floor(v-show="hotResult.length")
+          img(src="./resou.png")
+        goods-list(:data="hotResult")
         loading(v-show="hasMore")
         no-more(v-show="!hasMore && result.rows.length")
     go-top(v-show="goTopShow", @goTop="goTop")
@@ -59,6 +66,25 @@
       sortFieldType: {
         type: Number,
         default: 0
+      },
+      likesResult: {
+        type: Array,
+        default() {
+          return []
+        }
+      },
+      hotResult: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
+    computed: {
+      list () {
+        let temp = this.result.rows.concat(this.likesResult)
+
+        return this.hotResult.concat(temp)
       }
     },
     data () {
@@ -74,6 +100,12 @@
 
     },
     methods: {
+      priceFilter(data) {
+        this.$emit('priceFilter', data)
+      },
+      hideTop() {
+        this.goTopShow = false
+      },
       priceSearch(priceChoose) {
         this.$emit('priceSearch', priceChoose)
       },
@@ -136,5 +168,11 @@
       line-height 1
     }
   }
-
+  .floor {
+    line-height: 1rem;
+    text-align center
+    img {
+      width 4.8rem
+    }
+  }
 </style>

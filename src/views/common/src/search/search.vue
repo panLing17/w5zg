@@ -1,7 +1,7 @@
 <template lang="pug">
   .search
     .searchHeader
-      .left(@click="$router.go(-1)")
+      .left(@click="back")
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
@@ -22,9 +22,12 @@
                   :result="searchResult",
                   :hasMore="hasMore",
                   :sortFieldType="sortFieldType",
+                  :likesResult="likesResult",
+                  :hotResult="hotResult",
                   @loadMore="search()",
                   @brandSearch="brandSearch",
-                  @priceSearch="priceSearch"
+                  @priceSearch="priceSearch",
+                  @priceFilter="priceFilter"
                   )
 </template>
 
@@ -37,31 +40,61 @@
     data () {
       return {
         query: '', //搜索词
-        associativeQuery: [],
-        searchResult: {
+        associativeQuery: [], //联想词列表
+        searchResult: { //搜索列表
           aggs: [],
           rows: []
         },
-        searchInit: true,
-        showResult: false,
-        page: 1,
-        rows: 6,
-        hasMore: true,
-        sortFieldType: 0,
-        bi_id: '',
-        sortType: 2
+        likesResult: [], //近似商品列表
+        hotResult: [], //热搜商品列表
+        searchInit: true, //是否显示搜索初始化页面
+        showResult: false, //是否显示搜索结果页面
+        page: 1, //分页
+        rows: 6, //一页的长度
+        hasMore: true, //是否还有显示加载中
+        sortFieldType: 0, //搜索接口字段 排序字段类型
+        bi_id: '', //搜索接口字段 品牌ID集合 以逗号分隔
+        sortType: 2, //搜索接口字段 排序 2 升序 1 降序
+        searchType: 1, //相似搜索接口字段 1 相似 2 热搜
+        searchEnd: false, // 搜索结果是否到底
+        startPrice: 0, //价格区间筛选最低价格
+        endPrice: 0, //价格区间筛选最高价格,
+        associativeOpen: true //是否调联想搜索接口
       }
     },
     methods: {
+      // 如果是在搜索结果显示时点击返回按钮返回到搜索初始化
+      back() {
+        if(this.showResult) {
+          this.cancelQuery()
+        } else {
+          this.$router.go(-1)
+        }
+      },
+      // 所有值恢复出厂
       cancelQuery() {
         this.query = ''
+        this.$refs.searchResult.hideTop()
         this.searchResult = {
           aggs: [],
           rows: []
         }
+        this.associativeQuery = []
+        this.showResult = false
+        this.likesResult = []
+        this.hotResult = []
+        this.hasMore = true
+        this.sortFieldType = 0
+        this.bi_id = ''
+        this.sortType = 2
+        this.page = 1
+        this.searchEnd = false
+        this.searchType = 1
         this.searchInit = true
       },
+      // 初始化界面所有关键词点击回调
       wordSearch(item) {
+        this.associativeOpen = false
         if (item.search_word) {
           this.query = item.search_word
         } else if (item.gc_name){
@@ -70,19 +103,30 @@
           this.query = item
         }
         this.dataReset({})
+        setTimeout(()=>{
+          this.associativeOpen = true
+        }, 20)
+
       },
+      // 过滤器价格区间筛选回调
+      priceFilter(data) {
+        this.dataReset({sortType: this.sortType, bi_id: this.bi_id, sortFieldType: 3, startPrice: data.min, endPrice: data.max})
+      },
+      // 过滤器价格排序点击回调
       priceSearch(priceChoose) {
         let price = priceChoose===2 ? 1 : 2
         let sortFieldType = 3
         if (priceChoose === 0) {
           sortFieldType = 0
         }
-        this.dataReset({sortType: price, bi_id: this.bi_id, sortFieldType: sortFieldType})
+        this.dataReset({sortType: price, bi_id: this.bi_id, sortFieldType: sortFieldType, startPrice: this.startPrice, endPrice: this.endPrice})
 
       },
+      // 过滤器品牌筛选回调
       brandSearch(biArr) {
-        this.dataReset({sortType: this.sortType, bi_id: biArr, sortFieldType:this.sortFieldType})
+        this.dataReset({sortType: this.sortType, bi_id: biArr, sortFieldType:this.sortFieldType, startPrice: this.startPrice, endPrice: this.endPrice})
       },
+      // 联想搜索词点击回调
       associativeSelect (item) {
         this.query = item
         this.dataReset({})
@@ -90,10 +134,19 @@
       onSubmit () {
         return false
       },
+      // 调搜索接口
       search () {
+        if (this.query.trim().length===0) {
+          return
+        }
         this.searchInit = false
         //关闭过滤器
         this.$refs.searchResult.closeFilter()
+        // 如果搜索结果触底就调相似/热搜接口
+        if (this.searchEnd) {
+          this.searchOther()
+          return
+        }
         let self =this
         self.$ajax({
           method: 'post',
@@ -106,36 +159,103 @@
             searchRuleConstant: 1,
             sortFieldType: this.sortFieldType,
             sortType: this.sortType,
-            bi_id: this.bi_id
+            bi_id: this.bi_id,
+            startPrice: this.startPrice,
+            endPrice: this.endPrice
           }
         }).then(function(res){
           if (res) {
-            if (!res.data.data.rows.length || res.data.data.rows.length < self.rows) {
-              self.hasMore = false
+            self.associativeQuery = []
+            self.showResult = true
+            if (!res.data.data.rows.length && self.page===1) {
+              self.searchEnd = true
+              self.searchType = 2
+              self.searchOther()
+              return Promise.reject()
             }
             self.page++
             self.searchResult.rows = self.searchResult.rows.concat(res.data.data.rows)
             self.searchResult.aggs = res.data.data.aggs
-            self.associativeQuery = []
-            self.showResult = true
+            if (!res.data.data.rows.length || res.data.data.rows.length < self.rows) {
+              self.page = 1
+              self.searchEnd = true
+              self.searchOther()
+            }
           }
-        })
+        }).catch(()=>{})
       },
-      dataReset ({sortType=2, bi_id='', sortFieldType=0}) {
+      // 调相似/热搜接口
+      searchOther() {
+        let self =this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goodsSearch/v2/spusOther',
+          params: {
+            keywords: this.query,
+            page: this.page,
+            rows: this.rows,
+            city_no: 100100,
+            sortFieldType: this.sortFieldType,
+            sortType: this.sortType,
+            bi_id: this.bi_id,
+            searchType: this.searchType,
+            startPrice: this.startPrice,
+            endPrice: this.endPrice
+          }
+        }).then(function(res){
+          if (res) {
+            if (self.searchType === 1) {
+              if (!res.data.data.rows && self.page === 1) {
+                self.searchType = 2
+                self.searchOther()
+                return Promise.reject()
+              }
+              if (res.data.data.rows && (res.data.data.rows.length < self.rows)) {
+                self.searchType = 2
+                self.searchOther()
+                return Promise.reject()
+              }
+              self.page++
+              self.likesResult = self.likesResult.concat(res.data.data.rows)
+            } else if (self.searchType === 2) {
+              self.hotResult = self.hotResult.concat(res.data.data.rows)
+              self.page++
+              if (!res.data.data.rows || !res.data.data.rows.length || res.data.data.rows.length<self.rows) {
+                self.hasMore = false
+              }
+
+            }
+          }
+        }).catch(()=>{})
+      },
+      // 点搜索按钮触发，先把一些数据恢复出厂值
+      dataReset ({sortType=2, bi_id='', sortFieldType=0, startPrice=0, endPrice=0}) {
+        this.hotResult = []
+        this.$refs.searchResult.hideTop()
+        this.likesResult = []
+        this.searchType = 1
         this.searchResult = {
           aggs: [],
           rows: []
         }
+        this.startPrice = startPrice
+        this.endPrice = endPrice
         this.page = 1
         this.hasMore = true
         this.sortType = sortType
         this.bi_id = bi_id
         this.sortFieldType = sortFieldType
+        this.searchEnd = false
         this.search()
       }
     },
     watch: {
+      // 输入框里搜索词发生变化时调联想搜索接口
       query(newQuery) {
+
+        if (!this.associativeOpen) {
+          return
+        }
         if (newQuery.length) {
           let self = this
           self.$ajax({

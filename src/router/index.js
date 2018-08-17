@@ -320,16 +320,16 @@ const router = new Router ({
     //   }
     // },
     {
+      path: '/search',
+      name: '新搜索',
+      component: Common.search
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
       redirect: '/home',
       children: [
-        {
-          path: '/search',
-          name: '新搜索',
-          component: Common.search
-        },
         {
           path: '/home',
           name: '首页',

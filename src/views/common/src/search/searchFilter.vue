@@ -11,9 +11,9 @@
         .navItem(@click="priceSelected")
           span 价格
           img(:src="priceChoose===0?require('./price.png'):priceChoose===1?require('./priceUp.png'):require('./priceDown.png')")
-        <!--.navItem(@click="filterChange", :class="{active: filterChoose}")-->
-          <!--span 筛选-->
-          <!--img(:src="filterChoose?require('./filter2.png'):require('./filter.png')")-->
+        .navItem(@click="filterChange", :class="{active: filterChoose}")
+          span 筛选
+          img(:src="filterChoose?require('./filter2.png'):require('./filter.png')")
     .searchFilterWrapper
       .transitionWrapper
         transition(name="fade")
@@ -39,9 +39,9 @@
                 .center
                 .right
                   input(type="number", placeholder="最大金额", v-model="maxNum")
-              .btnWrapper
-                ul
-                  li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceChange(index, item)") {{item.min}}{{item.max?'-'+item.max:' 以上'}}
+              <!--.btnWrapper-->
+                <!--ul-->
+                  <!--li(v-for="(item, index) in priceArea", :class="{active: priceActive===index}", @click="priceChange(index, item)") {{item.min}}{{item.max?'-'+item.max:' 以上'}}-->
             .bottomBtn
               .left(@click="priceReset") 重置
               .right(@click="priceFilter") 确定
@@ -69,27 +69,6 @@
         priceChoose: 0,
         filterChoose: false,
         brandList: [],
-        priceArea: [
-          {
-            min: 0,
-            max: 500
-          },
-          {
-            min: 500,
-            max: 1000
-          },
-          {
-            min: 1000,
-            max: 2000
-          },
-          {
-            min: 2000,
-            max: 5000
-          },
-          {
-            min: 5000
-          }
-          ],
         priceActive: -1,
         minNum: '',
         maxNum: ''
@@ -133,13 +112,22 @@
     methods: {
       priceFilter() {
         this.filterChoose = false
-        if (this.minNum.trim().length===0) {
+        if (this.minNum.trim().length===0 && this.maxNum.trim().length===0) {
           return
+        }
+        if (this.minNum.trim().length===0) {
+          this.minNum = 0
+        }
+        if (this.maxNum.trim().length===0) {
+          this.maxNum = 99999999
         }
         if (parseFloat(this.minNum)>parseFloat(this.maxNum)) {
           [this.minNum, this.maxNum] = [this.maxNum, this.minNum]
         }
-        this.$emit('priceFilter', )
+        this.$emit('priceFilter', {
+          min: parseFloat(this.minNum),
+          max: parseFloat(this.maxNum)
+        })
       },
       priceReset() {
         this.priceActive = -1
