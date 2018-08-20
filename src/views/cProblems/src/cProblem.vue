@@ -54,6 +54,13 @@
             w5zgApp.toCustomService()
             return
           }
+          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
+            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'kefuBotton'})
+            if (results2) {
+              return
+            }
+          }
+
           this.$router.push('/service')
         }
       }
