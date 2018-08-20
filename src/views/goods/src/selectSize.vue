@@ -13,7 +13,7 @@
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-if="userData.member_type !== '092'")
             .price(v-if="$parent.initPriceFlag") {{$parent.goodsData.direct_supply_price | price-filter}}
             .price(v-else) {{realGoodsData.direct_supply_price| price-filter}}
-            .store(v-if="$parent.initPriceFlag") {{$parent.goodsData.storage_num>0 ?  '有货' : '无货'}}
+            .store(v-if="$parent.initPriceFlag") 有货
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
             .size
               span(v-if="selectedSpec.length === 0") 选择规格
@@ -31,7 +31,7 @@
               li(v-for="(item,fatherIndex) in spec")
                 .title {{item.specName}}
                 ul.content
-                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index)") {{i.value}}
+                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc')") {{i.value}}
                   p(style="clear:both")
             .count
               span 购买数量
@@ -63,10 +63,13 @@
               .freightDesc 运费
               .freightPrice {{freightPrice}}元
         .bottomButton(v-if="onlySelectSpec")
-          .left(@click="addCart") 加入购物车
-          .right(@click="goBuy") 立即购买
+          .left(v-show="noGoodsL", @click="goBuy") 立即购买
+          .right(v-show="noGoodsL", @click="addCart") 加入购物车
+          .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
         .bottomButton(v-else)
-          .right(@click="confirm") 确定
+          .right(v-show="noGoodsL",@click="confirm") 确定
+          .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
+        .notice(v-show="noticeFlag") 如果30天内到货，会通过系统消息提醒您
 </template>
 
 <script>
@@ -76,6 +79,11 @@
     name: "city-select",
     data () {
       return {
+        noGoodsE: false,
+        noGoodsL: true,
+        skuIds: '',
+        noticeFlag: '',
+        // skuId: '',
         startY: '',
         moveY: '',
         smallPhotoFlag: true,
@@ -119,7 +127,6 @@
         // let obj={};
         // obj=JSON.parse(JSON.stringify(this.photos))
         return this.photos.slice()
-
       },
       // 定位地址城市名称
       locationCityName() {
@@ -200,6 +207,30 @@
       this.getFreight()
     },
     methods:{
+      reachInform(){
+        console.log(this.skuIds)
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
+          params: {
+            gsku_id: self.skuIds
+          }
+        }).then(function (res) {
+          console.log(res)
+          if (res.data.code === '081') {
+            self.noticeFlag = true
+            let t = 2
+            let timer = setInterval(function () {
+              t--
+              if (t==0) {
+                self.noticeFlag = false
+                self.$emit('reachgoods')
+              }
+            },1000)
+          }
+        })
+      },
       // 获取运费
       getFreight () {
         let self = this
@@ -364,7 +395,8 @@
         this.$emit('buy')
       },*/
       // 校验库存与获得skuId（此请求每次挂载后都会执行）
-      getStoreNum (e,key,index, disable) {
+      getStoreNum (e,key,index, disable, item_valueIndex, oIndex, ccc) {
+        console.log(ccc)
         let date = new Date()
         // 为置灰直接弹出，没有操作
         if (disable) {
@@ -388,6 +420,66 @@
               }
             })
           })
+
+          if (this.$store.state.informGoods) {
+            this.$store.commit('setInformGoods', null)
+            // 获取选中的规格
+            let specData = {
+              'cityId': this.$store.state.location.city.id,
+              'gspu_id': this.$route.query.id,
+              'specList': [
+              ]
+            }
+            this.spec.forEach((now)=>{
+              let val = now.specValue[now.valueIndex].value
+              specData.specList.push({
+                'gspec_name': now.specName,
+                'gspec_value': val
+              })
+            })
+            let self = this
+            this.$ajax({
+              method: 'post',
+              url: self.$apiGoods + 'goods/sku/detail',
+              params: {
+                gc:JSON.stringify(specData)
+              }
+            }).then(function (response) {
+              // 显示真实sku价格，隐藏spu返回的最低价
+              self.$parent.initPriceFlag = false
+              // 将sku图片存入store
+              self.$store.commit('skuImgSave', response.data.data.logo)
+              // 根据sku切换展示图片
+              let skuGoodsData = self.list[0]
+              skuGoodsData.gi_img_url = response.data.data.logo
+              self.list.splice(0,1,skuGoodsData)
+              self.realGoodsData = response.data.data
+              if (ccc === 'suc') {
+                if (self.realGoodsData.storage_num<=0) {
+                  self.noGoodsL = false
+                  self.noGoodsE = true
+                } else{
+                  self.noGoodsL = true
+                  self.noGoodsE = false
+                }
+              }
+              self.skuIds = response.data.data.gsku_id
+              // vuex中保存skuId
+              self.$store.commit('getSkuId',response.data.data.gsku_id)
+              // 派发此组件load事件 (用于返回库存与规格)
+              let data = {
+                maxStoreNum: self.realGoodsData.storage_num,
+                spec: specData.specList,
+                counter_price: self.realGoodsData.counter_price ? self.realGoodsData.counter_price : 0,
+                retail_price: self.realGoodsData.retail_price ? self.realGoodsData.retail_price : 0,
+                direct_supply_price: self.realGoodsData.direct_supply_price ? self.realGoodsData.direct_supply_price : 0,
+                goi_freight: self.realGoodsData.goi_freight
+              }
+              self.$emit('load',data)
+
+            })
+
+          }
         } else {
         // 若无则正常
           // 若已经选择，则进行反选
@@ -577,6 +669,16 @@
             self.list.splice(0,1,skuGoodsData)
           }
           self.realGoodsData = response.data.data
+          if (ccc === 'suc') {
+            if (self.realGoodsData.storage_num<=0) {
+              self.noGoodsL = false
+              self.noGoodsE = true
+            } else{
+              self.noGoodsL = true
+              self.noGoodsE = false
+            }
+          }
+          self.skuIds = response.data.data.gsku_id
           // vuex中保存skuId
           self.$store.commit('getSkuId',response.data.data.gsku_id)
           // 派发此组件load事件 (用于返回库存与规格)
@@ -650,6 +752,14 @@
 </script>
 
 <style scoped>
+  .notice{
+    position: fixed;
+    width: 100%;
+    bottom: 1.29rem;
+    background-color: rgba(0,0,0,.3);
+    color: #fff;
+    text-align: center;
+  }
   .selectSizeBox {
   }
 
@@ -698,6 +808,13 @@
     background-color: #FF8500;
   }
   .bottomButton .right{
+    flex-grow: 1;
+    height: 100%;
+    background: rgb(244,0,87);
+    font-size: .4rem;
+    color: white;
+  }
+  .bottomButton .right2{
     flex-grow: 1;
     height: 100%;
     background: rgb(244,0,87);

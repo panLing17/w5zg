@@ -2,7 +2,7 @@
   .userinfo
     nav-bar
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="routerback()")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 用户资料
     .avatar
       ul.wrap(@click="select(1)")
@@ -56,7 +56,7 @@
     data(){
       return{
         show: false,
-        name:this.$route.query.routeParams
+        name: this.$route.query.routeParams
       }
     },
     created(){

@@ -118,6 +118,8 @@
         .line
         p 推荐
       recommend(background="white", ref="recommend")
+    .collectSuc(v-if="collectSucS")
+      span {{xuanfukuang === 1?'收藏成功':'取消收藏成功'}}
     div
       .buttons
         .leftSmallButtons
@@ -126,6 +128,10 @@
         .leftSmallButtons
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
+        .leftSmallButtons
+          img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0", @click="changeCollect1()")
+          img(src="../../../assets/img/Group 9 Copy@2x.png", v-if="collectFlag == 1 ", @click="changeCollect2()")
+          p {{collectFlag == 0? '收藏':'已收藏'}}
         //.ready
           img(src="../../../assets/img/ic_xqy_yuyue_selected.png")
           ul(@click="yuyueShow")
@@ -133,7 +139,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -171,6 +177,12 @@
     name: "goods-detailed",
     data () {
       return {
+        k: '',
+        j: '',
+        xuanfukuang: '',
+        collectSucS: '',
+        fiIds: '',
+        collectFlag: 0,
         // 真正存在的规格组合（置灰用）
         graySpecData: [],
         // 禁止选择专柜自提
@@ -309,6 +321,8 @@
       })*/
     },
     mounted () {
+      // 是否收藏
+      this.isCollect()
       this.getGoodsDetailed()
       this.getGoodsDesc()
       this.getBanner()
@@ -370,6 +384,92 @@
       }
     },
     methods:{
+      // 收藏成功&&取消收藏成功
+      collectionSuc(){
+        this.collectSucS = true
+        this.k = true
+        this.j = true
+        let self = this
+        let a = 2
+        self.time1 = setInterval(function () {
+          a--
+          if (a === 0) {
+            self.collectSucS = false
+            self.k = false
+            self.j = false
+            clearInterval(self.time1)
+          }
+        },1000)
+      },
+      // 到货通知
+      reachGoods(){
+        this.selectFlag = false
+      },
+      // 收藏
+      changeCollect1(){
+        if (localStorage.hasOwnProperty('token')) {
+          if (!this.k) {
+            let self = this
+            self.$ajax({
+              method: 'post',
+              url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+              params: {
+                gspuId: self.$route.query.id
+              }
+            }).then(function (res) {
+              if (res.data.data.fiId) {
+                self.xuanfukuang = 1
+                self.collectionSuc()
+                self.isCollect()
+              }
+            })
+          }
+        } else{
+          this.$router.push('/login/login2')
+        }
+
+      },
+      // 取消收藏
+      changeCollect2(){
+        if (!this.j) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
+            params: {
+              fiId: self.fiIds
+            }
+          }).then(function (res) {
+            console.log(res)
+            if (res.data.code === '081') {
+              self.xuanfukuang = 2
+              self.collectionSuc()
+              self.isCollect()
+            }
+          })
+        }
+      },
+      // 商品是否收藏
+      isCollect(){
+        if (localStorage.hasOwnProperty('token')) {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'gcFavoritesInfo/queryFavorite',
+            params: {
+              gspuId: self.$route.query.id
+            }
+          }).then(function (res) {
+            if (res.data.data.flag === 'N') {
+              self.collectFlag = 0
+            }
+            if (res.data.data.flag === 'Y') {
+              self.collectFlag = 1
+              self.fiIds = res.data.data.fiId
+            }
+          })
+        }
+      },
       // 显示预约
       yuyueShow () {
         if (this.initPriceFlag) {
@@ -651,12 +751,27 @@
         }).then(function (response) {
           // 改造格式
           let newData = self.specGray(response.data.data)
+          let informGoods = self.$store.state.informGoods
+          //let informGoods = {gspec_values: "150ml, 黑色"}
+          //console.log(informGoods)
           newData.forEach((now)=>{
+            now.valueIndex = -1
             now.specValue.forEach((sonNow, sonIndex)=>{
-              if (!sonNow.gray) {
-                now.valueIndex = -1
-              } else {
-                now.valueIndex = -1
+
+              // if (!sonNow.gray) {
+              //   now.valueIndex = -1
+              // } else {
+              //   now.valueIndex = -1
+              // }
+              if (informGoods) {
+                //console.log(informGoods.gspec_values.split(','))
+                let s = informGoods.gspec_values.split(',')
+                //console.log(s)
+                s.forEach((item) => {
+                  if (sonNow.value.trim() === item.trim()) {
+                    now.valueIndex = sonIndex
+                  }
+                })
               }
             })
           })
@@ -1066,6 +1181,21 @@
 </script>
 
 <style scoped>
+  .collectSuc{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 1.3rem;
+    text-align: center;
+    z-index: 200;
+  }
+  .collectSuc span{
+    display: inline-block;
+    padding: .2rem;
+    background-color: rgba(0,0,0,.4);
+    border-radius: .2rem;
+    color: #fff;
+  }
   .goodsBox {
     background: rgb(242,242,242);
     padding-bottom: 1rem;
@@ -1462,7 +1592,8 @@
   }
   .buttons> .leftSmallButtons{
     height: 100%;
-    width: 2rem;
+    width: 0;
+    flex-grow: 1;
     border-right: solid 1px #eee;
     display: flex;
     flex-direction: column;
@@ -1494,13 +1625,20 @@
     color: rgb(100,100,100);
   }
   .buttons .left{
-    flex-grow: 1;
+    flex-grow: 1.5;
     width: 0;
     background: #ff8500;
     font-size: .4rem;
     color: white;
   }
   .buttons .right{
+    flex-grow: 1.5;
+    width: 0;
+    background: rgb(244,0,87);
+    font-size: .4rem;
+    color: white;
+  }
+  .buttons .goodsInform{
     flex-grow: 1;
     width: 0;
     background: rgb(244,0,87);
