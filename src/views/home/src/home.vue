@@ -3,7 +3,7 @@
     .homeHeader
       .homeHeaderLeft(@click="$router.push('/page')")
         img.fenleiImg(src="../../../assets/img/fenlei@2x.png")
-      .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
+      .homeHeaderCenter(@click="$router.push('/search')")
         input.headerSearchInput(type="text", placeholder="请输入商品类别 例如: 男装")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->

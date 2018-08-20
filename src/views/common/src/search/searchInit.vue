@@ -7,7 +7,8 @@
         .hotContent
           .twoRow(ref="moreContent", :style="{'max-height': hotHeight}")
             ul
-              li(v-for="(item, index) in hot", @click="wordSearch(item)") {{item.search_word}}
+              li(v-for="(item, index) in hot", @click="wordSearch(item)")
+                div {{item.search_word}}
                 img(v-if="item.pic_url", :src="item.pic_url | img-filter")
           .moreWrapper(v-show="hotMoreShow", @click="hotMoreClick")
             img(:src="hotMore?require('./more2.png'):require('./more1.png')")
@@ -19,7 +20,8 @@
         .hotContent
           .twoRow(ref="moreContent2", :style="{'max-height': historyHeight}")
             ul
-              li(v-for="(item, index) in history", @click="wordSearch(item)") {{item}}
+              li(v-for="(item, index) in history", @click="wordSearch(item)")
+                div {{item}}
           .moreWrapper(v-show="historyMoreShow", @click="historyMoreClick")
             img(:src="historyMore?require('./more4.png'):require('./more3.png')")
       .categoryWrapper
@@ -31,7 +33,8 @@
               li(v-for="(item, index) in category", :class="{active: currentCategory===index}", @click="categoryChange(item, index, $event)") {{item.gc_name}}
         .categoryContent
           ul
-            li(v-for="item in categoryList", @click="wordSearch(item)") {{item.gc_name}}
+            li(v-for="item in categoryList", @click="wordSearch(item)")
+              div {{item.gc_name}}
               img(v-if="item.gc_icon_url", :src="item.gc_icon_url | img-filter")
 </template>
 
@@ -86,7 +89,7 @@
         if (!this.hotMore) {
           this.hotHeight = this.hotHeight2
         } else {
-          this.hotHeight = '2.2rem'
+          this.hotHeight = '2rem'
         }
         this.hotMore = !this.hotMore
       },
@@ -94,7 +97,7 @@
         if (!this.historyMore) {
           this.historyHeight = this.historyHeight2
         } else {
-          this.historyHeight = '2.2rem'
+          this.historyHeight = '2rem'
         }
         this.historyMore = !this.historyMore
       },
@@ -157,7 +160,7 @@
             self.$nextTick(()=>{
               if (self.$refs.moreContent.offsetHeight > self.minHeight) {
                 self.hotHeight2 = self.$refs.moreContent.offsetHeight + 'px'
-                self.hotHeight = '2.22rem'
+                self.hotHeight = '2rem'
                 self.hotMoreShow = true
               }
             })
@@ -178,7 +181,7 @@
                 self.$nextTick(() => {
                   if (self.$refs.moreContent2.offsetHeight > self.minHeight) {
                     self.historyHeight2 = self.$refs.moreContent2.offsetHeight + 'px'
-                    self.historyHeight = '2.22rem'
+                    self.historyHeight = '2rem'
                     self.historyMoreShow = true
                   }
                 })
@@ -242,24 +245,36 @@
     transition all 0.5s
     ul {
       padding: 0 .4rem
+      overflow hidden
+      box-sizing border-box
       li {
+        max-width 100%
         display: inline-block;
         position relative
-        padding:0 .426rem;
-        background: #f6f6f6;
         color: #333;
         font-size: .34rem;
         line-height: .85rem;
         margin: 0 .26rem .26rem 0;
-        border-radius .42rem
-        white-space nowrap
+        box-sizing border-box
         overflow hidden
+        white-space nowrap
         text-overflow ellipsis
+        div {
+          height 100%
+          width 100%
+          border-radius .42rem
+          overflow hidden
+          white-space nowrap
+          text-overflow ellipsis
+          padding:0 .5rem;
+          background: #f6f6f6;
+          box-sizing border-box
+        }
         img {
           width .4rem
           position absolute
-          right -0.05rem
-          bottom .5rem
+          right 0
+          top 0
         }
       }
     }
@@ -294,20 +309,34 @@
     ul {
       padding:.37rem  .29rem .1rem;
       li {
+        max-width 100%
         margin: 0 .26rem .26rem 0;
         position relative
         display inline-block
-        padding .186rem .426rem
-        border-radius:.42rem
-        border:1px solid rgb(206,206,206);
-        line-height: 1;
+        line-height: .85rem;
         font-size: .34rem;
         color: #333;
+        white-space nowrap
+        overflow hidden
+        text-overflow ellipsis
+        padding-top .05rem
+        div {
+          height 100%
+          width 100%
+          border-radius:.42rem
+          overflow hidden
+          white-space nowrap
+          text-overflow ellipsis
+          padding:0 .5rem;
+          background: #fff;
+          box-sizing border-box
+          border:1px solid rgb(206,206,206);
+        }
         img {
           width .4rem
           position absolute
-          right -0.05rem
-          bottom .5rem
+          right 0
+          top 0
         }
       }
     }

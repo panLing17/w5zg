@@ -5,7 +5,7 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="dataReset({})", @enter="dataReset({})", placeholder="请输入商品类别 例如: 男装", v-model="query")
+          input(type="search", @search="dataReset({})", @enter="dataReset({})", placeholder="请输入商品类别 例如: 男装", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="search") 搜索
@@ -59,8 +59,37 @@
         searchEnd: false, // 搜索结果是否到底
         startPrice: 0, //价格区间筛选最低价格
         endPrice: 0, //价格区间筛选最高价格,
-        associativeOpen: true //是否调联想搜索接口
+        associativeOpen: true, //是否调联想搜索接口
+        focus: false
       }
+    },
+    directives: {
+      focus: {
+        // 指令的定义
+        inserted: function (el) {
+          console.log(1111111122)
+          el.focus()
+        },
+        update: function (el) {
+          el.focus()
+          console.log('update')
+        },
+        componentUpdated: function () {
+          console.log('componentUpdated')
+        },
+        unbind: function () {
+          console.log('unbind')
+        }
+      }
+    },
+    deactivated() {
+      this.focus = false
+    },
+    activated() {
+      this.focus = true
+    },
+    mounted() {
+      this.focus = true
     },
     methods: {
       // 如果是在搜索结果显示时点击返回按钮返回到搜索初始化
@@ -252,7 +281,7 @@
     watch: {
       // 输入框里搜索词发生变化时调联想搜索接口
       query(newQuery) {
-
+        // 点击热搜词、热搜栏目、历史搜索时不需要调用联想搜索
         if (!this.associativeOpen) {
           return
         }
