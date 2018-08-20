@@ -55,7 +55,7 @@
             return
           }
           if (window.webkit && window.webkit.messageHandlers.iosMessage) {
-            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'kefuBotton'})
+            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'kefuButton'})
             if (results2) {
               return
             }
