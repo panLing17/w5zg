@@ -32,17 +32,23 @@ export const activityShare = {
         shareContent: '',
         shareImg: '',
         shareUrl: window.location.href.replace(/\?*#/, "?#"),
-        navShow: true
+        navShow: true,
+        shareId: ''
       }
     },
     created() {
+      this.shareId = this.$route.query.shId
       this.showShare()
       this.getShareContent()
       this.setTitle()
     },
     activated() {
       this.showShare()
-      this.getShareContent()
+      if (this.shareId != this.$route.query.shId) {
+        this.shareId = this.$route.query.shId
+        this.getShareContent()
+      }
+
       this.setTitle()
     },
     methods: {
@@ -59,22 +65,24 @@ export const activityShare = {
         }
       },
       getShareContent() {
+        let self = this
         if (!this.$route.query.shId) {
-          this.shareTitle = '万物直供商城正品保障'
-          this.shareContent = '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买'
+          this.shareTitle = '万物直供商城 正品保障'
+          this.shareContent = '万物直供商城，价格优惠，正品保障，支持专柜提货！'
           this.shareImg = 'https://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/logo/applogo@2x.png'
           // 安卓调H5回调
+          window['shareClickAndroid'] = null
           window['shareClickAndroid'] = function(){
-            w5zgApp.share(this.shareTitle,this.shareContent,this.shareImg,this.shareUrl)
+            w5zgApp.share(self.shareTitle,self.shareContent,self.shareImg,self.shareUrl)
           }
           return
         }
-        let self = this
+
         self.$ajax({
           method: 'get',
           url:self.$apiApp +  'acsharinginfo/getAcSharingInfoById',
           params: {
-            shId: this.$route.query.shId
+            shId: this.shareId
           },
         }).then(function (response) {
           if (response) {
@@ -88,6 +96,7 @@ export const activityShare = {
               link: self.shareUrl
             })
             // 安卓调H5回调
+            window['shareClickAndroid'] = null
             window['shareClickAndroid'] = function(){
               w5zgApp.share(self.shareTitle,self.shareContent,self.shareImg,self.shareUrl)
             }
@@ -100,7 +109,6 @@ export const activityShare = {
           this.navShow = false
         }
         if (window.webkit && window.webkit.messageHandlers.iosMessage) {
-          let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'ios-------ios'});
           this.shareShow = true
           this.navShow = false
         }
