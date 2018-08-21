@@ -6,7 +6,8 @@
                   :sortFieldType="sortFieldType",
                   @brandSearch="brandSearch",
                   @priceSearch="priceSearch",
-                  @priceFilter="priceFilter"
+                  @priceFilter="priceFilter",
+                  @resetSearch="resetSearch"
                   )
     scroll.searchResultContent(ref="searchResultContent",
                               :data="list",
@@ -100,6 +101,9 @@
 
     },
     methods: {
+      resetSearch() {
+        this.$emit('resetSearch')
+      },
       priceFilter(data) {
         this.$emit('priceFilter', data)
       },

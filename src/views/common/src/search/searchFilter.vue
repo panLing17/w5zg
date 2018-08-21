@@ -6,7 +6,7 @@
           span 品牌
           img(:src="brandChoose?require('./brandUp.png'):require('./brandDown.png')")
       .right
-        .navItem(:class="{active: sortFieldType===0}")
+        .navItem(:class="{active: sortFieldType===0}", @click="resetSearch")
           span 综合
         .navItem(@click="priceSelected")
           span 价格
@@ -110,23 +110,39 @@
       }
     },
     methods: {
+      resetSearch() {
+        if(this.sortFieldType===0) {
+          return
+        }
+        this.priceChoose = 0
+        this.minNum = ''
+        this.maxNum = ''
+        this.$emit('resetSearch')
+      },
       priceFilter() {
         this.filterChoose = false
         if (this.minNum.trim().length===0 && this.maxNum.trim().length===0) {
-          return
+          this.minNum = ''
+          this.maxNum = ''
         }
-        if (this.minNum.trim().length===0) {
-          this.minNum = 0
+        if (this.minNum.trim().length===0 && this.maxNum.trim().length>0) {
+          this.maxNum = parseFloat(this.maxNum)
         }
-        if (this.maxNum.trim().length===0) {
+        if (this.maxNum.trim().length===0 && this.minNum.trim().length>0) {
           this.maxNum = 99999999
         }
         if (parseFloat(this.minNum)>parseFloat(this.maxNum)) {
           [this.minNum, this.maxNum] = [this.maxNum, this.minNum]
         }
+        if (this.minNum.toString().trim().length!==0) {
+          this.minNum = parseFloat(this.minNum)
+        }
+        if (this.maxNum.toString().trim().length!==0) {
+          this.maxNum = parseFloat(this.maxNum)
+        }
         this.$emit('priceFilter', {
-          min: parseFloat(this.minNum),
-          max: parseFloat(this.maxNum)
+          min: this.minNum,
+          max: this.maxNum
         })
       },
       priceReset() {
@@ -155,9 +171,6 @@
             biArr += item.bi_id+','
           }
         })
-        if (!biArr.length) {
-          return
-        }
         biArr = biArr.substring(0, biArr.length-1)
         this.$emit('brandSearch', biArr)
       },

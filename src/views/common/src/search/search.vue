@@ -27,7 +27,8 @@
                   @loadMore="search()",
                   @brandSearch="brandSearch",
                   @priceSearch="priceSearch",
-                  @priceFilter="priceFilter"
+                  @priceFilter="priceFilter",
+                  @resetSearch="resetSearch"
                   )
 </template>
 
@@ -57,11 +58,12 @@
         sortType: 2, //搜索接口字段 排序 2 升序 1 降序
         searchType: 1, //相似搜索接口字段 1 相似 2 热搜
         searchEnd: false, // 搜索结果是否到底
-        startPrice: 0, //价格区间筛选最低价格
-        endPrice: 0, //价格区间筛选最高价格,
+        startPrice: '', //价格区间筛选最低价格
+        endPrice: '', //价格区间筛选最高价格,
         associativeOpen: true, //是否调联想搜索接口
         focus: false,
         placeholder: '', //默认搜索词
+        brandReset: true, //品牌列表是否重新赋值
       }
     },
     directives: {
@@ -133,9 +135,19 @@
         }, 20)
 
       },
+      // 点击综合
+      resetSearch() {
+        this.dataReset({sortFieldType: 0, bi_id: this.bi_id})
+      },
       // 过滤器价格区间筛选回调
       priceFilter(data) {
-        this.dataReset({sortType: this.sortType, bi_id: this.bi_id, sortFieldType: 3, startPrice: data.min, endPrice: data.max})
+
+        this.dataReset({sortType: this.sortType,
+          bi_id: this.bi_id,
+          sortFieldType: typeof data.min === 'string'?0:3,
+          startPrice: data.min,
+          endPrice: data.max,
+          brandReset: this.brandReset})
       },
       // 过滤器价格排序点击回调
       priceSearch(priceChoose) {
@@ -144,12 +156,12 @@
         if (priceChoose === 0) {
           sortFieldType = 0
         }
-        this.dataReset({sortType: price, bi_id: this.bi_id, sortFieldType: sortFieldType, startPrice: this.startPrice, endPrice: this.endPrice})
+        this.dataReset({sortType: price, bi_id: this.bi_id, sortFieldType: sortFieldType, startPrice: this.startPrice, endPrice: this.endPrice, brandReset: this.brandReset})
 
       },
       // 过滤器品牌筛选回调
       brandSearch(biArr) {
-        this.dataReset({sortType: this.sortType, bi_id: biArr, sortFieldType:this.sortFieldType, startPrice: this.startPrice, endPrice: this.endPrice})
+        this.dataReset({sortType: this.sortType, bi_id: biArr, sortFieldType:this.sortFieldType, startPrice: this.startPrice, endPrice: this.endPrice, brandReset: false})
       },
       // 联想搜索词点击回调
       associativeSelect (item) {
@@ -198,9 +210,11 @@
               self.searchOther()
               return Promise.reject()
             }
-            self.page++
             self.searchResult.rows = self.searchResult.rows.concat(res.data.data.rows)
-            self.searchResult.aggs = res.data.data.aggs
+            if(self.brandReset) {
+              self.searchResult.aggs = res.data.data.aggs
+            }
+            self.page++
             if (!res.data.data.rows.length || res.data.data.rows.length < self.rows) {
               self.page = 1
               self.searchEnd = true
@@ -254,15 +268,12 @@
         }).catch(()=>{})
       },
       // 点搜索按钮触发，先把一些数据恢复出厂值
-      dataReset ({sortType=2, bi_id='', sortFieldType=0, startPrice=0, endPrice=0}) {
+      dataReset ({sortType=2, bi_id='', sortFieldType=0, startPrice='', endPrice='', brandReset=true}) {
         this.hotResult = []
         this.$refs.searchResult.hideTop()
         this.likesResult = []
         this.searchType = 1
-        this.searchResult = {
-          aggs: [],
-          rows: []
-        }
+        this.searchResult.rows = []
         this.startPrice = startPrice
         this.endPrice = endPrice
         this.page = 1
@@ -271,6 +282,7 @@
         this.bi_id = bi_id
         this.sortFieldType = sortFieldType
         this.searchEnd = false
+        this.brandReset = brandReset
         if (this.query.trim().length===0) {
           this.query = this.placeholder
           this.associativeOpen = false
