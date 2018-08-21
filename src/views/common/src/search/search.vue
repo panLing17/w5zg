@@ -5,10 +5,10 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="dataReset({})", @enter="dataReset({})", placeholder="请输入商品类别 例如: 男装", v-model="query", v-focus="focus")
+          input(type="search", @search="dataReset({})", @enter="dataReset({})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
-      .right(@click="search") 搜索
+      .right(@click="dataReset({})") 搜索
     // 未搜索时
     search-init(v-show="searchInit", @wordSearch="wordSearch")
     // 联想查询
@@ -60,27 +60,23 @@
         startPrice: 0, //价格区间筛选最低价格
         endPrice: 0, //价格区间筛选最高价格,
         associativeOpen: true, //是否调联想搜索接口
-        focus: false
+        focus: false,
+        placeholder: '', //默认搜索词
       }
     },
     directives: {
       focus: {
         // 指令的定义
         inserted: function (el) {
-          console.log(1111111122)
           el.focus()
         },
         update: function (el) {
           el.focus()
-          console.log('update')
-        },
-        componentUpdated: function () {
-          console.log('componentUpdated')
-        },
-        unbind: function () {
-          console.log('unbind')
         }
       }
+    },
+    created() {
+      this._getDefaultWord()
     },
     deactivated() {
       this.focus = false
@@ -275,7 +271,27 @@
         this.bi_id = bi_id
         this.sortFieldType = sortFieldType
         this.searchEnd = false
+        if (this.query.trim().length===0) {
+          this.query = this.placeholder
+          this.associativeOpen = false
+          setTimeout(()=>{
+            this.associativeOpen = true
+          }, 20)
+        }
+
         this.search()
+
+      },
+      _getDefaultWord() {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/v2/getDefaultSeWord',
+          params: {
+          }
+        }).then(function(res){
+          self.placeholder = '阿迪'
+        })
       }
     },
     watch: {
