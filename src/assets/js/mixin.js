@@ -40,6 +40,11 @@ export const activityShare = {
       this.getShareContent()
       this.setTitle()
     },
+    activated() {
+      this.showShare()
+      this.getShareContent()
+      this.setTitle()
+    },
     methods: {
       setTitle() {
         if (typeof w5zgApp !== 'undefined') {
@@ -95,6 +100,7 @@ export const activityShare = {
           this.navShow = false
         }
         if (window.webkit && window.webkit.messageHandlers.iosMessage) {
+          let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'ios-------ios'});
           this.shareShow = true
           this.navShow = false
         }

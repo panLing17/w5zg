@@ -439,14 +439,14 @@ const router = new Router ({
         {
           path: '/shoppingCart',
           name: '购物车',
-          component: ShoppingCart.index,
+          component: ShoppingCart.shoppingCart,
           children: [
             {
-              path: '/',
-              name: '购物车',
-              component: ShoppingCart.shoppingCart,
-              children: [
-                {
+              // path: '/',
+              // name: '购物车',
+              // component: ShoppingCart.shoppingCart,
+              // children: [
+              //   {
                   path: '/',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
@@ -456,8 +456,8 @@ const router = new Router ({
                   name: '购物车',
                   component: ShoppingCart.express
                 }
-              ]
-            }
+            //   ]
+            // }
           ]
         },
         {
