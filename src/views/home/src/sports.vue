@@ -1,12 +1,12 @@
 <template lang="pug">
   .sports
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="back")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 8rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right", @click="shareClick")
         img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
-    .mescroll#sportsMescroll
+    .mescroll#sportsMescroll(:style="{top: navShow?'1.3rem':'0'}")
       .content
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
           div(v-for="tag in banner", style="width:100%" )
@@ -152,7 +152,7 @@
 <style scoped>
   .mescroll {
     position: fixed;
-    top: 1.3rem;
+    /*top: 1.3rem;*/
     bottom: 0;
     height: auto;
     width: 100%;

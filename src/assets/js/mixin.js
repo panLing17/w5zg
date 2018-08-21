@@ -31,19 +31,37 @@ export const activityShare = {
         shareTitle: '',
         shareContent: '',
         shareImg: '',
-        shareUrl: window.location.href.replace(/\?*#/, "?#")
+        shareUrl: window.location.href.replace(/\?*#/, "?#"),
+        navShow: true
       }
     },
     created() {
       this.showShare()
       this.getShareContent()
+      this.setTitle()
     },
     methods: {
+      setTitle() {
+        if (typeof w5zgApp !== 'undefined') {
+          w5zgApp.getTitle(this.$route.query.title)
+          return
+        }
+        if (window.webkit && window.webkit.messageHandlers.iosMessage) {
+          let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'title', title: this.$route.query.title});
+          if (results2) {
+            return
+          }
+        }
+      },
       getShareContent() {
         if (!this.$route.query.shId) {
           this.shareTitle = '万物直供商城正品保障'
           this.shareContent = '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买'
           this.shareImg = 'https://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/logo/applogo@2x.png'
+          // 安卓调H5回调
+          window['shareClickAndroid'] = function(){
+            w5zgApp.share(this.shareTitle,this.shareContent,this.shareImg,this.shareUrl)
+          }
           return
         }
         let self = this
@@ -64,15 +82,21 @@ export const activityShare = {
               shareDesc: self.shareContent,
               link: self.shareUrl
             })
+            // 安卓调H5回调
+            window['shareClickAndroid'] = function(){
+              w5zgApp.share(self.shareTitle,self.shareContent,self.shareImg,self.shareUrl)
+            }
           }
         })
       },
       showShare () {
         if (typeof w5zgApp !== 'undefined') {
           this.shareShow = true
+          this.navShow = false
         }
         if (window.webkit && window.webkit.messageHandlers.iosMessage) {
           this.shareShow = true
+          this.navShow = false
         }
       },
       shareClick () {
@@ -89,7 +113,6 @@ export const activityShare = {
           w5zgApp.share(this.shareTitle,this.shareContent,this.shareImg,this.shareUrl)
           return
         }
-
       }
     }
 

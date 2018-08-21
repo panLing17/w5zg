@@ -1,6 +1,6 @@
 <template lang="pug">
   .wrap
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="back")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
@@ -9,7 +9,7 @@
     .tabListWrapper(ref="tabWrapper")
       ul.tabList
         li.tabItem(v-for="(item, index) in tabList", ref="tab", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
-    .mescroll#activityMescroll
+    .mescroll#activityMescroll(:style="{top: navShow?'2.5rem':'1.2rem'}")
       .contentWrapper
         router-view(v-if="tabList.length", :id="tabList[tabActive].id")
 </template>
@@ -101,7 +101,7 @@
 <style scoped>
   .mescroll {
     position: fixed;
-    top: 2.5rem;
+    /*top: 2.5rem;*/
     bottom: 0;
     height: auto;
     width: 100%;

@@ -51,6 +51,9 @@ Vue.prototype.$mescrollInt = function (id,upFun,init,scrollWatch,downFun) {
         },200)
       },
       onScroll: scrollWatch
+    },
+    down: {
+      use: false
     }
   })
 }
