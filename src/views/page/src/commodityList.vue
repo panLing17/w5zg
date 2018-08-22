@@ -121,8 +121,15 @@
           } else if (this.$route.query.flags == 1) {
             this.message = this.$route.query.msg
           }
-          if (this.$refs.oInput.value == this.$route.query.msg) {
-            this.mescroll.scrollTo(0, 0)
+          if (this.$refs.oInput.value !== this.$route.query.msg) {
+            this.check = true
+            this.checked = false
+            this.change = false
+            this.change1 = true
+            this.change2 = false
+            this.order = 0
+            this.sort = ''
+            this.mescroll.resetUpScroll( )
           }
         }
       }
@@ -135,27 +142,26 @@
       if (this.$route.query.relNum == 1) {
         this.resultFlag = 1
       }
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0)
-        }
-      })
+      // this.position.forEach((now) => {
+      //   if (now.path === this.$route.path) {
+      //     this.mescroll.scrollTo(now.y, 0)
+      //   }
+      // })
       if (this.$route.query.id) {
         this.message = this.$store.state.keywordsL
       } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg
       }
-      if (this.$refs.oInput.value == this.$route.query.msg) {
-        this.check = true
-        this.checked = false
-        this.change = false
-        this.change1 = true
-        this.change2 = false
-        this.order = 0
-        this.sort = ''
-        this.mescroll.resetUpScroll(true)
-        this.mescroll.scrollTo(0, 0)
-      }
+      // if (this.$refs.oInput.value == this.$route.query.msg) {
+      //   this.check = true
+      //   this.checked = false
+      //   this.change = false
+      //   this.change1 = true
+      //   this.change2 = false
+      //   this.order = 0
+      //   this.sort = ''
+      //   this.mescroll.resetUpScroll(true)
+      // }
     },
     mounted () {
       this.resultFlag = 2

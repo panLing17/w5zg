@@ -46,7 +46,7 @@
                   .amount
                     span.nums x{{items.goods_num}}
                 .right
-                  .price 实付价:<span>{{items.sale_price | price-filter}}</span>
+                  .price 实付价:<span>{{items.direct_supply_price | price-filter}}</span>
                   .cartPrice 专柜价: {{items.sale_price | price-filter}}
           .buyAgainBtn(@click="againBuy(item,items)", v-if="item.orderInfo_status === '已完成'") <span>再次购买</span>
         .wrapDownner
@@ -113,7 +113,7 @@
             span 发货时间:
             span {{sendTime}}
           li.receiveTime.selects
-            span 签收时间:
+            span 确认收货时间:
             span {{receiveTime}}
         .copy(@click="copyText(totalOrderNum)") 复制
       .title

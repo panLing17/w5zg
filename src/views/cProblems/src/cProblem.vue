@@ -60,7 +60,6 @@
               return
             }
           }
-
           this.$router.push('/service')
         }
       }
