@@ -45,6 +45,13 @@
         if (this.$route.matched[1]) {
           this.routerPath = this.$route.matched[1].path
         }
+      },
+      userData(newVal) {
+        if (!newVal) {
+          return
+        } else {
+          this.getGoodsNum()
+        }
       }
     },
     store,
@@ -56,7 +63,7 @@
       shoppingCartCount () {
         return this.shoppingCartGoodsNum.sendNum + this.shoppingCartGoodsNum.carryNum
       },
-      ...mapState(['shoppingCartGoodsNum'])
+      ...mapState(['shoppingCartGoodsNum', 'userData'])
     },
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
@@ -119,14 +126,10 @@
       })*/
     },
     mounted() {
-      this.getGoodsNum()
       this.$data.transitionName = ''
     },
     methods: {
       getGoodsNum() {
-        if(!localStorage.getItem('token')) {
-          return
-        }
         let self = this
         self.$ajax({
           method: 'get',
