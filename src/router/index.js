@@ -292,6 +292,23 @@ const router = new Router ({
         keepAlive: true
       }
     },
+    {
+      path: '/activity',
+      name: '活动集合',
+      component: Acitivity.activity,
+      children: [
+        {
+          path: '',
+          name: '活动集合内容',
+          component: Acitivity.activityContent
+        }
+      ]
+    },
+    {
+      path: '/twoLevel',
+      name: '新二级活动',
+      component: Acitivity.twoLevel
+    },
     // {
     //   path: '/collection',
     //   name: '收藏夹',
@@ -396,23 +413,6 @@ const router = new Router ({
               path: '/home/sports',
               name: '三级活动',
               component: Home.sports
-            },
-            {
-              path: '/activity',
-              name: '活动集合',
-              component: Acitivity.activity,
-              children: [
-                {
-                  path: '',
-                  name: '活动集合内容',
-                  component: Acitivity.activityContent
-                }
-              ]
-            },
-            {
-              path: '/twoLevel',
-              name: '新二级活动',
-              component: Acitivity.twoLevel
             }
           ]
         },
@@ -439,14 +439,14 @@ const router = new Router ({
         {
           path: '/shoppingCart',
           name: '购物车',
-          component: ShoppingCart.index,
+          component: ShoppingCart.shoppingCart,
           children: [
             {
-              path: '/',
-              name: '购物车',
-              component: ShoppingCart.shoppingCart,
-              children: [
-                {
+              // path: '/',
+              // name: '购物车',
+              // component: ShoppingCart.shoppingCart,
+              // children: [
+              //   {
                   path: '/',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
@@ -456,8 +456,8 @@ const router = new Router ({
                   name: '购物车',
                   component: ShoppingCart.express
                 }
-              ]
-            }
+            //   ]
+            // }
           ]
         },
         {
@@ -991,8 +991,8 @@ router.beforeEach ((to, from, next) => {
 router.afterEach((to, from) => {
   new Vue().$initShare({
     sharePhoto: getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-    shareTitle: '万物直供商城正品保障',
-    shareDesc: '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买',
+    shareTitle: '万物直供商城 正品保障',
+    shareDesc: '万物直供商城，价格优惠，正品保障，支持专柜提货！',
     link: getLocationHref() + '/?#' + to.fullPath
   })
 })

@@ -1,12 +1,12 @@
 <template lang="pug">
   .sports
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="back")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 8rem;text-align: center;") {{$route.query.title}}
       .topRight(slot="right", @click="shareClick")
         img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
-    .mescroll#sportsMescroll
+    .mescroll#sportsMescroll(:style="{top: navShow?'1.3rem':'0'}")
       .content
         carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4rem")
           div(v-for="tag in banner", style="width:100%" )
@@ -19,18 +19,19 @@
 <script>
   import {mapState} from 'vuex'
   import recommend from './recommend'
+  import {activityShare} from 'assets/js/mixin.js'
   // 引入bus
 
     export default {
       name: "sports",
+      mixins:[activityShare],
       data () {
         return {
           banner: [],
           recommendGoods: [],
           parentId: null,
           parentType: null,
-          isEmpty: false,
-          shareShow: false
+          isEmpty: false
         }
       },
       components: {
@@ -75,50 +76,13 @@
           }
         })
       },
-      // beforeRouteEnter (to, from , next) {
-      //   to.meta.keepAlive = false
-      //   next();
-      // },
-      // beforeRouteLeave (to, from, next) {
-      //   to.meta.keepAlive = true
-      //   next()
-      // },
       methods: {
-        shareClick () {
-          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
-            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'share', title: '分享活动页', content: '特卖特卖', img: 'http://img1.imgtn.bdimg.com/it/u=845959696,1894336107&fm=27&gp=0.jpg'});
-            if (results2) {
-              return
-            }
-          }
-
-          if (w5zgApp) {
-            w5zgApp.share('标题','内容','图片','分享地址')
-            return
-          }
-
-        },
-        showShare () {
-          if ((window.webkit && window.webkit.messageHandlers.iosMessage) || w5zgApp) {
-            this.shareShow = true
-          }
-        },
         // 锁定或者解锁上拉加载
         lockUpDown (isLock) {
           this.mescroll.lockUpScroll( isLock );
         },
         back () {
-          if (window.webkit && window.webkit.messageHandlers.iosMessage) {
-            let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'back'});
-            if (results2) {
-              return
-            }
-          }
-          if (window.history.length<=2) {
-            this.$router.push('/home')
-          } else {
-            this.$router.go(-1)
-          }
+          this.$method.back.apply(this)
         },
         getParmas () {
           this.parentId = this.$route.query.actId;
@@ -188,7 +152,7 @@
 <style scoped>
   .mescroll {
     position: fixed;
-    top: 1.3rem;
+    /*top: 1.3rem;*/
     bottom: 0;
     height: auto;
     width: 100%;
