@@ -10,7 +10,7 @@
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({})") 搜索
     // 未搜索时
-    search-init(v-show="searchInit", @wordSearch="wordSearch")
+    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit")
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
@@ -78,6 +78,10 @@
       }
     },
     created() {
+      if (this.$route.query.key) {
+        this.query = this.$route.query.key
+        this.dataReset({})
+      }
       this._getDefaultWord()
     },
     deactivated() {
@@ -85,6 +89,11 @@
     },
     activated() {
       this.focus = true
+      if (this.$route.query.key) {
+        this.query = this.$route.query.key
+        this.dataReset({})
+      }
+      this._getDefaultWord()
     },
     mounted() {
       this.focus = true
@@ -92,10 +101,13 @@
     methods: {
       // 如果是在搜索结果显示时点击返回按钮返回到搜索初始化
       back() {
-        if(this.showResult) {
+        if(this.showResult && !this.$route.query.from) {
           this.cancelQuery()
         } else {
           this.$router.go(-1)
+          setTimeout(() => {
+            this.cancelQuery()
+          }, 500)
         }
       },
       // 所有值恢复出厂
@@ -302,7 +314,7 @@
           params: {
           }
         }).then(function(res){
-          self.placeholder = '阿迪'
+          self.placeholder = res.data.data
         })
       }
     },

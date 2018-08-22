@@ -54,7 +54,7 @@
       }
     },
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
-    /*beforeRouteEnter(to, from, next) {
+    beforeRouteEnter(to, from, next) {
       if (store.state.recommendAdvert.advert.length>=1 && store.state.recommendAdvert.tags.length>=1) {
         next()
       } else {
@@ -109,10 +109,10 @@
         getAdvert()
         getTags()
       }
-      /!*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
+      /*bus.$ajax.all([getAdvert(), getTags()]).then(() => {
         next()
-      })*!/
-    },*/
+      })*/
+    },
     mounted() {
       this.$data.transitionName = ''
     },

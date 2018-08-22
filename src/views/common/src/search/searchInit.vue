@@ -43,14 +43,6 @@
   import Flag from './flag'
   export default {
     name: "searchInit",
-    created () {
-      this.minHeight = parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize')) * 2.22
-      this.hotHeight2 = ''
-      this.historyHeight2 = ''
-      this._getHotData()
-      this._getHistory()
-      this._getCategory()
-    },
     data () {
       return {
         hot: [],
@@ -69,6 +61,20 @@
         historyMoreShow: false
       }
     },
+    props: {
+      showFlag: {
+        type: Boolean,
+        default: false
+      }
+    },
+    watch: {
+      showFlag(newVal) {
+        if (newVal) {
+          this._resetHotHeight()
+          this._resetHistoryHeight()
+        }
+      }
+    },
     computed: {
       categoryList () {
         if(this.category.length) {
@@ -81,6 +87,14 @@
       searchData () {
         return this.hot.concat(this.categoryList)
       }
+    },
+    created () {
+      this.minHeight = parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize')) * 2.22
+      this.hotHeight2 = ''
+      this.historyHeight2 = ''
+      this._getHotData()
+      this._getHistory()
+      this._getCategory()
     },
     mounted() {
     },
@@ -148,6 +162,24 @@
           }
         }
       },
+      _resetHotHeight() {
+        this.$nextTick(()=>{
+          if (this.$refs.moreContent.offsetHeight > this.minHeight) {
+            this.hotHeight2 = this.$refs.moreContent.offsetHeight + 'px'
+            this.hotHeight = '2rem'
+            this.hotMoreShow = true
+          }
+        })
+      },
+      _resetHistoryHeight() {
+        this.$nextTick(() => {
+          if (this.$refs.moreContent2.offsetHeight > this.minHeight) {
+            this.historyHeight2 = this.$refs.moreContent2.offsetHeight + 'px'
+            this.historyHeight = '2rem'
+            this.historyMoreShow = true
+          }
+        })
+      },
       _getHotData () {
         let self =this
         self.$ajax({
@@ -157,13 +189,7 @@
         }).then(function(res){
           if (res) {
             self.hot = res.data.data
-            self.$nextTick(()=>{
-              if (self.$refs.moreContent.offsetHeight > self.minHeight) {
-                self.hotHeight2 = self.$refs.moreContent.offsetHeight + 'px'
-                self.hotHeight = '2rem'
-                self.hotMoreShow = true
-              }
-            })
+            self._resetHotHeight()
           }
         })
       },
@@ -178,13 +204,7 @@
             if (res) {
               if (res.data.data.length) {
                 self.history = res.data.data
-                self.$nextTick(() => {
-                  if (self.$refs.moreContent2.offsetHeight > self.minHeight) {
-                    self.historyHeight2 = self.$refs.moreContent2.offsetHeight + 'px'
-                    self.historyHeight = '2rem'
-                    self.historyMoreShow = true
-                  }
-                })
+                self._resetHistoryHeight()
               }
             }
           })

@@ -148,7 +148,7 @@
       },
       // 搜索关键字
       searchKeyword (keyWord) {
-        this.$router.push({path:'/page/commodityList', query:{msg:keyWord,flags:1}})
+        this.$router.push({path:'/search',query:{key: keyWord, from: 1}})
       },
       // 前往活动
       goActivity (data) {

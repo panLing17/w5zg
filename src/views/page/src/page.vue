@@ -22,7 +22,7 @@
               span.point
               span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+              li(v-for="items in item.childList" @click="$router.push({path:'/search',query:{key: items.gc_keywords, from: 1}})").wrapImg
                 img(:src="items.gc_icon | img-filter", @load="imgOnload")
                 .words {{items.gc_name}}
 </template>
