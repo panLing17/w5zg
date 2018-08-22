@@ -108,7 +108,7 @@
           })
         },
         toNext (item, type, url, id, relateId, title) {
-          this.$method.goActivity.call(this, item)
+          this.$method.goActivity.call(this, item, 2)
           // switch (type) {
           //   // 跳外链
           //   case '143': window.location.href = url; break;

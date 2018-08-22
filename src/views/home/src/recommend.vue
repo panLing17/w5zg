@@ -152,7 +152,7 @@
       },
       // 前往活动
       goActivity (data) {
-        this.$method.goActivity.call(this, data)
+        this.$method.goActivity.call(this, data, 1)
         // switch (data.url_type) {
         //   // 跳外链
         //   case '143': window.location.href = data.url + '?shId=' + data.sh_id; break;

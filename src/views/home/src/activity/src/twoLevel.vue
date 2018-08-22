@@ -107,7 +107,7 @@
         } else if (status === 1) {
           obj = this.categoryList[index]
         }
-        this.$method.goActivity.call(this, obj)
+        this.$method.goActivity.call(this, obj, 2)
         // switch (obj.url_type) {
         //   // 跳外链
         //   case '143': window.location.href = obj.url; break
@@ -117,7 +117,7 @@
         //   case '141': this.$router.push({path: '/goodsDetailed', query: { id: obj.relate_id }}); break
         //   // 跳3级页面模板2
         //   case '149': this.$router.push({path: '/activity', query: {actId: obj.id, title: obj.title, parentType: '362'}}); break
-        }
+        // }
       },
       upCallback: function (page) {
         let self = this

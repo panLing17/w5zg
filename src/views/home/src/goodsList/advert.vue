@@ -13,7 +13,7 @@
     },
     methods: {
       toNext() {
-        this.$method.goActivity.call(this, this.content)
+        this.$method.goActivity.call(this, this.content, 1)
         // switch (this.content.url_type) {
         //   // 跳外链
         //   case '143': window.location.href = this.content.url + '?shId=' + this.content.sh_id; break;

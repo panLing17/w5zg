@@ -21,7 +21,7 @@
     },
     methods: {
       toNext (i) {
-        this.$method.goActivity.call(this, i)
+        this.$method.goActivity.call(this, i, 1)
         // switch (i.url_type) {
         //   // 跳外链
         //   case '143': window.location.href = i.url + '?shId=' + i.sh_id; break;
