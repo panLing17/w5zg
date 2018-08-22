@@ -444,7 +444,7 @@
       goActivity(item) {
         // 外链解析
         let f = ''
-        if (data.url.split('?').length===1) {
+        if (item.ac_outlink && item.ac_outlink.split('?').length===1) {
           f = '?'
         }else {
           f = '&'
