@@ -124,6 +124,9 @@
     },
     methods: {
       getGoodsNum() {
+        if(!localStorage.getItem('token')) {
+          return
+        }
         let self = this
         self.$ajax({
           method: 'get',
