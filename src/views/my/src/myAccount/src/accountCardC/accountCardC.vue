@@ -12,7 +12,6 @@
         li.tabItem.l(:class="{'active':listActive===0}",@click="tabChange(0)") 可用
         li.tabItem.c(:class="{'active':listActive===1}",@click="tabChange(1)") 已使用
         li.tabItem.r(:class="{'active':listActive===2}",@click="tabChange(2)") 已过期
-    .mescroll#Mescroll
       router-view
 </template>
 
@@ -25,12 +24,8 @@
           }
         },
       mounted () {
-        this.$mescrollInt('Mescroll', this.upCallback)
       },
         methods: {
-          upCallback: function () {
-            this.mescroll.endErr()
-          },
           tabChange(index) {
             this.listActive = index;
             this.$router.replace({path:`/my/useDetail/${index}`});

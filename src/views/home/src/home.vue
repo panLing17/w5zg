@@ -126,7 +126,6 @@
     },
     created() {
       this.adSub = 0
-      console.log(window.navigator)
     },
     activated () {
       // 首页分享
@@ -448,19 +447,19 @@
           case '145':
             this.$router.push({
               path: '/home/sports',
-              query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
+              query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
             });
             break;
           // 跳二级
           case '144':
             this.$router.push({
               path: '/home/largeCollection',
-              query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
+              query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
             });
             break;
           // 外部
           case '143':
-            window.location.href = item.ac_outlink;
+            window.location.href = item.ac_outlink + '?shId=' + item.sh_id;
             break;
           // 店铺
           case '142':
@@ -472,11 +471,11 @@
             break;
           // 跳二级模板2
           case '148':
-            this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title}})
+            this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}})
             break;
           // 跳3级页面模板2
           case '149':
-            this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363'}});
+            this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363', shId: item.sh_id}});
             break;
         }
       }

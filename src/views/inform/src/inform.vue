@@ -25,8 +25,8 @@
               .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]? ';' + item.gspec_values.toString().split(',')[1]:''}}
               .price
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
-                .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元
-
+                .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元,速抢!
+                .rightP(v-if="item.msType === '802'") 到货啦,速抢!
 </template>
 
 <script>
@@ -111,7 +111,6 @@
       } else {
         next()
       }
-
     },
     mounted(){
       this.$store.commit('setInformNum', this.$route.query.num)

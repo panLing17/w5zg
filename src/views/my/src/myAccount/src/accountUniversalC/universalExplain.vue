@@ -1,7 +1,7 @@
 <template lang="pug">
   .universalExplain
     nav-bar(background="#f70057")
-      .topLeft(slot="left", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="back")
         img(src="./back.png", style="width:.586rem")
       .topCenter(slot="center", style="color:#fff") 通用券说明
       .topRight(slot="right")
@@ -44,6 +44,11 @@
             ]
           }
         ]
+      }
+    },
+    methods: {
+      back() {
+        this.$method.back.apply(this)
       }
     },
     components: {

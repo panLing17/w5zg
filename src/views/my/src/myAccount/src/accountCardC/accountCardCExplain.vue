@@ -1,7 +1,7 @@
 <template lang="pug">
   .accountCardCExplain
     nav-bar(background="#f70057")
-      .topLeft(slot="left", @click="$router.go(-1)")
+      .topLeft(slot="left", @click="back")
         img(src="./back.png", style="width:.586rem")
       .topCenter(slot="center", style="color:#fff") 现金券说明
       .topRight(slot="right")
@@ -51,6 +51,11 @@
             answer: ['A. 点击“我的”—“现金券”，显示每张现金券。', 'B. 每个商品详情页中显示您所有现金券总额（不包含已过期的现金券）。']
           }
         ]
+      }
+    },
+    methods: {
+      back() {
+        this.$method.back.apply(this)
       }
     },
     components: {

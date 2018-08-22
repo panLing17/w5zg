@@ -1,11 +1,12 @@
 <template lang="pug">
   .wrap
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="back")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
-    .mescroll#twoLevelMescroll
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../../../assets/img/shareImg.png", style="width: .58rem")
+    .mescroll#twoLevelMescroll(:style="{top: navShow?'1.3rem':'0'}")
       .contentWrapper
         .block
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
@@ -30,8 +31,10 @@
 
 <script>
   import recommend from '../../recommend'
+  import {activityShare} from 'assets/js/mixin.js'
   export default {
     name: 'twoLevel',
+    mixins:[activityShare],
     components: { recommend },
     data () {
       return {
@@ -261,7 +264,7 @@
   }*/
   .mescroll {
     position: fixed;
-    top: 1.3rem;
+    /*top: 1.3rem;*/
     left: 0;
     bottom: 0;
     height: auto;
