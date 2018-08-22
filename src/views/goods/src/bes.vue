@@ -13,13 +13,15 @@
             ul
               li.contentRightItem(v-for="(item, index) in list", @click="addBespeak(item, index)")
                 .name
-                  img(src="../../../assets/img/position2.png")
+                  img(src="../../../assets/img/Shape@2x.png", v-if="index === checkFlags")
+                  img(src="../../../assets/img/Shape2@2x.png", v-else)
                   span(:class="{checkeds: index === checkFlags}") {{item.bs_name}}
                 .address {{item.bs_address}}
 </template>
 
 <script>
   import BScroll from 'better-scroll'
+
   export default {
     name: "bes",
     data () {
@@ -103,24 +105,30 @@
       },
       addBespeak (item, index) {
         this.bsId = item.bs_id
-        if (!this.bsId) {
-          this.$message.warning('请选择门店')
-          return
+        // if (!this.bsId) {
+        //   this.$message.warning('请选择门店')
+        //   return
+        // }
+        let jjj = {
+          gspuId: this.$route.query.id,
+          storeId: this.bsId
         }
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/addTryOn',
-          params: {
-            gspuId: self.$route.query.id,
-            storeId: self.bsId
-          },
-        }).then(function (response) {
-          self.checkFlags = index
-          //self.$message.success(response.data.msg)
-          //self.close()
-          self.$emit('succ')
-        })
+        this.$emit('succ',jjj)
+        this.checkFlags = index
+        // let self = this
+        // self.$ajax({
+        //   method: 'post',
+        //   url: self.$apiGoods + 'goods/addTryOn',
+        //   params: {
+        //     gspuId: self.$route.query.id,
+        //     storeId: self.bsId
+        //   },
+        // }).then(function (response) {
+        //   self.checkFlags = index
+        //   //self.$message.success(response.data.msg)
+        //   //self.close()
+        //   self.$emit('succ')
+        // })
       }
     }
   }
@@ -143,7 +151,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 10rem;
+    /*height: 10rem;*/
     /*position: fixed;
     bottom: 0;
     left: 0;
@@ -169,7 +177,7 @@
     margin-right: .1rem;
   }
   .content {
-    height: 8.7rem;
+    /*height: 8.7rem;*/
     display: flex;
     overflow: hidden;
   }

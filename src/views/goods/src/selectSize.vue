@@ -4,7 +4,7 @@
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       //.main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
-      .main(v-show="show")#selectSize
+      .main(v-show="show", :class="{changeH:yuyueF}")#selectSize
         .selectSizeHeader
           .photosBox()
             ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
@@ -25,7 +25,7 @@
             .size 选择 颜色 尺寸
           .headerClose(@click="close")
             img(src="../../../assets/img/Group10@2x.png")
-        .selectSizeContent(ref="selstSizeScroll")
+        .selectSizeContent(ref="selstSizeScroll", :class="{changeH2:yuyueF}")
           div(style="padding-bottom: .8rem;")
             ul.spec
               li(v-for="(item,fatherIndex) in spec")
@@ -69,7 +69,7 @@
         div(v-if="yuyueF")
           .wrapBtns(@click="yuyueBtn") 预约体验
           .notice(v-show="noticeFlag2")
-            div 预约体验成功
+            div 预约专柜成功
         div(v-if="!yuyueF")
           .bottomButton(v-if="onlySelectSpec")
             .left(v-show="noGoodsL", @click="goBuy") 立即购买
@@ -91,6 +91,7 @@
     components:{bes},
     data () {
       return {
+        HFlags: '',
         yuyueSuc: '',
         noticeFlag2: '',
         yuyueFlag: false,
@@ -229,9 +230,13 @@
     methods:{
       // 预约体验
       yuyueBtn() {
-        if (this.yuyueSuc) {
-          this.noticeFlag2 = true
-          let self = this
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/addTryOn',
+          params: self.yuyueSuc,
+        }).then(function (response) {
+          self.noticeFlag2 = true
           let t = 2
           let timer = setInterval(function () {
             t--
@@ -240,11 +245,11 @@
               self.$emit('ok')
             }
           },1000)
-        }
+        })
       },
       // 预约成功
-      succ() {
-        this.yuyueSuc = true
+      succ(jjj) {
+        this.yuyueSuc = jjj
       },
       reachInform(){
         console.log(this.skuIds)
@@ -875,7 +880,12 @@
     left: 0;
     z-index: 101;
   }
-
+  .changeH{
+    height: 14rem !important;
+  }
+  .changeH2{
+    height: 9.92rem !important;
+  }
   .main {
     /*padding-top: .2rem;*/
     /*padding-bottom: 1.5rem;*/
