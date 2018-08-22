@@ -137,7 +137,7 @@
       },
       // 点击综合
       resetSearch() {
-        this.dataReset({sortFieldType: 0, bi_id: this.bi_id})
+        this.dataReset({sortFieldType: 0, bi_id: this.bi_id, brandReset: this.brandReset})
       },
       // 过滤器价格区间筛选回调
       priceFilter(data) {
