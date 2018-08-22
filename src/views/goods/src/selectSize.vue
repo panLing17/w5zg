@@ -68,8 +68,10 @@
               .freightPrice {{freightPrice}}元
         div(v-if="yuyueF")
           .wrapBtns(@click="yuyueBtn") 预约体验
-          .notice(v-show="noticeFlag2")
+          .notice(v-show="noticeFlag2").notice2
             div 预约专柜成功
+          .notice(v-show="noticeFlag3").notice3
+            div 请先选择商品规格
         div(v-if="!yuyueF")
           .bottomButton(v-if="onlySelectSpec")
             .left(v-show="noGoodsL", @click="goBuy") 立即购买
@@ -91,6 +93,7 @@
     components:{bes},
     data () {
       return {
+        noticeFlag3: '',
         HFlags: '',
         yuyueSuc: '',
         noticeFlag2: '',
@@ -230,22 +233,36 @@
     methods:{
       // 预约体验
       yuyueBtn() {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/addTryOn',
-          params: self.yuyueSuc,
-        }).then(function (response) {
-          self.noticeFlag2 = true
+        if (this.yuyueFlag) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/addTryOn',
+            params: self.yuyueSuc,
+          }).then(function (response) {
+            self.noticeFlag2 = true
+            let t = 2
+            let timer1 = setInterval(function () {
+              t--
+              if (t==0) {
+                self.noticeFlag2 = false
+                self.$emit('ok')
+                clearInterval(timer1)
+              }
+            },1000)
+          })
+        } else{
+          let self = this
+          this.noticeFlag3 = true
           let t = 2
-          let timer = setInterval(function () {
+          let timer2 = setInterval(function () {
             t--
             if (t==0) {
-              self.noticeFlag2 = false
-              self.$emit('ok')
+              self.noticeFlag3 = false
+              clearInterval(timer2)
             }
           },1000)
-        })
+        }
       },
       // 预约成功
       succ(jjj) {
@@ -867,6 +884,12 @@
     background-color: rgba(0,0,0,.6);
     color: #fff;
     font-size: .4rem;
+  }
+  .notice2 div{
+    width: 3.73rem;
+  }
+  .notice3 div{
+    width: 4.8rem;
   }
   .selectSizeBox {
   }
