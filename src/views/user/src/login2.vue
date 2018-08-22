@@ -193,7 +193,7 @@
           this.$message.error('手机号码格式不正确！');
           return
         }
-        if (this.form.code.trim().length!=6) {
+        if (this.form.code.trim().length!=4) {
           this.$message.error('请输入正确手机验证码！');
           return
         }
@@ -306,7 +306,7 @@
         }else {
           this.iconFlag.phone = false
         }
-        if(this.form.code.length === 6) {
+        if(this.form.code.length === 4) {
           this.iconFlag.code = true
         }else {
           this.iconFlag.code = false
