@@ -1,6 +1,7 @@
 /**
  * Created by Administrator on 2017-12-24.
  */
+import Vue from 'vue'
 global.$isContained=(aa, bb)=>{
   if(!(aa instanceof Array)||!(bb instanceof Array)||((aa.length < bb.length))){
     return false;
@@ -49,4 +50,23 @@ function arrayPrice(value) {
 
   return arr
 }
-export default {transformDate, imgUrlFilter, getClientHeight, arrayPrice}
+
+function back() {
+  // android交互
+  if (typeof w5zgApp !== 'undefined') {
+    w5zgApp.onfinish()
+    return
+  }
+  // android交互完毕
+
+  // ios交互
+  if (window.webkit && window.webkit.messageHandlers.iosMessage) {
+    let results2 = window.webkit.messageHandlers.iosMessage.postMessage({type: 'back'});
+    if (results2) {
+      return
+    }
+  }
+  // ios交互完毕
+  this.$router.go(-1)
+}
+export default {transformDate, imgUrlFilter, getClientHeight, arrayPrice, back}

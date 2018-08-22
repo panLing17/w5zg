@@ -42,6 +42,9 @@ import Collection from '../views/collection/index.js'
 //通知
 import Inform from '../views/inform/index.js'
 
+// 常见问题
+import CProblems from '../views/cProblems/index.js'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -458,6 +461,22 @@ const router = new Router ({
           ]
         },
         {
+          path: '/cAnswers',
+          name: '收藏夹',
+          component: CProblems.cAnswer,
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: '/cProblems',
+          name: '收藏夹',
+          component: CProblems.cProblem,
+          meta: {
+            keepAlive: false
+          }
+        },
+        {
           path: '/collection',
           name: '收藏夹',
           component: Collection.collection,
@@ -727,6 +746,14 @@ const router = new Router ({
               ]
             },
             {
+              path: '/my/accountCardCExplain',
+              name: '我的现金券C说明',
+              component: MyAccount.accountCardCExplain,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
               path: '/my/cashDetailC',
               name: '现金券明细C',
               component:MyAccount.cashDetailC,
@@ -738,6 +765,14 @@ const router = new Router ({
               path: '/my/accountUniversalC',
               name: '通用券C',
               component:MyAccount.accountUniversalC,
+              meta: {
+                keepAlive: true
+              }
+            },
+            {
+              path: '/my/universalExplain',
+              name: '通用券C说明',
+              component:MyAccount.universalExplain,
               meta: {
                 keepAlive: true
               }
