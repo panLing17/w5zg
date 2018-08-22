@@ -442,6 +442,13 @@
         this.$router.push('/search')
       },
       goActivity(item) {
+        // 外链解析
+        let f = ''
+        if (data.url.split('?').length===1) {
+          f = '?'
+        }else {
+          f = '&'
+        }
         switch (item.ac_inlink_type) {
           // 跳三级
           case '145':
@@ -459,7 +466,7 @@
             break;
           // 外部
           case '143':
-            window.location.href = item.ac_outlink + '?shId=' + item.sh_id;
+            window.location.href = item.ac_outlink + f + 'shId=' + item.sh_id;
             break;
           // 店铺
           case '142':
