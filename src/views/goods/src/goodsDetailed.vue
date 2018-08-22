@@ -126,6 +126,7 @@
           img(src="../../../assets/img/msg.png", @click="goService")
           p 客服
         .leftSmallButtons
+          .shoppingCartCount(v-if="shoppingCartCount>0") {{shoppingCartCount}}
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
         .leftSmallButtons
@@ -244,6 +245,9 @@
       }
     },
     computed:{
+      shoppingCartCount () {
+        return this.shoppingCartGoodsNum.sendNum + this.shoppingCartGoodsNum.carryNum
+      },
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -256,7 +260,7 @@
       tong () {
         return parseInt(this.goodsData.counter_interval)
       },*/
-      ...mapState(['location', 'userData','skuId', 'transfer'])
+      ...mapState(['location', 'userData','skuId', 'transfer','shoppingCartGoodsNum'])
     },
     components: {locationSelect, selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
@@ -321,6 +325,7 @@
       })*/
     },
     mounted () {
+      this.getGoodsNum()
       // 是否收藏
       this.isCollect()
       this.getGoodsDetailed()
@@ -384,6 +389,17 @@
       }
     },
     methods:{
+      // 获取购物车数量
+      getGoodsNum() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/countCartNum',
+          params: {},
+        }).then(function (response) {
+          self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
+        })
+      },
       // 收藏成功&&取消收藏成功
       collectionSuc(){
         this.collectSucS = true
@@ -752,7 +768,8 @@
           // 改造格式
           let newData = self.specGray(response.data.data)
           let informGoods = self.$store.state.informGoods
-          console.log(newData)
+          //let informGoods = {gspec_values: "150ml, 黑色"}
+          //console.log(informGoods)
           newData.forEach((now)=>{
             now.valueIndex = -1
             now.specValue.forEach((sonNow, sonIndex)=>{
@@ -1650,6 +1667,19 @@
     bottom: 0;
 
     position: fixed;
+  }
+  /* 购物车数量 */
+  .shoppingCartCount {
+    background: white;
+    padding: 0 .125rem;
+    height: 18px !important;
+    line-height: 18px;
+    border-radius: 9px;
+    position: absolute;
+    top: -.02rem;
+    margin-left: 15px;
+    color: rgb(247,0,87);
+    border: solid 1px rgb(247,0,87);
   }
 </style>
 <style>

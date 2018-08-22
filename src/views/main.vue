@@ -17,7 +17,7 @@
             p(:class="{checked:routerPath=='/page'}") 分类
         li
           router-link(:to="$route.matched[1].path !== '/shoppingCart' ? '/shoppingCart' : ''")
-            span.count(v-if="$store.state.shoppingCount>0") {{$store.state.shoppingCount}}
+            span.count(v-if="shoppingCartCount>0") {{shoppingCartCount}}
             p
               img(:src="routerPath=='/shoppingCart'?require('../assets/img/shoppingcart4@3x.png'):require('../assets/img/shoppingcart3@3x.png')")
             p(:class="{checked:routerPath=='/shoppingCart'}") 购物车
@@ -31,6 +31,7 @@
 <script>
   import store from '../vuex/store.js'
   import {bus} from '../bus'
+  import {mapState} from 'vuex'
 
   export default {
     name: 'mainView',
@@ -51,7 +52,11 @@
       reversedMessage: function () {
         // `this` 指向 vm 实例
         return this.$store.state.viewDirection
-      }
+      },
+      shoppingCartCount () {
+        return this.shoppingCartGoodsNum.sendNum + this.shoppingCartGoodsNum.carryNum
+      },
+      ...mapState(['shoppingCartGoodsNum'])
     },
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
     beforeRouteEnter(to, from, next) {
@@ -114,11 +119,19 @@
       })*/
     },
     mounted() {
+      this.getGoodsNum()
       this.$data.transitionName = ''
     },
     methods: {
-      alt(){
-
+      getGoodsNum() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/countCartNum',
+          params: {},
+        }).then(function (response) {
+          self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
+        })
       }
     },
     created() {
@@ -167,16 +180,16 @@
   }
 
   .bottomNav > li .count {
-    background: rgba(255, 0, 0, 0.7);
+    background: white;
+    padding: 0 .125rem;
     height: 18px;
     line-height: 18px;
-    width: 18px;
     border-radius: 9px;
     position: absolute;
-    top: -.06rem;
-    margin-left: 10px;
-    color: white;
-
+    top: -.02rem;
+    margin-left: 5px;
+    color: rgb(247,0,87);
+    border: solid 1px rgb(247,0,87);
   }
 
   .bottomNav > li p > img {

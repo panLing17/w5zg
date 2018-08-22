@@ -182,10 +182,6 @@
       this.mescroll.destroy()
     },
     methods: {
-      scrollToTop () {
-        this.scroll = true
-        this.mescroll.scrollTo(0, 0)
-      },
       mescrollInt () {
         this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
           this.position.forEach((now) => {
@@ -196,6 +192,10 @@
         }, (obj) => {
 
         })
+      },
+      scrollToTop () {
+        this.scroll = true
+        this.mescroll.scrollTo(0, 0)
       },
       goBack () {
         this.$router.go(-1)
@@ -299,18 +299,6 @@
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
-          if (self.nowTab == 1 && response.data.data.carryNum > 0) {
-            self.settlementShow = true
-          }
-          if(self.nowTab == 1 && response.data.data.carryNum === 0){
-            self.settlementShow = false
-          }
-          if (self.nowTab == 0 && response.data.data.sendNum > 0) {
-            self.settlementShow = true
-          }
-          if(self.nowTab == 0 && response.data.data.sendNum === 0){
-            self.settlementShow = false
-          }
         })
       },
       tabChange(num) {
