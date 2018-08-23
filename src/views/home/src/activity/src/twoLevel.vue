@@ -56,7 +56,8 @@
           goods: false
         },
         brandList: [],
-        categoryList: []
+        categoryList: [],
+        parentId: this.$route.query.acId
       }
     },
     deactivated () {
@@ -66,7 +67,7 @@
       })
     },
     activated () {
-      if (this.parentId === this.$route.query.id || !this.$route.query.id) {
+      if (this.parentId === this.$route.query.actId || !this.$route.query.actId) {
         let _this = this
         this.$store.state.position.forEach((now) => {
           if (now.path === '/twoLevel') {
@@ -74,7 +75,9 @@
           }
         })
       } else {
-        this.parentId = this.$route.query.id
+        this.parentId = this.$route.query.actId
+        this.getBrandList()
+        this.getCategoryList()
         this.mescroll.resetUpScroll()
       }
     },
