@@ -389,7 +389,7 @@
       }
     },
     methods:{
-      // 获取购物车数量
+      // 获取购物车数量s
       getGoodsNum() {
         let self = this
         self.$ajax({
