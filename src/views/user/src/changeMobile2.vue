@@ -53,7 +53,7 @@
         let self = this
         this._checkPhone((flag) =>{
           if (flag) {
-            if (this.form.code.length!=6) {
+            if (this.form.code.length!=4) {
               this.$message.error('手机验证码格式不正确！')
               return
             }

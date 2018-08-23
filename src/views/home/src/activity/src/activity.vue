@@ -32,6 +32,11 @@
     created () {
 
     },
+    activated() {
+      this._initParams()
+      this.getTabList()
+    },
+    deactivated() {},
     mounted () {
       this._initParams()
       this.getTabList()
