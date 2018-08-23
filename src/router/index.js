@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/store.js'
 import Message from 'vue-multiple-message'
-// 用户操作（登录注册等 ）
+// 用户操作（  登录注册等 ）
 import User from '../views/user/index.js'
 // 主要操作页总路由
 import Main from '../views/main'
