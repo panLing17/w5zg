@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/store.js'
 import Message from 'vue-multiple-message'
-// 用户操作（登录注册等）
+// 用户操作（  登录注册等 ）
 import User from '../views/user/index.js'
 // 主要操作页总路由
 import Main from '../views/main'
@@ -309,6 +309,16 @@ const router = new Router ({
       name: '新二级活动',
       component: Acitivity.twoLevel
     },
+    {
+      path: '/home/largeCollection',
+      name: '二级活动',
+      component: Home.largeCollection
+    },
+    {
+      path: '/home/sports',
+      name: '三级活动',
+      component: Home.sports
+    },
     // {
     //   path: '/collection',
     //   name: '收藏夹',
@@ -403,16 +413,6 @@ const router = new Router ({
               meta: {
                 keepAlive: true
               }
-            },
-            {
-              path: '/home/largeCollection',
-              name: '二级活动',
-              component: Home.largeCollection
-            },
-            {
-              path: '/home/sports',
-              name: '三级活动',
-              component: Home.sports
             }
           ]
         },
@@ -439,15 +439,16 @@ const router = new Router ({
         {
           path: '/shoppingCart',
           name: '购物车',
-          component: ShoppingCart.shoppingCart,
+          component: ShoppingCart.index,
           children: [
             {
-              // path: '/',
-              // name: '购物车',
-              // component: ShoppingCart.shoppingCart,
-              // children: [
-              //   {
-                  path: '/',
+              path: '/',
+              name: '购物车',
+              redirect: '/shoppingCart/express',
+              component: ShoppingCart.shoppingCart,
+              children: [
+                {
+                  path: '/shoppingCart/self',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
                 },
@@ -456,8 +457,8 @@ const router = new Router ({
                   name: '购物车',
                   component: ShoppingCart.express
                 }
-            //   ]
-            // }
+              ]
+            }
           ]
         },
         {
