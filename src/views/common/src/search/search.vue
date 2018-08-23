@@ -10,7 +10,7 @@
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({})") 搜索
     // 未搜索时
-    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit")
+    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit", ref="searchInit")
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
@@ -83,11 +83,17 @@
         this.dataReset({})
       }
       this._getDefaultWord()
+      this.pushHistory = true
+      window.history.pushState(null, null, window.location.href)
     },
     deactivated() {
       this.focus = false
+      this.pushHistory = false
     },
     activated() {
+      if (!this.pushHistory) {
+        window.history.pushState(null, null, window.location.href)
+      }
       this.focus = true
       if (this.$route.query.key) {
         this.query = this.$route.query.key
@@ -104,7 +110,7 @@
         if(this.showResult && !this.$route.query.from) {
           this.cancelQuery()
         } else {
-          this.$router.go(-1)
+          this.$router.go(-2)
           setTimeout(() => {
             this.cancelQuery()
           }, 500)
@@ -130,6 +136,7 @@
         this.searchEnd = false
         this.searchType = 1
         this.searchInit = true
+        this.$refs.searchResult.clearFilter()
       },
       // 初始化界面所有关键词点击回调
       wordSearch(item) {
@@ -191,6 +198,7 @@
         this.searchInit = false
         //关闭过滤器
         this.$refs.searchResult.closeFilter()
+        this.focus = false
         // 如果搜索结果触底就调相似/热搜接口
         if (this.searchEnd) {
           this.searchOther()
@@ -214,6 +222,7 @@
           }
         }).then(function(res){
           if (res) {
+            self.$refs.searchInit._getHistory()
             self.associativeQuery = []
             self.showResult = true
             if (!res.data.data.rows.length && self.page===1) {

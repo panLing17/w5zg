@@ -6,7 +6,7 @@
           .title 热搜词
         .hotContent
           .twoRow(ref="moreContent", :style="{'max-height': hotHeight}")
-            ul
+            ul(ref="twoRowUl")
               li(v-for="(item, index) in hot", @click="wordSearch(item)")
                 div {{item.search_word}}
                 img(v-if="item.pic_url", :src="item.pic_url | img-filter")
@@ -18,8 +18,8 @@
           .clear(@click="clearHistory")
             img(src="./clear.png")
         .hotContent
-          .twoRow(ref="moreContent2", :style="{'max-height': historyHeight}")
-            ul
+          .twoRow
+            ul(ref="moreContent2", :style="{'max-height': historyHeight}")
               li(v-for="(item, index) in history", @click="wordSearch(item)")
                 div {{item}}
           .moreWrapper(v-show="historyMoreShow", @click="historyMoreClick")
@@ -67,6 +67,10 @@
         default: false
       }
     },
+    activated() {
+      this._resetHotHeight()
+      this._resetHistoryHeight()
+    },
     watch: {
       showFlag(newVal) {
         if (newVal) {
@@ -85,11 +89,17 @@
 
       },
       searchData () {
-        return this.hot.concat(this.categoryList)
+        let data = this.hot
+        if (this.history.length) {
+          data = data.concat(this.history)
+        }
+        data = data.concat(this.categoryList)
+        return data
       }
     },
     created () {
       this.minHeight = parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize')) * 2.22
+      // this.minHeight = ''
       this.hotHeight2 = ''
       this.historyHeight2 = ''
       this._getHotData()
@@ -163,20 +173,35 @@
         }
       },
       _resetHotHeight() {
+        this.hotHeight = 'none'
         this.$nextTick(()=>{
+          // this._getMinHeight()
           if (this.$refs.moreContent.offsetHeight > this.minHeight) {
             this.hotHeight2 = this.$refs.moreContent.offsetHeight + 'px'
             this.hotHeight = '2rem'
             this.hotMoreShow = true
+            this.hotMore = false
+          } else {
+            this.hotMoreShow = false
           }
         })
       },
+      _getMinHeight() {
+        let h = this.$method.getStyle(this.$refs.twoRowUl.children[0], 'height')
+        let m = this.$method.getStyle(this.$refs.twoRowUl.children[0], 'marginBottom')
+        this.minHeight = (parseInt(h) + parseInt(m)) * 2
+      },
       _resetHistoryHeight() {
+        this.historyHeight = 'none'
         this.$nextTick(() => {
+          // this._getMinHeight()
           if (this.$refs.moreContent2.offsetHeight > this.minHeight) {
             this.historyHeight2 = this.$refs.moreContent2.offsetHeight + 'px'
             this.historyHeight = '2rem'
             this.historyMoreShow = true
+            this.historyMore = false
+          } else {
+            this.historyMoreShow = false
           }
         })
       },
@@ -272,14 +297,16 @@
         display: inline-block;
         position relative
         color: #333;
-        font-size: .34rem;
+        font-size: 0;
         line-height: .85rem;
+        height: .85rem;
         margin: 0 .26rem .26rem 0;
         box-sizing border-box
         overflow hidden
         white-space nowrap
         text-overflow ellipsis
         div {
+          font-size: .34rem;
           height 100%
           width 100%
           border-radius .42rem

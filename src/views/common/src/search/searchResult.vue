@@ -7,7 +7,7 @@
                   @brandSearch="brandSearch",
                   @priceSearch="priceSearch",
                   @priceFilter="priceFilter",
-                  @resetSearch="resetSearch"
+                  @resetSearch="resetSearch",
                   )
     scroll.searchResultContent(ref="searchResultContent",
                               :data="list",
@@ -101,6 +101,9 @@
 
     },
     methods: {
+      clearFilter() {
+        this.$refs.searchFilter.clearFilter()
+      },
       resetSearch() {
         this.$emit('resetSearch')
       },

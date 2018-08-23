@@ -110,6 +110,11 @@
       }
     },
     methods: {
+      clearFilter() {
+        this.priceChoose = 0
+        this.minNum = ''
+        this.maxNum = ''
+      },
       resetSearch() {
         if(this.sortFieldType===0) {
           return
@@ -121,14 +126,15 @@
       },
       priceFilter() {
         this.filterChoose = false
-        if (this.minNum.trim().length===0 && this.maxNum.trim().length===0) {
+        if (this.minNum.toString().trim().length===0 && this.maxNum.toString().trim().length===0) {
           this.minNum = ''
           this.maxNum = ''
         }
-        if (this.minNum.trim().length===0 && this.maxNum.trim().length>0) {
+        if (this.minNum.toString().trim().length===0 && this.maxNum.toString().trim().length>0) {
+          this.minNum = 0
           this.maxNum = parseFloat(this.maxNum)
         }
-        if (this.maxNum.trim().length===0 && this.minNum.trim().length>0) {
+        if (this.maxNum.toString().trim().length===0 && this.minNum.toString().trim().length>0) {
           this.maxNum = 99999999
         }
         if (parseFloat(this.minNum)>parseFloat(this.maxNum)) {

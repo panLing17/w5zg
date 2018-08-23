@@ -103,7 +103,7 @@ export default {
     data () {
       setTimeout(() => {
         this.refresh()
-      }, 20)
+      }, 200)
     }
   }
 }
