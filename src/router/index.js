@@ -309,6 +309,16 @@ const router = new Router ({
       name: '新二级活动',
       component: Acitivity.twoLevel
     },
+    {
+      path: '/home/largeCollection',
+      name: '二级活动',
+      component: Home.largeCollection
+    },
+    {
+      path: '/home/sports',
+      name: '三级活动',
+      component: Home.sports
+    },
     // {
     //   path: '/collection',
     //   name: '收藏夹',
@@ -403,16 +413,6 @@ const router = new Router ({
               meta: {
                 keepAlive: true
               }
-            },
-            {
-              path: '/home/largeCollection',
-              name: '二级活动',
-              component: Home.largeCollection
-            },
-            {
-              path: '/home/sports',
-              name: '三级活动',
-              component: Home.sports
             }
           ]
         },
