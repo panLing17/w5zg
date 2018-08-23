@@ -4,7 +4,7 @@
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       //.main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
-      .main(v-show="show")#selectSize
+      .main(v-show="show", :class="{changeH:yuyueF}")#selectSize
         .selectSizeHeader
           .photosBox()
             ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
@@ -25,23 +25,27 @@
             .size 选择 颜色 尺寸
           .headerClose(@click="close")
             img(src="../../../assets/img/Group10@2x.png")
-        .selectSizeContent(ref="selstSizeScroll")
+        .selectSizeContent(ref="selstSizeScroll", :class="{changeH2:yuyueF}")
           div(style="padding-bottom: .8rem;")
             ul.spec
               li(v-for="(item,fatherIndex) in spec")
                 .title {{item.specName}}
                 ul.content
-                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc')") {{i.value}}
+                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc','y')") {{i.value}}
                   p(style="clear:both")
-            .count
+              .yuyue(v-if="yuyueF")
+                .titles 预约专柜
+                .conts(v-show="!yuyueFlag") 请先选择商品规格
+                bes(:show="yuyueFlag", @succ="succ")
+            .count(v-if="!yuyueF")
               span 购买数量
               w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
-            .express
+            .express(v-if="!yuyueF")
               h1 配送方式
               .buttonTab
                 button(@click="changeExpress('快递配送')", :class="{checked:expressType === '快递配送'}") 快递配送
                 button(@click="changeExpress('专柜自提')", v-if="carryType===1", :class="{checked:expressType === '专柜自提',lockNoChecked:lock}") 专柜提货
-            .address
+            .address(v-if="!yuyueF")
               h1
                 span {{expressType === '专柜自提' ? '专柜' : '配送'}}地址
                 span ({{expressType === '专柜自提' ? '提货' : '配送'}}地址影响库存，请正确选择)
@@ -59,27 +63,41 @@
                   i(v-if="location.city.name") {{location.province.name}} {{location.city.name}}
                   i(v-else) 请选择地址
                 img(src="../../../assets/img/more@2x.png")
-            .freight(v-show="expressType=='快递配送'")
+            .freight(v-show="expressType=='快递配送'", v-if="!yuyueF")
               .freightDesc 运费
               .freightPrice {{freightPrice}}元
-        .bottomButton(v-if="onlySelectSpec")
-          .left(v-show="noGoodsL", @click="goBuy") 立即购买
-          .right(v-show="noGoodsL", @click="addCart") 加入购物车
-          .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
-        .bottomButton(v-else)
-          .right(v-show="noGoodsL",@click="confirm") 确定
-          .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
-        .notice(v-show="noticeFlag")
-          div 如果30天内到货，会通过系统消息提醒您
+        div(v-if="yuyueF")
+          .wrapBtns(@click="yuyueBtn") 预约体验
+          .notice(v-show="noticeFlag2").notice2
+            div 预约专柜成功
+          .notice(v-show="noticeFlag3").notice3
+            div 请先选择商品规格
+        div(v-if="!yuyueF")
+          .bottomButton(v-if="onlySelectSpec")
+            .left(v-show="noGoodsL", @click="goBuy") 立即购买
+            .right(v-show="noGoodsL", @click="addCart") 加入购物车
+            .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
+          .bottomButton(v-else)
+            .right(v-show="noGoodsL", @click="confirm") 确定
+            .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
+          .notice(v-show="noticeFlag")
+            div 如果30天内到货，会通过系统消息提醒您
 </template>
 
 <script>
+  import bes from './bes'
   import {mapState, mapGetters} from 'vuex'
   import BScroll from 'better-scroll'
   export default {
     name: "city-select",
+    components:{bes},
     data () {
       return {
+        noticeFlag3: '',
+        HFlags: '',
+        yuyueSuc: '',
+        noticeFlag2: '',
+        yuyueFlag: false,
         noGoodsE: false,
         noGoodsL: true,
         skuIds: '',
@@ -100,6 +118,11 @@
       photos: Array,
       spec: Array,
       graySpecData: Array,
+      // 预约
+      yuyueF:{
+        type: Boolean,
+        default: false
+      },
       // 配送类型
       expressType:{
         type: String,
@@ -208,6 +231,43 @@
       this.getFreight()
     },
     methods:{
+      // 预约体验
+      yuyueBtn() {
+        if (this.yuyueFlag) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/addTryOn',
+            params: self.yuyueSuc,
+          }).then(function (response) {
+            self.noticeFlag2 = true
+            let t = 2
+            let timer1 = setInterval(function () {
+              t--
+              if (t==0) {
+                self.noticeFlag2 = false
+                self.$emit('ok')
+                clearInterval(timer1)
+              }
+            },1000)
+          })
+        } else{
+          let self = this
+          this.noticeFlag3 = true
+          let t = 2
+          let timer2 = setInterval(function () {
+            t--
+            if (t==0) {
+              self.noticeFlag3 = false
+              clearInterval(timer2)
+            }
+          },1000)
+        }
+      },
+      // 预约成功
+      succ(jjj) {
+        this.yuyueSuc = jjj
+      },
       reachInform(){
         console.log(this.skuIds)
         let self =this
@@ -338,6 +398,7 @@
         } else {
           this.$parent.selectDis(1)
         }
+        this.$parent.selectCityShow()
       },
       // 更改地址
       changeLocation () {
@@ -396,8 +457,35 @@
         this.$emit('buy')
       },*/
       // 校验库存与获得skuId（此请求每次挂载后都会执行）
-      getStoreNum (e,key,index, disable, item_valueIndex, oIndex, ccc) {
-        console.log(ccc)
+      getStoreNum (e,key,index, disable, item_valueIndex, oIndex, ccc, kkk) {
+        if (kkk === 'y') {
+
+          // 获取选中的规格
+          let specData = {
+            'cityId': this.$store.state.location.city.id,
+            'gspu_id': this.$route.query.id,
+            'specList': [
+            ]
+          }
+          this.spec.forEach((now)=>{
+            let val = now.specValue[now.valueIndex].value
+            specData.specList.push({
+              'gspec_name': now.specName,
+              'gspec_value': val
+            })
+          })
+          let self = this
+          this.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/sku/detail',
+            params: {
+              gc:JSON.stringify(specData)
+            }
+          }).then(function (response) {
+            self.$store.commit('getSkuId',response.data.data.gsku_id)
+            self.yuyueFlag = true
+          })
+        }
         let date = new Date()
         // 为置灰直接弹出，没有操作
         if (disable) {
@@ -753,6 +841,34 @@
 </script>
 
 <style scoped>
+  .titles{
+    font-size: .42rem;
+    font-weight: bold;
+    padding: 0 .4rem .2rem;
+  }
+  .conts{
+    width: 9.2rem;
+    height: .96rem;
+    background-color: #f2f2f2;
+    color: #666;
+    font-size: .35rem;
+    padding-left: .26rem;
+    line-height: .96rem;
+    margin: 0 auto;
+  }
+  .wrapBtns{
+    position: fixed;
+    z-index: 102;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1.2rem;
+    background-color: rgb(244,0,87);
+    color: #fff;
+    text-align: center;
+    line-height: 1.2rem;
+    font-size: .48rem;
+  }
   .notice{
     position: fixed;
     width: 100%;
@@ -769,6 +885,12 @@
     color: #fff;
     font-size: .4rem;
   }
+  .notice2 div{
+    width: 3.73rem;
+  }
+  .notice3 div{
+    width: 4.8rem;
+  }
   .selectSizeBox {
   }
 
@@ -781,7 +903,12 @@
     left: 0;
     z-index: 101;
   }
-
+  .changeH{
+    height: 14rem !important;
+  }
+  .changeH2{
+    height: 9.92rem !important;
+  }
   .main {
     /*padding-top: .2rem;*/
     /*padding-bottom: 1.5rem;*/
@@ -906,8 +1033,9 @@
     margin-bottom: .4rem;
   }
   .spec>li .title{
-    font-size: .4rem;
+    font-size: .42rem;
     padding-left: .4rem;
+    font-weight: bold;
   }
   .spec .content{
     margin-top: .3rem;

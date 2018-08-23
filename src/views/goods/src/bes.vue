@@ -5,31 +5,28 @@
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
-          .left
-            img(src="../../../assets/img/Page1@2x.png", @click="close")
-          .center 专柜体验
-          .right(@click="$router.push('/reservations')")
-            img(src="../../../assets/img/ic_yuyue_into.png")
-            span 我的预约
         .content
           .left(ref="lscroll2")
             ul
               li.contentLeftItem(v-for="(item, index) in storeList", :class="{active: index===currentCity}", @click="currentCity=index") {{item.cityName}}
           .right(ref="rscroll2")
             ul
-              li.contentRightItem(v-for="item in list", @click="addBespeak(item)")
+              li.contentRightItem(v-for="(item, index) in list", @click="addBespeak(item, index)")
                 .name
-                  img(src="../../../assets/img/position2.png")
-                  span {{item.bs_name}}
+                  img(src="../../../assets/img/Shape@2x.png", v-if="index === checkFlags")
+                  img(src="../../../assets/img/Shape2@2x.png", v-else)
+                  span(:class="{checkeds: index === checkFlags}") {{item.bs_name}}
                 .address {{item.bs_address}}
 </template>
 
 <script>
   import BScroll from 'better-scroll'
+
   export default {
-    name: "store-select",
+    name: "bes",
     data () {
       return {
+        checkFlags: '',
         // 当前选中的地址的id
         bsId: '',
         storeList: [],
@@ -106,59 +103,62 @@
           }, 20)
         })
       },
-      addBespeak (item) {
+      addBespeak (item, index) {
         this.bsId = item.bs_id
-        if (!this.bsId) {
-          this.$message.warning('请选择门店')
-          return
+        // if (!this.bsId) {
+        //   this.$message.warning('请选择门店')
+        //   return
+        // }
+        let jjj = {
+          gspuId: this.$route.query.id,
+          storeId: this.bsId
         }
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/addTryOn',
-          params: {
-            gspuId: self.$route.query.id,
-            storeId: self.bsId
-          },
-        }).then(function (response) {
-          if (response.data.code === '081') {
-            self.$message.success('预约专柜成功')
-            self.close()
-          }
-
-        })
+        this.$emit('succ',jjj)
+        this.checkFlags = index
+        // let self = this
+        // self.$ajax({
+        //   method: 'post',
+        //   url: self.$apiGoods + 'goods/addTryOn',
+        //   params: {
+        //     gspuId: self.$route.query.id,
+        //     storeId: self.bsId
+        //   },
+        // }).then(function (response) {
+        //   self.checkFlags = index
+        //   //self.$message.success(response.data.msg)
+        //   //self.close()
+        //   self.$emit('succ')
+        // })
       }
     }
   }
 </script>
 
 <style scoped>
+  .checkeds{
+    color: #F70057;
+  }
   .bg {
     background-color: rgba(0, 0, 0, 0.3);
     width: 100%;
     height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 101;
+    /*position: fixed;
+    top: 0;*/
+    /*left: 0;
+    z-index: 101;*/
   }
 
   .main {
     background-color: white;
     width: 100%;
-    height: 10rem;
-    position: fixed;
+    /*height: 10rem;*/
+    /*position: fixed;
     bottom: 0;
     left: 0;
-    z-index: 102;
+    z-index: 102;*/
   }
 
   .title {
-    height: 1.3rem;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 .4rem;
-    align-items: center;
     border-bottom:1px solid rgb(215,215,215);
   }
   .title .left img {
@@ -177,7 +177,7 @@
     margin-right: .1rem;
   }
   .content {
-    height: 8.7rem;
+    /*height: 8.7rem;*/
     display: flex;
     overflow: hidden;
   }
@@ -229,3 +229,4 @@
     font-size: .32rem;
   }
 </style>
+

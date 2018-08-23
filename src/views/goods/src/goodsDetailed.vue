@@ -140,7 +140,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -178,6 +178,7 @@
     name: "goods-detailed",
     data () {
       return {
+        yuyueF: false,
         k: '',
         j: '',
         xuanfukuang: '',
@@ -389,6 +390,10 @@
       }
     },
     methods:{
+      // 预约体验成功
+      ok() {
+        this.selectFlag = false
+      },
       // 获取购物车数量
       getGoodsNum() {
         let self = this
@@ -489,7 +494,9 @@
       // 显示预约
       yuyueShow () {
         if (this.initPriceFlag) {
-          this.$message.warning('请选择规格')
+          //this.$message.warning('请选择规格')
+          this.selectFlag = true
+          this.yuyueF = true
           return
         }
         this.bespeakFlag = true
@@ -832,6 +839,7 @@
         this.onlySelectSpec = false
         // 如果存在规格，直接进行选择配送方式
         this.selectFlag = true
+        this.yuyueF = false
       },
       buy () {
         // 如果没登录，直接跳往登录
@@ -853,7 +861,7 @@
         this.onlySelectSpec = false
         // 如果存在规格，直接进行选择配送方式
         this.selectFlag = true
-
+        this.yuyueF = false
       },
       // 单独选择门店后
       /*onlyStoreChange(data) {
@@ -1072,6 +1080,7 @@
             }
           } else {
             this.selectFlag = true
+            this.yuyueF = false
             // 隐藏返回顶部
             this.mescroll.hideTopBtn()
           }
@@ -1095,6 +1104,7 @@
             }
           } else {
             this.selectFlag = true
+            this.yuyueF = false
             // 返回顶部
             this.mescroll.hideTopBtn()
           }
@@ -1104,6 +1114,7 @@
         // 并且，告诉组件，此操作仅仅为了选择规格
         this.onlySelectSpec = true
         this.selectFlag = true
+        this.yuyueF = false
         // 隐藏返回顶部
         this.mescroll.hideTopBtn()
         // 重置购物车flag
