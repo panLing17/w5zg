@@ -121,7 +121,7 @@
           } else if (this.$route.query.flags == 1) {
             this.message = this.$route.query.msg
           }
-          if (this.$refs.oInput.value !== this.$route.query.msg) {
+          if (this.$refs.oInput.value == this.$route.query.msg) {
             this.check = true
             this.checked = false
             this.change = false
@@ -129,7 +129,7 @@
             this.change2 = false
             this.order = 0
             this.sort = ''
-            this.mescroll.resetUpScroll( )
+            //this.mescroll.resetUpScroll()
           }
         }
       }
@@ -152,16 +152,16 @@
       } else if (this.$route.query.flags == 1) {
         this.message = this.$route.query.msg
       }
-      // if (this.$refs.oInput.value == this.$route.query.msg) {
-      //   this.check = true
-      //   this.checked = false
-      //   this.change = false
-      //   this.change1 = true
-      //   this.change2 = false
-      //   this.order = 0
-      //   this.sort = ''
-      //   this.mescroll.resetUpScroll(true)
-      // }
+      if (this.$refs.oInput.value == this.$route.query.msg) {
+        this.check = true
+        this.checked = false
+        this.change = false
+        this.change1 = true
+        this.change2 = false
+        this.order = 0
+        this.sort = ''
+        this.mescroll.resetUpScroll()
+      }
     },
     mounted () {
       this.resultFlag = 2
@@ -193,10 +193,10 @@
       // 回退事件
       backgo () {
         this.$router.go(-1)
-        this.$store.commit('setPosition', {
-          path: this.$route.path,
-          y: 0
-        })
+        // this.$store.commit('setPosition', {
+        //   path: this.$route.path,
+        //   y: 0
+        // })
       },
       // 遮罩层出现后不让页面滑动
       notScroll (e) {
