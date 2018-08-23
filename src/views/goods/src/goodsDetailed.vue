@@ -326,7 +326,6 @@
       })*/
     },
     mounted () {
-      this.getGoodsNum()
       // 是否收藏
       this.isCollect()
       this.getGoodsDetailed()
@@ -350,7 +349,13 @@
       this.mescroll.destroy()
     },
     watch: {
-
+      userData(newVal) {
+        if (!newVal) {
+          return
+        } else {
+          this.getGoodsNum()
+        }
+      },
       skuId (val) {
         if (val) {
           this.getMakeMoney (val)
