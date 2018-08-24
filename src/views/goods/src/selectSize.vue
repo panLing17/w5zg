@@ -394,8 +394,14 @@
         this.$parent.disTypeName = data
         // 触发选择配送方式组件
         if(data==='专柜自提'&& !this.lock){
+          if (this.transfer.store && this.transfer.store.name) {
+            return
+          }
           this.$parent.selectDis(0)
         } else {
+          if (this.giveGoodsAddress.city_name) {
+            return
+          }
           this.$parent.selectDis(1)
         }
         this.$parent.selectCityShow()
