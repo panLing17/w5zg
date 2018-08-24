@@ -118,6 +118,11 @@
       photos: Array,
       spec: Array,
       graySpecData: Array,
+      // 地址选择
+      addressF:{
+        type: Boolean,
+        default: false
+      },
       // 预约
       yuyueF:{
         type: Boolean,
@@ -396,6 +401,10 @@
         if(data==='专柜自提'&& !this.lock){
           this.$parent.selectDis(0)
         } else {
+          console.log(this.$store.state.addressM)
+          if (this.$store.state.addressM) {
+            return
+          }
           this.$parent.selectDis(1)
         }
         this.$parent.selectCityShow()

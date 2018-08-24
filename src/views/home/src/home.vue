@@ -350,7 +350,6 @@
             }, 20)
           }
 
-
           if (page.num%2===0) {
             setTimeout(() =>{
               self.$adTag(self.recommendAdvert.tags[self.adSub%self.recommendAdvert.tags.length].data)

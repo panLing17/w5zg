@@ -11,14 +11,14 @@
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
           //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
-        .advertType(v-if="item.type === '333'", @click="goActivity(item)")
-          img(:src="item.image | img-filter")
+        <!--.advertType(v-if="item.type === '333'", @click="goActivity(item)")-->
+          <!--img(:src="item.image | img-filter")-->
         // 标签布局
-        ul.tagType(v-if="item.type === '334'")
-          .tagTitle
-            .text 细分
-            .line
-          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
+        <!--ul.tagType(v-if="item.type === '334'")-->
+          <!--.tagTitle-->
+            <!--.text 细分-->
+            <!--.line-->
+          <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     ul.goodsList.right(:style="{background:background}", ref="right")
       li(v-for="item in listData.right")
         // 正常商品布局
@@ -30,14 +30,14 @@
           .price(v-else) <span>直供价</span>{{item.direct_supply_price | price-filter}}
           //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
-        .advertType(v-if="item.type === '333'", @click="goActivity(item)")
-          img(:src="item.image | img-filter")
+        <!--.advertType(v-if="item.type === '333'", @click="goActivity(item)")-->
+          <!--img(:src="item.image | img-filter")-->
         // 标签布局
-        ul.tagType(v-if="item.type === '334'")
-          .tagTitle
-            .text 细分
-            .line
-          li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}
+        <!--ul.tagType(v-if="item.type === '334'")-->
+          <!--.tagTitle-->
+            <!--.text 细分-->
+            <!--.line-->
+          <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     div(style="clear:both")
 </template>
 
