@@ -5,10 +5,10 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="dataReset({})", @enter="dataReset({})", :placeholder="placeholder", v-model="query", v-focus="focus")
-        img.searchImg(src="./search.png", @click.prevent="dataReset({})")
+          input(type="search", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+        img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
-      .right(@click="dataReset({})") 搜索
+      .right(@click="dataReset({clearFilter: true})") 搜索
     // 未搜索时
     search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit", ref="searchInit")
     // 联想查询
@@ -289,7 +289,10 @@
         }).catch(()=>{})
       },
       // 点搜索按钮触发，先把一些数据恢复出厂值
-      dataReset ({sortType=2, bi_id='', sortFieldType=0, startPrice='', endPrice='', brandReset=true}) {
+      dataReset ({sortType=2, bi_id='', sortFieldType=0, startPrice='', endPrice='', brandReset=true, clearFilter=false}) {
+        if (clearFilter) {
+          this.$refs.searchResult.clearFilter()
+        }
         this.hotResult = []
         this.$refs.searchResult.hideTop()
         this.likesResult = []
