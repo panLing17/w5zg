@@ -354,14 +354,8 @@
               }
             }
           })
-        }
-      },
-      associativeQuery(newVal) {
-        if (newVal.length) {
-          this.searchInit = false
-          this.showResult = false
-        } else if (!newVal.length && this.searchResult.rows.length){
-          this.showResult = true
+        } else {
+          this.associativeQuery = []
         }
       }
     },
@@ -381,6 +375,8 @@
   }
   .search {
     position: relative;
+    height: 100vh;
+    overflow: hidden;
   }
   .searchHeader {
     display: flex;
