@@ -38,7 +38,10 @@
                 span {{counterText}}
               img.more(src="../../../assets/img/more.png")
           .bottomButton
-            .confirm(@click="submit") 确定
+            .confirm(@click="submit", v-if="kucunF") 确定
+            .reachGoods(v-else, @click="reachInform") 到货通知
+          .notice(v-show="noticeFlag")
+            div 如果30天内到货，会通过系统消息提醒您
     location-select(:show="locationFlag", :origin="'goodsDetailed'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     // location-select(:show="locationFlag", :origin="'confirm'", :location="locationList", @close="locationSelectClose", @selected="locationChange")
@@ -55,6 +58,9 @@
     name: "specChange",
     data() {
       return {
+        goodsSkuId: '',
+        noticeFlag: '',
+        kucunF: '',
         spcGoodsData: {},
         logo: '',
         spuId: '',
@@ -116,9 +122,39 @@
     mounted() {
     },
     methods: {
+      // 到货通知
+      reachInform(){
+        console.log(this.goodsSkuId)
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
+          params: {
+            gsku_id: self.goodsSkuId
+          }
+        }).then(function (res) {
+          console.log(res)
+          if (res.data.code === '081') {
+            self.noticeFlag = true
+            let t = 2
+            let timer = setInterval(function () {
+              t--
+              if (t==0) {
+                self.noticeFlag = false
+                self.close()
+              }
+            },1000)
+          }
+        })
+      },
       init (id, spec) {
         this.spuId = id
         this.getSpec(id, spec)
+        if (spec.storage_num > 0) {
+          return this.kucunF = true
+        }
+        this.kucunF = false
+        this.goodsSkuId = spec.gsku_id
       },
       upCallback: function (page) {
         let self = this;
@@ -362,6 +398,22 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  .notice{
+    position: fixed;
+    width: 100%;
+    bottom: 3.02rem;
+  }
+  .notice div{
+    width: 8.8rem;
+    height: .93rem;
+    border-radius: .9rem;
+    margin: 0 auto;
+    text-align: center;
+    line-height: .93rem;
+    background-color: rgba(0,0,0,.6);
+    color: #fff;
+    font-size: .4rem;
+  }
   .bg {
     background-color: rgba(0, 0, 0, 0.3);
     width: 100%;
@@ -511,7 +563,8 @@
     height 1.2rem
     background-color white
   }
-  .confirm {
+  .confirm,
+  .reachGoods{
     background-color #F70057
     color white
     width 100%
