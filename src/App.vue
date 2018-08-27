@@ -144,6 +144,9 @@
       },
 
       getAddressData () {
+        if (!localStorage.hasOwnProperty('token')) {
+          return
+        }
         let self = this
         self.$ajax({
           method: 'get',

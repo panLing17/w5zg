@@ -66,7 +66,7 @@ export const activityShare = {
       },
       getShareContent() {
         let self = this
-        if (!this.$route.query.shId) {
+        if (!this.$route.query.shId || this.$route.query.shId=='undefined' || (typeof this.$route.query.shId)=='undefined') {
           this.shareTitle = '万物直供商城 正品保障'
           this.shareContent = '万物直供商城，价格优惠，正品保障，支持专柜提货！'
           this.shareImg = 'https://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/logo/applogo@2x.png'

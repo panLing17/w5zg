@@ -82,17 +82,47 @@ function goActivity(data, from) {
   }
   switch (data.url_type) {
     // 跳外链
-    case '143': window.location.href = data.url + f +'shId=' + data.sh_id; break;
+    case '143':
+      if (data.sh_id) {
+        window.location.href = data.url + f +'shId=' + data.sh_id;
+      } else {
+        window.location.href = data.url
+      }
+      break;
     // 跳3级页面 361代表从1级跳3级
-    case '145': this.$router.push({path: '/home/sports',query:{parentType: from,actId: data.id, title: data.title, shId: data.sh_id}}); break;
+    case '145':
+      if (data.sh_id) {
+        this.$router.push({path: '/home/sports',query:{parentType: from,actId: data.id, title: data.title, shId: data.sh_id}});
+      } else {
+        this.$router.push({path: '/home/sports',query:{parentType: from,actId: data.id, title: data.title}});
+      }
+       break;
     // 跳商品详情页 取relate_id
-    case '141': this.$router.push({ path: '/goodsDetailed', query: { id: data.relate_id }}); break;
+    case '141': this.$router.push({ path: '/goodsDetailed' }); break;
     // 跳2级页面
-    case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: from,actId: data.id, title: data.title, shId: data.sh_id}}); break;
+    case '144':
+      if (data.sh_id) {
+        this.$router.push({path: '/home/largeCollection',query:{parentType: from,actId: data.id, title: data.title, shId: data.sh_id}});
+      } else {
+        this.$router.push({path: '/home/largeCollection',query:{parentType: from,actId: data.id, title: data.title}});
+      }
+       break;
     // 跳3级页面模板2
-    case '149': this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: from, shId: data.sh_id}}); break;
+    case '149':
+      if (data.sh_id) {
+        this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: from, shId: data.sh_id}});
+      } else {
+        this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: from}});
+      }
+       break;
     // 跳三级页面模板2
-    case '148': this.$router.push({path: '/twoLevel', query: {parentType: from,actId: data.id, title: data.title, shId: data.sh_id}}); break;
+    case '148':
+      if (data.sh_id) {
+        this.$router.push({path: '/twoLevel', query: {parentType: from,actId: data.id, title: data.title, shId: data.sh_id}});
+      } else {
+        this.$router.push({path: '/twoLevel', query: {parentType: from,actId: data.id, title: data.title}});
+      }
+      break;
   }
 }
 export default { transformDate, imgUrlFilter, getClientHeight, arrayPrice, back, goActivity }

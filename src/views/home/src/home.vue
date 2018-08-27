@@ -451,21 +451,41 @@
         switch (item.ac_inlink_type) {
           // 跳三级
           case '145':
-            this.$router.push({
-              path: '/home/sports',
-              query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
-            });
+            if (item.sh_id) {
+              this.$router.push({
+                path: '/home/sports',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
+              });
+            } else {
+              this.$router.push({
+                path: '/home/sports',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
+              });
+            }
+
             break;
           // 跳二级
           case '144':
-            this.$router.push({
-              path: '/home/largeCollection',
-              query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
-            });
+            if (item.sh_id) {
+              this.$router.push({
+                path: '/home/largeCollection',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
+              });
+            } else {
+              this.$router.push({
+                path: '/home/largeCollection',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
+              });
+            }
+
             break;
           // 外部
           case '143':
-            window.location.href = item.ac_outlink + f + 'shId=' + item.sh_id;
+            if (item.sh_id) {
+              window.location.href = item.ac_outlink + f + 'shId=' + item.sh_id;
+            } else {
+              window.location.href = item.ac_outlink
+            }
             break;
           // 店铺
           case '142':
@@ -477,11 +497,19 @@
             break;
           // 跳二级模板2
           case '148':
-            this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}})
+            if (item.sh_id) {
+              this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}})
+            } else {
+              this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title}})
+            }
             break;
           // 跳3级页面模板2
           case '149':
-            this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363', shId: item.sh_id}});
+            if (item.sh_id) {
+              this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363', shId: item.sh_id}});
+            } else {
+              this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363'}});
+            }
             break;
         }
       }
@@ -509,11 +537,11 @@
     z-index: 100;
     display: flex;
     align-items: center;
-    height: 1rem;
+    height: 1.2rem;
     overflow: hidden;
     /*background: #fff;*/
     width: 100%;
-    padding: 0 .26rem;
+    padding: .2rem .26rem 0;
   }
   .homeHeader.active {
     background: #fff;
