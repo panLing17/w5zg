@@ -124,14 +124,16 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url:self.$apiTransaction +  'balance/pay',
+          url:self.$apiTransaction + 'balance/pay',
           params: {
             totalOrderId: self.orderId,
             payPwd: pwd
           },
         }).then(function (response) {
           if (response.data.optSuc) {
-            self.$router.push({path:'/goods/paymentResults',query:{type:0,price:self.$route.query.price}})
+            self.$router.push({path:'/paymentResults',query:{type:0}})
+          } else {
+            self.$router.push({path:'/paymentResults',query:{type:1}})
           }
         })
       }

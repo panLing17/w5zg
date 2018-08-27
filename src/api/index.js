@@ -62,11 +62,11 @@ axios.interceptors.response.use(
   (error) => {
     // console.log(error.response.status) // for debug
     if (error.response.status === 800) {
+      localStorage.removeItem('token')
       let vm = new Vue({
         router
       })
       vm.$router.push('/login')
-      localStorage.removeItem('token')
     } else {
       Message({
         showClose: true,

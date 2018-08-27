@@ -1,21 +1,24 @@
 <template lang="pug">
   .largeConllection
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
     .mescroll#largeMescroll
       .content(ref="largeConllection")
         ul.list
-          li.item(v-for="(item, index) in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id, item.title)", :key="index")
+          li.item(v-for="(item, index) in bankList", @click="toNext(item, item.url_type,item.url,item.id,item.relate_id, item.title)", :key="index")
             img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
     <!--.noData(v-if="isEmpty") 暂无更多活动-->
 </template>
 
 <script>
+  import {activityShare} from 'assets/js/mixin.js'
     export default {
       name: "largeCollection",
+      mixins:[activityShare],
       data () {
         return {
           bankList: []
@@ -104,17 +107,18 @@
             })
           })
         },
-        toNext (type, url, id, relateId, title) {
-          switch (type) {
-            // 跳外链
-            case '143': window.location.href = url; break;
-            // 跳3级页面 362代表从2级跳3级
-            case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id,title: title}}); break;
-            // 跳商品详情
-            case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
-            // 跳3级页面模板2
-            case '149': this.$router.push({ path: '/activity', query: { actId: id, title: title, parentType: '362'}}); break;
-          }
+        toNext (item, type, url, id, relateId, title) {
+          this.$method.goActivity.call(this, item, 2)
+          // switch (type) {
+          //   // 跳外链
+          //   case '143': window.location.href = url; break;
+          //   // 跳3级页面 362代表从2级跳3级
+          //   case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id,title: title}}); break;
+          //   // 跳商品详情
+          //   case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
+          //   // 跳3级页面模板2
+          //   case '149': this.$router.push({ path: '/activity', query: { actId: id, title: title, parentType: '362'}}); break;
+          // }
         }
         // upCallback: function(page) {
         //   let self = this;

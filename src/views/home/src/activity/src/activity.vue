@@ -1,22 +1,25 @@
 <template lang="pug">
   .wrap
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="back")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../../../assets/img/shareImg.png", style="width: .58rem")
     .tabListWrapper(ref="tabWrapper")
       ul.tabList
         li.tabItem(v-for="(item, index) in tabList", ref="tab", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
-    .mescroll#activityMescroll
+    .mescroll#activityMescroll(:style="{top: navShow?'2.5rem':'1.2rem'}")
       .contentWrapper
-        router-view
+        router-view(v-if="tabList.length", :id="tabList[tabActive].id")
 </template>
 
 <script>
   import BScroll from "better-scroll"
+  import {activityShare} from 'assets/js/mixin.js'
   export default {
     name: "activity",
+    mixins:[activityShare],
     data () {
       return {
         tabActive: 0,
@@ -26,24 +29,17 @@
         params: {}
       }
     },
-    beforeRouteEnter (to, from , next) {
-      to.meta.keepAlive = false
-      next()
-    },
     created () {
 
     },
+    activated() {
+      this._initParams()
+      this.getTabList()
+    },
+    deactivated() {},
     mounted () {
       this._initParams()
-      this.getTabList(this.$route.query.id)
-    },
-    activated () {
-      if (this.actId != this.$route.query.actId) {
-        this._initParams()
-        this.getTabList()
-      } else {
-        this.$router.replace({path: '', query: {id:this.tabList[this.tabActive].id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
-      }
+      this.getTabList()
     },
     methods: {
       _initParams () {
@@ -73,9 +69,8 @@
           this.tabScroll && this.tabScroll.scrollToElement.call(this.tabScroll, this.$refs.tab[index-1], 500)
         }
         this.tabActive = index
-        this.$router.replace({path: '', query: {id:this.tabList[index].id, title: this.$route.query.title, actId: this.$route.query.actId,  parentType: this.$route.query.parentType}})
       },
-      getTabList (id) {
+      getTabList () {
         let _this = this;
         this.$ajax({
           url: this.url,
@@ -95,16 +90,6 @@
             })
 
           })
-          if (!id) {
-            _this.$router.replace({path: '', query: {id:_this.tabList[0].id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
-          } else {
-            _this.$router.replace({path: '', query: {id:id, title: this.$route.query.title, actId: this.$route.query.actId, parentType: this.$route.query.parentType}})
-            _this.tabList.forEach((item, index) => {
-              if (item.id == id) {
-                _this.tabActive = index
-              }
-            })
-          }
         })
       },
       back () {
@@ -121,7 +106,7 @@
 <style scoped>
   .mescroll {
     position: fixed;
-    top: 2.5rem;
+    /*top: 2.5rem;*/
     bottom: 0;
     height: auto;
     width: 100%;
