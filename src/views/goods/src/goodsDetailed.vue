@@ -117,7 +117,7 @@
       .title
         .line
         p 推荐
-      recommend(background="white", ref="recommend")
+      recommend(ref="recommend")
     .collectSuc(v-if="collectSucS")
       span {{xuanfukuang === 1?'收藏成功':'取消收藏成功'}}
     div
@@ -126,6 +126,7 @@
           img(src="../../../assets/img/msg.png", @click="goService")
           p 客服
         .leftSmallButtons
+          .shoppingCartCount(v-if="shoppingCartCount>0") {{shoppingCartCount}}
           img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
           p 购物车
         .leftSmallButtons
@@ -139,7 +140,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -177,6 +178,7 @@
     name: "goods-detailed",
     data () {
       return {
+        yuyueF: false,
         k: '',
         j: '',
         xuanfukuang: '',
@@ -244,6 +246,9 @@
       }
     },
     computed:{
+      shoppingCartCount () {
+        return this.shoppingCartGoodsNum.sendNum + this.shoppingCartGoodsNum.carryNum
+      },
       // 现金券购买省钱价格
       /*xian () {
         return this.goodsData.counter_interval - this.goodsData.cost_interval
@@ -256,7 +261,7 @@
       tong () {
         return parseInt(this.goodsData.counter_interval)
       },*/
-      ...mapState(['location', 'userData','skuId', 'transfer'])
+      ...mapState(['location', 'userData','skuId', 'transfer','shoppingCartGoodsNum'])
     },
     components: {locationSelect, selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
@@ -344,7 +349,13 @@
       this.mescroll.destroy()
     },
     watch: {
-
+      userData(newVal) {
+        if (!newVal) {
+          return
+        } else {
+          this.getGoodsNum()
+        }
+      },
       skuId (val) {
         if (val) {
           this.getMakeMoney (val)
@@ -384,6 +395,21 @@
       }
     },
     methods:{
+      // 预约体验成功
+      ok() {
+        this.selectFlag = false
+      },
+      // 获取购物车数量
+      getGoodsNum() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/countCartNum',
+          params: {},
+        }).then(function (response) {
+          self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
+        })
+      },
       // 收藏成功&&取消收藏成功
       collectionSuc(){
         this.collectSucS = true
@@ -473,7 +499,9 @@
       // 显示预约
       yuyueShow () {
         if (this.initPriceFlag) {
-          this.$message.warning('请选择规格')
+          //this.$message.warning('请选择规格')
+          this.selectFlag = true
+          this.yuyueF = true
           return
         }
         this.bespeakFlag = true
@@ -513,9 +541,6 @@
           }
 
         })
-      },
-      lockUpDown (isLock) {
-        this.mescroll.lockUpScroll( isLock );
       },
       selectCityOpen(){
         this.selectCity = true
@@ -816,6 +841,7 @@
         this.onlySelectSpec = false
         // 如果存在规格，直接进行选择配送方式
         this.selectFlag = true
+        this.yuyueF = false
       },
       buy () {
         // 如果没登录，直接跳往登录
@@ -837,7 +863,7 @@
         this.onlySelectSpec = false
         // 如果存在规格，直接进行选择配送方式
         this.selectFlag = true
-
+        this.yuyueF = false
       },
       // 单独选择门店后
       /*onlyStoreChange(data) {
@@ -1056,6 +1082,7 @@
             }
           } else {
             this.selectFlag = true
+            this.yuyueF = false
             // 隐藏返回顶部
             this.mescroll.hideTopBtn()
           }
@@ -1079,6 +1106,7 @@
             }
           } else {
             this.selectFlag = true
+            this.yuyueF = false
             // 返回顶部
             this.mescroll.hideTopBtn()
           }
@@ -1088,6 +1116,7 @@
         // 并且，告诉组件，此操作仅仅为了选择规格
         this.onlySelectSpec = true
         this.selectFlag = true
+        this.yuyueF = false
         // 隐藏返回顶部
         this.mescroll.hideTopBtn()
         // 重置购物车flag
@@ -1651,6 +1680,19 @@
     bottom: 0;
 
     position: fixed;
+  }
+  /* 购物车数量 */
+  .shoppingCartCount {
+    background: white;
+    padding: 0 .125rem;
+    height: 18px !important;
+    line-height: 18px;
+    border-radius: 9px;
+    position: absolute;
+    top: -.02rem;
+    margin-left: 15px;
+    color: rgb(247,0,87);
+    border: solid 1px rgb(247,0,87);
   }
 </style>
 <style>

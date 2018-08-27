@@ -76,6 +76,9 @@ const state = {
   informGoods: null
 }
 const mutations = {
+  setAddressM (state, data) {
+    state.addressM = data
+  },
   setInformNum (state, data) {
     state.informNum = data
   },
@@ -217,6 +220,6 @@ export default new Vuex.Store({
   mutations,
   actions,
   getters,
-  strict: debug,
-  plugins: debug ? [createLogger()] : []
+  // strict: debug,
+  // plugins: debug ? [createLogger()] : []
 })

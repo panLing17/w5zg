@@ -1,11 +1,12 @@
 <template lang="pug">
   .wrap
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="back")
         img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
-    .mescroll#twoLevelMescroll
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../../../assets/img/shareImg.png", style="width: .58rem")
+    .mescroll#twoLevelMescroll(:style="{top: navShow?'1.3rem':'0'}")
       .contentWrapper
         .block
           ul.brandList(:style="{'max-height': brand.height}", ref="brand")
@@ -30,8 +31,10 @@
 
 <script>
   import recommend from '../../recommend'
+  import {activityShare} from 'assets/js/mixin.js'
   export default {
     name: 'twoLevel',
+    mixins:[activityShare],
     components: { recommend },
     data () {
       return {
@@ -53,16 +56,9 @@
           goods: false
         },
         brandList: [],
-        categoryList: []
+        categoryList: [],
+        parentId: this.$route.query.acId
       }
-    },
-    beforeRouteEnter (to, from, next) {
-      to.meta.keepAlive = false
-      next()
-    },
-    beforeRouteLeave (to, from, next) {
-      to.meta.keepAlive = true
-      next()
     },
     deactivated () {
       this.$store.commit('setPosition', {
@@ -71,7 +67,7 @@
       })
     },
     activated () {
-      if (this.parentId === this.$route.query.id || !this.$route.query.id) {
+      if (this.parentId === this.$route.query.actId || !this.$route.query.actId) {
         let _this = this
         this.$store.state.position.forEach((now) => {
           if (now.path === '/twoLevel') {
@@ -79,7 +75,9 @@
           }
         })
       } else {
-        this.parentId = this.$route.query.id
+        this.parentId = this.$route.query.actId
+        this.getBrandList()
+        this.getCategoryList()
         this.mescroll.resetUpScroll()
       }
     },
@@ -104,16 +102,17 @@
         } else if (status === 1) {
           obj = this.categoryList[index]
         }
-        switch (obj.url_type) {
-          // 跳外链
-          case '143': window.location.href = obj.url; break
-          // 跳3级页面模板1 362代表从2级跳3级
-          case '145': this.$router.push({path: '/home/sports', query: {parentType: '362', actId: obj.id, title: obj.title}}); break
-          // 跳商品详情
-          case '141': this.$router.push({path: '/goodsDetailed', query: { id: obj.relate_id }}); break
-          // 跳3级页面模板2
-          case '149': this.$router.push({path: '/activity', query: {actId: obj.id, title: obj.title, parentType: '362'}}); break
-        }
+        this.$method.goActivity.call(this, obj, 2)
+        // switch (obj.url_type) {
+        //   // 跳外链
+        //   case '143': window.location.href = obj.url; break
+        //   // 跳3级页面模板1 362代表从2级跳3级
+        //   case '145': this.$router.push({path: '/home/sports', query: {parentType: '362', actId: obj.id, title: obj.title}}); break
+        //   // 跳商品详情
+        //   case '141': this.$router.push({path: '/goodsDetailed', query: { id: obj.relate_id }}); break
+        //   // 跳3级页面模板2
+        //   case '149': this.$router.push({path: '/activity', query: {actId: obj.id, title: obj.title, parentType: '362'}}); break
+        // }
       },
       upCallback: function (page) {
         let self = this
@@ -261,7 +260,7 @@
   }*/
   .mescroll {
     position: fixed;
-    top: 1.3rem;
+    /*top: 1.3rem;*/
     left: 0;
     bottom: 0;
     height: auto;

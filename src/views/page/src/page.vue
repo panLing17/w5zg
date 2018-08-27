@@ -23,7 +23,8 @@
               span.letter {{item.gc_name}}
             ul.listOfGoods
               li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
-                img(:src="items.gc_icon | img-filter", @load="imgOnload")
+                div(style="width: 1.9rem; height: 1.9rem; overflow: hidden; font-size: 0;")
+                  img(v-lazy="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+items.gc_icon+'?x-oss-process=style/compress'")
                 .words {{items.gc_name}}
 </template>
 
@@ -44,9 +45,7 @@
         productList: [],
         loadingFlag: 0,
         rightShowFlag: '', // 控制右侧内容的显隐
-        tabNums: '',
-        loadIndex: 0,
-        imgTotal: 0
+        tabNums: ''
       }
     },
     computed: mapState(['position']),
@@ -66,33 +65,6 @@
       this.judgeCity()
     },
     methods: {
-      imgOnload () {
-        this.loadIndex++
-        if (this.loadIndex === this.imgTotal) {
-          this.loadIndex = 0
-          if (!this.rScroll) {
-            this.rScroll = new BScroll(this.$refs.righters, {
-              click: true,
-              probeType: 3
-            })
-            this.$store.state.position.forEach((now) => {
-              if (now.path === this.$route.path + '2') {
-                this.rScroll.scrollTo(0, now.y, 0);
-              }
-            })
-            this.rScroll.on('touchEnd', (pos) => {
-              this.$store.commit('setPosition', {
-                path: this.$route.path + '2',
-                y: pos.y
-              })
-            })
-          }
-          else {
-            this.rScroll.refresh()
-          }
-          this.loadingFlag += 1
-        }
-      },
       keepState () {
         if (this.$route.query.tabNum == undefined) {
           this.secondLevel(this.pageName[0].gc_id)
@@ -173,9 +145,28 @@
           params: {firstId: id}
         }).then(function (res) {
           self.productList = res.data.data
-          self.imgTotal = 0
-          self.productList.forEach((item) => {
-            self.imgTotal += item.childList.length
+          self.$nextTick(()=>{
+            if (!self.rScroll) {
+              self.rScroll = new BScroll(self.$refs.righters, {
+                click: true,
+                probeType: 3
+              })
+              self.$store.state.position.forEach((now) => {
+                if (now.path === self.$route.path + '2') {
+                  self.rScroll.scrollTo(0, now.y, 0);
+                }
+              })
+              self.rScroll.on('touchEnd', (pos) => {
+                self.$store.commit('setPosition', {
+                  path: self.$route.path + '2',
+                  y: pos.y
+                })
+              })
+            }
+            else {
+              self.rScroll.refresh()
+            }
+            self.loadingFlag += 1
           })
         })
       },
@@ -185,7 +176,6 @@
         //this.wordsShow = true
         this.num = index
         this.rScroll.scrollTo(0, 0);
-        this.loadIndex = 0
         this.$router.replace({path:'/page',query:{tabNum:index}})
         this.secondLevel(id)
       },

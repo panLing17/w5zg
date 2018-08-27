@@ -11,10 +11,21 @@
     components: {
       recommend
     },
+    props: {
+      id: {
+        type: Number,
+        default: -1
+      }
+    },
     data () {
       return {
         parentId: '',
         isEmpty: false
+      }
+    },
+    watch: {
+      id () {
+        this.mescroll.resetUpScroll();
       }
     },
     deactivated () {
@@ -24,38 +35,12 @@
       })
     },
     activated () {
-      if (this.parentId == this.$route.query.id || !this.$route.query.id) {
-        let _this = this
-        this.$store.state.position.forEach((now) => {
-          if (now.path === '/activity') {
-            _this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      } else {
-        this.parentId = this.$route.query.id
-        this.mescroll.resetUpScroll();
-      }
-    },
-    beforeRouteUpdate  (to, from, next) {
-      if (this.parentId == to.query.id) {
-        let _this = this
-        this.$store.state.position.forEach((now) => {
-          if (now.path === '/activity') {
-            _this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      } else {
-        this.parentId = to.query.id
-        this.mescroll.resetUpScroll();
-      }
-      next();
-    },
-    beforeRouteLeave (to, from, next) {
-      to.meta.keepAlive = true
-      next()
-    },
-    created () {
-      this.parentId = this.$route.query.id
+      let _this = this
+      this.$store.state.position.forEach((now) => {
+        if (now.path === '/activity') {
+          _this.mescroll.scrollTo(now.y, 0);
+        }
+      })
     },
     mounted () {
       this.$mescrollInt("activityMescroll",this.upCallback);
@@ -85,7 +70,7 @@
         })
       },
       getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        if (!this.parentId) {
+        if (this.id===-1) {
           successCallback&&successCallback([])
           return
         }
@@ -96,7 +81,7 @@
           params: {
             page: pageNum,
             rows: pageSize,
-            parentId: this.parentId,
+            parentId: this.id,
             parentType: '362'
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}

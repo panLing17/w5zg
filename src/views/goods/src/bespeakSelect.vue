@@ -6,7 +6,7 @@
       .main(v-if="show")
         .title
           .left
-            img(src="../../../assets/img/Page1@2x.png")
+            img(src="../../../assets/img/Page1@2x.png", @click="close")
           .center 专柜体验
           .right(@click="$router.push('/reservations')")
             img(src="../../../assets/img/ic_yuyue_into.png")
@@ -121,8 +121,11 @@
             storeId: self.bsId
           },
         }).then(function (response) {
-          self.$message.success(response.data.msg)
-          self.close()
+          if (response.data.code === '081') {
+            self.$message.success('预约专柜成功')
+            self.close()
+          }
+
         })
       }
     }
