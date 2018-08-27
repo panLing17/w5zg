@@ -118,6 +118,11 @@
       photos: Array,
       spec: Array,
       graySpecData: Array,
+      // 地址选择
+      addressF:{
+        type: Boolean,
+        default: false
+      },
       // 预约
       yuyueF:{
         type: Boolean,
@@ -399,6 +404,9 @@
           }
           this.$parent.selectDis(0)
         } else {
+          if (this.$store.state.addressM) {
+            return
+          }
           if (this.giveGoodsAddress.city_name) {
             return
           }

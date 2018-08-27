@@ -76,6 +76,9 @@ const state = {
   informGoods: null
 }
 const mutations = {
+  setAddressM (state, data) {
+    state.addressM = data
+  },
   setInformNum (state, data) {
     state.informNum = data
   },

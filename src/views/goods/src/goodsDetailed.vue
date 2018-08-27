@@ -117,7 +117,7 @@
       .title
         .line
         p 推荐
-      recommend(background="white", ref="recommend")
+      recommend(ref="recommend")
     .collectSuc(v-if="collectSucS")
       span {{xuanfukuang === 1?'收藏成功':'取消收藏成功'}}
     div
@@ -541,9 +541,6 @@
           }
 
         })
-      },
-      lockUpDown (isLock) {
-        this.mescroll.lockUpScroll( isLock );
       },
       selectCityOpen(){
         this.selectCity = true

@@ -34,7 +34,7 @@
             <!--span 商品，及相关商品-->
       .title
         img(src="../../../assets/img/recommend.png")
-      recommend#dataId(background="white", ref="recommend")
+      recommend#dataId(ref="recommend")
       .bottomPlaceholder
 </template>
 <script>
