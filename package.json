@@ -25,6 +25,7 @@
     "vue": "^2.5.9",
     "vue-axios": "^2.1.0",
     "vue-js-toggle-button": "^1.2.2",
+    "vue-lazyload": "^1.2.6",
     "vue-m-carousel": "^2.0.1",
     "vue-multiple-message": "^1.1.0",
     "vue-qrcode": "0.0.2",
