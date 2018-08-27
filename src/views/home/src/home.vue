@@ -6,7 +6,7 @@
         .activeHeaderLeft(v-show="homeHeaderActive")
           img.fenleiImg(src="../../../assets/img/fenlei@2x.png", @click.prevent="")
       .homeHeaderCenter(@click="$router.push('/search')")
-        input.headerSearchInput(type="text", placeholder="请输入商品类别 例如: 男装")
+        input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->
       .homeHeaderRight(@click="$router.push({path:'/inform',query:{num:0}})")
@@ -117,7 +117,8 @@
         goodsList: [],
         firstFloor: [],
         secondFloor: [],
-        informNum: 0
+        informNum: 0,
+        placeholder: ''
       }
     },
     components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
@@ -186,12 +187,25 @@
       // 首页分享
       // this.loadShare()
       this.informNumCheck()
+      this._getDefaultWord()
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      //获取默认搜索词
+      _getDefaultWord() {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/v2/getDefaultSeWord',
+          params: {
+          }
+        }).then(function(res){
+          self.placeholder = res.data.data
+        })
+      },
       //获取消息条数
       informNumCheck(){
         if (localStorage.getItem('token')) {
