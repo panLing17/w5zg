@@ -5,7 +5,7 @@
         img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderLeft(v-show="homeHeaderActive")
           img.fenleiImg(src="../../../assets/img/fenlei@2x.png", @click.prevent="")
-      .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
+      .homeHeaderCenter(@click="$router.push('/search')")
         input.headerSearchInput(type="text", placeholder="请输入商品类别 例如: 男装")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->
