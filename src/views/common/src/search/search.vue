@@ -362,8 +362,6 @@
           this.showResult = false
         } else if (!newVal.length && this.searchResult.rows.length){
           this.showResult = true
-        } else if (!newVal.length && !this.searchResult.rows.length) {
-          this.searchInit = true
         }
       }
     },
