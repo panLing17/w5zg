@@ -1,5 +1,5 @@
 <template lang="pug">
-  scroll.searchContent(:data="searchData")
+  scroll.searchContent(:data="searchData", ref="searchContent")
     div
       .hotWrapper
         .blockTitle
@@ -70,6 +70,7 @@
     activated() {
       this._resetHotHeight()
       this._resetHistoryHeight()
+      this._getHistory()
     },
     watch: {
       showFlag(newVal) {
@@ -116,6 +117,9 @@
           this.hotHeight = '2rem'
         }
         this.hotMore = !this.hotMore
+        setTimeout(()=>{
+          this.$refs.searchContent.refresh()
+        }, 20)
       },
       historyMoreClick() {
         if (!this.historyMore) {
@@ -124,6 +128,9 @@
           this.historyHeight = '2rem'
         }
         this.historyMore = !this.historyMore
+        setTimeout(()=>{
+          this.$refs.searchContent.refresh()
+        }, 20)
       },
       wordSearch(item) {
         this.$emit('wordSearch', item)
@@ -259,6 +266,7 @@
   @import '~assets/stylus/variable.styl'
   .searchContent {
     height: "calc(100vh - %s)" % $height-header;
+    overflow: hidden;
   }
   .hotWrapper, .historyWrapper {
     border-bottom: .16rem solid rgb(242,242,242);
