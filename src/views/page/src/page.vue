@@ -5,9 +5,9 @@
         img(src="../../../assets/img/location.png")
         span.city {{cityName}}
       .topCenter(slot="center")
-        .searchInput(@click="$router.push({path:'/home/searchHistory',query:{jumps:'page'}})")
+        .searchInput(@click="$router.push({path:'/search'})")
           img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
-          input(type="text", placeholder="请输入商品名称", readonly, unselectable='on')
+          input(type="text", placeholder="请输入商品名称", unselectable='on')
           img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
       .topRight(slot="right")
         img(src="../../../assets/img/msg_0.png" v-show="false")
@@ -22,7 +22,7 @@
               span.point
               span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+              li(v-for="items in item.childList" @click="$router.push({path:'/search',query:{key: items.gc_keywords, from: 1}})").wrapImg
                 div(style="width: 1.9rem; height: 1.9rem; overflow: hidden; font-size: 0;")
                   img(v-lazy="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+items.gc_icon+'?x-oss-process=style/compress'")
                 .words {{items.gc_name}}
