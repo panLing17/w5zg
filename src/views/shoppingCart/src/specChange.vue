@@ -141,7 +141,7 @@
               t--
               if (t==0) {
                 self.noticeFlag = false
-                self.close()
+                self.submit('reach')
               }
             },1000)
           }
@@ -221,7 +221,11 @@
           self.$emit('load',data)
           self.selectedSpec = data.spec
           console.log(self.selectedSpec)*/
-
+          if (self.spcGoodsData.storage_num > 0) {
+            return self.kucunF = true
+          }
+          self.kucunF = false
+          self.goodsSkuId = response.data.data.gsku_id
         })
       },
       // 改造格式
@@ -278,7 +282,7 @@
           self.spec = newData
         })
       },
-      submit (id) {
+      submit (reach) {
         let type
         if (this.emitType === 'express') {
           type = 167
@@ -302,10 +306,13 @@
             bsId: self.storeId
           }
         }).then(function (response) {
-          self.$message.success('修改成功')
           self.close()
           self.$parent.getData()
           self.$parent.$parent.getGoodsNum()
+          if (reach === 'reach') {
+            return
+          }
+          self.$message.success('修改成功')
         })
       },
       // 打开地址选择
