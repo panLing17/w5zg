@@ -119,7 +119,7 @@
         this.hotMore = !this.hotMore
         setTimeout(()=>{
           this.$refs.searchContent.refresh()
-        }, 20)
+        }, 550)
       },
       historyMoreClick() {
         if (!this.historyMore) {
@@ -130,7 +130,7 @@
         this.historyMore = !this.historyMore
         setTimeout(()=>{
           this.$refs.searchContent.refresh()
-        }, 20)
+        }, 550)
       },
       wordSearch(item) {
         this.$emit('wordSearch', item)
