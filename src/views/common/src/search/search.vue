@@ -228,6 +228,7 @@
             if (!res.data.data.rows.length && self.page===1) {
               self.searchEnd = true
               self.searchType = 2
+              self.searchResult.aggs = res.data.data.aggs
               self.searchOther()
               return Promise.reject()
             }
@@ -356,6 +357,9 @@
           })
         } else {
           this.associativeQuery = []
+          if (!this.showResult) {
+            this.searchInit = true
+          }
         }
       }
     },

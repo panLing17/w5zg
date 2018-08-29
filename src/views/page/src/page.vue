@@ -24,7 +24,7 @@
             ul.listOfGoods
               li(v-for="items in item.childList" @click="$router.push({path:'/search',query:{key: items.gc_keywords, from: 1}})").wrapImg
                 div(style="width: 1.9rem; height: 1.9rem; overflow: hidden; font-size: 0;")
-                  img(v-lazy="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+items.gc_icon+'?x-oss-process=style/compress'")
+                  img(v-lazy="items.gc_icon", :key="items.gc_icon")
                 .words {{items.gc_name}}
 </template>
 
