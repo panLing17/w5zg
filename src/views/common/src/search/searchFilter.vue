@@ -162,7 +162,8 @@
         this.maxNum = item.max?item.max:''
       },
       priceSelected() {
-        this.priceChoose = ++this.priceChoose%3
+        // this.priceChoose = ++this.priceChoose%3
+        this.priceChoose = this.priceChoose===1?2:1
         this.$emit('priceSearch', this.priceChoose)
       },
       closeFilter() {

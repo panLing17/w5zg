@@ -189,6 +189,10 @@
         this.codeItem = []
       },
       login () {
+        this.$notify({
+          content: '验证码已发送，请稍后',
+          bottom: 5
+        })
         if (!this.phoneReg.test(this.form.phone)) {
           this.$message.error('手机号码格式不正确！');
           return

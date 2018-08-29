@@ -44,11 +44,8 @@ export const activityShare = {
     },
     activated() {
       this.showShare()
-      if (this.shareId != this.$route.query.shId) {
-        this.shareId = this.$route.query.shId
-        this.getShareContent()
-      }
-
+      this.shareId = this.$route.query.shId
+      this.getShareContent()
       this.setTitle()
     },
     methods: {

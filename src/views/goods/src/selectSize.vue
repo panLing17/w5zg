@@ -17,7 +17,7 @@
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
             .size
               span(v-if="selectedSpec.length === 0") 选择规格
-              span(v-if="selectedSpec.length > 0")(v-for="spec in selectedSpec", style="margin-right:.2rem") {{spec.gspec_value}}
+              span(v-if="selectedSpec.length > 0", v-for="spec in selectedSpec", style="margin-right:.2rem") {{spec.gspec_value}}
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-else)
             .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.direct_supply_price | price-filter}}
             .price(v-else) {{0 | price-filter}}
