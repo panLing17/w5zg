@@ -70,11 +70,18 @@
       },
       activated () {
         let _this = this
-        this.position.forEach((now) => {
-          if (now.path === '/sports') {
-            _this.mescroll.scrollTo(now.y, 0);
-          }
-        })
+        if (this.parentId != this.$route.query.actId) {
+          this.getParmas();
+          this.getBanner();
+          this.mescroll.resetUpScroll()
+        }else {
+          this.position.forEach((now) => {
+            if (now.path === '/sports') {
+              _this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }
+
       },
       methods: {
         // 锁定或者解锁上拉加载
