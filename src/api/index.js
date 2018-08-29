@@ -66,7 +66,9 @@ axios.interceptors.response.use(
       let vm = new Vue({
         router
       })
-      vm.$router.push('/login')
+      if (!vm.$route.meta.noNeedLogin) {
+        vm.$router.push('/login')
+      }
     } else {
       Message({
         showClose: true,

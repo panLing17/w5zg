@@ -1,23 +1,21 @@
 <template lang="pug">
   .phoneLogin
-    <!--nav-bar(background="white")-->
-      <!--.topLeft(slot="left", @click="$router.go(-1)")-->
-        <!--img(src="../../../assets/img/back@2x.png", style="width:.3rem")-->
-      <!--.topCenter(slot="center") 验证码登录-->
-      <!--.topRight(slot="right")-->
     .content
       .form
         .phone
           .iconWrapper
-            img.icon(:src="!iconFlag.phone?require('../../../assets/img/用户图标@2x.png'):require('../../../assets/img/用户图标-点亮@2x.png')")
-          input.input(type="number", placeholder="请输入您的手机号", v-model="form.phone", @input="lightUp")
+            img.icon(:src="!iconFlag.phone?require('../../../assets/img/login/Icon_phone@2x.png'):require('../../../assets/img/login/Icon_phone_checked@2x.png')")
+          input.input(type="number", placeholder="手机号", v-model="form.phone", @input="lightUp")
+        .zhinengWrapper
+          #sc(v-if="showSC")
         .code
           .iconWrapper
-            img.icon(:src="!iconFlag.code?require('../../../assets/img/密码2@2x.png'):require('../../../assets/img/密码-点亮@2x.png')")
-          input.input(type="text", placeholder="请输入手机验证码", v-model="form.code", @input="lightUp")
-          .codeBtn(:style="{background:codeBtn.bg}", @click="sendCode") {{codeBtn.text}}
+            img.icon(:src="!iconFlag.code?require('../../../assets/img/login/Icon_editor@2x.png'):require('../../../assets/img/login/Icon_editor_checked@2x.png')")
+          input.input(type="text", placeholder="验证码", v-model="form.code", @input="lightUp")
+          <!--.codeBtn(:style="{background:codeBtn.bg}", @click="sendCode") {{codeBtn.text}}-->
       .btn(@click="login") 登入 / 注册
-      .tips(@click="$refs.agreement.mShow()") 《万物直供用户协议》
+      .tips(@click="$refs.agreement.mShow()") 用户注册代表同意<span>《万物直供用户协议》</span>
+      .call 客服电话: 4008-947-999
     transition(name="fade")
       .mask(v-if="popShow.code", @click="hidePop")
     <!--transition(name="fade")-->
@@ -36,11 +34,11 @@
             <!--li.inputItem {{codeItem[3]}}-->
           <!--input.trueInput(ref="trueInput", @input="writeCode", v-model="code")-->
     agreement(ref="agreement")
-    transition(name="fade")
-      .popWrapper(v-show="popShow.code")
-        .close(@click.stop="hidePop")
-        .popContent
-          #sc(v-if="showSC")
+    <!--transition(name="fade")-->
+      <!--.popWrapper(v-show="popShow.code")-->
+        <!--.close(@click.stop="hidePop")-->
+        <!--.popContent-->
+          <!--#sc(v-if="showSC")-->
 </template>
 
 <script>
@@ -325,31 +323,32 @@
     color:#999;
   }
   .phoneLogin {
-    background: rgb(242,242,242);
+    background: #fff;
     width: 100%;
     position: absolute;
     z-index: 100;
   }
   .content {
     background: #fff;
+    width: 8rem;
+    margin: 0 auto;
     height: calc(100vh - 1.3rem);
+    position: relative;
   }
   .form {
-    padding: 1.5rem 1rem 0;
+    padding: .8rem 0 0;
   }
   .phone, .code {
-    height: 1rem;
+    height: 1.17rem;
     display: flex;
     align-items: center;
     border-bottom: 1px solid #f2f2f2;
   }
   .iconWrapper {
     flex: none;
-    width: 1rem;
+    width: .82rem;
   }
-  .phone .icon {
-    width: .4rem;
-  }
+
   .input {
     flex: 1;
     width: 100%;
@@ -360,7 +359,7 @@
     font-size: .4rem;
   }
   .code {
-    margin-top: 1.2rem;
+    margin-top: .21rem;
   }
   .codeBtn {
     flex: none;
@@ -372,12 +371,12 @@
     border-radius: .2rem;
     font-size: .4rem;
   }
-  .code .icon {
-    width: .46rem;
+  .icon {
+    width: .64rem;
   }
   .btn {
     margin: 2.37rem auto 0;
-    width: 6rem;
+    width: 6.9rem;
     height: 1rem;
     font-size: .4rem;
     color: #fff;
@@ -474,10 +473,13 @@
     margin-left: -100%;
   }
   .tips {
-    margin-top: 2rem;
-    font-size: .3rem;
-    color: #999;
+    margin-top: .53rem;
+    font-size: .29rem;
+    color: #333;
     text-align: center;
+  }
+  .tips span {
+    color: #f70057;
   }
   .agreementWrapper {
     position: absolute;
@@ -538,10 +540,11 @@
     font-weight: bold;
     margin-right: .1rem;
   }
+  .zhinengWrapper {
+    margin-top: .42rem;
+  }
   #sc {
-    margin: .1rem auto 0;
-    /*width: 7.5rem;*/
-    width: 299px;
+    margin: 0;
   }
   input  {
     -webkit-appearance: none;
@@ -553,5 +556,14 @@
     border: 1px solid #ddd;
     outline: none;
     padding-left: .5rem;
+  }
+  .call {
+    font-size:.32rem;
+    color:rgba(102,102,102,1);
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: .8rem;
+    left: 0;
   }
 </style>
