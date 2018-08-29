@@ -9,14 +9,14 @@
             img(src="../../../../../assets/img/Icon_top_close_gray@2x.png", @click="close")
           .lists
             ul
-              li(v-for="(item, index) in lists")
-                .checks(@click="selects(item, index)")
+              li(v-for="(item, index) in lists", @click="selects(item, index)")
+                .checks
                   img(src="../../../../../assets/img/checks copy@2x.png", v-if="item.checkFlag")
                   img(src="../../../../../assets/img/Oval 2@2x.png", v-else)
                 .reasons {{item.words}}
           .confirm(@click="confirmB") 确定
-          .selectReason(v-if="reasonF")
-            div 请选择取消原因
+          <!--.selectReason(v-if="reasonF")-->
+            <!--div 请选择取消原因-->
 </template>
 
 <script>
@@ -57,17 +57,21 @@
                 this.close()
                 return
               }
-              let t = 2
-              let self = this
-              self.reasonF = true
-              let timer = setInterval(function () {
-                t--
-                if (t === 0) {
-                  self.reasonF = false
-                  clearInterval(timer)
-                }
-              },1000)
             }
+            // let t = 2
+            // let self = this
+            // self.reasonF = true
+            // let timer = setInterval(function () {
+            //   t--
+            //   if (t === 0) {
+            //     self.reasonF = false
+            //     clearInterval(timer)
+            //   }
+            // },1000)
+            this.$notify({
+              content: '请选择取消原因',
+              bottom: 1.86
+            })
           }
         }
     }
