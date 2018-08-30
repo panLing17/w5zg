@@ -259,7 +259,7 @@
               fun()
             } else {
               let since = ''
-              self.$route.path === '/shoppingCart' ? since = 'true' : since = 'false'
+              self.$route.path === '/shoppingCart/self' ? since = 'true' : since = 'false'
               if (self.$store.state.transfer.length > 0) {
                 self.$router.push({path: '/confirmOrder', query: {since: since, type: 'shoppingCart'}})
               } else {

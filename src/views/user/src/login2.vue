@@ -123,7 +123,7 @@
           this.scFlag = false
           this.$notify({
             content: '手机号格式不正确',
-            bottom: 5
+            bottom: 4
           })
           this.$nextTick(()=>{
             this.showSC = true
@@ -143,7 +143,7 @@
             if (response) {
               _this.$notify({
                 content: '验证码已发送，请稍后',
-                bottom: 5
+                bottom: 4
               })
               _this.sendCodeFlag = true
               //倒计时
@@ -154,7 +154,7 @@
               }
               _this.timer = setInterval(() => {
                 count--
-                if (count <= 0) {
+                if (count < 0) {
                   clearInterval(_this.timer)
                   _this.showSC = true
                   _this.scFlag = false
@@ -310,7 +310,7 @@
     width: .64rem;
   }
   .btn {
-    margin: 2.37rem auto 0;
+    margin: 1rem auto 0;
     width: 6.9rem;
     height: 1rem;
     font-size: .4rem;

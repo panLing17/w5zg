@@ -18,6 +18,7 @@
             img.icon(:src="passwordType=='password'?require('../../../assets/img/login/Icon_eye_unlook@2x.png'):require('../../../assets/img/login/Icon_eye@2x.png')")
         .forget(@click="$router.push('/forget1')") 忘记密码
       .btn(@click="login") 登入
+      .call 客服电话: 4008-947-999
 </template>
 
 <script>
@@ -118,6 +119,7 @@
     width: 8rem;
     height: calc(100vh - 1.3rem);
     margin: 0 auto;
+    position: relative;
   }
   .form {
     padding-top: 1.33rem;
@@ -178,5 +180,14 @@
     font-size: .32rem;
     line-height: .64rem;
     color: #777;
+  }
+  .call {
+    font-size:.32rem;
+    color:rgba(102,102,102,1);
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: .8rem;
+    left: 0;
   }
 </style>
