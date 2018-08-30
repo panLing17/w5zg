@@ -5,7 +5,7 @@
         .phone
           .iconWrapper
             img.icon(:src="!iconFlag.phone?require('../../../assets/img/login/Icon_phone@2x.png'):require('../../../assets/img/login/Icon_phone_checked@2x.png')")
-          input.input(type="number", placeholder="手机号", v-model="form.mobile", @input="lightUp")
+          input.input(type="number", pattern="1[0-9]{10}", placeholder="手机号", v-model="form.mobile", @input="lightUp")
           .iconWrapper(v-show="form.mobile.length", @click="clear(1)")
             img.icon(src="../../../assets/img/login/Icon_del@2x.png")
         .code
