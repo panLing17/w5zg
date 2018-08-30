@@ -5,7 +5,7 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(type="search",@click="associativeSearchFn(query)", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
@@ -329,11 +329,8 @@
         }).then(function(res){
           self.placeholder = res.data.data
         })
-      }
-    },
-    watch: {
-      // 输入框里搜索词发生变化时调联想搜索接口
-      query(newQuery) {
+      },
+      associativeSearchFn(newQuery) {
         // 点击热搜词、热搜栏目、历史搜索时不需要调用联想搜索
         if (!this.associativeOpen) {
           return
@@ -361,6 +358,12 @@
             this.searchInit = true
           }
         }
+      }
+    },
+    watch: {
+      // 输入框里搜索词发生变化时调联想搜索接口
+      query(newQuery) {
+        this.associativeSearchFn(newQuery)
       }
     },
     components: {

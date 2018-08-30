@@ -22,7 +22,7 @@
                     .spec(@click="openSpecChange(i.gspu_id, i)")
                       span(v-for="(item,index) in i.specVOList") {{item.gspec_value}} {{index < i.specVOList.length-1? ';':''}}
                       img(src="../../../assets/img/ic_page_xljt@2x.png")
-                    w-counter.counter(v-model="i.goods_num", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
+                    w-counter.counter(v-model="i.goods_num", @countPlusError="countPlusError", @click.stop="", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="2rem", height="20px")
                   .price
                     span 实付价：{{i.direct_supply_price | price-filter}}
                     span(style="color:#999;text-decoration:line-through") 专柜价：{{i.counter_price | price-filter}}
@@ -112,6 +112,9 @@
       }
     },
     methods: {
+      countPlusError() {
+        this.$message.warning('库存不足')
+      },
       // 打开修改规格
       openSpecChange (id,spec) {
         this.$parent.openSpecChange(id, spec)

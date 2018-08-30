@@ -10,7 +10,7 @@
             img.icon(src="../../../assets/img/login/Icon_del@2x.png")
         .zhinengWrapper
           #sc(v-if="showSC")
-          .timer(v-show="!showSC")  {{timerNum}}秒后可重新获取
+          .timer(v-show="!showSC")  {{timerNum}} 秒后可重新获取
         .code
           .iconWrapper
             img.icon(:src="!iconFlag.code?require('../../../assets/img/login/Icon_editor@2x.png'):require('../../../assets/img/login/Icon_editor_checked@2x.png')")
@@ -147,7 +147,6 @@
               })
               _this.sendCodeFlag = true
               //倒计时
-              _this.showSC = false
               let count = 60
               if (_this.timer) {
                 clearInterval(_this.timer)
@@ -158,12 +157,15 @@
                   clearInterval(_this.timer)
                   _this.showSC = true
                   _this.scFlag = false
+                  _this.timerNum = 60
                   _this._initSc()
                 } else {
                   _this.timerNum = count
                 }
 
               }, 1000)
+            } else {
+              _this.showSC = true
             }
           })
         }

@@ -367,7 +367,10 @@ const router = new Router ({
     {
       path: '/search',
       name: '新搜索',
-      component: Common.search
+      component: Common.search,
+      meta:{
+        noNeedLogin: true
+      }
     },
     {
       path: '/',
