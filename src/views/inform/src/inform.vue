@@ -3,13 +3,17 @@
     .navbar
       .topLeft
         img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
-      .topCenter 通知
-    .empty(v-if="!contLists.length")
+      .topCenter {{mstype==='802'?'到货通知':'消息中心'}}
+    .tabQ(v-if="mstype == ''")
+      ul
+        li(v-for="(item, index) in titles", :class="{cli:nums === index}", @click="tabQie(item, index)") {{item}}(0)
+      .lineDiv(ref="lineD", :class="{lefts:leftF}")
+    .empty(v-if="!contLists.length", :class="{tops:topF}")
       .imgs
         img(src="../../../assets/img/Group 7@2x.png")
       .goToHome(@click="$router.push('/home')") 去商城首页
-    .contList.mescroll#collectMescroll
-      ul
+    .contList.mescroll#collectMescroll(:class="{tops:topF, paddingS:!tabFlag}")
+      ul(v-if="tabFlag").tabS
         li(v-for="item in contLists")
           .topper
             .leftT
@@ -27,6 +31,19 @@
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
                 .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元,速抢!
                 .rightP(v-if="item.msType === '802'") 到货啦,速抢!
+      ul(v-else).tabH
+        li(v-for="items in tabHList")
+          .times
+            .timeSon 2018-08-29
+          .conts(v-for="i in items.sonList")
+            .upper
+              .lefters
+                .pointer
+                .titleN 夏季防晒季！
+              .righters 点击查看 ＞
+            .centers
+              img(src="")
+            .downner <span>全场防晒隔离5折起！防晒喷雾50元、还有水宝宝、肌肤之钥、 OLAY小银瓶、ZA隔离霜、佰草集防晒套装，等你来抢！</span>
 </template>
 
 <script>
@@ -35,10 +52,17 @@
     name: "inform",
     data(){
       return{
+        tabFlag: true,
+        paddingF: '',
+        leftF: '',
+        topF: '',
+        titles: ['系统通知', '推荐活动'],
+        nums: 0,
         number: this.$route.query.num,
         looked: 1,
         mstype: '',
-        contLists: []
+        contLists: [],
+        tabHList: [{sonList:[{}]}, {sonList:[{}]}, {sonList:[{}, {}]}]
       }
     },
     computed: {
@@ -56,6 +80,9 @@
           console.log(this.$route.query.num)
           this.$store.commit('setInformNum', this.$route.query.num)
           this.judgeType()
+          this.nums = 0
+          this.leftF = false
+          this.tabFlag = true
           this.mescroll.resetUpScroll()
         }
         if (from.path === '/goodsDetailed') {
@@ -69,7 +96,8 @@
     },
     activated(){
       //this.judgeType()
-
+      //this.nums = 0
+      //this.leftF = false
       // if (this.number != this.$route.query.num) {
       //   this.number = this.$route.query.num
       //   this.mescroll.resetUpScroll()
@@ -125,6 +153,18 @@
       })
     },
     methods:{
+      tabQie(item, index){
+        this.nums = index
+        if (index === 0) {
+          this.leftF = false
+          this.tabFlag = true
+        }
+        if (index === 1) {
+          this.leftF = true
+          this.tabFlag = false
+        }
+        this.$refs.lineD.style.transition = 'left .5s'
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -193,9 +233,11 @@
       judgeType(){
         if (this.$route.query.num == 0){
           this.mstype = ''
+          this.topF = false
         }
         if (this.$route.query.num == 1){
           this.mstype = '802'
+          this.topF = true
         }
       },
       upCallback: function (page) {
@@ -230,10 +272,49 @@
 </script>
 
 <style scoped>
+  .paddingS{
+    padding-top: 0 !important;
+  }
+  .lefts{
+    left: 6.20rem !important;
+  }
+  .tops{
+    top: 1.28rem !important;
+  }
+  .cli{
+    color: #F70057;
+  }
   .wrapNav{
     position: fixed;
     top: 0;
     bottom: 0;
+  }
+  .tabQ{
+    position: fixed;
+    top: 1.28rem;
+    width: 100%;
+    height: .93rem;
+    background-color: #fff;
+    z-index: 200;
+  }
+  .tabQ ul{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.76rem 0 1.84rem;
+
+  }
+  .tabQ ul li{
+    line-height: .93rem;
+    font-size: .37rem;
+  }
+  .lineDiv{
+    width: 2.13rem;
+    height: .08rem;
+    background-color: #F70057;
+    position: absolute;
+    bottom: 0;
+    left: 1.76rem;
   }
   .empty{
     width: 100%;
@@ -241,7 +322,7 @@
     color: #666;
     background-color: #f2f2f2;
     position: fixed;
-    top: 1.28rem;
+    top: 2.21rem;
     bottom: 0;
     /*margin-top: 1.28rem;*/
     padding-top: 1.06rem;
@@ -266,7 +347,7 @@
     font-size: .4rem;
   }
   #collectMescroll{
-    top: 1.28rem;
+    top: 2.21rem;
     bottom: 0;
     position: fixed;
     z-index: 100;
@@ -291,7 +372,7 @@
     padding-top: .1rem;
   }
   .topCenter{
-    margin-left: 3.7rem;
+    margin-left: 3.4rem;
     font-size: .48rem;
     color: #fff;
   }
@@ -301,25 +382,25 @@
     background-color: #f2f2f2;
     padding-bottom: 1.89rem;
   }
-  .contList li{
+  .contList ul.tabS li{
     margin-bottom: .26rem;
     padding-bottom: .4rem;
     background-color: #fff;
   }
-  .contList li .topper{
+  .contList ul.tabS li .topper{
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: .32rem .53rem .32rem .16rem;
   }
-  .contList li .topper .leftT{
+  .contList ul.tabS li .topper .leftT{
     display: flex;
     align-items: center;
   }
-  .contList li .topper .leftT .point{
+  .contList ul.tabS li .topper .leftT .point{
 
   }
-  .contList li .topper .leftT .point span{
+  .contList ul.tabS li .topper .leftT .point span{
     display: block;
     width: .21rem;
     height: .21rem;
@@ -327,32 +408,32 @@
     border-radius: 50%;
     margin-right: .16rem;
   }
-  .contList li .topper .leftT .title{
+  .contList ul.tabS li .topper .leftT .title{
     color: #333;
     font-size: .42rem;
     font-weight: 500;
     padding-left: .37rem;
   }
-  .contList li .topper .rightT{
+  .contList ul.tabS li .topper .rightT{
     color: #999;
     font-size: .32rem;
     padding-left: .12rem;
   }
-  .contList li .bottommer{
+  .contList ul.tabS li .bottommer{
     margin: 0 .53rem;
     background-color: #f2f2f2;
     border-radius: .13rem;
     display: flex;
   }
-  .contList li .bottommer .leftB{
+  .contList ul.tabS li .bottommer .leftB{
     width: 2.4rem;
     height: 2.4rem;
   }
-  .contList li .bottommer .leftB img{
+  .contList ul.tabS li .bottommer .leftB img{
     width: 2.4rem;
     height: 2.4rem;
   }
-  .contList li .bottommer .rightB{
+  .contList ul.tabS li .bottommer .rightB{
     width: 0;
     height: 2.4rem;
     flex-grow: 1;
@@ -362,32 +443,97 @@
     flex-direction: column;
     justify-content: space-between;
   }
-  .contList li .bottommer .rightB .text{
+  .contList ul.tabS li .bottommer .rightB .text{
     color: #666;
     font-size: .35rem;
     margin-right: .24rem;
   }
-  .contList li .bottommer .rightB .attr{
+  .contList ul.tabS li .bottommer .rightB .attr{
     font-size: .29rem;
     color: #999;
   }
-  .contList li .bottommer .price{
+  .contList ul.tabS li .bottommer .price{
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
-  .contList li .bottommer .price .leftP span{
+  .contList ul.tabS li .bottommer .price .leftP span{
     font-size: .29rem;
     color: #333;
   }
-  .contList li .bottommer .price .leftP strong{
+  .contList ul.tabS li .bottommer .price .leftP strong{
     font-size: .37rem;
     color: #F70057;
     font-weight: 400;
   }
-  .contList li .bottommer .price .rightP{
+  .contList ul.tabS li .bottommer .price .rightP{
     margin-right: .24rem;
     color: #FF005A;
     font-size: .29rem;
+  }
+
+  /*推荐活动tab*/
+  ul.tabH li .times{
+    width: 100%;
+    padding: .32rem 0;
+    background-color: #f2f2f2;
+  }
+  ul.tabH li .times .timeSon{
+    width: 2.35rem;
+    height: .53rem;
+    text-align: center;
+    line-height: .54rem;
+    font-size: .32rem;
+    color: #fff;
+    background-color: #ccc;
+    border-radius: .1rem;
+    margin: 0 auto;
+  }
+  .conts{
+    background-color: #fff;
+    padding: 0 .42rem;
+    margin-bottom: .26rem;
+  }
+  .conts:last-child{
+    margin-bottom: 0;
+  }
+  .conts .upper{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .26rem 0;
+  }
+  .conts .upper .lefters{
+    display: flex;
+    align-items: center;
+  }
+  .conts .upper .lefters .pointer{
+    width: .21rem;
+    height: .21rem;
+    border-radius: 50%;
+    background-color: #F70057;
+    margin-right: .16rem;
+  }
+  .conts .upper .lefters .titleN{
+    font-size: .37rem;
+    color: #333;
+  }
+  .conts .upper .righters{
+    font-size: .3rem;
+    color: #aaa;
+  }
+  .conts .centers{
+    width: 9.17rem;
+    height: 3.2rem;
+  }
+  .conts .centers img{
+    width: 9.17rem;
+    height: 3.2rem;
+  }
+  .conts .downner{
+    padding: .3rem 0;
+    font-size: .32rem;
+    color: #666;
+    line-height: .53rem;
   }
 </style>
