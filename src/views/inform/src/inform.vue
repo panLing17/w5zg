@@ -6,11 +6,18 @@
       .topCenter {{mstype==='802'?'到货通知':'消息中心'}}
     .tabQ(v-if="mstype == ''")
       ul
-        li(v-for="(item, index) in titles", :class="{cli:nums === index}", @click="tabQie(item, index)") {{item}}(0)
+        li(v-for="(item, index) in titles", :class="{cli:nums === index}", @click="tabQie(item, index)") {{item}}
+          span {{index===0?'(0)':'(4)'}}
       .lineDiv(ref="lineD", :class="{lefts:leftF}")
-    .empty(v-if="!contLists.length", :class="{tops:topF}")
+    .empty(v-if="!contLists.length&&tabFlag==true", :class="{tops:topF}")
       .imgs
-        img(src="../../../assets/img/Group 7@2x.png")
+        img(src="../../../assets/img/coupon-icon1@2x.png")
+      .words 暂时没有系统通知
+      .goToHome(@click="$router.push('/home')") 去商城首页
+    .empty(v-if="!tabHList.length&&tabFlag==false", :class="{tops:topF}")
+      .imgs
+        img(src="../../../assets/img/coupon-icon2@2x.png")
+      .words 暂时没有推荐活动
       .goToHome(@click="$router.push('/home')") 去商城首页
     .contList.mescroll#collectMescroll(:class="{tops:topF, paddingS:!tabFlag}")
       ul(v-if="tabFlag").tabS
@@ -52,6 +59,8 @@
     name: "inform",
     data(){
       return{
+        widthTwoF: '',
+        widthThreeF: '',
         tabFlag: true,
         paddingF: '',
         leftF: '',
@@ -62,7 +71,8 @@
         looked: 1,
         mstype: '',
         contLists: [],
-        tabHList: [{sonList:[{}]}, {sonList:[{}]}, {sonList:[{}, {}]}]
+        tabHList: [{sonList:[{}]}, {sonList:[{}]}, {sonList:[{}, {}]}],
+        //tabHList: []
       }
     },
     computed: {
@@ -109,6 +119,7 @@
       //     }
       //   })
       // }
+
     },
     beforeDestroy(){
       this.mescroll.hideTopBtn()
@@ -276,7 +287,7 @@
     padding-top: 0 !important;
   }
   .lefts{
-    left: 6.20rem !important;
+    left: 6rem !important;
   }
   .tops{
     top: 1.28rem !important;
@@ -301,20 +312,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 1.76rem 0 1.84rem;
-
   }
   .tabQ ul li{
+    width: 50%;
+    text-align: center;
     line-height: .93rem;
     font-size: .37rem;
   }
   .lineDiv{
-    width: 2.13rem;
+    width: 3rem;
     height: .08rem;
     background-color: #F70057;
     position: absolute;
     bottom: 0;
-    left: 1.76rem;
+    left: 1rem;
   }
   .empty{
     width: 100%;
@@ -333,8 +344,13 @@
     /*margin-top: 1.06rem;*/
   }
   .imgs img{
-    width: 2.96rem;
-    height: 3.38rem;
+    width: 2.66rem;
+    height: 2.66rem;
+  }
+  .empty .words{
+    font-size: .37rem;
+    color: #777;
+    margin-top: .26rem;
   }
   .goToHome{
     width: 4.26rem;
