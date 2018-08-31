@@ -943,7 +943,7 @@
     /*padding-bottom: 1.5rem;*/
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1171,7 +1171,7 @@
     border-bottom:1px solid #eee;
   }
   .selectSizeContent {
-    height: 5.92rem;
+    height: 7.92rem;
     overflow: hidden;
   }
   .headerClose {

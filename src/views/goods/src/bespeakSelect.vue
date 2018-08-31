@@ -146,7 +146,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -177,7 +177,7 @@
     margin-right: .1rem;
   }
   .content {
-    height: 8.7rem;
+    height: 10.7rem;
     display: flex;
     overflow: hidden;
   }
