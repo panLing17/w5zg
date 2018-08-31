@@ -306,6 +306,7 @@
           } else {
             self.settlementShow = false
           }
+
         })
       },
       tabChange(num) {
@@ -318,7 +319,6 @@
         } else {
           this.$router.push('/shoppingCart/self')
         }
-
 
         /* 请求购物车上面数量 */
         this.getGoodsNum()
