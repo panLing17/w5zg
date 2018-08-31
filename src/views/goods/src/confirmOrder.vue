@@ -28,7 +28,7 @@
           img(src="../../../assets/img/next@2x.png")
       .location(v-if="$route.query.since === 'false'&&JSON.stringify(giveGoodsAddress) === '{}'")
         .addLocation
-          p(@click="$router.push('/my/localAdd')") 添加收货地址
+          p(@click="goSelectLocation") 添加收货地址
       goods-card.goods-card(v-for="(item,index) in transfer", :key="index", :data="item", :since="$route.query.since")
       .allPrice
         .goodsNum 共计{{content}}件商品
@@ -580,7 +580,11 @@
         this.flag = false
       },
       goSelectLocation() {
-        this.flag = true
+        if (this.locationList.length) {
+          this.flag = true
+        } else {
+          this.$router.push('/my/localAdd')
+        }
       }
     }
   }

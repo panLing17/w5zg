@@ -49,7 +49,7 @@
           this.id = this.$route.query.actId
           this.getList();
         }else {
-          this.position.forEach((now) => {
+          this.$store.state.position.forEach((now) => {
             if (now.path === this.$route.path) {
               _this.mescroll.scrollTo(now.y, 0);
             }

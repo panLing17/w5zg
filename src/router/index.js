@@ -124,7 +124,8 @@ const router = new Router ({
       path: '/goodsDetailed',
       name: '商品详情',
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        noNeedLogin: true
       },
       component: Goods.goodsDetailed
     }, {
@@ -154,7 +155,8 @@ const router = new Router ({
       name: '工会APP下载',
       component: Common.downloadGh,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        noNeedLogin: true
       }
     },
     {
@@ -162,7 +164,8 @@ const router = new Router ({
       name: 'APP下载',
       component: Common.download,
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        noNeedLogin: true
       }
     },
     {
@@ -296,6 +299,9 @@ const router = new Router ({
       path: '/activity',
       name: '活动集合',
       component: Acitivity.activity,
+      meta: {
+        noNeedLogin: true
+      },
       children: [
         {
           path: '',
@@ -307,17 +313,26 @@ const router = new Router ({
     {
       path: '/twoLevel',
       name: '新二级活动',
-      component: Acitivity.twoLevel
+      component: Acitivity.twoLevel,
+      meta: {
+        noNeedLogin: true
+      }
     },
     {
       path: '/home/largeCollection',
       name: '二级活动',
-      component: Home.largeCollection
+      component: Home.largeCollection,
+      meta: {
+        noNeedLogin: true
+      }
     },
     {
       path: '/home/sports',
       name: '三级活动',
-      component: Home.sports
+      component: Home.sports,
+      meta: {
+        noNeedLogin: true
+      }
     },
     // {
     //   path: '/collection',
@@ -352,7 +367,10 @@ const router = new Router ({
     {
       path: '/search',
       name: '新搜索',
-      component: Common.search
+      component: Common.search,
+      meta:{
+        noNeedLogin: true
+      }
     },
     {
       path: '/',
@@ -368,7 +386,10 @@ const router = new Router ({
             {
               path: '/',
               name: '首页',
-              component: Home.home
+              component: Home.home,
+              meta: {
+                noNeedLogin: true
+              }
             },
             {
               path: '/home/citySearch',
@@ -429,7 +450,10 @@ const router = new Router ({
         {
           path: '/page',
           name: '分类',
-          component: Page.page
+          component: Page.page,
+          meta: {
+            noNeedLogin: true
+          }
         },
         {
           path: '/page/commodityList',

@@ -39,7 +39,7 @@
                 bes(:show="yuyueFlag", @succ="succ")
             .count(v-if="!yuyueF")
               span 购买数量
-              w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
+              w-counter(v-model="content", @countPlusError="countPlusError", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
             .express(v-if="!yuyueF")
               h1 配送方式
               .buttonTab
@@ -236,6 +236,21 @@
       this.getFreight()
     },
     methods:{
+      // 数量增加不了处理
+      countPlusError() {
+        //若所有层级都选择了规格则继续
+        let flag = 0
+        this.spec.forEach((now)=>{
+          if (now.valueIndex === -1) {
+            flag+=1
+          }
+        })
+        if (flag>0) {
+          this.$message.warning('请选择规格')
+        } else {
+          this.$message.warning('库存不足')
+        }
+      },
       // 预约体验
       yuyueBtn() {
         if (this.yuyueFlag) {
@@ -928,7 +943,7 @@
     /*padding-bottom: 1.5rem;*/
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1156,7 +1171,7 @@
     border-bottom:1px solid #eee;
   }
   .selectSizeContent {
-    height: 5.92rem;
+    height: 7.92rem;
     overflow: hidden;
   }
   .headerClose {
