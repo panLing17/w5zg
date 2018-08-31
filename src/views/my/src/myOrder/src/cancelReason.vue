@@ -13,7 +13,7 @@
                 .checks
                   img(src="../../../../../assets/img/checks copy@2x.png", v-if="item.checkFlag")
                   img(src="../../../../../assets/img/Oval 2@2x.png", v-else)
-                .reasons {{item.words}}
+                .reasons {{item.dic_name}}
           .confirm(@click="confirmB") 确定
           <!--.selectReason(v-if="reasonF")-->
             <!--div 请选择取消原因-->
@@ -26,13 +26,21 @@
           shows:{
             type: Boolean,
             default: false
+          },
+          totalId:{
+            type: String,
+            default: ''
           }
         },
         data() {
           return{
             reasonF: '',
-            lists: [{words:'其他渠道价格更低', checkFlag: false}, {words:'该商品降价了', checkFlag: false}, {words:'操作有误（商品、地址等选错）', checkFlag: false}, {words:'重复下单/误下单', checkFlag: false}, {words:'不想买了', checkFlag: false}, {words:'商品无货', checkFlag: false}, {words:'其他原因', checkFlag: false}]
+            reasonNum: '',
+            lists: []
           }
+        },
+        mounted(){
+          this.getLists()
         },
         methods:{
           selects(item, index){
@@ -43,6 +51,7 @@
                 this.lists[i].checkFlag = false
               }
             }
+            this.reasonNum = item.dic_no
           },
           close(){
             this.$emit('close')
@@ -54,23 +63,47 @@
             for (let i = 0; i < this.lists.length; i++) {
               if (this.lists[i].checkFlag == true) {
                 this.reasonF = false
-                this.close()
+                this.selectReason()
                 return
               }
             }
-            // let t = 2
-            // let self = this
-            // self.reasonF = true
-            // let timer = setInterval(function () {
-            //   t--
-            //   if (t === 0) {
-            //     self.reasonF = false
-            //     clearInterval(timer)
-            //   }
-            // },1000)
             this.$notify({
               content: '请选择取消原因',
               bottom: 1.86
+            })
+          },
+          // 获取原因列表
+          getLists() {
+            let self = this
+            self.$ajax({
+              method: 'get',
+              url: self.$apiTransaction + '/order/getCancelOrderReason',
+              params:{}
+            }).then(function(res){
+              for (let i = 0; i < res.data.data.length; i++) {
+                res.data.data[i].checkFlag = false
+              }
+              self.lists = res.data.data
+              console.log(self.lists)
+            })
+          },
+          // 选择原因
+          selectReason() {
+            let self = this
+            self.$ajax({
+              method: 'patch',
+              url: self.$apiTransaction + '/order/cancel/' + self.totalId,
+              params: {
+                cancelReason: self.reasonNum
+              }
+            }).then(function (res) {
+              console.log(res)
+              if (res.data.code === '081') {
+                self.$emit('cancelSuc')
+                self.lists.forEach((item) =>{
+                  item.checkFlag = false
+                })
+              }
             })
           }
         }

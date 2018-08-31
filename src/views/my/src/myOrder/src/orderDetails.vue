@@ -123,7 +123,7 @@
     .fixedBtn(v-show="whiteBarFlag")
       .leftBtn(v-if="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
       .rightBtn(@click="jumpToRight($event)", ref="rightBtns", v-if="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货' && rightBtn !== '申请退款' && rightBtn !== '批量退款' && rightBtn !== '取消申请'") {{rightBtn}}
-    cancel-reason(:shows="shows", @close="closes")
+    cancel-reason(:shows="shows", @close="closes", :totalId = "TotalOrderId", @cancelSuc = "cancelSuc")
 </template>
 
 <script>
@@ -135,6 +135,7 @@
     components:{CancelReason, recommend},
     data(){
       return{
+        totalOrderId: '',
         shows: false,
         shopFlag: '', //门店联系人，联系方式显隐
         pickUpNums: '', //提货码
@@ -231,6 +232,13 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 取消订单成功
+      cancelSuc() {
+        this.mescroll.resetUpScroll()
+        this.$message.success('取消成功！')
+        this.$router.go(-1)
+        this.shows = false
+      },
       closes(){
         this.shows = false
       },

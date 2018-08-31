@@ -46,7 +46,7 @@
               .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .noData(v-if="isEmpty")
         img(src="../../../../../assets/img/emptyOrder.png")
-    cancel-reason(:shows = 'shows', @close = 'closes')
+    cancel-reason(:shows = 'shows', @close = 'closes', :totalId = 'totalOrderId', @cancelSuc = 'cancelSuc')
 </template>
 
 <script>
@@ -57,6 +57,7 @@
       components: {CancelReason},
       data(){
         return{
+          totalOrderId: '',
           shows: false,
           btnLeftFlag:"", //左边按钮显隐
           btnRightFlag:"", //右边按钮显隐
@@ -117,6 +118,12 @@
         this.mescroll.destroy();
       },
       methods:{
+        // 取消订单成功
+        cancelSuc() {
+          this.mescroll.resetUpScroll()
+          this.$message.success('取消成功！')
+          this.shows = false
+        },
         closes(){
           this.shows = false
         },
@@ -241,7 +248,7 @@
             //   }
             // })
             this.shows = true
-
+            this.totalOrderId = id
           }
           if (e.target.innerText === "删除订单") {
             this.$confirm({
