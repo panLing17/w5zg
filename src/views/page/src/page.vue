@@ -1,16 +1,16 @@
 <template lang="pug">
   .wrapPage
-    nav-bar
-      .topLeft(slot="left")
-        img(src="../../../assets/img/location.png")
-        span.city {{cityName}}
-      .topCenter(slot="center")
-        .searchInput(@click="$router.push({path:'/search'})")
-          img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
-          input(type="text", placeholder="请输入商品名称", unselectable='on')
-          img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
-      .topRight(slot="right")
-        img(src="../../../assets/img/msg_0.png" v-show="false")
+    <!--nav-bar-->
+      <!--.topLeft(slot="left")-->
+        <!--img(src="../../../assets/img/location.png")-->
+        <!--span.city {{cityName}}-->
+      <!--.topCenter(slot="center")-->
+    .searchInput(@click="$router.push({path:'/search'})")
+      img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
+      input(type="text", placeholder="请输入商品名称", unselectable='on')
+      <!--img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg-->
+      <!--.topRight(slot="right")-->
+        <!--img(src="../../../assets/img/msg_0.png" v-show="false")-->
     .content(v-loading="loadingFlag < 2")
       .left(ref='lefters')
         ul
@@ -289,16 +289,22 @@
   }
   /*搜索框样式--开始*/
   .searchInput{
-    width: 6.5rem;
-    height: .7rem;
-    background-color: rgb(238,238,238);
-    border-radius: .9rem;
+    width: 8rem;
+    height: 1.3rem;
+    margin 0 auto;
+    background: #fff;
     line-height: .7rem;
+    display: flex;
+    align-items: center;
+    position relative
   }
   .searchInput img.leftImg{
+    position absolute
+    left .3rem;
+    top: 50%;
+    transform translateY(-50%)
     width: .45rem;
     vertical-align: middle;
-    margin-left: .3rem;
   }
   .searchInput img.rightImg{
     width: .45rem;
@@ -306,12 +312,16 @@
     margin-left: .2rem;
   }
   .searchInput input{
-    width: 70%;
+    border-radius: .9rem;
+    padding-left: .8rem;
+    background-color: rgb(238,238,238);
+    width: 100%;
+    height: .7rem;
     border: 0;
     outline: none;
     font-size: .3rem;
     margin-left: .2rem;
-    background-color: rgb(238,238,238);
+
   }
   /*搜索框样式--结束*/
   .topRight{

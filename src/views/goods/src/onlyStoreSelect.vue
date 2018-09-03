@@ -85,25 +85,27 @@
         }
       },
       getStore () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
-          params: {
-            gskuId: self.$store.state.skuId
-          },
-        }).then(function (response) {
-          self.storeList = response.data.data
-          setTimeout(() => {
-            if (self.lscroll) {
-              self.lscroll.refresh()
-            } else {
-              self.lscroll = new BScroll(self.$refs.lscroll, {
-                click: true
-              })
-            }
-          }, 20)
-        })
+        if(this.$store.state.skuId) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
+            params: {
+              gskuId: self.$store.state.skuId
+            },
+          }).then(function (response) {
+            self.storeList = response.data.data
+            setTimeout(() => {
+              if (self.lscroll) {
+                self.lscroll.refresh()
+              } else {
+                self.lscroll = new BScroll(self.$refs.lscroll, {
+                  click: true
+                })
+              }
+            }, 20)
+          })
+        }
       },
       addBespeak () {
         if (!this.bsId) {
