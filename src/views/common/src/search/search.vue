@@ -77,6 +77,16 @@
         }
       }
     },
+    beforeRouteEnter(to, from, next) {
+      if (from.path === '/home') {
+        next(vm => {
+          // 如果是从home搜索框过来先到初始化界面
+          vm.cancelQuery()
+        })
+      } else {
+        next()
+      }
+    },
     created() {
       if (this.$route.query.key) {
         this.query = this.$route.query.key
