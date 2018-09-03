@@ -40,8 +40,14 @@
           phone: false,
           code: false,
         },
-        phoneReg: /^1[0-9]{10}$/
+        phoneReg: /^1[0-9]{10}$/,
+        prevUrl: ''
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.prevUrl = from.path
+      })
     },
     mounted () {
     },
@@ -76,8 +82,12 @@
             self.getUserData()
             // 本地储token
             localStorage.setItem('token',response.data.data)
-            // 跳转至首页
-            self.$router.go(-1)
+            if (self.prevUrl === '/forget1') {
+              self.$router.push('/my')
+            } else {
+              self.$router.go(-1)
+            }
+
           }
         })
         // this.$store.dispatch('login',this.form)
