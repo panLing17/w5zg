@@ -18,8 +18,8 @@
           .clear(@click="clearHistory")
             img(src="./clear.png")
         .hotContent
-          .twoRow
-            ul(ref="moreContent2", :style="{'max-height': historyHeight}")
+          .twoRow(ref="moreContent2", :style="{'max-height': historyHeight}")
+            ul
               li(v-for="(item, index) in history", @click="wordSearch(item)")
                 div {{item}}
           .moreWrapper(v-show="historyMoreShow", @click="historyMoreClick")

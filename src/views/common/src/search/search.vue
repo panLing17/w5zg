@@ -227,7 +227,6 @@
             self.showResult = true
             if (!res.data.data.rows.length && self.page===1) {
               self.searchEnd = true
-              self.searchType = 2
               self.searchResult.aggs = res.data.data.aggs
               self.searchOther()
               return Promise.reject()
@@ -256,12 +255,12 @@
             page: this.page,
             rows: this.rows,
             city_no: 100100,
-            sortFieldType: this.sortFieldType,
+            sortFieldType: 0,
             sortType: this.sortType,
-            bi_id: this.bi_id,
+            // bi_id: this.bi_id,
             searchType: this.searchType,
-            startPrice: this.startPrice,
-            endPrice: this.endPrice
+            // startPrice: this.startPrice,
+            // endPrice: this.endPrice
           }
         }).then(function(res){
           if (res) {
