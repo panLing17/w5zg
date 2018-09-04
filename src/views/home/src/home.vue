@@ -19,7 +19,7 @@
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
-        slider
+        slider(:data="banner")
           div(v-for="(item, index) in banner")
             a(@click.prevent="goActivity(item)")
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
@@ -35,8 +35,8 @@
       //.title1
       w-activity(:listData="activityGoods")
       //.title2
-      .secondFloor(v-if="secondFloor && secondFloor.length")
-        slider
+      .secondFloor(v-if="secondFloor.length")
+        slider(:data="secondFloor")
           div(v-for="(item, index) in secondFloor")
             a(@click.prevent="goActivity(item)")
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")

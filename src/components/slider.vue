@@ -21,6 +21,12 @@ export default {
     }
   },
   props: {
+    data: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     loop: {
       type: Boolean,
       default: true
@@ -34,6 +40,21 @@ export default {
       default: 5000
     }
   },
+  watch:{
+    // data(newVal) {
+    //   if (newVal.length) {
+    //     setTimeout(() => {
+    //       this._setSliderWidth()
+    //       this._initDots()
+    //       this._initSlider()
+    //
+    //       if (this.autoPlay) {
+    //         this._play()
+    //       }
+    //     }, 200)
+    //   }
+    // }
+  },
   mounted () {
     setTimeout(() => {
       this._setSliderWidth()
@@ -46,13 +67,13 @@ export default {
     }, 200)
 
 
-    window.addEventListener('resize', () => {
-      if (!this.slider) {
-        return
-      }
-      this._setSliderWidth(true)
-      this.slider.refresh()
-    })
+    // window.addEventListener('resize', () => {
+    //   if (!this.slider) {
+    //     return
+    //   }
+    //   this._setSliderWidth(true)
+    //   this.slider.refresh()
+    // })
   },
   methods: {
     refresh () {
