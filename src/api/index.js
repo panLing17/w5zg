@@ -6,6 +6,20 @@ import Message from 'vue-multiple-message'
 
 // axios.defaults.baseURL = process.env.API_ROOT
 
+//不需要登录的页面
+let noNeedLogin = [
+  '/home',
+  '/goodsDetailed',
+  '/twoLevel',
+  '/activity',
+  '/home/sports',
+  '/home/largeCollection',
+  '/search',
+  '/page'
+]
+
+
+
 // 过滤请求
 axios.interceptors.request.use((config) => {
   // 如果没有token追加一条token
@@ -63,10 +77,20 @@ axios.interceptors.response.use(
     // console.log(error.response.status) // for debug
     if (error.response.status === 800) {
       localStorage.removeItem('token')
-      let vm = new Vue({
-        router
+      let lo = window.location.href.split('#')[1].split('?')[0]
+      let f = false
+      noNeedLogin.forEach(item => {
+        if (lo === item) {
+          f = true
+        }
       })
-      vm.$router.push('/login')
+
+      if (!f) {
+        let vm = new Vue({
+          router
+        })
+        vm.$router.push('/login')
+      }
     } else {
       Message({
         showClose: true,

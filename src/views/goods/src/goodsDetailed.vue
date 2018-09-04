@@ -537,22 +537,25 @@
       },
       // 检测是否可自提
       checkStore () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
-          params: {
-            gskuId: self.$store.state.skuId
-          },
-        }).then(function (response) {
-          if(response.data.data.length<1){
-            self.disableCabinet = true
-            self.disTypeName = '快递配送'
-          } else {
-            self.disableCabinet = false
-          }
+        if(this.$store.state.skuId) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
+            params: {
+              gskuId: self.$store.state.skuId
+            },
+          }).then(function (response) {
+            if(response.data.data.length<1){
+              self.disableCabinet = true
+              self.disTypeName = '快递配送'
+            } else {
+              self.disableCabinet = false
+            }
 
-        })
+          })
+        }
+
       },
       selectCityOpen(){
         this.selectCity = true

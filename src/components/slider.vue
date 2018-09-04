@@ -4,7 +4,7 @@
         <slot>
         </slot>
       </div>
-      <div class="dots">
+      <div class="dots" v-show="dots.length>1">
         <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex===index}"></span>
       </div>
     </div>
@@ -84,7 +84,7 @@ export default {
         child.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-      if (this.loop && !isResize) {
+      if (this.loop && !isResize && this.children.length>1) {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'

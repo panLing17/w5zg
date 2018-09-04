@@ -299,6 +299,14 @@
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
+          if (self.nowTab == 0 && response.data.data.sendNum > 0) {
+            self.settlementShow = true
+          } else if (self.nowTab==1 && response.data.data.carryNum > 0) {
+            self.settlementShow = true
+          } else {
+            self.settlementShow = false
+          }
+
         })
       },
       tabChange(num) {
@@ -312,13 +320,6 @@
           this.$router.push('/shoppingCart/self')
         }
 
-        if (num == 0 && this.shoppingCartGoodsNum.carryNum > 0) {
-          this.settlementShow = true
-        } else if (num == 1 && this.shoppingCartGoodsNum.sendNum > 0) {
-          this.settlementShow = true
-        } else {
-          this.settlementShow = false
-        }
         /* 请求购物车上面数量 */
         this.getGoodsNum()
         /* 关闭整理操作 */

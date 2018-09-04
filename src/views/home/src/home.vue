@@ -59,12 +59,16 @@
                 .dec1 现金券
                 .dec2 领取后3个月内有效
           .rightBtn(@click.stop="closeTicket") 立即使用
-    .animateWrapper(v-if="animateShow", @click="animateShow=false")
-      .animate
-        span(:class="{play:animateShow}") 敬
-        span(:class="{play:animateShow}") 请
-        span(:class="{play:animateShow}") 期
-        span(:class="{play:animateShow}") 待
+    .popAd(v-if="popAdShow", @click="popUpAd=[]", @touchmove.prevent="")
+      .popAdContent
+        img.close(src="../../../assets/img/close@2x.png", @click.stop.prevent="hidePopAd", @touchmove.prevent="")
+        img.img(:src="popUpAd[0].ac_phone_image | img-filter", @click.stop.prevent="popAdToNext", @touchmove.prevent="")
+    <!--.animateWrapper(v-if="animateShow", @click="animateShow=false")-->
+      <!--.animate-->
+        <!--span(:class="{play:animateShow}") 敬-->
+        <!--span(:class="{play:animateShow}") 请-->
+        <!--span(:class="{play:animateShow}") 期-->
+        <!--span(:class="{play:animateShow}") 待-->
     //home-guide
 </template>
 <script>
@@ -118,12 +122,16 @@
         firstFloor: [],
         secondFloor: [],
         informNum: 0,
-        placeholder: ''
+        placeholder: '',
+        popUpAd: []
       }
     },
     components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
     computed: {
-      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket', 'recommendAdvert'])
+      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket', 'recommendAdvert']),
+      popAdShow () {
+        return this.popUpAd.length && !window.sessionStorage.getItem('popAd')
+      }
     },
     created() {
       this.adSub = 0
@@ -194,6 +202,17 @@
       this.mescroll.destroy()
     },
     methods: {
+      //弹屏隐藏
+      hidePopAd() {
+        sessionStorage.setItem('popAd', '1')
+        this.popUpAd = []
+      },
+      //弹屏广告跳转
+      popAdToNext() {
+        let temp = this.popUpAd.slice()
+        this.hidePopAd()
+        this.goActivity(temp[0])
+      },
       //获取默认搜索词
       _getDefaultWord() {
         let self =this
@@ -233,6 +252,7 @@
           self.hotButton = response.data.data.tenActList
           self.firstFloor = response.data.data.firstFloorADList
           self.secondFloor = response.data.data.secondFloorAdList
+          self.popUpAd = response.data.data.popUpAd
           self.loadingFlag = 4
         })
       },
@@ -959,6 +979,37 @@
     position: relative;
     margin: 0.13rem 0;
   }
+  .popAd {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,.5);
+    z-index: 200;
+    height: 100vh;
+  }
+  .popAdContent {
+    width: 8rem;
+    height: 8rem;
+    overflow: hidden;
+    font-size: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .popAdContent .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: .8rem;
+  }
+  .popAdContent .img {
+    width: 100%;
+  }
+
+
+
 
 
   .animateWrapper {

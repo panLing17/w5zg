@@ -86,25 +86,28 @@
         }
       },
       getStore () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
-          params: {
-            gskuId: self.$store.state.skuId
-          },
-        }).then(function (response) {
-          self.storeList = response.data.data
-          setTimeout(() => {
-            if (self.lscroll2) {
-              self.lscroll2.refresh()
-            } else {
-              self.lscroll2 = new BScroll(self.$refs.lscroll2, {
-                click: true
-              })
-            }
-          }, 20)
-        })
+        if(this.$store.state.skuId) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
+            params: {
+              gskuId: self.$store.state.skuId
+            },
+          }).then(function (response) {
+            self.storeList = response.data.data
+            setTimeout(() => {
+              if (self.lscroll2) {
+                self.lscroll2.refresh()
+              } else {
+                self.lscroll2 = new BScroll(self.$refs.lscroll2, {
+                  click: true
+                })
+              }
+            }, 20)
+          })
+        }
+
       },
       addBespeak (item) {
         this.bsId = item.bs_id
@@ -145,7 +148,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -176,7 +179,7 @@
     margin-right: .1rem;
   }
   .content {
-    height: 8.7rem;
+    height: 10.7rem;
     display: flex;
     overflow: hidden;
   }
