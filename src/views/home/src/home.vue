@@ -15,7 +15,7 @@
         .activeHeaderRight(v-show="homeHeaderActive")
           img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png", @click.prevent="")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      .banner(v-if="banner && banner.length")
+      .banner(v-if="banner.length")
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
@@ -743,7 +743,7 @@
   }
 
   .news {
-    margin-top: 6px;
+    border-top: 1px solid #E2E1E1;
   }
 
   .title1, .title2 {

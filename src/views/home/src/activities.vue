@@ -46,6 +46,7 @@
     width: 100%;
     /*height: 6rem;*/
     position: relative;
+    border-top: .13rem solid #ececec;
   }
   .goodsList {
     width: 100%;
