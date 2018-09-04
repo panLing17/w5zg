@@ -194,10 +194,8 @@
   .call {
     font-size:.32rem;
     color:rgba(102,102,102,1);
-    position: absolute;
     width: 100%;
     text-align: center;
-    bottom: .8rem;
-    left: 0;
+    margin-top: 6.9rem;
   }
 </style>

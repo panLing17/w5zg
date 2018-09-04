@@ -499,11 +499,9 @@
   .call {
     font-size:.32rem;
     color:rgba(102,102,102,1);
-    position: absolute;
+    margin-top: 5.44rem;
     width: 100%;
     text-align: center;
-    bottom: .8rem;
-    left: 0;
   }
   .timer {
     width: 100%;

@@ -984,7 +984,7 @@
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(0,0,0,.5);
+    background: rgba(0,0,0,.7);
     z-index: 200;
     height: 100vh;
   }
