@@ -145,7 +145,7 @@
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="locationChange")
-    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc")
+    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc", @backPrev="backPrev")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -395,6 +395,11 @@
       }
     },
     methods:{
+      // 从预约地址返回到选择规格
+      backPrev(){
+        this.selectFlag = true
+        this.bespeakFlag = false
+      },
       yuyueSucc(){
         this.bespeakFlag = false
         this.$notify({

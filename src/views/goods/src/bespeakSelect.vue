@@ -6,7 +6,7 @@
       .main(v-if="show")
         .title
           .left
-            img(src="../../../assets/img/Page1@2x.png", @click="close")
+            img(src="../../../assets/img/Page1@2x.png", @click="backPrev")
           .center 专柜体验
           .right(@click="$router.push('/reservations')")
             img(src="../../../assets/img/ic_yuyue_into.png")
@@ -71,6 +71,9 @@
     mounted () {
     },
     methods:{
+      backPrev(){
+        this.$emit('backPrev')
+      },
       close () {
         this.$emit('close')
       },
