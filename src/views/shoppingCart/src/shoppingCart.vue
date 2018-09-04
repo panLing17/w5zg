@@ -81,7 +81,7 @@
       },
       allPrice () {
         let num = 0
-        if (this.$route.path === '/shoppingCart') {
+        if (this.$route.path === '/shoppingCart/self') {
           if (this.shoppingCartSelected.length>0) {
             this.shoppingCartSelected.forEach((now)=>{
               now.shoppingCartVOList.forEach((sonNow)=>{
