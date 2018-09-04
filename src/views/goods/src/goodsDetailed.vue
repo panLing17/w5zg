@@ -145,7 +145,7 @@
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="locationChange")
-    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc", @backPrev="backPrev")
+    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc", @backPrev="backPrev", :backFlag="backFlag")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -178,6 +178,7 @@
     name: "goods-detailed",
     data () {
       return {
+        backFlag: '',
         yuyueF: false,
         k: '',
         j: '',
@@ -402,10 +403,6 @@
       },
       yuyueSucc(){
         this.bespeakFlag = false
-        this.$notify({
-          content: '预约专柜成功',
-          bottom: 1.86
-        })
       },
       // 显示选择预约地址
       besShow(){
@@ -519,9 +516,11 @@
           //this.$message.warning('请选择规格')
           this.selectFlag = true
           this.yuyueF = true
+          this.backFlag = false
           return
         }
         this.bespeakFlag = true
+        this.backFlag = true
       },
       // 获取实际不存在规格（置灰）
       getRelSpec () {

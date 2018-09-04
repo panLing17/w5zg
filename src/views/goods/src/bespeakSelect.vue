@@ -5,7 +5,9 @@
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
-          .left
+          .left(v-if="backFlag")
+            img(src="../../../assets/img/Page1@2x.png", @click="close")
+          .left(v-else)
             img(src="../../../assets/img/Page1@2x.png", @click="backPrev")
           .center 专柜体验
           .right(@click="$router.push('/reservations')")
@@ -40,6 +42,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      backFlag: {
+        type: Boolean,
+        default: false
       }
     },
     computed: {
@@ -71,7 +77,7 @@
     mounted () {
     },
     methods:{
-      backPrev(){
+      backPrev() {
         this.$emit('backPrev')
       },
       close () {
@@ -129,6 +135,10 @@
         }).then(function (response) {
           if (response.data.code === '081') {
             self.close()
+            self.$notify({
+              content: '预约专柜成功',
+              bottom: 1.86
+            })
           }
 
         })
