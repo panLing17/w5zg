@@ -5,7 +5,7 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search",@click="associativeSearchFn(query)", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(type="search",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
@@ -117,6 +117,27 @@
       this.focus = true
     },
     methods: {
+      // 点击搜索框回到初始化页面
+      goInit() {
+        this.$refs.searchResult.hideTop()
+        this.searchResult = {
+          aggs: [],
+          rows: []
+        }
+        this.associativeQuery = []
+        this.showResult = false
+        this.likesResult = []
+        this.hotResult = []
+        this.hasMore = true
+        this.sortFieldType = 0
+        this.bi_id = ''
+        this.sortType = 2
+        this.page = 1
+        this.searchEnd = false
+        this.searchType = 1
+        this.searchInit = true
+        this.$refs.searchResult.clearFilter()
+      },
       // 如果是在搜索结果显示时点击返回按钮返回到搜索初始化
       back() {
         if(this.showResult && !this.$route.query.from) {
