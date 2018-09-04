@@ -145,7 +145,7 @@
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="locationChange")
-    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
+    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -395,6 +395,13 @@
       }
     },
     methods:{
+      yuyueSucc(){
+        this.bespeakFlag = false
+        this.$notify({
+          content: '预约专柜成功',
+          bottom: 1.86
+        })
+      },
       // 显示选择预约地址
       besShow(){
         this.bespeakFlag = true

@@ -122,7 +122,6 @@
           },
         }).then(function (response) {
           if (response.data.code === '081') {
-            self.$message.success('预约专柜成功')
             self.close()
           }
 
