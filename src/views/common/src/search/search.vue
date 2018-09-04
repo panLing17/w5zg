@@ -64,6 +64,7 @@
         focus: false,
         placeholder: '', //默认搜索词
         brandReset: true, //品牌列表是否重新赋值
+        prevUrl: '', //上一个路由地址
       }
     },
     directives: {
@@ -78,14 +79,9 @@
       }
     },
     beforeRouteEnter(to, from, next) {
-      if (from.path === '/home') {
-        next(vm => {
-          // 如果是从home搜索框过来先到初始化界面
-          vm.cancelQuery()
-        })
-      } else {
-        next()
-      }
+      next((vm) => {
+        vm.prevUrl = from.path
+      })
     },
     created() {
       if (this.$route.query.key) {
@@ -101,9 +97,15 @@
       this.pushHistory = false
     },
     activated() {
+      // 若是从首页和page页的搜索框过来就放出初始化页面
+      if ((this.prevUrl === '/home' && !this.$route.query.key) || (this.prevUrl === '/page' && !this.$route.query.key)) {
+        this.cancelQuery()
+      }
+      //给window历史记录里增加一条使安卓的返回键可以用
       if (!this.pushHistory) {
         window.history.pushState(null, null, window.location.href)
       }
+      //切换focus可以使输入框聚焦
       this.focus = true
       if (this.$route.query.key) {
         this.query = this.$route.query.key

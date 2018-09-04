@@ -227,7 +227,6 @@
           params: {
           }
         }).then(function (res) {
-          console.log(res.data.data.messageNum)
           self.informNum = res.data.data.messageNum
         })
       },

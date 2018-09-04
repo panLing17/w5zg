@@ -328,7 +328,7 @@
           }
         }).then(function (response) {
           // self.$message.success('成功生成订单')
-          self.$router.push({
+          self.$router.replace({
             path: '/payment',
             query: {id: response.data.data.totalOrderId, price: response.data.data.payPrice}
           })
