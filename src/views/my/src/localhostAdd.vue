@@ -19,10 +19,10 @@
         label.detailed(style="height:2rem") 详细地址 <textarea v-model="form.detailedAddr"></textarea>
       li(v-if="false")
         label 邮政编码 <input type="text" v-model="zipCode" placeholder='(选填)'>
-      li.checkbox
-        a(@click.stop="locationDefault(item.addressId , item.isdefault)")
-          w-checkbox(v-model="isdefault")
-        span 设为默认
+      <!--li.checkbox-->
+        <!--a(@click.stop="locationDefault(item.addressId , item.isdefault)")-->
+          <!--w-checkbox(v-model="isdefault")-->
+        <!--span 设为默认-->
     .bottomButton
       w-button(@click="locationSave") 保存
     city-select(:show="show", @close="show=false", @change="cityChange")
