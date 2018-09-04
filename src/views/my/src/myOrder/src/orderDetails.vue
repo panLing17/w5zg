@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar(background="#F70057")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src='../../../../../assets/img/ic_order_return.png', style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
@@ -123,16 +123,20 @@
     .fixedBtn(v-show="whiteBarFlag")
       .leftBtn(v-if="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
       .rightBtn(@click="jumpToRight($event)", ref="rightBtns", v-if="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货' && rightBtn !== '申请退款' && rightBtn !== '批量退款' && rightBtn !== '取消申请'") {{rightBtn}}
+    cancel-reason(:shows="shows", @close="closes", :totalId = "TotalOrderId", @cancelSuc = "cancelSuc")
 </template>
 
 <script>
   import {mapState} from 'vuex'
   import recommend from './recommend'
+  import CancelReason from "./cancelReason";
   export default {
     name: 'orderDetails',
-    components:{recommend},
+    components:{CancelReason, recommend},
     data(){
       return{
+        totalOrderId: '',
+        shows: false,
         shopFlag: '', //门店联系人，联系方式显隐
         pickUpNums: '', //提货码
         whiteBarFlag: true, //最下方的白条的显隐
@@ -228,6 +232,16 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 取消订单成功
+      cancelSuc() {
+        this.mescroll.resetUpScroll()
+        this.$message.success('取消成功！')
+        this.$router.go(-1)
+        this.shows = false
+      },
+      closes(){
+        this.shows = false
+      },
       // 再次购买
       againBuy(item,items){
         let deliveryNum = 0
@@ -324,24 +338,24 @@
 
         }
         if (e.target.innerHTML === '取消订单') {
-          this.$confirm({
-            title: '确认',
-            message: '真的要这样做吗',
-            confirm: () => {
-              let self = this;
-              self.$ajax({
-                method: "patch",
-                url: self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
-                params: {}
-              }).then(function(res){
-                self.$router.go(-1);
-              })
-            },
-            noConfirm: () => {
-
-            }
-          })
-
+          // this.$confirm({
+          //   title: '确认',
+          //   message: '真的要这样做吗',
+          //   confirm: () => {
+          //     let self = this;
+          //     self.$ajax({
+          //       method: "patch",
+          //       url: self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
+          //       params: {}
+          //     }).then(function(res){
+          //       self.$router.go(-1);
+          //     })
+          //   },
+          //   noConfirm: () => {
+          //
+          //   }
+          // })
+          this.shows = true
         }
         if (e.target.innerHTML === '批量退款') {
 
