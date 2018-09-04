@@ -140,12 +140,12 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok", @besShow="besShow")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="locationChange")
-    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
+    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc", @backPrev="backPrev", :backFlag="backFlag")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -178,6 +178,7 @@
     name: "goods-detailed",
     data () {
       return {
+        backFlag: '',
         yuyueF: false,
         k: '',
         j: '',
@@ -395,6 +396,19 @@
       }
     },
     methods:{
+      // 从预约地址返回到选择规格
+      backPrev(){
+        this.selectFlag = true
+        this.bespeakFlag = false
+      },
+      yuyueSucc(){
+        this.bespeakFlag = false
+      },
+      // 显示选择预约地址
+      besShow(){
+        this.bespeakFlag = true
+        this.selectFlag = false
+      },
       // 预约体验成功
       ok() {
         this.selectFlag = false
@@ -502,9 +516,11 @@
           //this.$message.warning('请选择规格')
           this.selectFlag = true
           this.yuyueF = true
+          this.backFlag = false
           return
         }
         this.bespeakFlag = true
+        this.backFlag = true
       },
       // 获取实际不存在规格（置灰）
       getRelSpec () {

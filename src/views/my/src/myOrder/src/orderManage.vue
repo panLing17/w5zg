@@ -1,8 +1,8 @@
 <template lang="pug">
   .wrapNav
-    nav-bar(background="white")
+    nav-bar(background="#F70057")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src="../../../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单管理
       .topRight(slot="right")
         img(src="../../../../../assets/img/searchInput搜索图标@2x.png" @click="jumpToSearch()" v-if="false").search
@@ -46,14 +46,19 @@
               .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .noData(v-if="isEmpty")
         img(src="../../../../../assets/img/emptyOrder.png")
+    cancel-reason(:shows = 'shows', @close = 'closes', :totalId = 'totalOrderId', @cancelSuc = 'cancelSuc')
 </template>
 
 <script>
   import {mapState} from 'vuex'
+  import CancelReason from "./cancelReason";
   export default {
       name: "orderManage",
+      components: {CancelReason},
       data(){
         return{
+          totalOrderId: '',
+          shows: false,
           btnLeftFlag:"", //左边按钮显隐
           btnRightFlag:"", //右边按钮显隐
           orderStatus:"", //订单的状态
@@ -113,6 +118,15 @@
         this.mescroll.destroy();
       },
       methods:{
+        // 取消订单成功
+        cancelSuc() {
+          this.mescroll.resetUpScroll()
+          this.$message.success('取消成功！')
+          this.shows = false
+        },
+        closes(){
+          this.shows = false
+        },
         //当无订单时，将end去掉
         emptys(){
           let mescrollUpwarp = document.getElementsByClassName("mescroll-upwarp")[0];
@@ -213,27 +227,28 @@
             this.$router.push('/my/checkLogistics');
           }
           if (e.target.innerText === "取消订单") {
-            this.$confirm({
-              title: '确认',
-              message: '真的要这样做吗',
-              confirm: () => {
-                //alert('确定')
-                let self = this;
-                self.$ajax({
-                  method:"patch",
-                  url:self.$apiTransaction + "order/cancel/"+id,
-                  params:{}
-                }).then(function(res){
-                  //self.request();
-                  self.mescroll.resetUpScroll();
-                  self.$message.success('取消成功！');
-                })
-              },
-              noConfirm: () => {
-                //alert('取消')
-              }
-            })
-
+            // this.$confirm({
+            //   title: '确认',
+            //   message: '真的要这样做吗',
+            //   confirm: () => {
+            //     //alert('确定')
+            //     let self = this;
+            //     self.$ajax({
+            //       method:"patch",
+            //       url:self.$apiTransaction + "order/cancel/"+id,
+            //       params:{}
+            //     }).then(function(res){
+            //       //self.request();
+            //       self.mescroll.resetUpScroll();
+            //       self.$message.success('取消成功！');
+            //     })
+            //   },
+            //   noConfirm: () => {
+            //     //alert('取消')
+            //   }
+            // })
+            this.shows = true
+            this.totalOrderId = id
           }
           if (e.target.innerText === "删除订单") {
             this.$confirm({
@@ -461,6 +476,7 @@
   .topCenter{
     font-size: .5rem;
     font-weight: 400;
+    color: #fff;
   }
   .topRight img{
     vertical-align: middle;

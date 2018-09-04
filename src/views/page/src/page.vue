@@ -58,11 +58,11 @@
     },
     mounted () {
       // 判断显示城市的字数
-      this.judgeCityNum()
+      //this.judgeCityNum()
       // 一级分类
       //this.request()
       // 判断显示当前城市
-      this.judgeCity()
+      //this.judgeCity()
     },
     methods: {
       keepState () {
