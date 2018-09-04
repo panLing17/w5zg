@@ -140,7 +140,7 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok", @besShow="besShow")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
@@ -395,6 +395,11 @@
       }
     },
     methods:{
+      // 显示选择预约地址
+      besShow(){
+        this.bespeakFlag = true
+        this.selectFlag = false
+      },
       // 预约体验成功
       ok() {
         this.selectFlag = false

@@ -4,7 +4,7 @@
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       //.main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
-      .main(v-show="show", :class="{changeH:yuyueF}")#selectSize
+      .main(v-show="show")#selectSize
         .selectSizeHeader
           .photosBox()
             ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
@@ -25,7 +25,7 @@
             .size 选择 颜色 尺寸
           .headerClose(@click="close")
             img(src="../../../assets/img/Group10@2x.png")
-        .selectSizeContent(ref="selstSizeScroll", :class="{changeH2:yuyueF}")
+        .selectSizeContent(ref="selstSizeScroll")
           div(style="padding-bottom: .8rem;")
             ul.spec
               li(v-for="(item,fatherIndex) in spec")
@@ -33,10 +33,10 @@
                 ul.content
                   li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc','y')") {{i.value}}
                   p(style="clear:both")
-              .yuyue(v-if="yuyueF")
+              //.yuyue(v-if="yuyueF")
                 .titles 预约专柜
                 .conts(v-show="!yuyueFlag") 请先选择商品规格
-                bes(:show="yuyueFlag", @succ="succ")
+                //bes(:show="yuyueFlag", @succ="succ")
             .count(v-if="!yuyueF")
               span 购买数量
               w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
@@ -93,6 +93,7 @@
     components:{bes},
     data () {
       return {
+        bespeakFlag: '',
         noticeFlag3: '',
         HFlags: '',
         yuyueSuc: '',
@@ -239,23 +240,7 @@
       // 预约体验
       yuyueBtn() {
         if (this.yuyueFlag) {
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiGoods + 'goods/addTryOn',
-            params: self.yuyueSuc,
-          }).then(function (response) {
-            self.noticeFlag2 = true
-            let t = 2
-            let timer1 = setInterval(function () {
-              t--
-              if (t==0) {
-                self.noticeFlag2 = false
-                self.$emit('ok')
-                clearInterval(timer1)
-              }
-            },1000)
-          })
+          this.$emit('besShow')
         } else{
           let self = this
           this.noticeFlag3 = true
