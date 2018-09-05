@@ -114,10 +114,10 @@
           title: '删除地址',
           message: '确定要删除么',
           confirm: () => {
-            if (this.list[index].ra_default && this.list.length>1) {
-              let defaultIndex = (index+1)%this.list.length
-              this.defaultChange(this.list[defaultIndex].ra_default,defaultIndex,this.list[defaultIndex].id)
-            }
+            // if (this.list[index].ra_default && this.list.length>1) {
+            //   let defaultIndex = (index+1)%this.list.length
+            //   this.defaultChange(true,defaultIndex,this.list[defaultIndex].id)
+            // }
             let self = this
             self.$ajax({
               method: 'delete',
@@ -127,7 +127,8 @@
               },
               headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
             }).then(function (response) {
-              self.list.splice(index,1)
+              // self.list.splice(index,1)
+              self.getData()
             })
           },
           noConfirm: () => {
