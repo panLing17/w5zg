@@ -114,6 +114,10 @@
           title: '删除地址',
           message: '确定要删除么',
           confirm: () => {
+            if (this.list[index].ra_default && this.list.length>1) {
+              let defaultIndex = (index+1)%this.list.length
+              this.defaultChange(this.list[defaultIndex].ra_default,defaultIndex,this.list[defaultIndex].id)
+            }
             let self = this
             self.$ajax({
               method: 'delete',
@@ -150,7 +154,6 @@
       changeLocation (item) {
         this.$router.push({path: '/my/localAdd', query:{id:item.id}})
         this.$store.commit('transferGive',item)
-        console.log(item)
       }
     }
   }

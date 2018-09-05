@@ -214,7 +214,6 @@
           params: {
           }
         }).then(function (res) {
-          console.log(res.data.data)
           self.collectionNum = res.data.data
         })
       },
@@ -240,7 +239,6 @@
             msType: 802
           }
         }).then(function (res) {
-          console.log(res.data.data.messageNum)
           self.reachGoodsNum = res.data.data.messageNum
         })
       },

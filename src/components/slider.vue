@@ -55,6 +55,12 @@ export default {
     //   }
     // }
   },
+  // activated() {
+  //   if (this.autoPlay) {
+  //     this.slider.refresh()
+  //     this.slider.goToPage((this.currentPageIndex+1) % this.dots.length, 0, 400)
+  //   }
+  // },
   mounted () {
     setTimeout(() => {
       this._setSliderWidth()
@@ -76,6 +82,17 @@ export default {
     // })
   },
   methods: {
+    resize() {
+      if (!this.slider) {
+        return
+      }
+      this._setSliderWidth(true)
+      this.slider.refresh()
+      if (this.autoPlay) {
+        clearTimeout(this.timer)
+        this._play()
+      }
+    },
     refresh () {
       this.slider.refresh()
     },
