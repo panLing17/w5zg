@@ -77,6 +77,9 @@
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
             span {{item.bs_phone}}
+      .toServiceWrapper(@click="$router.push('/service')")
+        img.service(src="../../../../../assets/img/service@2x.png")
+        .serviceDesc 联系客服
       .total
         ul
           li.totalQuantity
@@ -1105,7 +1108,7 @@
   /*商品的详情--结束*/
   /*总商品的统计--开始*/
   .total{
-    margin-top: .2rem;
+    /*margin-top: .2rem;*/
     background-color: #fff;
   }
   .total ul{
@@ -1286,5 +1289,21 @@
   /* .slide-fade-leave-active for below version 2.1.8 */ {
     /*transform: translateY(10px);*/
     opacity: 0;
+  }
+  .toServiceWrapper {
+    background: #fff;
+    height: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px 0;
+  }
+  .service {
+    width: .58rem;
+  }
+  .serviceDesc {
+    margin-left: .21rem;
+    font-size:.37rem;
+    color:rgb(51,51,51);
   }
 </style>
