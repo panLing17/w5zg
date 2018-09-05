@@ -77,6 +77,11 @@
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
             span {{item.bs_phone}}
+      .linkService(@click="$router.push('/service')")
+        .wrapService
+          .img
+            img(src="../../../../../assets/img/service@2x.png")
+          .links 联系客服
       .total
         ul
           li.totalQuantity
@@ -775,6 +780,7 @@
         oInput.value = val;
         document.body.appendChild(oInput);
         oInput.select(); // 选择对象
+        oInput.setSelectionRange(0, oInput.value.length)
         document.execCommand("Copy"); // 执行浏览器复制命令
         document.body.removeChild(oInput);
         var orderNumbers = document.getElementsByClassName("orderNumber")[0];
@@ -1103,9 +1109,33 @@
     margin-left: .1rem;
   }
   /*商品的详情--结束*/
+  /*联系客服*/
+  .linkService{
+    margin-top: .2rem;
+    background-color: #fff;
+  }
+  .linkService .wrapService{
+    width: 2.5rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: .37rem 0;
+  }
+  .linkService .img{
+    width: .58rem;
+    height: .58rem;
+  }
+  .linkService .img img{
+    width: .58rem;
+    height: .58rem;
+  }
+  .linkService .links{
+    margin-left: .21rem;
+    font-size: .37rem;
+    color: #333;
+  }
   /*总商品的统计--开始*/
   .total{
-    margin-top: .2rem;
     background-color: #fff;
   }
   .total ul{

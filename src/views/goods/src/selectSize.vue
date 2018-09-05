@@ -292,6 +292,7 @@
               if (t==0) {
                 self.noticeFlag = false
                 self.$emit('reachgoods')
+                clearInterval(timer)
               }
             },1000)
           }
