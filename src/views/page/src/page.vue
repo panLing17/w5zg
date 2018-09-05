@@ -7,7 +7,7 @@
       <!--.topCenter(slot="center")-->
     .searchInput(@click="$router.push({path:'/search'})")
       img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
-      input(type="text", placeholder="请输入商品名称", unselectable='on')
+      input(type="text", :placeholder="placeholder", unselectable='on')
       <!--img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg-->
       <!--.topRight(slot="right")-->
         <!--img(src="../../../assets/img/msg_0.png" v-show="false")-->
@@ -45,12 +45,14 @@
         productList: [],
         loadingFlag: 0,
         rightShowFlag: '', // 控制右侧内容的显隐
-        tabNums: ''
+        tabNums: '',
+        placeholder:''
       }
     },
     computed: mapState(['position']),
     created () {
       this.request()
+      this._getDefaultWord()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -65,6 +67,18 @@
       //this.judgeCity()
     },
     methods: {
+      //获取默认搜索词
+      _getDefaultWord() {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/v2/getDefaultSeWord',
+          params: {
+          }
+        }).then(function(res){
+          self.placeholder = res.data.data
+        })
+      },
       keepState () {
         if (this.$route.query.tabNum == undefined) {
           this.secondLevel(this.pageName[0].gc_id)
