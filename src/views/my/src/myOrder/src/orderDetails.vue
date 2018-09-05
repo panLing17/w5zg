@@ -778,6 +778,7 @@
         oInput.value = val;
         document.body.appendChild(oInput);
         oInput.select(); // 选择对象
+        oInput.setSelectionRange(0, oInput.value.length)
         document.execCommand("Copy"); // 执行浏览器复制命令
         document.body.removeChild(oInput);
         var orderNumbers = document.getElementsByClassName("orderNumber")[0];
@@ -1108,7 +1109,6 @@
   /*商品的详情--结束*/
   /*总商品的统计--开始*/
   .total{
-    /*margin-top: .2rem;*/
     background-color: #fff;
   }
   .total ul{
