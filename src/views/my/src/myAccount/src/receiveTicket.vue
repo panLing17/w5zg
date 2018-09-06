@@ -11,8 +11,10 @@
         .formTop
         .formBottom
           input(placeholder="请输入手机号领取", v-if="!isLoginFlag", v-model="phone", type="number")
-          .btn(@click="receive") 点击领取
-          .text 万物直供商城送您现金券，购物更省钱！
+          .btn(@click="receive")
+            img(src="../../../../../assets/img/getBtn@2x.png")
+          .text
+            img(src="../../../../../assets/img/w5zgLogo@2x.png")
           .agreementBtn(@click="$refs.agreement.mShow()") 《万物直供用户协议》
       .successWrapper(v-if="showSuccess")
         .topWrapper
@@ -24,7 +26,7 @@
             .line1 已经领过券了哦~
             .line2 您可以推荐亲友领券！
         .bottomWrapper
-          img.ewm(src="../../../../../assets/img/gzh.jpg")
+          img.ewm(src="../../../../../assets/img/erweima@2x.png")
           .dec 长按关注“万物直供”商城公众号
           .downloadWrapper
             a.btn(href="http://a.app.qq.com/o/simple.jsp?pkgname=com.w5kj.w5mall&fromcase=40002")
@@ -145,6 +147,7 @@
     display: flex;
     flex-direction: column;
     position: relative;
+    background: url("../../../../../assets/img/bg24@2x.png") no-repeat;
   }
   .bg {
     position: absolute;
@@ -163,20 +166,20 @@
   }
   .formTop {
     width: 100%;
-    height: 60%;
-    background: url("../../../../../assets/img/issue1@2x.jpg") no-repeat top left;
+    height: 50%;
+    background: url("../../../../../assets/img/quan@2x.png") no-repeat top left;
     background-size: 100% 100%;
   }
   .formBottom {
-    height: 40%;
+    height: 50%;
     width: 100%;
-    background: #c72d26;
+    /*background: url("../../../../../assets/img/bg24@2x.png") no-repeat;*/
     position: relative;
   }
-  .form input, .form .btn {
-    width: 7.45rem;
-    height: 1rem;
-    border-radius: 1rem;
+  .form input{
+    width: 7.73rem;
+    height: 1.17rem;
+    border-radius: 1.17rem;
   }
   .form input {
     position: absolute;
@@ -187,7 +190,7 @@
     border: none;
     outline: none;
     text-align: center;
-    color: rgb(51,51,51);
+    color: #999;
     font-size: .43rem;
     box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
   }
@@ -196,20 +199,27 @@
     top: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    background: #fecb37;
-    color: #c72d26;
-    font-size: .43rem;
-    line-height: 1rem;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+    /*background: #fecb37;*/
+    /*color: #c72d26;*/
+    /*font-size: .43rem;*/
+    /*line-height: 1rem;*/
+    /*box-shadow: 2px 2px 10px rgba(0,0,0,0.3);*/
+  }
+  .form .btn img{
+    width: 5.69rem;
   }
   .text {
-    font-size: .4rem;
-    color: #fff;
+    /*font-size: .4rem;*/
+    /*color: #fff;*/
     position: absolute;
-    top: 3.5rem;
+    top: 4.26rem;
     left: 0;
     width: 100%;
     text-align: center;
+  }
+  .text img{
+    width: 1.28rem;
+    height: 1.28rem;
   }
   .successWrapper {
     position: absolute;
@@ -218,12 +228,13 @@
     top: 0;
     left: 0;
     z-index: 150;
+    background: url("../../../../../assets/img/bg24@2x.png") no-repeat;
   }
   .topWrapper {
     width: 100%;
     height: 50%;
     position: relative;
-    background: url("../../../../../assets/img/issue2@3x.png") no-repeat top left;
+    background: url("../../../../../assets/img/quan2@2x.png") no-repeat top left;
     background-size: 100% 100%;
 
   }
@@ -246,7 +257,7 @@
   .bottomWrapper {
     height: 50%;
     width: 100%;
-    background: #c72d26;
+    /*background: #c72d26;*/
     position: relative;
   }
 
@@ -258,7 +269,7 @@
   }
   .dec {
     margin-top: .2rem;
-    font-size:.4rem;
+    font-size:.32rem;
     color: #fff;
   }
   img {
@@ -267,7 +278,7 @@
   .downloadWrapper {
     display: flex;
     justify-content: space-between;
-    padding: 0 .3rem;
+    padding: 0 .4rem;
     margin-top: .5rem;
   }
   .downloadWrapper .btn {
@@ -286,8 +297,9 @@
   .goHome {
     text-align: center;
     color: #fff;
-    font-size: .4rem;
+    font-size: .37rem;
     margin-top: .2rem;
+    text-decoration: underline;
   }
   .successDec {
     width: 100%;
@@ -307,19 +319,22 @@
     width: 100%;
     position: absolute;
     text-align: center;
-    bottom: 1.5rem;
+    bottom: 1.3rem;
     left: 0;
-    font-size: .53rem;
-    color: #c82c26;
+    font-size: .35rem;
+    color: #F02342;
     line-height: 1.5;
+  }
+  .againDec .line2{
+    margin-top: .15rem;
   }
   .agreementBtn {
     position: absolute;
-    top: 4.5rem;
+    top: 5.7rem;
     left: 0;
     width: 100%;
     color: #fff;
-    font-size: .4rem;
+    font-size: .3rem;
     text-align: center;
     z-index: 150;
   }

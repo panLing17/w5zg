@@ -273,7 +273,7 @@
           url: self.$apiGoods+ 'goods/shoppingCart/add',
           params: eve
         }).then(function (response) {
-          if (response.data.code = '081') {
+          if (response.data.code === '081') {
             self.$message.success('添加购物车成功')
           }
         })
@@ -1113,6 +1113,7 @@
   .linkService{
     margin-top: .2rem;
     background-color: #fff;
+    border: 1px solid #f2f2f2;
   }
   .linkService .wrapService{
     width: 2.5rem;
