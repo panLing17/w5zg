@@ -1,5 +1,5 @@
 <template lang="pug">
-  .mescroll.goodsMescroll
+  .mescroll#goodsMescroll
     // 导航-------------------------------------------------------------------------------------------
     .headerWrapper
       .back(@click="goBack")
@@ -66,11 +66,28 @@
     //地址展示---------------------------------------------------------------------------------------------------
     .addressWrapper
       .noAddress 请选择配送方式
-
+      <!--.address-->
+        <!--img(src="./address.png")-->
+        <!--span 配送至:-->
+        <!--span 南京市玄武区玄武区玄武区玄武大道道699-22号地方带你飞豆腐脑地-->
+      <!--.address-->
+        <!--img(src="./address.png")-->
+        <!--span 提货门店:-->
+        <!--span -->
+    // 横幅广告---------------------------------------------------------------------------------------------------
+    .adWrapper
+      img(src="./ad.png")
+    // 详情图片---------------------------------------------------------------------------------------------------
+    .detailsImgWrapper(v-html="goodsData.gi_desc")
+    .goodsListWrapper
+      .title
+        img(src="./title@2x.png")
+      goods-list(:data="goodsList")
 </template>
 
 <script>
   import Slider from 'components/slider'
+  import GoodsList from 'components/goodsList'
   import {mapGetters} from 'vuex'
   export default {
     name: "goodsDetails",
@@ -79,10 +96,14 @@
         banner: [], // 轮播图
         spuId: '',
         goodsData: {}, // 商品详情数据
+        goodsList: [], // 推荐商品列表
       }
     },
     created() {
       this.getDetailsData()
+    },
+    mounted() {
+      this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, () => {})
     },
     computed: {
       ...mapGetters(['userData'])
@@ -108,6 +129,29 @@
           }
         })
       },
+      upCallback: function (page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          self.goodsList = self.goodsList.concat(curPageData)
+          self.mescroll.endSuccess(curPageData.length)
+        }, function () {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum, pageSize, successCallback, errorCallback) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'gcdetails/goodsRecommendationList',
+          params: {
+            page: pageNum
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback && successCallback(response.data.data)
+        })
+      },
       // 后退
       goBack () {
         if (window.history.length>1) {
@@ -115,15 +159,16 @@
         } else {
           this.$router.push('/home')
         }
-      },
+      }
     },
     components: {
-      Slider
+      Slider,
+      GoodsList
     }
   }
 </script>
 
-<style scoped lang="stylus">
+<style lang="stylus">
   img {
    pointer-events none
   }
@@ -372,6 +417,46 @@
       color #9b9b9b
       font-size .32rem
       font-weight 400
+    }
+    .address {
+      overflow hidden
+      white-space nowrap
+      text-overflow ellipsis
+      img {
+        width .32rem
+      }
+      span {
+        color #9b9b9b
+        font-weight 400
+        font-size .32rem
+        margin-left .13rem
+      }
+    }
+  }
+  .adWrapper {
+    font-size 0
+    margin-top .21rem
+    img {
+      width 100%
+    }
+  }
+  .detailsImgWrapper {
+    font-size 0
+    img {
+      width 100%
+    }
+  }
+  .goodsListWrapper {
+    .title {
+      font-size 0
+      height 1rem
+      display flex
+      align-items center
+      justify-content center
+      background-color #f2f2f2
+      img {
+        width 4.96rem
+      }
     }
   }
 </style>
