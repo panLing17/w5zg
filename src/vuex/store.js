@@ -212,7 +212,8 @@ const actions = {
   }
 }
 const getters = {
-  transfer: state => state.transfer
+  transfer: state => state.transfer,
+  userData: state => state.userData
 }
 const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
