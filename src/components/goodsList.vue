@@ -1,7 +1,7 @@
 <template lang="pug">
-  .goodsList
+  .goodsList#goodsList
     ul.list
-      li.item(v-for="item in data", @click="$router.push({path: '/goodsDetailed', query: {id: item.gspu_id}})")
+      li.item(v-for="(item, index) in data", @click="$router.push({path: '/goodsDetailed', query: {id: item.gspu_id}})", :style="{'margin-right': index%2===0?'':'0'}")
         .imgWrapper
           img(:src="item.gi_image_url | img-filter")
         .goodsNameWrapper
@@ -10,7 +10,7 @@
         .priceWrapper
           ul
             li.desc 实付价：￥
-            li.price(v-for="price in $method.arrayPrice(item.skus_city[0].direct_supply_price)") {{price}}
+            li.price(v-for="price in $method.arrayPrice(item.direct_supply_price)") {{price}}
 </template>
 
 <script>
@@ -30,6 +30,7 @@
 <style scoped lang="stylus">
   .goodsList {
     .list {
+      background rgb(246,246,246)
       .item {
         display inline-block
         vertical-align top
@@ -61,9 +62,9 @@
             border-radius .3rem
             font-size .26rem
             padding 0 .1rem
+            margin-right .1rem
           }
           span {
-            margin-left .1rem
             font-size .34rem
             line-height .48rem
             color #333
@@ -98,8 +99,15 @@
           }
         }
       }
-      .item:nth-child(2n) {
-        margin-right 0
+      .adImage {
+        width: 100%;
+        margin-bottom: .13rem;
+        img {
+          width: 100%;
+        }
+      }
+      .adTag {
+
       }
     }
   }

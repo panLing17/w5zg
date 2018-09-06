@@ -78,7 +78,7 @@
     .adWrapper
       img(src="./ad.png")
     // 详情图片---------------------------------------------------------------------------------------------------
-    .detailsImgWrapper(v-html="goodsData.gi_desc")
+    .detailsImgWrapper(ref="detailsImgWrapper", v-html="goodsData.gi_desc")
     .goodsListWrapper
       .title
         img(src="./title@2x.png")
@@ -101,6 +101,14 @@
     },
     created() {
       this.getDetailsData()
+    },
+    updated() {
+      let len = this.$refs.detailsImgWrapper.children.length
+      if (len > 0) {
+        for (let i=0;i<len; i++) {
+          this.$refs.detailsImgWrapper.children[i].style.width = '100%'
+        }
+      }
     },
     mounted() {
       this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, () => {})
@@ -168,9 +176,16 @@
   }
 </script>
 
-<style lang="stylus">
+<style scoped lang="stylus">
   img {
    pointer-events none
+  }
+  .mescroll {
+    position fixed
+    top 0
+    bottom 0
+    left 0
+    height auto
   }
 
   .headerWrapper {
@@ -447,13 +462,13 @@
     }
   }
   .goodsListWrapper {
+    background-color #f2f2f2
     .title {
       font-size 0
       height 1rem
       display flex
       align-items center
       justify-content center
-      background-color #f2f2f2
       img {
         width 4.96rem
       }
