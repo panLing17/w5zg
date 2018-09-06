@@ -45,6 +45,9 @@ import Inform from '../views/inform/index.js'
 // 常见问题
 import CProblems from '../views/cProblems/index.js'
 
+//新商品详情
+import GoodsDetails from '../views/goodsDetails/goodsDetails'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -323,6 +326,11 @@ const router = new Router ({
       path: '/search',
       name: '新搜索',
       component: Common.search
+    },
+    {
+      path: '/goodsDetails',
+      name: '新详情',
+      component: GoodsDetails
     },
     {
       path: '/',
