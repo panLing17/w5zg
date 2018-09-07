@@ -49,18 +49,18 @@
           span 通用券
           span {{userData.cash_balance | price-filter}}
     // 规格-----------------------------------------------------------------------------------------------------
-    .sizeWrapper
+    .sizeWrapper(@click="$refs.selectSize.show()")
       .left 规格:
       .right
         .noSize 请选择规格
       .arrow
         img(src="./arrow.png")
     // 配送方式选择---------------------------------------------------------------------------------------------
-    .distributionWrapper
+    .distributionWrapper(@click="$refs.selectSize.show()")
       .left 配送:
       .right
         .btn 快递配送
-        .btn 专柜自提
+        .btn(v-if="goodsData.carry_type===1") 专柜自提
       .arrow
         img(src="./arrow.png")
     //地址展示---------------------------------------------------------------------------------------------------
@@ -83,14 +83,46 @@
       .title
         img(src="./title@2x.png")
       goods-list(:data="goodsList")
+    // 底部按钮------------------------------------------------------------------------------------------------------
+    .toolbarWrapper
+      .left
+        .block
+          img(src="./service.png")
+          span 客服
+        .block
+          div
+            img(src="./shoppingcart.png")
+            .badge 1
+          span 购物车
+        .block
+          img(:src="isFavorite?require('./collection_yes.png'):require('./collection_no.png')")
+          span {{isFavorite?'已收藏':'收藏'}}
+      .right
+        .two(v-show="true")
+          div 加入购物车
+          div 立即购买
+        .one(v-show="false")
+          div 到货通知
     // 标签说明-----------------------------------------------------------------------------------------------------
     tag-desc(ref="tagDesc")
+    // 规格选择-----------------------------------------------------------------------------------------------------
+    select-size(
+                ref="selectSize",
+                :imgUrl="goodsData.gi_image_url",
+                :price="goodsData.min_direct_supply_price",
+                :specGroup="goodsData.spec_group",
+                :spuId="spuId",
+                :carryType="goodsData.carry_type"
+                )
+    select-city
 </template>
 
 <script>
   import Slider from 'components/slider'
   import GoodsList from 'components/goodsList'
   import TagDesc from './tagDesc'
+  import SelectSize from './selectSize'
+  import SelectCity from './selectCity'
   import {mapGetters} from 'vuex'
   export default {
     name: "goodsDetails",
@@ -100,12 +132,15 @@
         spuId: '',
         goodsData: {}, // 商品详情数据
         goodsList: [], // 推荐商品列表
+        isFavorite: false
       }
     },
     created() {
       this.getDetailsData()
+      this.queryFavorite()
     },
     updated() {
+      // 解决v-html的内容css没有效果
       let len = this.$refs.detailsImgWrapper.children.length
       if (len > 0) {
         for (let i=0;i<len; i++) {
@@ -135,8 +170,36 @@
           }
         }).then(function(res){
           if (res) {
+            self.specFormat(res.data.data)
             self.goodsData = res.data.data
             self.banner = res.data.data.spu_banner
+          }
+        })
+      },
+      // 规格格式化
+      specFormat(data) {
+        if (data.spec_group && data.spec_group.length) {
+          data.spec_group.forEach(item => {
+            item.checked = -1
+            item.spec_value = item.spec_value.split(',')
+          })
+        }
+      },
+      // 查询是否收藏过
+      queryFavorite() {
+        if (!localStorage.getItem('token') || !this.spuId) {
+          return
+        }
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'gcdetails/queryFavorite',
+          params: {
+            gspuId: this.spuId
+          }
+        }).then(function(res){
+          if (res) {
+            self.isFavorite = res.data.data.flag==='N'?false:true
           }
         })
       },
@@ -175,7 +238,9 @@
     components: {
       Slider,
       GoodsList,
-      TagDesc
+      TagDesc,
+      SelectSize,
+      SelectCity
     }
   }
 </script>
@@ -475,6 +540,64 @@
       justify-content center
       img {
         width 4.96rem
+      }
+    }
+  }
+  .toolbarWrapper {
+    position fixed
+    bottom 0
+    left 0
+    width 100%
+    height 1.33rem
+    display flex
+    border-top 1px solid #d7d7d7
+    .left {
+      flex 1
+      display flex
+      background-color #fff
+      .block {
+        flex 1
+        display flex
+        flex-direction column
+        justify-content center
+        align-items center
+        font-size 0
+        border-right 1px solid #d7d7d7
+        &:last-child {
+          border none
+        }
+        div {
+          position relative
+        }
+        img {
+          width .64rem
+        }
+        span {
+          color #666
+          font-size .26rem
+          margin-top .08rem
+          line-height 1
+        }
+      }
+    }
+    .right {
+      width 53%
+      flex none
+      .two {
+        display flex
+        div {
+          flex 1
+          line-height 1.33rem
+          text-align center
+          color #fff
+          font-size .4rem
+          &:nth-child(1) {
+            background-color #ff8500
+          }
+          &:nth-child(2) {
+            background-color #ff0057
+          }
+        }
       }
     }
   }

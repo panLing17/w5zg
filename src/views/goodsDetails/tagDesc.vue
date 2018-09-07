@@ -8,7 +8,7 @@
           div 标签说明
           div(@click="hide()")
             img(src="./close@2x.png")
-        scroll.content
+        scroll.content(ref="tagDescScroll")
           div.contentWrapper
             p.btnWrapper
               span.redBtn 专柜提货
@@ -33,7 +33,16 @@
     name: "tagDesc",
     data() {
       return {
-        tagDescShow: true
+        tagDescShow: false
+      }
+    },
+    watch:{
+      tagDescShow(val) {
+        if (val) {
+          setTimeout(()=>{
+            this.$refs.tagDescScroll.refresh()
+          },520)
+        }
       }
     },
     methods: {
@@ -51,6 +60,7 @@
 </script>
 
 <style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
   .fold-enter-active, .fold-leave-active {
     transition: all 0.5s;
   }
@@ -78,7 +88,7 @@
     left 0
     z-index 30
     width 100%
-    height 12rem
+    height $height-pop-details
     background-color #fff
     .title {
       height 1.25rem
@@ -102,7 +112,7 @@
       }
     }
     .content {
-      height 10.75rem
+      height "calc(%s - 1.25rem)" % $height-pop-details
       overflow hidden
       .contentWrapper {
         padding .4rem 0 1.2rem

@@ -330,7 +330,10 @@ const router = new Router ({
     {
       path: '/goodsDetails',
       name: '新详情',
-      component: GoodsDetails
+      component: GoodsDetails,
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/',

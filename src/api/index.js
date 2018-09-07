@@ -15,7 +15,11 @@ let noNeedLogin = [
   '/home/sports',
   '/home/largeCollection',
   '/search',
-  '/page'
+  '/page',
+  '/my/receiveTicket',
+  '/my/receiveTicketGH',
+  '/download',
+  '/download/labourunion'
 ]
 
 
