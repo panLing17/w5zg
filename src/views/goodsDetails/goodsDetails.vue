@@ -10,7 +10,7 @@
         div(v-for="item in banner")
           img(:src="item.gi_img_url | img-filter")
     // 红字说明-------------------------------------------------------------------------------------------
-    .descWrapper
+    .descWrapper(@click="$refs.tagDesc.show()")
       ul.type1(v-if="goodsData.carry_type===1")
         li 专柜提货
         li 专柜比价,未省钱,白送
@@ -83,11 +83,14 @@
       .title
         img(src="./title@2x.png")
       goods-list(:data="goodsList")
+    // 标签说明-----------------------------------------------------------------------------------------------------
+    tag-desc(ref="tagDesc")
 </template>
 
 <script>
   import Slider from 'components/slider'
   import GoodsList from 'components/goodsList'
+  import TagDesc from './tagDesc'
   import {mapGetters} from 'vuex'
   export default {
     name: "goodsDetails",
@@ -171,7 +174,8 @@
     },
     components: {
       Slider,
-      GoodsList
+      GoodsList,
+      TagDesc
     }
   }
 </script>
