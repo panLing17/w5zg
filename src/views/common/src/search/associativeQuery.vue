@@ -37,7 +37,7 @@
       li {
         height: 1.2rem;
         line-height 1.2rem
-        border-bottom:1px solid rgb(206,206,206);
+        border-bottom:1px solid #ececec;
         font-size:.37rem;
         color:rgb(51,51,51);
         overflow hidden
