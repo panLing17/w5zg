@@ -11,7 +11,7 @@
             img(src="../../../assets/img/paymentResults0.png")
           .descWrapper
             .desc1 支付成功
-            .desc2 品牌商开始备货啦，请耐心等候
+            .desc2 系统开始备货啦，请耐心等候
           .btnWrapper
             .left(@click="$router.push('/home')") 返回首页
             .right(@click="$router.push('/my/orderManage')") 查看订单

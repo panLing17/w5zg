@@ -1,7 +1,7 @@
 <template lang="pug">
   .adTagWrapper
     ul
-      li(v-for="tag in content", @click="router.push({path:'/page/commodityList', query:{msg:tag,flags:1}})") {{tag}}
+      li(v-for="tag in content", @click="router.push({path:'/search', query:{key:tag,from:1}})") {{tag}}
 </template>
 
 <script>

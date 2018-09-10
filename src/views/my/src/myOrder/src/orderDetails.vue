@@ -2,7 +2,7 @@
   .wrapNav
     nav-bar(background="#F70057")
       .topLeft(slot="left")
-        img(src="../../../../../assets/img/ic_order_return.png", style="width:.3rem", @click="$router.go(-1)")
+        img(src='../../../../../assets/img/ic_order_return.png', style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 订单详情
       .topRight(slot="right")
         img(src="../../../../../assets/img/msg_0.png" v-if="false").msg
@@ -77,6 +77,9 @@
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
             span {{item.bs_phone}}
+      .toServiceWrapper(@click="$router.push('/service')")
+        img.service(src="../../../../../assets/img/service@2x.png")
+        .serviceDesc 联系客服
       .total
         ul
           li.totalQuantity
@@ -123,16 +126,20 @@
     .fixedBtn(v-show="whiteBarFlag")
       .leftBtn(v-if="leftBtn !== '删除订单' && leftBtn !== '提醒发货' && leftBtn !== '批量退款' && leftBtn !== '取消申请'" @click="jumpToLeft($event)") {{leftBtn}}
       .rightBtn(@click="jumpToRight($event)", ref="rightBtns", v-if="rightBtn !== '再次购买' && rightBtn !== '确认收货' && rightBtn !== '提醒发货' && rightBtn !== '申请退款' && rightBtn !== '批量退款' && rightBtn !== '取消申请'") {{rightBtn}}
+    cancel-reason(:shows="shows", @close="closes", :totalId = "TotalOrderId", @cancelSuc = "cancelSuc")
 </template>
 
 <script>
   import {mapState} from 'vuex'
   import recommend from './recommend'
+  import CancelReason from "./cancelReason";
   export default {
     name: 'orderDetails',
-    components:{recommend},
+    components:{CancelReason, recommend},
     data(){
       return{
+        totalOrderId: '',
+        shows: false,
         shopFlag: '', //门店联系人，联系方式显隐
         pickUpNums: '', //提货码
         whiteBarFlag: true, //最下方的白条的显隐
@@ -228,6 +235,16 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 取消订单成功
+      cancelSuc() {
+        this.mescroll.resetUpScroll()
+        this.$message.success('取消成功！')
+        this.$router.go(-1)
+        this.shows = false
+      },
+      closes(){
+        this.shows = false
+      },
       // 再次购买
       againBuy(item,items){
         let deliveryNum = 0
@@ -242,7 +259,7 @@
           deliveryWays: deliveryNum,
           province: this.$store.state.location.province.id,
           city: this.$store.state.location.city.id,
-          storeId: items.si_id,
+          storeId: items.bs_id,
           goodsNum: items.goods_num
         }
         this.addShoppingCar(b)
@@ -254,7 +271,7 @@
           url: self.$apiGoods+ 'goods/shoppingCart/add',
           params: eve
         }).then(function (response) {
-          if (response.data.code = '081') {
+          if (response.data.code === '081') {
             self.$message.success('添加购物车成功')
           }
         })
@@ -324,24 +341,24 @@
 
         }
         if (e.target.innerHTML === '取消订单') {
-          this.$confirm({
-            title: '确认',
-            message: '真的要这样做吗',
-            confirm: () => {
-              let self = this;
-              self.$ajax({
-                method: "patch",
-                url: self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
-                params: {}
-              }).then(function(res){
-                self.$router.go(-1);
-              })
-            },
-            noConfirm: () => {
-
-            }
-          })
-
+          // this.$confirm({
+          //   title: '确认',
+          //   message: '真的要这样做吗',
+          //   confirm: () => {
+          //     let self = this;
+          //     self.$ajax({
+          //       method: "patch",
+          //       url: self.$apiTransaction + "order/cancel"+"/+"+self.orderId,
+          //       params: {}
+          //     }).then(function(res){
+          //       self.$router.go(-1);
+          //     })
+          //   },
+          //   noConfirm: () => {
+          //
+          //   }
+          // })
+          this.shows = true
         }
         if (e.target.innerHTML === '批量退款') {
 
@@ -761,6 +778,7 @@
         oInput.value = val;
         document.body.appendChild(oInput);
         oInput.select(); // 选择对象
+        oInput.setSelectionRange(0, oInput.value.length)
         document.execCommand("Copy"); // 执行浏览器复制命令
         document.body.removeChild(oInput);
         var orderNumbers = document.getElementsByClassName("orderNumber")[0];
@@ -1091,7 +1109,6 @@
   /*商品的详情--结束*/
   /*总商品的统计--开始*/
   .total{
-    margin-top: .2rem;
     background-color: #fff;
   }
   .total ul{
@@ -1272,5 +1289,21 @@
   /* .slide-fade-leave-active for below version 2.1.8 */ {
     /*transform: translateY(10px);*/
     opacity: 0;
+  }
+  .toServiceWrapper {
+    background: #fff;
+    height: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px 0;
+  }
+  .service {
+    width: .58rem;
+  }
+  .serviceDesc {
+    margin-left: .21rem;
+    font-size:.37rem;
+    color:rgb(51,51,51);
   }
 </style>

@@ -5,8 +5,10 @@
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .main(v-if="show")
         .title
-          .left
+          .left(v-if="backFlag")
             img(src="../../../assets/img/Page1@2x.png", @click="close")
+          .left(v-else)
+            img(src="../../../assets/img/Page1@2x.png", @click="backPrev")
           .center 专柜体验
           .right(@click="$router.push('/reservations')")
             img(src="../../../assets/img/ic_yuyue_into.png")
@@ -40,6 +42,10 @@
       show: {
         type: Boolean,
         default: false
+      },
+      backFlag: {
+        type: Boolean,
+        default: false
       }
     },
     computed: {
@@ -71,6 +77,9 @@
     mounted () {
     },
     methods:{
+      backPrev() {
+        this.$emit('backPrev')
+      },
       close () {
         this.$emit('close')
       },
@@ -86,25 +95,28 @@
         }
       },
       getStore () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
-          params: {
-            gskuId: self.$store.state.skuId
-          },
-        }).then(function (response) {
-          self.storeList = response.data.data
-          setTimeout(() => {
-            if (self.lscroll2) {
-              self.lscroll2.refresh()
-            } else {
-              self.lscroll2 = new BScroll(self.$refs.lscroll2, {
-                click: true
-              })
-            }
-          }, 20)
-        })
+        if(this.$store.state.skuId) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
+            params: {
+              gskuId: self.$store.state.skuId
+            },
+          }).then(function (response) {
+            self.storeList = response.data.data
+            setTimeout(() => {
+              if (self.lscroll2) {
+                self.lscroll2.refresh()
+              } else {
+                self.lscroll2 = new BScroll(self.$refs.lscroll2, {
+                  click: true
+                })
+              }
+            }, 20)
+          })
+        }
+
       },
       addBespeak (item) {
         this.bsId = item.bs_id
@@ -122,8 +134,11 @@
           },
         }).then(function (response) {
           if (response.data.code === '081') {
-            self.$message.success('预约专柜成功')
             self.close()
+            self.$notify({
+              content: '预约专柜成功',
+              bottom: 1.86
+            })
           }
 
         })
@@ -146,7 +161,7 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -177,7 +192,7 @@
     margin-right: .1rem;
   }
   .content {
-    height: 8.7rem;
+    height: 10.7rem;
     display: flex;
     overflow: hidden;
   }

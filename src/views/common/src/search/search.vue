@@ -5,7 +5,7 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(type="search",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
@@ -64,6 +64,7 @@
         focus: false,
         placeholder: '', //默认搜索词
         brandReset: true, //品牌列表是否重新赋值
+        prevUrl: '', //上一个路由地址
       }
     },
     directives: {
@@ -76,6 +77,11 @@
           el.focus()
         }
       }
+    },
+    beforeRouteEnter(to, from, next) {
+      next((vm) => {
+        vm.prevUrl = from.path
+      })
     },
     created() {
       if (this.$route.query.key) {
@@ -91,9 +97,15 @@
       this.pushHistory = false
     },
     activated() {
+      // 若是从首页和page页的搜索框过来就放出初始化页面
+      if ((this.prevUrl === '/home' && !this.$route.query.key) || (this.prevUrl === '/page' && !this.$route.query.key)) {
+        this.cancelQuery()
+      }
+      //给window历史记录里增加一条使安卓的返回键可以用
       if (!this.pushHistory) {
         window.history.pushState(null, null, window.location.href)
       }
+      //切换focus可以使输入框聚焦
       this.focus = true
       if (this.$route.query.key) {
         this.query = this.$route.query.key
@@ -105,6 +117,27 @@
       this.focus = true
     },
     methods: {
+      // 点击搜索框回到初始化页面
+      goInit() {
+        this.$refs.searchResult.hideTop()
+        this.searchResult = {
+          aggs: [],
+          rows: []
+        }
+        this.associativeQuery = []
+        this.showResult = false
+        this.likesResult = []
+        this.hotResult = []
+        this.hasMore = true
+        this.sortFieldType = 0
+        this.bi_id = ''
+        this.sortType = 2
+        this.page = 1
+        this.searchEnd = false
+        this.searchType = 1
+        this.searchInit = true
+        this.$refs.searchResult.clearFilter()
+      },
       // 如果是在搜索结果显示时点击返回按钮返回到搜索初始化
       back() {
         if(this.showResult && !this.$route.query.from) {
@@ -227,7 +260,6 @@
             self.showResult = true
             if (!res.data.data.rows.length && self.page===1) {
               self.searchEnd = true
-              self.searchType = 2
               self.searchResult.aggs = res.data.data.aggs
               self.searchOther()
               return Promise.reject()
@@ -256,12 +288,12 @@
             page: this.page,
             rows: this.rows,
             city_no: 100100,
-            sortFieldType: this.sortFieldType,
+            sortFieldType: 0,
             sortType: this.sortType,
-            bi_id: this.bi_id,
+            // bi_id: this.bi_id,
             searchType: this.searchType,
-            startPrice: this.startPrice,
-            endPrice: this.endPrice
+            // startPrice: this.startPrice,
+            // endPrice: this.endPrice
           }
         }).then(function(res){
           if (res) {
@@ -329,11 +361,8 @@
         }).then(function(res){
           self.placeholder = res.data.data
         })
-      }
-    },
-    watch: {
-      // 输入框里搜索词发生变化时调联想搜索接口
-      query(newQuery) {
+      },
+      associativeSearchFn(newQuery) {
         // 点击热搜词、热搜栏目、历史搜索时不需要调用联想搜索
         if (!this.associativeOpen) {
           return
@@ -361,6 +390,12 @@
             this.searchInit = true
           }
         }
+      }
+    },
+    watch: {
+      // 输入框里搜索词发生变化时调联想搜索接口
+      query(newQuery) {
+        this.associativeSearchFn(newQuery)
       }
     },
     components: {

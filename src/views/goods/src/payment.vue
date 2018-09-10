@@ -2,7 +2,7 @@
   .paymentBox
     nav-bar(background="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-2)")
+        img(src="../../../assets/img/back@2x.png", style="width:.3rem", @click="$router.go(-1)")
       .topCenter(slot="center") 确认支付
       .topRight(slot="right")
     .price

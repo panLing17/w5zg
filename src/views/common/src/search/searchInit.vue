@@ -18,8 +18,8 @@
           .clear(@click="clearHistory")
             img(src="./clear.png")
         .hotContent
-          .twoRow
-            ul(ref="moreContent2", :style="{'max-height': historyHeight}")
+          .twoRow(ref="moreContent2", :style="{'max-height': historyHeight}")
+            ul
               li(v-for="(item, index) in history", @click="wordSearch(item)")
                 div {{item}}
           .moreWrapper(v-show="historyMoreShow", @click="historyMoreClick")
@@ -362,13 +362,13 @@
 
   .categoryContent {
     ul {
-      padding:.37rem  .29rem .1rem;
+      padding:.37rem  .4rem .1rem;
       li {
-        max-width 100%
-        margin: 0 .26rem .26rem 0;
+        width 2.7rem
+        height .85rem
+        margin: 0 .42rem .26rem 0;
         position relative
         display inline-block
-        line-height: .85rem;
         font-size: .34rem;
         color: #333;
         white-space nowrap
@@ -382,10 +382,12 @@
           overflow hidden
           white-space nowrap
           text-overflow ellipsis
-          padding:0 .5rem;
+          /*padding:0 .42rem;*/
           background: #fff;
           box-sizing border-box
           border:1px solid rgb(206,206,206);
+          line-height: .85rem;
+          text-align center
         }
         img {
           width .4rem
@@ -393,6 +395,9 @@
           right 0
           top 0
         }
+      }
+      li:nth-child(3n) {
+        margin-right 0
       }
     }
   }
