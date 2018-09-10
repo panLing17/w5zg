@@ -7,15 +7,17 @@
         // 头部-----------------------------------------------------------------------------------------
         .top
           .imgWrapper
-            img(:src="imgUrl | img-filter")
+            img(:src="logo | img-filter")
           .textWrapper
-            .price {{price | price-filter}}
+            .price {{priceShow | price-filter}}
             .size
-              .no 请选择规格
-              .yes
+              .no(v-show="!selectionSize.length") 请选择规格
+              .yes(v-show="selectionSize.length")
+                ul
+                  li(v-for="item in selectionSize") {{item.value}}
             .desc
-              .yes 有货
-              <!--.no 无货-->
+              .yes(v-show="storageNum>0") 有货
+              .no(v-show="storageNum===0") 无货
           .close(@click="hide()")
             img(src="./close@2x.png")
         // 中间内容-------------------------------------------------------------------------------------
@@ -31,34 +33,29 @@
             .counteWrapper
               .left 购买数量
               .right
-                .minus
+                .minus(@click="minus")
                   img(src="./minus.png")
                 .count {{count}}
-                .add
+                .add(@click="add")
                   img(src="./add.png")
             // 配送选择---------------------------------------------------------------------------------
             .typeWrapper
               .typeName 配送方式
               .typeBtn
-                .btn 快递配送
-                .btn(v-if="carryType===1") 专柜自提
-              .address1
+                .btn(:class="{active: shippingMethods===0}", @click="shippingMethodsChange(0)") 快递配送
+                .btn(v-if="carryType===1", :class="{active: shippingMethods===1}", @click="shippingMethodsChange(1)") 专柜自提
+              .address1(v-show="shippingMethods===0", @click="$emit('show-address')")
                 .desc 配送地址
-                .addressText(v-show="true")
+                .addressText
                   img.addressImg(src="./address.png")
-                  span 南京市玄武区玄武大道699-22号南京市玄武区玄武大道699-22号
+                  span {{address}}
                   img.arrowImg(src="./arrow.png")
-              .address1(v-show="false")
+              .address1(v-show="shippingMethods===1")
                 .desc 专柜地址<span>(提货地影响库存，请正确选择）</span>
                 .addressText
                   img.addressImg(src="./address.png")
                   span 南京市玄武区玄武大道699-22号南京市玄武区玄武大道699-22号
                   img.arrowImg(src="./arrow.png")
-            // 运费------------------------------------------------------------------------------------
-            .freightWrapper
-              .desc 运费
-              .freight {{freight}}元
-
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
           <!--.two-->
@@ -76,9 +73,11 @@
       return {
         selectSizeShow: false, //控制显示和隐藏
         count: 1, //数量
-        freight: 0, //运费
-        address: [], //地址合集
-        storageNum: 1
+        //freight: 0, //运费   作废
+        storageNum: 1, //sku接口返回的数量，为0表示无货，初始化为1
+        selectionSize: [], //选中的规格
+        skuData: {}, // sku信息
+        shippingMethods: 0, //配送方式，0为快递 1为自提
       }
     },
     props: {
@@ -103,9 +102,23 @@
         type: String,
         default: ''
       },
+      // 是否可自提
       carryType: {
         type: Number,
         default: 0
+      },
+      // 配送地址显示
+      address: {
+        type: String,
+        default: ''
+      }
+    },
+    computed: {
+      logo () {
+        return this.skuData.logo?this.skuData.logo:this.imgUrl
+      },
+      priceShow() {
+        return this.skuData.direct_supply_price?this.skuData.direct_supply_price:this.price
       }
     },
     watch:{
@@ -152,26 +165,51 @@
             params: params
           }).then(function(res){
             if (res) {
-              self.imgUrl = res.data.data.logo
+              self.storageNum = res.data.data.storage_num
+              self.selectionSizeFormat(res.data.data)
+              self.skuData = res.data.data
+              self.$emit('selection-size', self.skuData)
             }
           })
         }
       },
-      // 获取用户所有地址
-      getAddress() {
-        if (!localStorage.getItem('token')) {
+      // sku尺码格式化
+      selectionSizeFormat(data) {
+        let temp = []
+        for(let i=1; i<=5; i++) {
+          if (data['spec_name'+i].length>0 && data['spec_value'+i].length>0) {
+            temp.push({
+              name: data['spec_name'+i],
+              value: data['spec_value'+i]
+            })
+          }
+        }
+        data.selectionSize = temp
+        this.selectionSize = temp
+      },
+      // 数量减
+      minus() {
+        if (this.count===1) {
           return
         }
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'receivingAddress/addresses',
-          params: {},
-        }).then(function (response) {
-          if(response) {
-            self.address = response.data.data
-          }
-        })
+        this.count--
+      },
+      // 数量加
+      add() {
+        if (!this.selectionSize.length) {
+          this.$message.warning('请选择规格！')
+          return
+        }
+        if (this.count === this.storageNum) {
+          this.$message.warning('数量已达到上限！')
+          return
+        }
+        this.count++
+      },
+      // 配送方式改变
+      shippingMethodsChange(flag) {
+        this.shippingMethods = flag
+        this.$emit('shipping-change', flag)
       },
       hide() {
         this.selectSizeShow = false
@@ -252,6 +290,15 @@
           color #666
           font-size .32rem
           line-height .45rem
+          ul {
+            display flex
+            li {
+              margin-right .1rem
+              &:last-child {
+                margin-right 0
+              }
+            }
+          }
         }
         .desc {
           font-size .34rem
@@ -367,7 +414,7 @@
             font-size .32rem
             border-radius .133rem
             margin-right .26rem
-            .active {
+            &.active {
               border-color #ff0057
               color #ff0057
             }
@@ -410,22 +457,6 @@
               width .64rem
             }
           }
-        }
-      }
-      .freightWrapper {
-        margin-top .26rem
-        display flex
-        align-items center
-        .desc {
-          color #333
-          font-size .42rem
-          font-weight 500
-        }
-        .freight {
-          margin-left .26rem
-          color #666
-          font-size .4rem
-          font-weight 400
         }
       }
     }

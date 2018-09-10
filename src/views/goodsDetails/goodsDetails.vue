@@ -27,14 +27,14 @@
         .realIcon ￥
         .realPrice
           ul
-            li(v-for="item in $method.arrayPrice(goodsData.min_direct_supply_price)") {{item}}
+            li(v-for="item in $method.arrayPrice(directSupplyPrice)") {{item}}
       .other
         .price1
           span 专柜价:
-          span {{goodsData.min_counter_price | price-filter}}
+          span {{counterPrice | price-filter}}
         .price2
           span 用券立减:
-          span {{(goodsData.min_counter_price-goodsData.min_direct_supply_price) | price-filter}}
+          span {{economyPrice | price-filter}}
       .appointmentBtn(v-if="goodsData.carry_type===1")
         img(src="./xin.png")
         span 预约体验
@@ -52,28 +52,33 @@
     .sizeWrapper(@click="$refs.selectSize.show()")
       .left 规格:
       .right
-        .noSize 请选择规格
+        .noSize(v-show="!selectionOfSizeData.length") 请选择规格
+        .size(v-show="selectionOfSizeData.length")
+          ul
+            li(v-for="item in selectionOfSizeData")
+              .name {{item.name}}
+              .value ({{item.value}})
       .arrow
         img(src="./arrow.png")
     // 配送方式选择---------------------------------------------------------------------------------------------
     .distributionWrapper(@click="$refs.selectSize.show()")
       .left 配送:
       .right
-        .btn 快递配送
-        .btn(v-if="goodsData.carry_type===1") 专柜自提
+        .btn(:class="{active: shippingMethods===0}") 快递配送
+        .btn(v-if="goodsData.carry_type===1", :class="{active: shippingMethods===1}") 专柜自提
       .arrow
         img(src="./arrow.png")
     //地址展示---------------------------------------------------------------------------------------------------
     .addressWrapper
       .noAddress 请选择配送方式
-      <!--.address-->
-        <!--img(src="./address.png")-->
-        <!--span 配送至:-->
-        <!--span 南京市玄武区玄武区玄武区玄武大道道699-22号地方带你飞豆腐脑地-->
-      <!--.address-->
-        <!--img(src="./address.png")-->
-        <!--span 提货门店:-->
-        <!--span -->
+      .address
+        img(src="./address.png")
+        span 配送至:
+        span 南京市玄武区玄武区玄武区玄武大道道699-22号地方带你飞豆腐脑地
+      .address
+        img(src="./address.png")
+        span 提货门店:
+        span
     // 横幅广告---------------------------------------------------------------------------------------------------
     .adWrapper
       img(src="./ad.png")
@@ -94,9 +99,9 @@
             img(src="./shoppingcart.png")
             .badge 1
           span 购物车
-        .block
-          img(:src="isFavorite?require('./collection_yes.png'):require('./collection_no.png')")
-          span {{isFavorite?'已收藏':'收藏'}}
+        .block(@click="favorite")
+          img(:src="isFavorite.flag==='Y'?require('./collection_yes.png'):require('./collection_no.png')")
+          span {{isFavorite.flag==='Y'?'已收藏':'收藏'}}
       .right
         .two(v-show="true")
           div 加入购物车
@@ -112,9 +117,16 @@
                 :price="goodsData.min_direct_supply_price",
                 :specGroup="goodsData.spec_group",
                 :spuId="spuId",
-                :carryType="goodsData.carry_type"
+                :carryType="goodsData.carry_type",
+                :address="addressShow",
+                @selection-size="selectionOfSize",
+                @show-address="$refs.express.show()",
+                @shipping-change="shippingMethodsChange"
                 )
-    select-city
+    // 配送地址选择--------------------------------------------------------------------------------------------------
+    express(ref="express", :address="address", @address-change="addressChange", @select-city="$refs.selectCity.show()")
+    // 城市选择-----------------------------------------------------------------------------------------------------
+    select-city(ref="selectCity", @city-change="cityChage")
 </template>
 
 <script>
@@ -123,6 +135,7 @@
   import TagDesc from './tagDesc'
   import SelectSize from './selectSize'
   import SelectCity from './selectCity'
+  import Express from './express'
   import {mapGetters} from 'vuex'
   export default {
     name: "goodsDetails",
@@ -132,12 +145,19 @@
         spuId: '',
         goodsData: {}, // 商品详情数据
         goodsList: [], // 推荐商品列表
-        isFavorite: false
+        isFavorite: {}, // 是否收藏过
+        selectionOfSizeData: [], // 选中的规格
+        address: [], //地址合集,
+        addressShow: '', //页面上地址显示
+        cityData: {}, // 选择城市后的数据
+        shippingMethods: 0, // 配送方式，0为快递 1为自提
+        skuData: {}, // sku信息
       }
     },
     created() {
       this.getDetailsData()
       this.queryFavorite()
+      this.getAddress()
     },
     updated() {
       // 解决v-html的内容css没有效果
@@ -152,7 +172,22 @@
       this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, () => {})
     },
     computed: {
-      ...mapGetters(['userData'])
+      ...mapGetters(['userData']),
+      directSupplyPrice() {
+        return this.skuData.direct_supply_price ? this.skuData.direct_supply_price : this.goodsData.min_direct_supply_price
+      },
+      counterPrice() {
+        return this.skuData.counter_price ? this.skuData.counter_price : this.goodsData.min_counter_price
+      },
+      economyPrice() {
+        let temp
+        if (this.skuData.gsku_id) {
+          return this.getEconomyPrice()
+
+        } else {
+          return this.goodsData.min_counter_price - this.goodsData.min_direct_supply_price
+        }
+      }
     },
     methods: {
       // 根据spuid获取详情内容
@@ -185,6 +220,11 @@
           })
         }
       },
+      // 选择规格后返回
+      selectionOfSize(data) {
+        this.skuData = data
+        this.selectionOfSizeData = data.selectionSize
+      },
       // 查询是否收藏过
       queryFavorite() {
         if (!localStorage.getItem('token') || !this.spuId) {
@@ -199,7 +239,66 @@
           }
         }).then(function(res){
           if (res) {
-            self.isFavorite = res.data.data.flag==='N'?false:true
+            self.isFavorite = res.data.data
+          }
+        })
+      },
+      // 收藏按钮点击
+      favorite() {
+        if (!localStorage.getItem('token')) {
+          this.$message.warning('请先登录！')
+          this.$router.push('/login')
+          return
+        }
+        let params, url
+        if (this.isFavorite.flag==='Y') {
+          params = {
+            fiId: this.isFavorite.fiId
+          }
+          url = 'gcFavoritesInfo/cancelFavorite'
+        } else {
+          params = {
+            gspuId: this.spuId
+          }
+          url = 'gcFavoritesInfo/saveGcFavorite'
+        }
+        let self =this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + url,
+          params: params
+        }).then(function(res){
+          if (res) {
+            if (self.isFavorite.flag==='Y') {
+              self.$set(self.isFavorite, 'flag', 'N')
+            } else {
+              self.isFavorite = {
+                fiId: res.data.data.fiId,
+                flag: 'Y'
+              }
+            }
+          }
+        })
+      },
+      // 获取用户所有地址
+      getAddress() {
+        if (!localStorage.getItem('token')) {
+          return
+        }
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'receivingAddress/addresses',
+          params: {},
+        }).then(function (response) {
+          if(response) {
+            self.address = response.data.data
+            self.address.forEach(item => {
+              if (item.ra_default==='011') {
+                self.addressShow = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+                return false
+              }
+            })
           }
         })
       },
@@ -226,6 +325,36 @@
           successCallback && successCallback(response.data.data)
         })
       },
+      // 配送地址切换
+      addressChange(item) {
+        this.addressShow = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+      },
+      // 城市选择切换
+      cityChage(data) {
+        this.cityData = data
+        this.addressShow = data.province.pro_name + data.city.city_name
+      },
+      // 配送方式切换
+      shippingMethodsChange(flag) {
+        this.shippingMethods = flag
+      },
+      // 根据skuId获取用券立减
+      getEconomyPrice() {
+        new Promise(resolve => {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'goods/sku/'+this.skuData.gsku_id+'/economyPrice',
+            params: {
+              skuId: this.skuData.gsku_id
+            }
+          }).then(function (res) {
+            if (res) {
+              resolve(res.data.data.useCardEconomyPrice)
+            }
+          })
+        })
+      },
       // 后退
       goBack () {
         if (window.history.length>1) {
@@ -240,7 +369,8 @@
       GoodsList,
       TagDesc,
       SelectSize,
-      SelectCity
+      SelectCity,
+      Express
     }
   }
 </script>
@@ -433,9 +563,11 @@
     height .93rem
     display flex
     align-items center
-    padding-left .4rem
+    padding 0 .4rem
+    justify-content space-between
     position relative
     border-bottom 1px solid #d7d7d7
+    min-width 0
     .left, .noSize {
       color #888
       font-weight 400
@@ -443,12 +575,33 @@
     }
     .right {
       margin-left .2rem
+      flex 1
+      white-space nowrap
+      text-overflow ellipsis
+      overflow hidden
+      .size {
+        ul {
+          display flex
+          li {
+            display flex
+            line-height 1
+            margin-right .2rem
+            &:last-child {
+              margin-right 0
+            }
+            .name {
+              color #333
+              font-size .37rem
+            }
+            .value {
+              color #888
+              font-size .32rem
+            }
+          }
+        }
+      }
     }
     .arrow {
-      position absolute
-      right .32rem
-      top 50%
-      transform translateY(-50%)
       img {
         width .586rem
       }
@@ -471,17 +624,19 @@
       .btn {
         width 1.76rem
         height .586rem
-        border 1px solid #ff0057
+        border 1px solid #666
         border-radius .133rem
         line-height .586rem
         text-align center
         font-size .32rem
-        color #ff0057
         font-weight 400
+        color #333
         &:nth-child(2) {
           margin-left .26rem
-          border-color #666
-          color #333
+        }
+        &.active {
+          border-color #ff0057
+          color #ff0057
         }
       }
     }

@@ -1,0 +1,56 @@
+<template lang="pug">
+  .selectStore
+    transition(name="fade")
+      .mask(v-show="selectStoreShow", @click="hide()", @touchmove.prevent="")
+    transition(name="fold")
+      .contentWrapper(v-show="selectStoreShow")
+</template>
+
+<script>
+  export default {
+    name: "selectStore",
+    data() {
+      return {
+        selectStoreShow: true
+      }
+    },
+    methods: {
+      show() {
+        this.selectStoreShow = true
+      },
+      hide() {
+        this.selectStoreShow = false
+      }
+    }
+  }
+</script>
+
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
+  .fold-enter-active, .fold-leave-active {
+    transition: all 0.5s;
+  }
+  .fold-enter, .fold-leave-to {
+    transform: translate3d(0,100%,0);
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: all 0.5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+  img {
+    pointer-events none
+  }
+  .mask {
+    position fixed
+    top 0
+    left 0
+    width 100%
+    height 100vh
+    z-index 30
+  }
+  .contentWrapper {
+
+  }
+</style>
