@@ -21,6 +21,12 @@ export default {
     }
   },
   props: {
+    data: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     loop: {
       type: Boolean,
       default: true
@@ -34,6 +40,27 @@ export default {
       default: 5000
     }
   },
+  watch:{
+    // data(newVal) {
+    //   if (newVal.length) {
+    //     setTimeout(() => {
+    //       this._setSliderWidth()
+    //       this._initDots()
+    //       this._initSlider()
+    //
+    //       if (this.autoPlay) {
+    //         this._play()
+    //       }
+    //     }, 200)
+    //   }
+    // }
+  },
+  // activated() {
+  //   if (this.autoPlay) {
+  //     this.slider.refresh()
+  //     this.slider.goToPage((this.currentPageIndex+1) % this.dots.length, 0, 400)
+  //   }
+  // },
   mounted () {
     setTimeout(() => {
       this._setSliderWidth()
@@ -46,15 +73,26 @@ export default {
     }, 200)
 
 
-    window.addEventListener('resize', () => {
+    // window.addEventListener('resize', () => {
+    //   if (!this.slider) {
+    //     return
+    //   }
+    //   this._setSliderWidth(true)
+    //   this.slider.refresh()
+    // })
+  },
+  methods: {
+    resize() {
       if (!this.slider) {
         return
       }
       this._setSliderWidth(true)
       this.slider.refresh()
-    })
-  },
-  methods: {
+      if (this.autoPlay) {
+        clearTimeout(this.timer)
+        this._play()
+      }
+    },
     refresh () {
       this.slider.refresh()
     },

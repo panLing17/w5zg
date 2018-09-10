@@ -13,7 +13,7 @@
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
-        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type===1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
+        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag2" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type===1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)" v-if="goodsData.carry_type===1">赔付电话4008-947-999</span><span class="tag2" v-else>客服电话4008-947-999</span>
         .goodsName  {{goodsData.gi_name}}
         <!-- a(href="tel:4008-947-999") -->
           //.stateChuiNiu(@click="saveMoneyTipsFlag = true")
@@ -512,15 +512,19 @@
       },
       // 显示预约
       yuyueShow () {
-        if (this.initPriceFlag) {
-          //this.$message.warning('请选择规格')
-          this.selectFlag = true
-          this.yuyueF = true
-          this.backFlag = false
-          return
+        if (localStorage.hasOwnProperty('token')) {
+          if (this.initPriceFlag) {
+            //this.$message.warning('请选择规格')
+            this.selectFlag = true
+            this.yuyueF = true
+            this.backFlag = false
+            return
+          }
+          this.bespeakFlag = true
+          this.backFlag = true
+        } else{
+          this.$router.push('/login/login2')
         }
-        this.bespeakFlag = true
-        this.backFlag = true
       },
       // 获取实际不存在规格（置灰）
       getRelSpec () {
@@ -1294,10 +1298,25 @@
     transform: scale(.8,.8);
     margin-left: -.5rem;
   }
-  .tags>.tag:last-child {
+  .tags>.tag2{
+    display: inline-block;
+    padding: .05rem .2rem;
+    font-size: .3rem;
+    font-weight: 500;
+    border-radius: 1rem;
+    color: rgb(244,108,62);
+    background: rgb(255,239,232);
+    transform: scale(.8,.8);
+    margin-left: -.5rem;
+  }
+  .tags>.tag:last-child{
     border: none;
     background: none;
     text-decoration: underline;
+  }
+  .tags>.tag2:last-child {
+    border: none;
+    background: none;
   }
   .price {
     display: flex;

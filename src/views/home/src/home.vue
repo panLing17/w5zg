@@ -9,17 +9,17 @@
         input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->
-      .homeHeaderRight(@click="$router.push({path:'/inform',query:{num:0}})")
+      .homeHeaderRight(@click="goToMessage()")
         .infoCount(v-show="informNum>0") {{informNum.toString().length>2?'99':informNum}}
         img.headerImg(src="../../../assets/img/xiaoxi1.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderRight(v-show="homeHeaderActive")
           img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png", @click.prevent="")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      .banner(v-if="banner && banner.length")
+      .banner(v-if="banner.length")
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
-        slider
+        slider(:data="banner", ref="bannerSlider")
           div(v-for="(item, index) in banner")
             a(@click.prevent="goActivity(item)")
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
@@ -35,8 +35,8 @@
       //.title1
       w-activity(:listData="activityGoods")
       //.title2
-      .secondFloor(v-if="secondFloor && secondFloor.length")
-        slider
+      .secondFloor(v-if="secondFloor.length")
+        slider(:data="secondFloor")
           div(v-for="(item, index) in secondFloor")
             a(@click.prevent="goActivity(item)")
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
@@ -202,6 +202,14 @@
       this.mescroll.destroy()
     },
     methods: {
+      goToMessage(){
+        if (localStorage.hasOwnProperty('token')) {
+          this.$router.push({path:'/inform',query:{num:0}})
+        } else{
+          this.$router.push('/login/login2')
+        }
+      },
+
       //弹屏隐藏
       hidePopAd() {
         sessionStorage.setItem('popAd', '1')
@@ -743,7 +751,7 @@
   }
 
   .news {
-    margin-top: 6px;
+    border-top: 1px solid #E2E1E1;
   }
 
   .title1, .title2 {

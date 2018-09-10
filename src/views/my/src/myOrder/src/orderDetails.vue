@@ -77,11 +77,9 @@
           p(v-if="item.shopFlag")
             span.shop 门店联系方式:
             span {{item.bs_phone}}
-      .linkService(@click="$router.push('/service')")
-        .wrapService
-          .img
-            img(src="../../../../../assets/img/service@2x.png")
-          .links 联系客服
+      .toServiceWrapper(@click="$router.push('/service')")
+        img.service(src="../../../../../assets/img/service@2x.png")
+        .serviceDesc 联系客服
       .total
         ul
           li.totalQuantity
@@ -261,7 +259,7 @@
           deliveryWays: deliveryNum,
           province: this.$store.state.location.province.id,
           city: this.$store.state.location.city.id,
-          storeId: items.si_id,
+          storeId: items.bs_id,
           goodsNum: items.goods_num
         }
         this.addShoppingCar(b)
@@ -1109,32 +1107,6 @@
     margin-left: .1rem;
   }
   /*商品的详情--结束*/
-  /*联系客服*/
-  .linkService{
-    margin-top: .2rem;
-    background-color: #fff;
-    border: 1px solid #f2f2f2;
-  }
-  .linkService .wrapService{
-    width: 2.5rem;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    padding: .37rem 0;
-  }
-  .linkService .img{
-    width: .58rem;
-    height: .58rem;
-  }
-  .linkService .img img{
-    width: .58rem;
-    height: .58rem;
-  }
-  .linkService .links{
-    margin-left: .21rem;
-    font-size: .37rem;
-    color: #333;
-  }
   /*总商品的统计--开始*/
   .total{
     background-color: #fff;
@@ -1317,5 +1289,21 @@
   /* .slide-fade-leave-active for below version 2.1.8 */ {
     /*transform: translateY(10px);*/
     opacity: 0;
+  }
+  .toServiceWrapper {
+    background: #fff;
+    height: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1px 0;
+  }
+  .service {
+    width: .58rem;
+  }
+  .serviceDesc {
+    margin-left: .21rem;
+    font-size:.37rem;
+    color:rgb(51,51,51);
   }
 </style>

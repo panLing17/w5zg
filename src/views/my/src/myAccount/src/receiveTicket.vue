@@ -1,10 +1,10 @@
 <template lang="pug">
   .receiveTicket
-    nav-bar(background="white")
-      .topLeft(slot="left", @click="$router.replace('/home')")
-        img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")
-      .topCenter(slot="center", style="width: 6rem;text-align:center;") 万物直供商城现金券
-      .topRight(slot="right")
+    <!--nav-bar(background="white")-->
+      <!--.topLeft(slot="left", @click="$router.replace('/home')")-->
+        <!--img(src="../../../../../assets/img/back@2x.png", style="width:.3rem")-->
+      <!--.topCenter(slot="center", style="width: 6rem;text-align:center;") 万物直供商城现金券-->
+      <!--.topRight(slot="right")-->
     .content(v-loading="loadingFlag")
       <!--img.bg(:src="showSuccess?require('../../../../../assets/img/3-01.jpg'):require('../../../../../assets/img/1-01.jpg')")-->
       .form(v-if="!showSuccess")
@@ -22,6 +22,7 @@
             .price {{price}}
               span 元
             .successDec 恭喜您获得“万物直供”商城
+            .words 现金券，即领即用
           .againDec(v-if="!getSuccess")
             .line1 已经领过券了哦~
             .line2 您可以推荐亲友领券！
@@ -46,11 +47,11 @@
       return {
         phone: '',
         isLoginFlag: false,
-        showSuccess:false,
+        showSuccess: true,
         url: '',
         price: 0,
         loadingFlag: false,
-        getSuccess: false
+        getSuccess: true
       }
     },
     created () {
@@ -141,6 +142,7 @@
     background: rgb(242,242,242);
   }
   .content {
+    height: 100%;
     min-height: calc(100vh - 1.3rem);
     line-height: 1;
     text-align: center;
@@ -166,12 +168,12 @@
   }
   .formTop {
     width: 100%;
-    height: 50%;
+    height: 45%;
     background: url("../../../../../assets/img/quan@2x.png") no-repeat top left;
     background-size: 100% 100%;
   }
   .formBottom {
-    height: 50%;
+    height: 55%;
     width: 100%;
     /*background: url("../../../../../assets/img/bg24@2x.png") no-repeat;*/
     position: relative;
@@ -212,7 +214,7 @@
     /*font-size: .4rem;*/
     /*color: #fff;*/
     position: absolute;
-    top: 4.26rem;
+    top: 4.36rem;
     left: 0;
     width: 100%;
     text-align: center;
@@ -232,7 +234,7 @@
   }
   .topWrapper {
     width: 100%;
-    height: 50%;
+    height: 45%;
     position: relative;
     background: url("../../../../../assets/img/quan2@2x.png") no-repeat top left;
     background-size: 100% 100%;
@@ -240,22 +242,22 @@
   }
   .price {
     position: absolute;
-    bottom: .6rem;
+    bottom: 1.4rem;
     left: 0;
     width: 100%;
     text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #c72d26;
+    font-size: .7rem;
+    font-weight: 600;
+    color: #F02342;
     letter-spacing: -.1rem;
     transform: scale(1, 1.2);
   }
   .price span {
-    font-size: .7rem;
+    font-size: .6rem;
     margin-left: .1rem;
   }
   .bottomWrapper {
-    height: 50%;
+    height: 55%;
     width: 100%;
     /*background: #c72d26;*/
     position: relative;
@@ -305,15 +307,23 @@
     width: 100%;
     position: absolute;
     text-align: center;
-    bottom: 2.8rem;
+    bottom: 2.4rem;
     left: 0;
-    font-size: .53rem;
-    color: #c82c26;
+    font-size: .37rem;
+    color: #F02342;
   }
   .success {
     width: 100%;
     height: 100%;
     position: relative;
+  }
+  .success .words{
+    width: 100%;
+    font-size: .3rem;
+    text-align: center;
+    color: #F02342;
+    position: absolute;
+    bottom: .8rem;
   }
   .againDec {
     width: 100%;
@@ -330,7 +340,7 @@
   }
   .agreementBtn {
     position: absolute;
-    top: 5.7rem;
+    top: 5.9rem;
     left: 0;
     width: 100%;
     color: #fff;

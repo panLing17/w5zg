@@ -5,7 +5,7 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search",@click="associativeSearchFn(query)", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(type="search",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
@@ -64,6 +64,7 @@
         focus: false,
         placeholder: '', //默认搜索词
         brandReset: true, //品牌列表是否重新赋值
+        prevUrl: '', //上一个路由地址
       }
     },
     directives: {
@@ -78,14 +79,9 @@
       }
     },
     beforeRouteEnter(to, from, next) {
-      if (from.path === '/home') {
-        next(vm => {
-          // 如果是从home搜索框过来先到初始化界面
-          vm.cancelQuery()
-        })
-      } else {
-        next()
-      }
+      next((vm) => {
+        vm.prevUrl = from.path
+      })
     },
     created() {
       if (this.$route.query.key) {
@@ -101,9 +97,15 @@
       this.pushHistory = false
     },
     activated() {
+      // 若是从首页和page页的搜索框过来就放出初始化页面
+      if ((this.prevUrl === '/home' && !this.$route.query.key) || (this.prevUrl === '/page' && !this.$route.query.key)) {
+        this.cancelQuery()
+      }
+      //给window历史记录里增加一条使安卓的返回键可以用
       if (!this.pushHistory) {
         window.history.pushState(null, null, window.location.href)
       }
+      //切换focus可以使输入框聚焦
       this.focus = true
       if (this.$route.query.key) {
         this.query = this.$route.query.key
@@ -115,6 +117,27 @@
       this.focus = true
     },
     methods: {
+      // 点击搜索框回到初始化页面
+      goInit() {
+        this.$refs.searchResult.hideTop()
+        this.searchResult = {
+          aggs: [],
+          rows: []
+        }
+        this.associativeQuery = []
+        this.showResult = false
+        this.likesResult = []
+        this.hotResult = []
+        this.hasMore = true
+        this.sortFieldType = 0
+        this.bi_id = ''
+        this.sortType = 2
+        this.page = 1
+        this.searchEnd = false
+        this.searchType = 1
+        this.searchInit = true
+        this.$refs.searchResult.clearFilter()
+      },
       // 如果是在搜索结果显示时点击返回按钮返回到搜索初始化
       back() {
         if(this.showResult && !this.$route.query.from) {

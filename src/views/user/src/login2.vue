@@ -499,7 +499,7 @@
   .call {
     font-size:.32rem;
     color:rgba(102,102,102,1);
-    margin-top: 5.44rem;
+    margin-top: 4.5rem;
     width: 100%;
     text-align: center;
   }

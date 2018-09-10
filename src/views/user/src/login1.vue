@@ -196,6 +196,6 @@
     color:rgba(102,102,102,1);
     width: 100%;
     text-align: center;
-    margin-top: 6.9rem;
+    margin-top: 6rem;
   }
 </style>
