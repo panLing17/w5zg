@@ -28,9 +28,11 @@
               .spec(v-for="(item, index) in specGroup")
                 .specName {{item.spec_name}}
                 ul.specValue
-                  li(v-for="(value, i) in item.spec_value", @click="specChange(index, i)", :class="{active: item.checked===i}") {{value}}
+                  li(v-for="(value, i) in item.spec_value",
+                    @click="specChange(index, i)",
+                    :class="{active: item.checked===i}") {{value}}
             // 数量加减---------------------------------------------------------------------------------
-            .counteWrapper
+            .counteWrapper(v-show="fromType!==2")
               .left 购买数量
               .right
                 .minus(@click="minus")
@@ -39,7 +41,7 @@
                 .add(@click="add")
                   img(src="./add.png")
             // 配送选择---------------------------------------------------------------------------------
-            .typeWrapper
+            .typeWrapper(v-show="fromType!==2")
               .typeName 配送方式
               .typeBtn
                 .btn(:class="{active: shippingMethods===0}", @click="shippingMethodsChange(0)") 快递配送
@@ -58,11 +60,12 @@
                   img.arrowImg(src="./arrow.png")
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
-          <!--.two-->
-            <!--div 加入购物车-->
-            <!--div 立即购买-->
-          <!--.one 到货通知-->
-          .one 确定
+          .two(v-show="bottomBtnType===0")
+            div 加入购物车
+            div 立即购买
+          .one(v-show="bottomBtnType===1", @click="saveReachGoods") 到货通知
+          .one(v-show="bottomBtnType===2") 确定
+          .one(v-show="bottomBtnType===3", @click="addTry") 预约体验
 </template>
 
 <script>
@@ -78,6 +81,7 @@
         selectionSize: [], //选中的规格
         skuData: {}, // sku信息
         shippingMethods: 0, //配送方式，0为快递 1为自提
+        bottomBtnType: 0, // 底部按钮类型 0为默认，即显示加入购物车、立即购买 1为到货通知 2为确定 3为预约体验
       }
     },
     props: {
@@ -111,6 +115,10 @@
       address: {
         type: String,
         default: ''
+      },
+      // 打开此弹框按钮类型
+      fromType: {
+        type: 0
       }
     },
     computed: {
@@ -127,6 +135,15 @@
           setTimeout(()=>{
             this.$refs.selectSizeScroll.refresh()
           }, 520)
+        }
+      },
+      fromType(newVal) {
+        if (newVal===0) {
+          this.bottomBtnType = 0
+        } else if (newVal===1) {
+          this.bottomBtnType = 2
+        } else if (newVal===2) {
+          this.bottomBtnType = 3
         }
       }
     },
@@ -166,6 +183,16 @@
           }).then(function(res){
             if (res) {
               self.storageNum = res.data.data.storage_num
+              // 切换底部按钮
+              if (self.storageNum===0) {
+                self.bottomBtnType = 1
+              } else if(self.storageNum>0 && self.fromType===0) {
+                self.bottomBtnType = 0
+              } else if (self.storageNum>0 && self.fromType===1) {
+                self.bottomBtnType = 2
+              } else if (self.fromType===2) {
+                self.bottomBtnType = 3
+              }
               self.selectionSizeFormat(res.data.data)
               self.skuData = res.data.data
               self.$emit('selection-size', self.skuData)
@@ -197,19 +224,56 @@
       // 数量加
       add() {
         if (!this.selectionSize.length) {
-          this.$message.warning('请选择规格！')
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
           return
         }
-        if (this.count === this.storageNum) {
-          this.$message.warning('数量已达到上限！')
+        if (this.count >= this.storageNum) {
+          this.$notify({
+            content: '商品库存不足',
+            bottom: 1.8
+          })
           return
         }
         this.count++
       },
       // 配送方式改变
       shippingMethodsChange(flag) {
+        if (!this.skuData.gsku_id) {
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
+          return
+        }
+
+        if (this.skuData.gsku_id && this.skuData.storage_num===0) {
+          this.$notify({
+            content: '商品库存不足',
+            bottom: 1.8
+          })
+          return
+        }
         this.shippingMethods = flag
         this.$emit('shipping-change', flag)
+      },
+      // 到货通知按钮点击
+      saveReachGoods() {
+        this.$emit('save-goods')
+      },
+      // 预约按钮点击
+      addTry() {
+        if (!this.skuData.gsku_id) {
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
+          return
+        }
+        this.selectSizeShow = false
+        this.$emit('try-show')
       },
       hide() {
         this.selectSizeShow = false
@@ -352,6 +416,16 @@
               &.active {
                 color #ff0057
                 border-color #ff0057
+              }
+              &.noStorage {
+                color #666
+                background-color #e8e8e8
+                border-color #e8e8e8
+              }
+              &.noStorageActive {
+                color #fff
+                background-color #999
+                border-color #999
               }
             }
           }

@@ -17,7 +17,7 @@
   export default {
     name: 'app',
     mounted() {
-      this.getAddressData()
+      // this.getAddressData()
       this.getDictionaries()
       // this.getLocation()
       if (localStorage.hasOwnProperty('token')) {

@@ -4,11 +4,33 @@
       .mask(v-show="selectStoreShow", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
       .contentWrapper(v-show="selectStoreShow")
+        .title
+          .left
+            img(src="./back2.png")
+          .center 专柜提货
+          .right
+            img(src="./close.png")
+        .content
+          scroll.left()
+            ul
+              li
+          scroll.right()
+            ul
+              li
 </template>
 
 <script>
+  import Scroll from 'components/scroll'
   export default {
     name: "selectStore",
+    props: {
+      data: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
     data() {
       return {
         selectStoreShow: true
@@ -21,6 +43,9 @@
       hide() {
         this.selectStoreShow = false
       }
+    },
+    components: {
+      Scroll
     }
   }
 </script>

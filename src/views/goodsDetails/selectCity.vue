@@ -12,7 +12,7 @@
             .noSelect(v-show="!selected.city.city_name && selected.province.pro_name") 请选择
             .value(v-show="selected.city.city_name") {{selected.city.city_name}}
         .content
-          scroll.left(ref="selectCityScroll")
+          scroll.left(:data="province")
             ul
               li(v-for="item in province", @click="getCity(item)") {{item.pro_name}}
           scroll.right(:data="city")
@@ -37,15 +37,10 @@
     },
     watch:{
       selectCityShow(val) {
-        if (val) {
-          setTimeout(()=>{
-            this.$refs.selectCityScroll.refresh()
-          }, 520)
+        if (val && !this.province.length) {
+          this.getProvince()
         }
       }
-    },
-    created() {
-      this.getProvince()
     },
     methods: {
       // 获取搜索省

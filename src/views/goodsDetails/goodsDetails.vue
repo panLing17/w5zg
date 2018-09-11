@@ -34,8 +34,8 @@
           span {{counterPrice | price-filter}}
         .price2
           span 用券立减:
-          span {{economyPrice | price-filter}}
-      .appointmentBtn(v-if="goodsData.carry_type===1")
+          span {{minusPrice | price-filter}}
+      .appointmentBtn(v-if="goodsData.carry_type===1", @click="addTry")
         img(src="./xin.png")
         span 预约体验
     // 现金券-------------------------------------------------------------------------------------------------
@@ -49,7 +49,7 @@
           span 通用券
           span {{userData.cash_balance | price-filter}}
     // 规格-----------------------------------------------------------------------------------------------------
-    .sizeWrapper(@click="$refs.selectSize.show()")
+    .sizeWrapper(@click="openSelectSizePop")
       .left 规格:
       .right
         .noSize(v-show="!selectionOfSizeData.length") 请选择规格
@@ -61,7 +61,7 @@
       .arrow
         img(src="./arrow.png")
     // 配送方式选择---------------------------------------------------------------------------------------------
-    .distributionWrapper(@click="$refs.selectSize.show()")
+    .distributionWrapper(@click="openSelectSizePop")
       .left 配送:
       .right
         .btn(:class="{active: shippingMethods===0}") 快递配送
@@ -97,17 +97,18 @@
         .block
           div
             img(src="./shoppingcart.png")
-            .badge 1
+            .badge(v-if="shoppingCartNum.toString().length<=2 && shoppingCartNum!==0") {{shoppingCartNum}}
+            .badge(v-if="shoppingCartNum.toString().length>2 && shoppingCartNum!==0") 99<span>+</span>
           span 购物车
         .block(@click="favorite")
           img(:src="isFavorite.flag==='Y'?require('./collection_yes.png'):require('./collection_no.png')")
           span {{isFavorite.flag==='Y'?'已收藏':'收藏'}}
       .right
-        .two(v-show="true")
-          div 加入购物车
-          div 立即购买
-        .one(v-show="false")
-          div 到货通知
+        .two(v-show="bottomBtnType===0")
+          div(@click="add") 加入购物车
+          div(@click="buy") 立即购买
+        .one(v-show="bottomBtnType===1")
+          div(@click="saveReachGoods") 到货通知
     // 标签说明-----------------------------------------------------------------------------------------------------
     tag-desc(ref="tagDesc")
     // 规格选择-----------------------------------------------------------------------------------------------------
@@ -119,23 +120,39 @@
                 :spuId="spuId",
                 :carryType="goodsData.carry_type",
                 :address="addressShow",
+                :fromType="fromType",
                 @selection-size="selectionOfSize",
                 @show-address="$refs.express.show()",
-                @shipping-change="shippingMethodsChange"
+                @shipping-change="shippingMethodsChange",
+                @save-goods="saveReachGoods",
+                @try-show="$refs.addTryPop.show()"
                 )
-    // 配送地址选择--------------------------------------------------------------------------------------------------
+    // 配送地址选择---------------------------------------------------------------------------------------------------------
     express(ref="express", :address="address", @address-change="addressChange", @select-city="$refs.selectCity.show()")
-    // 城市选择-----------------------------------------------------------------------------------------------------
+    // 城市选择-------------------------------------------------------------------------------------------------------------
     select-city(ref="selectCity", @city-change="cityChage")
+    // 预约体验-------------------------------------------------------------------------------------------------------------
+    add-try(ref="addTryPop")
+    // 自提门店地址----------------------------------------------------------------------------------------------------------
 </template>
 
 <script>
+  // 轮播
   import Slider from 'components/slider'
+  // 商品列表
   import GoodsList from 'components/goodsList'
+  // 标签说明
   import TagDesc from './tagDesc'
+  // 规格
   import SelectSize from './selectSize'
+  // 城市选择
   import SelectCity from './selectCity'
+  // 配送地址选择
   import Express from './express'
+  // 预约体验
+  import AddTry from './addTry'
+  // 自提门店
+  import SelectStore from './selectStore'
   import {mapGetters} from 'vuex'
   export default {
     name: "goodsDetails",
@@ -152,12 +169,17 @@
         cityData: {}, // 选择城市后的数据
         shippingMethods: 0, // 配送方式，0为快递 1为自提
         skuData: {}, // sku信息
+        minusPrice: 0, // 用券立减
+        shoppingCartNum: 0, //购物车数量
+        fromType: 0, // 打开规格弹框的按钮类型， 0 不处理 1 表示加入购物车或立即购买按钮，规格页需显示确认按钮 2 表示预约体验按钮
+        bottomBtnType: 0, // 底部按钮类型 0 显示购物车、立即购买 1 显示到货通知
       }
     },
     created() {
       this.getDetailsData()
       this.queryFavorite()
       this.getAddress()
+      this.getGoodsNum()
     },
     updated() {
       // 解决v-html的内容css没有效果
@@ -173,20 +195,13 @@
     },
     computed: {
       ...mapGetters(['userData']),
+      // 实付价
       directSupplyPrice() {
         return this.skuData.direct_supply_price ? this.skuData.direct_supply_price : this.goodsData.min_direct_supply_price
       },
+      // 专柜价
       counterPrice() {
         return this.skuData.counter_price ? this.skuData.counter_price : this.goodsData.min_counter_price
-      },
-      economyPrice() {
-        let temp
-        if (this.skuData.gsku_id) {
-          return this.getEconomyPrice()
-
-        } else {
-          return this.goodsData.min_counter_price - this.goodsData.min_direct_supply_price
-        }
       }
     },
     methods: {
@@ -208,6 +223,7 @@
             self.specFormat(res.data.data)
             self.goodsData = res.data.data
             self.banner = res.data.data.spu_banner
+            self.minusPrice = self.goodsData.min_counter_price - self.goodsData.min_direct_supply_price
           }
         })
       },
@@ -224,6 +240,10 @@
       selectionOfSize(data) {
         this.skuData = data
         this.selectionOfSizeData = data.selectionSize
+        // 获取用券立减价格
+        this.getEconomyPrice()
+        // 判断库存切换底部按钮显示
+        this.bottomBtnType = data.storage_num===0 ? 1 : 0
       },
       // 查询是否收藏过
       queryFavorite() {
@@ -246,7 +266,10 @@
       // 收藏按钮点击
       favorite() {
         if (!localStorage.getItem('token')) {
-          this.$message.warning('请先登录！')
+          this.$notify({
+            content: '请先登录！',
+            bottom: 1.8
+          })
           this.$router.push('/login')
           return
         }
@@ -302,6 +325,110 @@
           }
         })
       },
+      // 配送地址切换
+      addressChange(item) {
+        this.addressShow = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+      },
+      // 城市选择切换
+      cityChage(data) {
+        this.cityData = data
+        this.addressShow = data.province.pro_name + data.city.city_name
+      },
+      // 配送方式切换
+      shippingMethodsChange(flag) {
+        this.shippingMethods = flag
+      },
+      // 根据skuId获取用券立减
+      getEconomyPrice() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goods/sku/'+this.skuData.gsku_id+'/economyPrice',
+          params: {
+            skuId: this.skuData.gsku_id
+          }
+        }).then(function (res) {
+          if (res) {
+            self.minusPrice = res.data.data.useCardEconomyPrice
+          }
+        })
+      },
+      // 获取购物车数量
+      getGoodsNum() {
+        if (!localStorage.getItem('token')) {
+          return
+        }
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'shoppingCart/countCartNum',
+          params: {},
+        }).then(function (res) {
+          if (res) {
+            self.shoppingCartNum = res.data.data.carryNum + res.data.data.sendNum
+          }
+        })
+      },
+      // 正常打开规格选择弹框
+      openSelectSizePop() {
+        this.fromType = 0
+        this.$refs.selectSize.show()
+      },
+      // 加入购物车按钮点击
+      add() {
+        this.btnCommon()
+      },
+      // 立即购买按钮点击
+      buy() {
+        this.btnCommon()
+      },
+      // 点击加入购物车和立即购买按钮共同的逻辑
+      btnCommon() {
+        if (!localStorage.getItem('token')) {
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
+          this.$router.push('/login')
+          return
+        }
+        this.fromType = 1
+        this.$refs.selectSize.show()
+      },
+      // 点击到货通知按钮
+      saveReachGoods() {
+        if (!localStorage.getItem('token')) {
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
+          this.$router.push('/login')
+          return
+        }
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
+          params: {
+            gsku_id: this.skuData.gsku_id
+          }
+        }).then(function (res) {
+          if (res) {
+            self.$notify({
+              content: '如果30天内到货,会通过系统消息提醒您',
+              bottom: 1.8
+            })
+          }
+        })
+      },
+      // 点击预约体验按钮
+      addTry() {
+        if (!this.skuData.gsku_id) {
+          this.fromType = 2
+          this.$refs.selectSize.show()
+        }
+      },
+      // 获取推荐列表
       upCallback: function (page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function (curPageData) {
@@ -325,36 +452,6 @@
           successCallback && successCallback(response.data.data)
         })
       },
-      // 配送地址切换
-      addressChange(item) {
-        this.addressShow = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
-      },
-      // 城市选择切换
-      cityChage(data) {
-        this.cityData = data
-        this.addressShow = data.province.pro_name + data.city.city_name
-      },
-      // 配送方式切换
-      shippingMethodsChange(flag) {
-        this.shippingMethods = flag
-      },
-      // 根据skuId获取用券立减
-      getEconomyPrice() {
-        new Promise(resolve => {
-          let self = this
-          self.$ajax({
-            method: 'get',
-            url: self.$apiGoods + 'goods/sku/'+this.skuData.gsku_id+'/economyPrice',
-            params: {
-              skuId: this.skuData.gsku_id
-            }
-          }).then(function (res) {
-            if (res) {
-              resolve(res.data.data.useCardEconomyPrice)
-            }
-          })
-        })
-      },
       // 后退
       goBack () {
         if (window.history.length>1) {
@@ -370,7 +467,9 @@
       TagDesc,
       SelectSize,
       SelectCity,
-      Express
+      Express,
+      AddTry,
+      SelectStore
     }
   }
 </script>
@@ -723,6 +822,22 @@
         }
         div {
           position relative
+          .badge {
+            position absolute
+            left .3rem
+            top -.05rem
+            height .4rem
+            line-height .4rem
+            padding 0 .1rem
+            border-radius .4rem
+            border 1px solid #ff0057
+            color #ff0057
+            font-size .26rem
+            background-color #fff
+            span {
+              color #ff0057
+            }
+          }
         }
         img {
           width .64rem
@@ -752,6 +867,17 @@
           &:nth-child(2) {
             background-color #ff0057
           }
+        }
+      }
+      .one {
+        display flex
+        div {
+          flex 1
+          line-height 1.33rem
+          text-align center
+          color #fff
+          font-size .4rem
+          background-color #ff0057
         }
       }
     }
