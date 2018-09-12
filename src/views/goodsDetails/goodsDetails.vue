@@ -92,7 +92,7 @@
     // 底部按钮------------------------------------------------------------------------------------------------------
     .toolbarWrapper
       .left
-        .block
+        .block(@click="goService")
           img(src="./service.png")
           span 客服
         .block
@@ -127,7 +127,9 @@
                 @shipping-change="shippingMethodsChange",
                 @save-goods="saveReachGoods",
                 @try-show="$refs.addTryPop.show()",
-                @open-pop="openPop"
+                @open-pop="openPop",
+                @count="getCount",
+                @submit-goods="submitGoods"
                 )
     // 配送地址选择---------------------------------------------------------------------------------------------------------
     express(ref="express", :addressList="addressList", @address-change="addressChange", @select-city="$refs.selectCity.show()")
@@ -175,10 +177,11 @@
         skuData: {}, // sku信息
         minusPrice: 0, // 用券立减
         shoppingCartNum: 0, //购物车数量
-        fromType: 0, // 打开规格弹框的按钮类型， 0 不处理 1 表示加入购物车或立即购买按钮，规格页需显示确认按钮 2 表示预约体验按钮
+        fromType: 0, // 打开规格弹框的按钮类型， 0 不处理 1 表示加入购物车 3 立即购买按钮，规格页需显示确认按钮 2 表示预约体验按钮
         bottomBtnType: 0, // 底部按钮类型 0 显示购物车、立即购买 1 显示到货通知
         storeList: [], // 门店合集
         store: {}, // 选中的门店信息
+        count: 1, // 商品数量
       }
     },
     created() {
@@ -241,10 +244,20 @@
       },
       // 规格格式化
       specFormat(data) {
+        let informGoods = this.$store.state.informGoods
         if (data.spec_group && data.spec_group.length) {
           data.spec_group.forEach(item => {
             item.checked = -1
             item.spec_value = item.spec_value.split(',')
+            // 判断是否是从到货通知过来，如果是需把规格选中 等待接口好了再写
+            // if (informGoods) {
+            //   let s = informGoods.gspec_values.split(',')
+            //   s.forEach((sItem) => {
+            //     if (sonNow.value.trim() === item.trim()) {
+            //       now.valueIndex = sonIndex
+            //     }
+            //   })
+            // }
           })
         }
       },
@@ -261,6 +274,10 @@
         if (data.refStoreList) {
           this.storeList = data.refStoreList
         }
+      },
+      // 获取将要加入购物车或购买的数量
+      getCount(count) {
+        this.count = count
       },
       // 查询是否收藏过
       queryFavorite() {
@@ -335,7 +352,11 @@
             self.addressList = response.data.data
             self.addressList.forEach(item => {
               if (item.ra_default==='011') {
-                self.address.text = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+                self.address = {
+                  text: item.province_name + item.city_name + item.county_name + item.ra_detailed_addr,
+                  province: item.ra_province,
+                  city: item.ra_city
+                }
                 return false
               }
             })
@@ -344,14 +365,19 @@
       },
       // 配送地址切换
       addressChange(item) {
-        item.text = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
-        this.address = item
+        this.address = {
+          text: item.province_name + item.city_name + item.county_name + item.ra_detailed_addr,
+          province: item.ra_province,
+          city: item.ra_city
+        }
       },
       // 城市选择切换
       cityChage(data) {
-        this.cityData = data
-        data.text = data.province.pro_name + data.city.city_name
-        this.address = data
+        this.address = {
+          text: data.province.pro_name + data.city.city_name,
+          province: data.city.pro_no,
+          city: data.city.city_no
+        }
       },
       // 配送方式切换
       shippingMethodsChange(flag) {
@@ -392,7 +418,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/countCartNum',
+          url: self.$apiApp + 'shoppingCart/v2/countCartNum',
           params: {},
         }).then(function (res) {
           if (res) {
@@ -407,14 +433,43 @@
       },
       // 加入购物车按钮点击
       add() {
-        this.btnCommon()
+        this.fromType = 1
+        this.btnCommon(() => {
+          this.addShoppingCart()
+        })
+      },
+      // 加入购物车接口
+      addShoppingCart(callback) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/shoppingCart/add',
+          params: {
+            gskuId: this.skuData.gsku_id,
+            deliveryWays: this.shippingMethods===0?167:168, // 167为快递 168为自提
+            province: this.shippingMethods===0?this.address.province:this.store.bs_province_no,
+            city: this.shippingMethods===0?this.address.city:this.store.bs_city_no,
+            storeId: this.store.bs_id,
+            goodsNum: this.count
+          },
+        }).then(function (res) {
+          if (res) {
+            self.$notify({
+              content: '加入购物车成功',
+              bottom: 1.8
+            })
+            self.shoppingCartNum++
+            callback && callback()
+          }
+        })
       },
       // 立即购买按钮点击
       buy() {
+        this.fromType = 3
         this.btnCommon()
       },
       // 点击加入购物车和立即购买按钮共同的逻辑
-      btnCommon() {
+      btnCommon(callback) {
         if (!localStorage.getItem('token')) {
           this.$notify({
             content: '请先登录',
@@ -423,8 +478,31 @@
           this.$router.push('/login')
           return
         }
-        this.fromType = 1
-        this.$refs.selectSize.show()
+        if (!this.skuData.gsku_id) {
+          this.$refs.selectSize.show()
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
+          return
+        }
+        if (this.shippingMethods===0 && !this.address.province) {
+          this.$refs.selectSize.show()
+          this.$notify({
+            content: '请选择配送地址',
+            bottom: 1.8
+          })
+          return
+        }
+        if (this.shippingMethods===1 && !this.store.bs_id) {
+          this.$refs.selectSize.show()
+          this.$notify({
+            content: '请选择自提门店',
+            bottom: 1.8
+          })
+          return
+        }
+        callback && callback()
       },
       // 点击到货通知按钮
       saveReachGoods() {
@@ -471,6 +549,27 @@
       // 门店选择回调
       storeSelect(item) {
         this.store = item
+      },
+      // 规格弹框点击确定按钮回调
+      submitGoods(flag) {
+        if (flag===2) {
+          this.addShoppingCart(() => {
+            this.$refs.selectSize.hide()
+          })
+        }
+      },
+      // 前往客服
+      goService () {
+        let goodsData = {
+          show : 1, // 1为打开， 其他参数为隐藏（包括非零元素）
+          title : this.goodsData.gi_name,
+          desc : '',
+          picture : this.$method.imgUrlFilter(this.goodsData.gi_image_url),
+          note : '备注',
+          url : window.location.href.replace(/#/, "?#")
+        }
+        this.$store.commit('getNowGoodsData',  goodsData)
+        this.$router.push('/service')
       },
       // 获取推荐列表
       upCallback: function (page) {

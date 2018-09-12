@@ -63,10 +63,10 @@
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
           .two(v-show="bottomBtnType===0")
-            div 加入购物车
-            div 立即购买
+            div(@click="submitGoods(2)") 加入购物车
+            div(@click="submitGoods(4)") 立即购买
           .one(v-show="bottomBtnType===1", @click="saveReachGoods") 到货通知
-          .one(v-show="bottomBtnType===2") 确定
+          .one(v-show="bottomBtnType===2 || bottomBtnType===4", @click="submitGoods(bottomBtnType)") 确定
           .one(v-show="bottomBtnType===3", @click="addTry") 预约体验
 </template>
 
@@ -83,7 +83,7 @@
         selectionSize: [], //选中的规格
         skuData: {}, // sku信息
         shippingMethods: 0, //配送方式，0为快递 1为自提
-        bottomBtnType: 0, // 底部按钮类型 0为默认，即显示加入购物车、立即购买 1为到货通知 2为确定 3为预约体验
+        bottomBtnType: 0, // 底部按钮类型 0为默认，即显示加入购物车、立即购买 1为到货通知 2为确定从加入购物车来 4为确定从立即购买来 3为预约体验
       }
     },
     props: {
@@ -155,6 +155,8 @@
           this.bottomBtnType = 2
         } else if (newVal===2) {
           this.bottomBtnType = 3
+        } else if (newVal===3) {
+          this.bottomBtnType = 4
         }
       }
     },
@@ -201,11 +203,14 @@
                 self.bottomBtnType = 0
               } else if (self.storageNum>0 && self.fromType===1) {
                 self.bottomBtnType = 2
-              } else if (self.fromType===2) {
+              } else if(self.storageNum>0 && self.fromType===3) {
+                self.bottomBtnType = 4
+              }else if (self.fromType===2) {
                 self.bottomBtnType = 3
               }
               self.selectionSizeFormat(res.data.data)
               self.skuData = res.data.data
+              self.$emit('count', self.count)
               self.$emit('selection-size', self.skuData)
             }
           })
@@ -231,6 +236,7 @@
           return
         }
         this.count--
+        this.$emit('count', this.count)
       },
       // 数量加
       add() {
@@ -249,6 +255,7 @@
           return
         }
         this.count++
+        this.$emit('count', this.count)
       },
       // 配送方式改变
       shippingMethodsChange(flag) {
@@ -304,6 +311,33 @@
         }
         this.selectSizeShow = false
         this.$emit('try-show')
+      },
+      // 确定按钮点击
+      submitGoods(flag) {
+        if (!this.skuData.gsku_id) {
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
+          return
+        }
+
+        if (this.shippingMethods===0 && !this.address.province) {
+          this.$notify({
+            content: '请选择配送地址',
+            bottom: 1.8
+          })
+          return
+        }
+
+        if (this.shippingMethods===1 && !this.store.bs_id) {
+          this.$notify({
+            content: '请选择自提门店',
+            bottom: 1.8
+          })
+          return
+        }
+        this.$emit('submit-goods', flag)
       },
       hide() {
         this.selectSizeShow = false
