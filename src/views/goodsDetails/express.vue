@@ -8,7 +8,7 @@
           img(src="./back.png")
         scroll.content(ref="expressScroll")
           ul
-            li(v-for="item in address", @click="addressChange(item)")
+            li(v-for="item in addressList", @click="addressChange(item)")
               .info
                 .name {{item.ra_name}}
                 .phone {{item.ra_phone}}
@@ -23,7 +23,7 @@
   export default {
     name: "express",
     props: {
-      address: {
+      addressList: {
         type: Array,
         default() {
           return []

@@ -1,9 +1,10 @@
 <template lang="pug">
   .mescroll#goodsMescroll
     // 导航-------------------------------------------------------------------------------------------
-    .headerWrapper
+    .headerWrapper(:class="{active: topActive}")
+      span(v-show="topActive") 商品详情
       .back(@click="goBack")
-        img(src="./back@2x.png")
+        img(:src="topActive?require('./back3.png'):require('./back@2x.png')")
     // 轮播图-------------------------------------------------------------------------------------------
     .banner(v-if="banner.length")
       slider
@@ -70,15 +71,15 @@
         img(src="./arrow.png")
     //地址展示---------------------------------------------------------------------------------------------------
     .addressWrapper
-      .noAddress 请选择配送方式
-      .address
+      .noAddress(v-show="(shippingMethods===1 && !store.bs_name) || (shippingMethods===0 && !address.text)") 请选择配送方式
+      .address(v-show="shippingMethods===0 && address.text")
         img(src="./address.png")
         span 配送至:
-        span 南京市玄武区玄武区玄武区玄武大道道699-22号地方带你飞豆腐脑地
-      .address
+        span {{address.text}}
+      .address(v-show="shippingMethods===1 && store.bs_name")
         img(src="./address.png")
         span 提货门店:
-        span
+        span {{store.bs_name}}
     // 横幅广告---------------------------------------------------------------------------------------------------
     .adWrapper
       img(src="./ad.png")
@@ -119,21 +120,23 @@
                 :specGroup="goodsData.spec_group",
                 :spuId="spuId",
                 :carryType="goodsData.carry_type",
-                :address="addressShow",
+                :address="address",
                 :fromType="fromType",
+                :store="store",
                 @selection-size="selectionOfSize",
-                @show-address="$refs.express.show()",
                 @shipping-change="shippingMethodsChange",
                 @save-goods="saveReachGoods",
-                @try-show="$refs.addTryPop.show()"
+                @try-show="$refs.addTryPop.show()",
+                @open-pop="openPop"
                 )
     // 配送地址选择---------------------------------------------------------------------------------------------------------
-    express(ref="express", :address="address", @address-change="addressChange", @select-city="$refs.selectCity.show()")
+    express(ref="express", :addressList="addressList", @address-change="addressChange", @select-city="$refs.selectCity.show()")
     // 城市选择-------------------------------------------------------------------------------------------------------------
     select-city(ref="selectCity", @city-change="cityChage")
     // 预约体验-------------------------------------------------------------------------------------------------------------
-    add-try(ref="addTryPop")
+    add-try(ref="addTryPop", :data="storeList", :spuId="spuId")
     // 自提门店地址----------------------------------------------------------------------------------------------------------
+    select-store(ref="selectStore", :data="storeList", @store-select="storeSelect")
 </template>
 
 <script>
@@ -158,14 +161,15 @@
     name: "goodsDetails",
     data () {
       return {
+        topActive: false, // 头部导航标志，下滑时改变
         banner: [], // 轮播图
         spuId: '',
         goodsData: {}, // 商品详情数据
         goodsList: [], // 推荐商品列表
         isFavorite: {}, // 是否收藏过
         selectionOfSizeData: [], // 选中的规格
-        address: [], //地址合集,
-        addressShow: '', //页面上地址显示
+        addressList: [], //地址合集,
+        address: {}, //页面上地址显示
         cityData: {}, // 选择城市后的数据
         shippingMethods: 0, // 配送方式，0为快递 1为自提
         skuData: {}, // sku信息
@@ -173,6 +177,8 @@
         shoppingCartNum: 0, //购物车数量
         fromType: 0, // 打开规格弹框的按钮类型， 0 不处理 1 表示加入购物车或立即购买按钮，规格页需显示确认按钮 2 表示预约体验按钮
         bottomBtnType: 0, // 底部按钮类型 0 显示购物车、立即购买 1 显示到货通知
+        storeList: [], // 门店合集
+        store: {}, // 选中的门店信息
       }
     },
     created() {
@@ -191,7 +197,13 @@
       }
     },
     mounted() {
-      this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, () => {})
+      this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, (obj) => {
+        if (obj.preScrollY>60) {
+          this.topActive = true
+        } else {
+          this.topActive = false
+        }
+      })
     },
     computed: {
       ...mapGetters(['userData']),
@@ -239,11 +251,16 @@
       // 选择规格后返回
       selectionOfSize(data) {
         this.skuData = data
+        // 选中的规格显示用
         this.selectionOfSizeData = data.selectionSize
         // 获取用券立减价格
         this.getEconomyPrice()
         // 判断库存切换底部按钮显示
         this.bottomBtnType = data.storage_num===0 ? 1 : 0
+        // 若有门店则放入集合中
+        if (data.refStoreList) {
+          this.storeList = data.refStoreList
+        }
       },
       // 查询是否收藏过
       queryFavorite() {
@@ -315,10 +332,10 @@
           params: {},
         }).then(function (response) {
           if(response) {
-            self.address = response.data.data
-            self.address.forEach(item => {
+            self.addressList = response.data.data
+            self.addressList.forEach(item => {
               if (item.ra_default==='011') {
-                self.addressShow = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+                self.address.text = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
                 return false
               }
             })
@@ -327,16 +344,30 @@
       },
       // 配送地址切换
       addressChange(item) {
-        this.addressShow = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+        item.text = item.province_name + item.city_name + item.county_name + item.ra_detailed_addr
+        this.address = item
       },
       // 城市选择切换
       cityChage(data) {
         this.cityData = data
-        this.addressShow = data.province.pro_name + data.city.city_name
+        data.text = data.province.pro_name + data.city.city_name
+        this.address = data
       },
       // 配送方式切换
       shippingMethodsChange(flag) {
         this.shippingMethods = flag
+        // 如果是自提并且之前没选择过则弹出门店地址弹框
+        if (flag===1 && !this.store.bs_id) {
+          this.$refs.selectStore.show()
+        }
+      },
+      // 打开地址选择弹框或者门店地址弹框
+      openPop(flag) {
+        if (flag===0) {
+          this.$refs.express.show()
+        } else {
+          this.$refs.selectStore.show()
+        }
       },
       // 根据skuId获取用券立减
       getEconomyPrice() {
@@ -423,10 +454,23 @@
       },
       // 点击预约体验按钮
       addTry() {
+        if (!localStorage.getItem('token')) {
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
+          return
+        }
         if (!this.skuData.gsku_id) {
           this.fromType = 2
           this.$refs.selectSize.show()
+        } else {
+          this.$refs.addTryPop.show()
         }
+      },
+      // 门店选择回调
+      storeSelect(item) {
+        this.store = item
       },
       // 获取推荐列表
       upCallback: function (page) {
@@ -493,6 +537,20 @@
     top 0
     left 0
     z-index 10
+    &.active {
+      background-color #fff
+      border-bottom 1px solid #d7d7d7
+      span {
+        position absolute
+        top 0
+        left 0
+        width 100%
+        text-align center
+        line-height 1.32rem
+        color #333
+        font-size .48rem
+      }
+    }
     .back {
      font-size 0
      padding .26rem .4rem

@@ -5,18 +5,22 @@
     transition(name="fold")
       .contentWrapper(v-show="selectStoreShow")
         .title
-          .left
+          .left(@click="hide")
             img(src="./back2.png")
           .center 专柜提货
-          .right
+          .right(@click="hide")
             img(src="./close.png")
         .content
-          scroll.left()
+          scroll.left(ref="storeLeft", :data="data")
             ul
-              li
-          scroll.right()
+              li(v-for="(item, index) in data", :class="{active: active===index}", @click="active=index") {{item.cityName}}
+          scroll.right(ref="storeRight", :data="rightList")
             ul
-              li
+              li(v-for="item in rightList", @click="storeSelect(item)")
+                .name
+                  img(src="./address2.png")
+                  span {{item.bs_name}}
+                .address {{item.bs_address}}
 </template>
 
 <script>
@@ -33,10 +37,30 @@
     },
     data() {
       return {
-        selectStoreShow: true
+        selectStoreShow: false,
+        active: 0
+      }
+    },
+    watch: {
+      selectStoreShow(newVal) {
+        if (newVal) {
+          setTimeout(() => {
+            this.$refs.storeLeft.refresh()
+            this.$refs.storeRight.refresh()
+          }, 520)
+        }
+      },
+    },
+    computed: {
+      rightList() {
+        return this.data[this.active] ? this.data[this.active].storeList : []
       }
     },
     methods: {
+      storeSelect(item) {
+        this.$emit('store-select', item)
+        this.hide()
+      },
       show() {
         this.selectStoreShow = true
       },
@@ -76,6 +100,92 @@
     z-index 30
   }
   .contentWrapper {
-
+    height $height-pop-details
+    position fixed
+    bottom 0
+    left 0
+    width 100%
+    background-color #fff
+    z-index 30
+    .title {
+      height 1.33rem
+      display flex
+      justify-content space-between
+      align-items center
+      border-bottom 1px solid #d7d7d7
+      .left {
+        padding-left .4rem
+      }
+      .left, .right {
+        font-size 0
+        img {
+          width .58rem
+        }
+      }
+      .center {
+        font-size .48rem
+        color #333
+        font-weight 400
+      }
+      .right {
+        padding-right .4rem
+      }
+    }
+    .content {
+      display flex
+      height calc(100% - 1.33rem)
+      .left {
+        width 26%
+        ul {
+          li {
+            padding 0.34rem 0.53rem
+            border-bottom 1px solid #d7d7d7
+            font-size .4rem
+            color #333
+            line-height .56rem
+            &:last-child {
+              border none
+            }
+            &.active {
+              background-color #f2f2f2
+              color #ff0057
+              border-color #f2f2f2
+            }
+          }
+        }
+      }
+      .right {
+        width 74%
+        background #f2f2f2
+        ul {
+          padding 0 .4rem
+          li {
+            min-height 2.13rem
+            display flex
+            flex-direction column
+            justify-content center
+            border-bottom 1px solid #d7d7d7
+            .name {
+              font-size 0
+              img {
+                width .26rem
+              }
+              span {
+                color #333
+                font-size .37rem
+                line-height .53rem
+                word-break break-all
+              }
+            }
+            .address {
+              color #666
+              font-size .32rem
+              line-height .53rem
+              word-break break-all
+            }
+          }
+        }
+      }
+    }
   }
 </style>

@@ -46,17 +46,19 @@
               .typeBtn
                 .btn(:class="{active: shippingMethods===0}", @click="shippingMethodsChange(0)") 快递配送
                 .btn(v-if="carryType===1", :class="{active: shippingMethods===1}", @click="shippingMethodsChange(1)") 专柜自提
-              .address1(v-show="shippingMethods===0", @click="$emit('show-address')")
+              .address1(v-show="shippingMethods===0")
                 .desc 配送地址
-                .addressText
+                .addressText(@click="openPop(0)")
                   img.addressImg(src="./address.png")
-                  span {{address}}
+                  span(v-if="!address.text") 请选择配送地址
+                  span(v-else) {{address.text}}
                   img.arrowImg(src="./arrow.png")
               .address1(v-show="shippingMethods===1")
                 .desc 专柜地址<span>(提货地影响库存，请正确选择）</span>
-                .addressText
+                .addressText(@click="openPop(1)")
                   img.addressImg(src="./address.png")
-                  span 南京市玄武区玄武大道699-22号南京市玄武区玄武大道699-22号
+                  span(v-if="!store.bs_id") 请选择自提门店
+                  span(v-else) {{store.bs_name}}
                   img.arrowImg(src="./arrow.png")
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
@@ -113,12 +115,21 @@
       },
       // 配送地址显示
       address: {
-        type: String,
-        default: ''
+        type: Object,
+        default() {
+          return {}
+        }
       },
       // 打开此弹框按钮类型
       fromType: {
         type: 0
+      },
+      // 选中的自提门店信息
+      store: {
+        type: Object,
+        default() {
+          return {}
+        }
       }
     },
     computed: {
@@ -184,7 +195,7 @@
             if (res) {
               self.storageNum = res.data.data.storage_num
               // 切换底部按钮
-              if (self.storageNum===0) {
+              if (self.storageNum===0 && self.fromType!==2) {
                 self.bottomBtnType = 1
               } else if(self.storageNum>0 && self.fromType===0) {
                 self.bottomBtnType = 0
@@ -258,6 +269,25 @@
         }
         this.shippingMethods = flag
         this.$emit('shipping-change', flag)
+      },
+      // 打开地址选择弹框或者门店地址弹框
+      openPop(flag) {
+        if (!this.skuData.gsku_id) {
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
+          return
+        }
+
+        if (this.skuData.gsku_id && this.skuData.storage_num===0) {
+          this.$notify({
+            content: '商品库存不足',
+            bottom: 1.8
+          })
+          return
+        }
+        this.$emit('open-pop', flag)
       },
       // 到货通知按钮点击
       saveReachGoods() {
