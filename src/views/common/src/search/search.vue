@@ -5,12 +5,12 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="search",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(ref="input", type="search",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
     // 未搜索时
-    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit", ref="searchInit")
+    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit", ref="searchInit", @input-blur="inputBlur")
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
@@ -73,9 +73,10 @@
         inserted: function (el) {
           el.focus()
         },
-        update: function (el) {
-          el.focus()
-        }
+        // update: function (el) {
+        //   alert('update')
+        //   el.focus()
+        // }
       }
     },
     beforeRouteEnter(to, from, next) {
@@ -231,7 +232,7 @@
         this.searchInit = false
         //关闭过滤器
         this.$refs.searchResult.closeFilter()
-        this.focus = false
+        this.inputBlur()
         // 如果搜索结果触底就调相似/热搜接口
         if (this.searchEnd) {
           this.searchOther()
@@ -390,6 +391,10 @@
             this.searchInit = true
           }
         }
+      },
+      // 让搜索框失去焦点
+      inputBlur() {
+        this.$refs.input.blur()
       }
     },
     watch: {
@@ -416,6 +421,7 @@
     position: relative;
     height: 100vh;
     overflow: hidden;
+    background: #fff;
   }
   .searchHeader {
     display: flex;
