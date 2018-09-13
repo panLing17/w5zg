@@ -105,8 +105,7 @@
         }
       },
       spuId: {
-        type: String,
-        default: ''
+        type: Number
       },
       // 是否可自提
       carryType: {
@@ -409,7 +408,7 @@
         left 4rem
         .price {
           font-size .48rem
-          color #ff0057
+          color #f70057
           line-height .56rem
         }
         .size {
@@ -478,8 +477,8 @@
               color #333
               font-weight 400
               &.active {
-                color #ff0057
-                border-color #ff0057
+                color #f70057
+                border-color #f70057
               }
               &.noStorage {
                 color #666
@@ -553,8 +552,8 @@
             border-radius .133rem
             margin-right .26rem
             &.active {
-              border-color #ff0057
-              color #ff0057
+              border-color #f70057
+              color #f70057
             }
           }
         }
@@ -617,13 +616,13 @@
             background-color #ff8500
           }
           &:nth-child(2) {
-            background-color #ff0057
+            background-color #f70057
           }
         }
       }
       .one {
         height 100%
-        background-color #ff0057
+        background-color #f70057
         line-height 1.33rem
         text-align center
         color #fff

@@ -150,7 +150,7 @@
               transform translateX(-50%)
               width 1.6rem
               height .08rem
-              background-color #ff0057
+              background-color #f70057
             }
           }
           .value {

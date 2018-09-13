@@ -95,7 +95,7 @@
         .block(@click="goService")
           img(src="./service.png")
           span 客服
-        .block
+        .block(@click="$router.push('/shoppingCart')")
           div
             img(src="./shoppingcart.png")
             .badge(v-if="shoppingCartNum.toString().length<=2 && shoppingCartNum!==0") {{shoppingCartNum}}
@@ -184,20 +184,24 @@
         count: 1, // 商品数量
       }
     },
+    beforeRouteUpdate(to,from,next) {
+      Object.assign(this.$data, this.$options.data())
+      this.spuId = Number(to.query.id)
+      this.getDetailsData()
+      this.queryFavorite()
+      this.getAddress()
+      this.getGoodsNum()
+      next()
+    },
     created() {
+      this.spuId = Number(this.$route.query.id)
       this.getDetailsData()
       this.queryFavorite()
       this.getAddress()
       this.getGoodsNum()
     },
     updated() {
-      // 解决v-html的内容css没有效果
-      let len = this.$refs.detailsImgWrapper.children.length
-      if (len > 0) {
-        for (let i=0;i<len; i++) {
-          this.$refs.detailsImgWrapper.children[i].style.width = '100%'
-        }
-      }
+      this.updateImg()
     },
     mounted() {
       this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, (obj) => {
@@ -222,7 +226,6 @@
     methods: {
       // 根据spuid获取详情内容
       getDetailsData() {
-        this.spuId = this.$route.query.id
         if (!this.spuId) {
           return
         }
@@ -239,6 +242,9 @@
             self.goodsData = res.data.data
             self.banner = res.data.data.spu_banner
             self.minusPrice = self.goodsData.min_counter_price - self.goodsData.min_direct_supply_price
+            self.$nextTick(()=>{
+              self.updateImg()
+            })
           }
         })
       },
@@ -537,6 +543,7 @@
             content: '请先登录',
             bottom: 1.8
           })
+          this.$router.push('/login')
           return
         }
         if (!this.skuData.gsku_id) {
@@ -601,6 +608,16 @@
           this.$router.go(-1)
         } else {
           this.$router.push('/home')
+        }
+      },
+      updateImg () {
+        // 解决v-html的内容css没有效果
+        let len = this.$refs.detailsImgWrapper.getElementsByTagName('img').length
+        let iArr = this.$refs.detailsImgWrapper.getElementsByTagName('img')
+        if (len > 0) {
+          for (let i=0;i<len; i++) {
+            iArr[i].style.width = '100%'
+          }
         }
       }
     },
@@ -667,7 +684,7 @@
   .descWrapper {
     font-size .266rem
     .type1 {
-      color #ff0057
+      color #f70057
       li {
         background-color #ffe8f0
       }
@@ -721,7 +738,7 @@
         text-align center
       }
       .realIcon {
-        color #ff0057
+        color #f70057
         font-size .32rem
         line-height 1
         margin-left .16rem
@@ -731,7 +748,7 @@
           display flex
           align-items flex-end
           li {
-            color #ff0057
+            color #f70057
             font-size .693rem
             font-weight 400
             line-height .8
@@ -759,7 +776,7 @@
       }
       .price2 {
         margin-left .4rem
-        color #ff0057
+        color #f70057
       }
     }
     .appointmentBtn {
@@ -769,7 +786,7 @@
       align-items center
       justify-content center
       border-radius .346rem
-      border 1px solid #ff0057
+      border 1px solid #f70057
       position absolute
       right .4rem
       bottom .16rem
@@ -778,7 +795,7 @@
       }
       span {
         margin-left .1rem
-        color #ff0057
+        color #f70057
         font-size .32rem
       }
     }
@@ -806,7 +823,7 @@
             color #333
           }
           &:nth-child(2) {
-            color #ff0057
+            color #f70057
           }
         }
       }
@@ -891,8 +908,8 @@
           margin-left .26rem
         }
         &.active {
-          border-color #ff0057
-          color #ff0057
+          border-color #f70057
+          color #f70057
         }
       }
     }
@@ -987,12 +1004,12 @@
             line-height .4rem
             padding 0 .1rem
             border-radius .4rem
-            border 1px solid #ff0057
-            color #ff0057
+            border 1px solid #f70057
+            color #f70057
             font-size .26rem
             background-color #fff
             span {
-              color #ff0057
+              color #f70057
             }
           }
         }
@@ -1022,7 +1039,7 @@
             background-color #ff8500
           }
           &:nth-child(2) {
-            background-color #ff0057
+            background-color #f70057
           }
         }
       }
@@ -1034,7 +1051,7 @@
           text-align center
           color #fff
           font-size .4rem
-          background-color #ff0057
+          background-color #f70057
         }
       }
     }

@@ -81,7 +81,7 @@
   import store from '../../../vuex/store'
   import shareImg from '../../../assets/img/applogo@2x.png'
   import Slider from 'components/slider'
-  import GoodsList from './goodsList/goodsList'
+  import GoodsList from 'components/goodsList'
 
   export default {
     name: 'home',

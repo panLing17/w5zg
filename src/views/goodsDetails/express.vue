@@ -6,6 +6,7 @@
       .contentWrapper(v-show="expressShow")
         .title(@click="hide()")
           img(src="./back.png")
+          span 选择收货地址
         scroll.content(ref="expressScroll")
           ul
             li(v-for="item in addressList", @click="addressChange(item)")
@@ -102,8 +103,18 @@
         align-items center
         padding 0 .53rem
         border-bottom 1px solid #d7d7d7
+        position relative
         img {
           width .26rem
+        }
+        span {
+          position absolute
+          top 50%
+          left 50%
+          transform translate(-50%, -50%)
+          font-size .48rem
+          color #333
+          font-weight 400
         }
       }
       .content {
@@ -134,7 +145,7 @@
               display flex
               font-size .29rem
               .default {
-                color #ff0057
+                color #f70057
                 margin-right .1rem
               }
               .desc {
@@ -150,7 +161,7 @@
         position fixed
         bottom 0
         left 0
-        background-color #ff0057
+        background-color #f70057
         color #fff
         line-height 1.28rem
         font-size .48rem

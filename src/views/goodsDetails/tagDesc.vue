@@ -16,7 +16,7 @@
             p.block 本品牌各大商场均有售，请您到专柜体验（试穿）后再购买！不满意就退货！
             p.btnWrapper(style="margin-top: .586rem;")
               span.redBtn 专柜比价, 未省钱, 白送
-            p.block 本商城商品全部源自线下品牌专柜，90%商品的券后价，比专柜价(折后价)便宜30-70%。<span style="color: #ff0057;">您到专柜提货，请对比专柜商品售价</span>，如果您发现专柜价格（非周年庆等特殊活动或恶意行为）低于商城券后价。我们将按商品商城券后价赔付给您（单件商品仅赔付一次）。
+            p.block 本商城商品全部源自线下品牌专柜，90%商品的券后价，比专柜价(折后价)便宜30-70%。<span style="color: #f70057;">您到专柜提货，请对比专柜商品售价</span>，如果您发现专柜价格（非周年庆等特殊活动或恶意行为）低于商城券后价。我们将按商品商城券后价赔付给您（单件商品仅赔付一次）。
             p.block 欢迎您拨打赔付电话：4008-947-999
             p.line
             p.btnWrapper(style="margin-top: .53rem;")
@@ -122,8 +122,8 @@
       }
       .redBtn {
         background-color #ffe8f0
-        color #ff0057
-        border 1px solid #ff0057
+        color #f70057
+        border 1px solid #f70057
       }
       .redBtn, .blackBtn  {
         height .533rem

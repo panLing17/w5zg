@@ -133,7 +133,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/countCartNum',
+          url: self.$apiGoods + 'shoppingCart/v2/countCartNum',
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)

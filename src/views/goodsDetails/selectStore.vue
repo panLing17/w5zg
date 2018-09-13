@@ -148,7 +148,7 @@
             }
             &.active {
               background-color #f2f2f2
-              color #ff0057
+              color #f70057
               border-color #f2f2f2
             }
           }

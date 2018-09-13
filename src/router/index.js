@@ -11,7 +11,7 @@ import Home from '../views/home/index.js'
 // 分类
 import Page from '../views/page/index.js'
 // 购物车
-import ShoppingCart from '../views/shoppingCart/index.js'
+// import ShoppingCart from '../views/shoppingCart/index.js'
 // 我的
 import My from '../views/my/index.js'
 // 订单管理
@@ -47,6 +47,8 @@ import CProblems from '../views/cProblems/index.js'
 
 //新商品详情
 import GoodsDetails from '../views/goodsDetails/goodsDetails'
+//新购物车
+import ShoppingTrolley from '../views/shoppingTrolley/index'
 
 Vue.use(Router)
 const router = new Router ({
@@ -123,14 +125,16 @@ const router = new Router ({
       meta: {
         keepAlive: true
       }
-    }, {
-      path: '/goodsDetailed',
-      name: '商品详情',
-      meta: {
-        keepAlive: true
-      },
-      component: Goods.goodsDetailed
-    }, {
+    },
+    // {
+    //   path: '/goodsDetailed',
+    //   name: '商品详情',
+    //   meta: {
+    //     keepAlive: true
+    //   },
+    //   component: Goods.goodsDetailed
+    // },
+    {
       path: '/service',
       name: '在线客服',
       component: Goods.service,
@@ -328,7 +332,7 @@ const router = new Router ({
       component: Common.search
     },
     {
-      path: '/goodsDetails',
+      path: '/goodsDetailed',
       name: '新详情',
       component: GoodsDetails,
       meta: {
@@ -425,28 +429,49 @@ const router = new Router ({
         {
           path: '/shoppingCart',
           name: '购物车',
-          component: ShoppingCart.index,
+          component: ShoppingTrolley.shoppingCart,
           children: [
             {
               path: '/',
+              redirect: '/shoppingCart/express'
+            },
+            {
+              path: '/shoppingCart/express',
               name: '购物车',
-              redirect: '/shoppingCart/express',
-              component: ShoppingCart.shoppingCart,
-              children: [
-                {
-                  path: '/shoppingCart/self',
-                  name: '购物车',
-                  component: ShoppingCart.giveSelf
-                },
-                {
-                  path: '/shoppingCart/express',
-                  name: '购物车',
-                  component: ShoppingCart.express
-                }
-              ]
+              component: ShoppingTrolley.express
+            },
+            {
+              path: '/shoppingCart/self',
+              name: '购物车',
+              component: ShoppingTrolley.self
             }
           ]
         },
+        // {
+        //   path: '/shoppingCart',
+        //   name: '购物车',
+        //   component: ShoppingCart.index,
+        //   children: [
+        //     {
+        //       path: '/',
+        //       name: '购物车',
+        //       redirect: '/shoppingCart/express',
+        //       component: ShoppingCart.shoppingCart,
+        //       children: [
+        //         {
+        //           path: '/shoppingCart/self',
+        //           name: '购物车',
+        //           component: ShoppingCart.giveSelf
+        //         },
+        //         {
+        //           path: '/shoppingCart/express',
+        //           name: '购物车',
+        //           component: ShoppingCart.express
+        //         }
+        //       ]
+        //     }
+        //   ]
+        // },
         {
           path: '/cAnswers',
           name: '收藏夹',
