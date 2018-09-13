@@ -204,7 +204,7 @@
     methods: {
       goToMessage(){
         if (localStorage.hasOwnProperty('token')) {
-          this.$router.push({path:'/inform',query:{num:0}})
+          this.$router.push({path:'/inform/systemM',query:{num:0}})
         } else{
           this.$router.push('/login/login2')
         }
@@ -238,11 +238,11 @@
         if (localStorage.getItem('token')) {
           let self = this
           self.$ajax({
-            method: 'post',
-            url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+            method: 'get',
+            url: self.$apiMember + '/ucMessage/queryMessageNum',
             params: {}
           }).then(function (res) {
-            self.informNum = res.data.data.messageNum
+            self.informNum = res.data.data.totalNum
           })
         }
       },

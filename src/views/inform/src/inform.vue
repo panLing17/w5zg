@@ -7,50 +7,10 @@
     .tabQ(v-if="mstype == ''")
       ul
         li(v-for="(item, index) in titles", :class="{cli:nums === index}", @click="tabQie(item, index)") {{item}}
-          span {{index===0?'(0)':'(4)'}}
+          span {{ index===0?'('+recordS+')':'('+recordA+')' }}
       .lineDiv(ref="lineD", :class="{lefts:leftF}")
-    .empty(v-if="!contLists.length&&tabFlag==true", :class="{tops:topF}")
-      .imgs
-        img(src="../../../assets/img/coupon-icon1@2x.png")
-      .words 暂时没有系统通知
-      .goToHome(@click="$router.push('/home')") 去商城首页
-    .empty(v-if="!tabHList.length&&tabFlag==false", :class="{tops:topF}")
-      .imgs
-        img(src="../../../assets/img/coupon-icon2@2x.png")
-      .words 暂时没有推荐活动
-      .goToHome(@click="$router.push('/home')") 去商城首页
-    .contList.mescroll#collectMescroll(:class="{tops:topF, paddingS:!tabFlag}")
-      ul(v-if="tabFlag").tabS
-        li(v-for="item in contLists")
-          .topper
-            .leftT
-              .point <span v-if="item.ms_status === '5303'"></span>
-              .title(:class="{active:item.ms_status === '5303'}") {{item.msType === '802'?'到货通知':'购物车降价通知'}}
-            .rightT {{item.notice_time}}
-          .bottommer(@click="goTogGoods(item)")
-            .leftB
-              img(:src="item.ms_thumbnail | img-filter")
-            .rightB
-              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
-              .text(v-if="item.msType !== '802'") {{item.ms_title}}
-              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]? ';' + item.gspec_values.toString().split(',')[1]:''}}
-              .price
-                .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
-                .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元,速抢!
-                .rightP(v-if="item.msType === '802'") 到货啦,速抢!
-      ul(v-else).tabH
-        li(v-for="items in tabHList")
-          .times
-            .timeSon 2018-08-29
-          .conts(v-for="i in items.sonList")
-            .upper
-              .lefters
-                .pointer
-                .titleN 夏季防晒季！
-              .righters 点击查看 ＞
-            .centers
-              img(src="")
-            .downner <span>全场防晒隔离5折起！防晒喷雾50元、还有水宝宝、肌肤之钥、 OLAY小银瓶、ZA隔离霜、佰草集防晒套装，等你来抢！</span>
+    .contList#collectMescroll(:class="{tops:topF}")
+      router-view
 </template>
 
 <script>
@@ -59,188 +19,78 @@
     name: "inform",
     data(){
       return{
-        widthTwoF: '',
-        widthThreeF: '',
-        tabFlag: true,
         paddingF: '',
         leftF: '',
         topF: '',
         titles: ['系统通知', '推荐活动'],
+        recordS: '',
+        recordA: '',
         nums: 0,
-        number: this.$route.query.num,
-        looked: 1,
         mstype: '',
         contLists: [],
-        tabHList: [{sonList:[{}]}, {sonList:[{}]}, {sonList:[{}, {}]}],
+        tabHList: [],
         //tabHList: []
       }
     },
     computed: {
-      isEmpty(){
-        if (this.contLists.length === 0) {
-          return true
-        }
-        return false
-      },
       ...mapState(['position'])
     },
     watch:{
-      '$route'(to,from) {
-        if (from.path === '/my') {
-          console.log(this.$route.query.num)
-          this.$store.commit('setInformNum', this.$route.query.num)
-          this.judgeType()
-          this.nums = 0
-          this.leftF = false
-          this.tabFlag = true
-          this.mescroll.resetUpScroll()
-        }
-        if (from.path === '/goodsDetailed') {
-          this.position.forEach((now) => {
-            if (now.path === this.$route.path) {
-              this.mescroll.scrollTo(now.y, 0)
-            }
-          })
-        }
-      }
-    },
-    activated(){
-      //this.judgeType()
-      //this.nums = 0
-      //this.leftF = false
-      // if (this.number != this.$route.query.num) {
-      //   this.number = this.$route.query.num
-      //   this.mescroll.resetUpScroll()
-      // }
-      // else {
-      //   this.position.forEach((now) => {
-      //     if (now.path === this.$route.path) {
-      //       this.mescroll.scrollTo(now.y, 0)
-      //     }
-      //   })
-      // }
 
     },
-    beforeDestroy(){
-      this.mescroll.hideTopBtn()
-      this.mescroll.destroy()
+    activated(){
+      this.judgeType()
+      this.weiDuMessage()
+      if (this.$route.path === '/inform/systemM') {
+        this.nums = 0
+        this.leftF = false
+      } else{
+        this.nums = 1
+        this.leftF = true
+      }
+
     },
-    beforeRouteLeave(to, from, next){
-      if (to.path === '/my') {
-        let types = 0
-        if (this.$store.state.informNum === 0) {
-          types = ''
-        }
-        if (this.$store.state.informNum === 1) {
-          types = 802
-        }
+    mounted(){
+      this.weiDuMessage()
+    },
+    methods:{
+      // 显示未读消息的条数
+      weiDuMessage(){
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + 'ucMessage/updateMessageStatus',
-          params:{
-            msType: types
+          url: self.$apiMember + '/ucMessage/queryMessageNum',
+          params: {
           }
-        }).then( (res)=> {
-          console.log('111')
-          //self.mescroll.resetUpScroll()
-          next()
-        })
-        next(false)
-      } else {
-        next()
-      }
-    },
-    mounted(){
-      this.$store.commit('setInformNum', this.$route.query.num)
-      this.judgeType()
-      this.$mescrollInt('collectMescroll', this.upCallback, ()=>{
+        }).then(function (res) {
+          self.recordS = res.data.data.systemNum
+          if (res.data.data.systemNum>99) {
+            self.recordS = '99+'
+          } else {
+            self.recordS = res.data.data.systemNum
+          }
+          if (res.data.data.activityNum>99) {
+            self.recordA = '99+'
+          } else {
+            self.recordA = res.data.data.activityNum
+          }
 
-      }, (obj) => {
-        this.$store.commit('setPosition', {
-          path: this.$route.path,
-          y: obj.preScrollY
         })
-      })
-    },
-    methods:{
+      },
       tabQie(item, index){
         this.nums = index
         if (index === 0) {
           this.leftF = false
-          this.tabFlag = true
+          this.$router.replace({path:'/inform/systemM',query:{num:0}})
         }
         if (index === 1) {
           this.leftF = true
-          this.tabFlag = false
+          this.$router.replace('/inform/activityM')
         }
         this.$refs.lineD.style.transition = 'left .5s'
       },
-      // 锁定或者解锁上拉加载
-      lockUpDown (isLock) {
-        this.mescroll.lockUpScroll(isLock)
-      },
-      goTogGoods(e){
-        this.$store.commit('setInformGoods', e)
-        if (e.msType === '801') {
-          // 跳购物车
-          // 1.判断购物车里还有没有商品
-          let self = this
-          let isExits = false
-          self.$ajax({
-            method: 'get',
-            url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
-            params: {},
-          }).then(function (response) {
-            response.data.data.commList.forEach((item) => {
-              item.shoppingCartVOList.forEach((goods) => {
-                if (e.rel_id === goods.sc_id && e.gspu_id === goods.gspu_id) {
-                  self.$router.push('/shoppingCart')
-                  isExits = true
-                  return false
-                }
-              })
-            })
 
-            if (!isExits) {
-              self.$ajax({
-                method: 'get',
-                url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
-                params: {},
-              }).then(function (res) {
-                res.data.data.commList.forEach((item) => {
-                  item.shoppingCartVOList.forEach((goods) => {
-                    if (e.rel_id == goods.sc_id && e.gspu_id === goods.gspu_id) {
-                      self.$router.push('/shoppingCart/express')
-                      isExits = true
-                      return false
-                    }
-                  })
-                })
 
-                // 跳商品详情
-                if (!isExits) {
-                  self.$router.push({
-                    path:'/goodsDetailed',
-                    query:{
-                      id: e.gspu_id
-                    }
-                  })
-                }
-              })
-            }
-          })
-
-        } else if (e.msType === '802') {
-          // 跳商品详情
-          this.$router.push({
-            path:'/goodsDetailed',
-            query:{
-              id: e.gspu_id
-            }
-          })
-        }
-      },
       judgeType(){
         if (this.$route.query.num == 0){
           this.mstype = ''
@@ -251,33 +101,9 @@
           this.topF = true
         }
       },
-      upCallback: function (page) {
-        let self = this
-        self.getListDataFromNet(page.num, page.size, function (curPageData) {
-          if (page.num === 1) self.contLists = []
-          self.contLists = self.contLists.concat(curPageData)
-          self.mescroll.endSuccess(curPageData.length)
-        }, function () {
-          // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-          self.mescroll.endErr()
-        })
-      },
-      getListDataFromNet (pageNum,pageSize,successCallback,errorCallback) {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiMember + 'ucMessage/queryMemberMessagePage',
-          params: {
-            page: pageNum,
-            rows: pageSize,
-            msType: self.mstype
-          },
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function (response) {
-          console.log(response.data.data.rows)
-          successCallback&&successCallback(response.data.data.rows)//成功回调
-        })
-      },
+
+
+
     }
   }
 </script>
@@ -290,7 +116,7 @@
     left: 6rem !important;
   }
   .tops{
-    top: 1.28rem !important;
+
   }
   .cli{
     color: #F70057;
@@ -327,52 +153,15 @@
     bottom: 0;
     left: 1rem;
   }
-  .empty{
-    width: 100%;
-    text-align: center;
-    color: #666;
-    background-color: #f2f2f2;
-    position: fixed;
-    top: 2.21rem;
-    bottom: 0;
-    /*margin-top: 1.28rem;*/
-    padding-top: 1.06rem;
-    height: calc(100vh - 1.28rem);
-    z-index: 200;
-  }
-  .imgs{
-    /*margin-top: 1.06rem;*/
-  }
-  .imgs img{
-    width: 2.66rem;
-    height: 2.66rem;
-  }
-  .empty .words{
-    font-size: .37rem;
-    color: #777;
-    margin-top: .26rem;
-  }
-  .goToHome{
-    width: 4.26rem;
-    height: 1.17rem;
-    line-height: 1.17rem;
-    margin: .74rem auto 0;
-    background-color: #F70057;
-    border-radius: .26rem;
-    color: #fff;
-    font-size: .4rem;
-  }
+
   #collectMescroll{
-    top: 2.21rem;
-    bottom: 0;
-    position: fixed;
-    z-index: 100;
-    background-color: #f2f2f2;
+    /*top: 2.21rem;*/
+    /*bottom: 0;*/
+    /*position: fixed;*/
+    /*z-index: 100;*/
+    /*background-color: #f2f2f2;*/
   }
-  .active{
-    font-weight: 600 !important;
-    padding-left: 0 !important;
-  }
+
   .navbar{
     position: fixed;
     top: 0;

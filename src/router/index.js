@@ -461,12 +461,22 @@ const router = new Router ({
           }
         },
         {
-          path: '/inform',
+          path: '/',
           name: '通知',
           component: Inform.inform,
-          meta: {
-            keepAlive: false
-          }
+          redirect: '/inform/systemM',
+          children: [
+            {
+              path: '/inform/systemM',
+              name: '系统通知',
+              component: Inform.systemM
+            },
+            {
+              path: '/inform/activityM',
+              name: '活动通知',
+              component: Inform.activityM
+            }
+          ]
         },
         {
           path: '/my',
