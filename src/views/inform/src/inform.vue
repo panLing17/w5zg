@@ -26,10 +26,7 @@
         recordS: '',
         recordA: '',
         nums: 0,
-        mstype: '',
-        contLists: [],
-        tabHList: [],
-        //tabHList: []
+        mstype: ''
       }
     },
     computed: {
