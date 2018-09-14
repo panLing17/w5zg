@@ -449,7 +449,7 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiGoods + 'goods/shoppingCart/add',
+          url: self.$apiGoods + 'goods/v2/shoppingCart/add',
           params: {
             gskuId: this.skuData.gsku_id,
             deliveryWays: this.shippingMethods===0?167:168, // 167为快递 168为自提

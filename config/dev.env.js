@@ -5,7 +5,7 @@ module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
   DEV_HOST: '//localhost:',
   REQ_PRE : '"http://"',
-  //API_ROOT: '"192.168.2.100:"',
+  // API_ROOT: '"192.168.2.100:"',
   API_ROOT: '"192.168.2.169:"',
   MEMBER_PORT: '"8051"',
   GOODS_PORT: '"8041"',
