@@ -9,6 +9,24 @@ export const shoppingCart = {
     }
   },
   methods: {
+    // 商品选中
+    goodsChange(obj) {
+      let goods = this.data['commList'][obj.index].shoppingCartVOList[obj.i]
+      let self = this
+      self.$ajax({
+        method: 'post',
+        url: self.$apiGoods + 'shoppingCart/v2/selectShoppingCart',
+        params: {
+          scIdArray: goods.sc_id,
+          checked: goods.checked==='011'?false:true
+        }
+      }).then(function (res) {
+        if(res) {
+
+        }
+      })
+
+    },
     dataFormat(data) {
       data.commList.forEach(item => {
         item.shoppingCartVOList.forEach(goods => {

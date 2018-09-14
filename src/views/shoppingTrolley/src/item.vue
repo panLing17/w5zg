@@ -11,7 +11,7 @@
           .storeContent
             ul.goodsWrapper
               li.goods(v-for="(goods, i) in item.shoppingCartVOList")
-                .left
+                .left(@click="$emit('goods-change', {index,i})")
                   img(src="./gou.png", v-show="goods.checked==='011'")
                   .noChecked(v-show="goods.checked==='012'")
                 .right
@@ -79,7 +79,6 @@
       }
     },
     methods: {
-
     }
   }
 </script>

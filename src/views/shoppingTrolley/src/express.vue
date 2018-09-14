@@ -2,7 +2,10 @@
   .express
     no-data(v-show="isEmpty")
     .listWrapper(v-show="!isEmpty")
-      item(:data="data")
+      item(
+      :data="data",
+      @goods-change="goodsChange"
+      )
 
 </template>
 
@@ -41,7 +44,7 @@
             self.data = res.data.data
           }
         })
-      },
+      }
     },
     components: {
       NoData,
