@@ -325,6 +325,27 @@ const router = new Router ({
       component: Common.search
     },
     {
+      path: '/inform',
+      name: '通知',
+      component: Inform.inform,
+      children: [
+        {
+          path: '/',
+          redirect: '/inform/systemM'
+        },
+        {
+          path: '/inform/systemM',
+          name: '系统通知',
+          component: Inform.systemM
+        },
+        {
+          path: '/inform/activityM',
+          name: '活动通知',
+          component: Inform.activityM
+        }
+      ]
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
@@ -459,24 +480,6 @@ const router = new Router ({
           meta: {
             keepAlive: false
           }
-        },
-        {
-          path: '/',
-          name: '通知',
-          component: Inform.inform,
-          redirect: '/inform/systemM',
-          children: [
-            {
-              path: '/inform/systemM',
-              name: '系统通知',
-              component: Inform.systemM
-            },
-            {
-              path: '/inform/activityM',
-              name: '活动通知',
-              component: Inform.activityM
-            }
-          ]
         },
         {
           path: '/my',

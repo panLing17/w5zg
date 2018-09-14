@@ -18,7 +18,8 @@
               .righters 点击查看 ＞
             .centers
               img(:src="items.ms_thumbnail | img-filter")
-            .downner <span>{{items.content}}</span>
+            <!--.downner <span>{{items.content}}</span>-->
+            .downner <span>按实际贷款卡了圣诞节啦拉的记录卡时间拉力赛的距离假两件的拉斯加拉力赛的捡垃圾了阿拉斯加的拉时间的了解奥丝蓝黛家里的加拉时间的拉斯加的阿迪吉拉斯的吉拉斯肯德基拉三等奖拉三季度了</span>
 </template>
 
 <script>
@@ -39,11 +40,12 @@
         this.mescroll.destroy()
       },
       activated(){
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0)
-          }
-        })
+        // this.position.forEach((now) => {
+        //   if (now.path === this.$route.path) {
+        //     this.mescroll.scrollTo(now.y, 0)
+        //   }
+        // })
+        this.mescroll.resetUpScroll()
       },
       mounted(){
         this.$mescrollInt('activityMescroll', this.upCallback, ()=>{
@@ -62,6 +64,7 @@
         },
         // 活动通知点击后跳转哪个页面
         goToLinks(e){
+          console.log(e)
           if (e.url_type === '603') {
             this.$router.push({path:'/goodsDetailed',query:{id:e.relate_id}})
           } else{
@@ -77,9 +80,8 @@
               }
             }).then(function (res) {
               if (res.data.code === '081') {
-                this.mescroll.resetUpScroll()
+                //self.mescroll.resetUpScroll()
               }
-
             })
           }
         },
@@ -223,5 +225,14 @@
     font-size: .32rem;
     color: #666;
     line-height: .53rem;
+  }
+  .downner span{
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
 </style>
