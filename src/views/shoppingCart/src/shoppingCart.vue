@@ -2,13 +2,11 @@
   div
     nav-bar(background="rgb(247,0,87)" color="white")
       .topLeft(slot="left")
-        img(src="../../../assets/img/ic_order_return.png", style="width:.3rem", @click="goBack()")
       .topCenter(slot="center", style="color:white") 购物车
       .topRight(slot="right")
     .shoppingCartBox.mescroll#shoppingCartMescroll(:class="{positionFixed:positionFixed}")
       .cartTypeTab
         ul
-
           li(@click="tabChange(0)", :class="{tabChecked:nowTab===0}")
             p 快递配送
             span(class="animated", :class="{swing:flag}") ({{shoppingCartGoodsNum.sendNum}})
@@ -19,7 +17,7 @@
           span.side
       .content(v-loading="loading")
         transition(name="fade", mode="out-in")
-          router-view(ref="routerView", @clear="getGoodsNum")
+          router-view(@clear="getGoodsNum", @scroll="scrollToTop", ref="routerView")
         .title
           img(src="../../../assets/img/recommend.png")
         recommend(ref="recommend")
@@ -31,7 +29,7 @@
         .right
           .price
             p (不含运费) 实付：<span>{{computedPrice.allPrice | price-filter}}</span>
-            p 现金券抵扣：{{computedPrice.counterPrice-computedPrice.allPrice | price-filter}}
+            p 现金券抵扣：{{usableNetCard | price-filter}}
           .button(@click="goConfirmOrder") 结算({{allPrice}})
       .arrangement(v-if="!arrangementFlag", @click="arrangement")
         img(src="../../../assets/img/pageList.png")
@@ -74,9 +72,16 @@
     },
     components: {goodsCard, disableGoods, citySelect, cartGuide, recommend, disableTips},
     computed: {
+      usableNetCard () {
+        if (this.computedPrice.counterPrice - this.computedPrice.allPrice < this.userData.netcard_balance) {
+          return this.computedPrice.counterPrice - this.computedPrice.allPrice
+        } else {
+          return this.userData.netcard_balance
+        }
+      },
       allPrice () {
         let num = 0
-        if (this.$route.path === '/shoppingCart') {
+        if (this.$route.path === '/shoppingCart/self') {
           if (this.shoppingCartSelected.length>0) {
             this.shoppingCartSelected.forEach((now)=>{
               now.shoppingCartVOList.forEach((sonNow)=>{
@@ -96,22 +101,15 @@
 
         return num
       },
-      ...mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position'])
+      ...mapState(['shoppingCartGoodsNum', 'computedPrice', 'shoppingCartAllChecked', 'shoppingCartSelected', 'location', 'position', 'userData'])
     },
     mounted() {
+      this.getUserDat()
       // mescroll初始化
-      this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
-        this.position.forEach((now) => {
-          if (now.path === this.$route.path) {
-            this.mescroll.scrollTo(now.y, 0);
-          }
-        })
-      }, (obj) => {
-
-      })
+      this.mescrollInt()
       // 动画hack
       this.animateHack()
-      if (this.$route.path === '/shoppingCart') {
+      if (this.$route.path === '/shoppingCart/self') {
         this.nowTab = 0
       } else {
         this.nowTab = 1
@@ -128,6 +126,13 @@
     watch: {
       $route(to, from) {
         this.loading = true
+        // 按url选中选项卡
+        if (to.path === '/shoppingCart/self') {
+          this.nowTab = 1
+        }
+        if (to.path === '/shoppingCart/express') {
+          this.nowTab = 0
+        }
         // loading加载
         let s = 300  // 基础秒数
         let math = Math.random() * 500 // 随机秒数
@@ -145,18 +150,23 @@
       next()
     },
     activated () {
-      if (this.$route.path === '/shoppingCart') {
+      if (this.$route.path === '/shoppingCart/self') {
         this.nowTab = 1
       } else {
         this.nowTab = 0
       }
       // 获取商品数量
       this.getGoodsNum()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0);
-        }
-      })
+      if (!this.scroll) {
+        this.position.forEach((now) => {
+          if (now.path === this.$route.path) {
+            this.mescroll.scrollTo(now.y, 0);
+          }
+        })
+      } else {
+        this.scroll = false
+      }
+
     },
     deactivated() {
 
@@ -172,8 +182,35 @@
       this.mescroll.destroy()
     },
     methods: {
+      mescrollInt () {
+        this.$mescrollInt("shoppingCartMescroll", this.upCallback, () => {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0);
+            }
+          })
+        }, (obj) => {
+
+        })
+      },
+      scrollToTop () {
+        this.scroll = true
+        this.mescroll.scrollTo(0, 0)
+      },
       goBack () {
         this.$router.go(-1)
+      },
+      /* 获取用户信息 */
+      getUserDat () {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/currentMember',
+          params: {}
+        }).then(function (response) {
+          self.$store.commit('userDataChange', response.data.data)
+          self.userData()
+        })
       },
       // 整理
       arrangement () {
@@ -189,7 +226,7 @@
       deleteScGoods () {
         let scId = []
         let selectedDate = this.shoppingCartSelected
-        if (this.$route.path === '/shoppingCart') {
+        if (this.$route.path === '/shoppingCart/self') {
           if (selectedDate.length>0) {
             selectedDate.forEach((now,index)=>{
               now.shoppingCartVOList.forEach((sonNow,sonIndex)=>{
@@ -216,6 +253,7 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
           self.$refs['routerView'].getData()
+          self.getGoodsNum()
         })
       },
       // 锁定或者解锁上拉加载
@@ -261,18 +299,14 @@
           params: {},
         }).then(function (response) {
           self.$store.commit('shoppingCartGoodsNumChange', response.data.data)
-          if (self.nowTab == 1 && response.data.data.carryNum > 0) {
-            self.settlementShow = true
-          }
-          if(self.nowTab == 1 && response.data.data.carryNum === 0){
-            self.settlementShow = false
-          }
           if (self.nowTab == 0 && response.data.data.sendNum > 0) {
             self.settlementShow = true
-          }
-          if(self.nowTab == 0 && response.data.data.sendNum === 0){
+          } else if (self.nowTab==1 && response.data.data.carryNum > 0) {
+            self.settlementShow = true
+          } else {
             self.settlementShow = false
           }
+
         })
       },
       tabChange(num) {
@@ -283,16 +317,9 @@
         if (num === 0) {
           this.$router.push('/shoppingCart/express')
         } else {
-          this.$router.push('/shoppingCart')
+          this.$router.push('/shoppingCart/self')
         }
 
-        if (num == 0 && this.shoppingCartGoodsNum.carryNum > 0) {
-          this.settlementShow = true
-        } else if (num == 1 && this.shoppingCartGoodsNum.sendNum > 0) {
-          this.settlementShow = true
-        } else {
-          this.settlementShow = false
-        }
         /* 请求购物车上面数量 */
         this.getGoodsNum()
         /* 关闭整理操作 */

@@ -4,7 +4,7 @@
         <slot>
         </slot>
       </div>
-      <div class="dots">
+      <div class="dots" v-show="dots.length>1">
         <span class="dot" v-for="(item, index) in dots" :key="index" :class="{active: currentPageIndex===index}"></span>
       </div>
     </div>
@@ -21,6 +21,12 @@ export default {
     }
   },
   props: {
+    data: {
+      type: Array,
+      default() {
+        return []
+      }
+    },
     loop: {
       type: Boolean,
       default: true
@@ -34,6 +40,27 @@ export default {
       default: 5000
     }
   },
+  watch:{
+    // data(newVal) {
+    //   if (newVal.length) {
+    //     setTimeout(() => {
+    //       this._setSliderWidth()
+    //       this._initDots()
+    //       this._initSlider()
+    //
+    //       if (this.autoPlay) {
+    //         this._play()
+    //       }
+    //     }, 200)
+    //   }
+    // }
+  },
+  // activated() {
+  //   if (this.autoPlay) {
+  //     this.slider.refresh()
+  //     this.slider.goToPage((this.currentPageIndex+1) % this.dots.length, 0, 400)
+  //   }
+  // },
   mounted () {
     setTimeout(() => {
       this._setSliderWidth()
@@ -46,15 +73,29 @@ export default {
     }, 200)
 
 
-    window.addEventListener('resize', () => {
+    // window.addEventListener('resize', () => {
+    //   if (!this.slider) {
+    //     return
+    //   }
+    //   this._setSliderWidth(true)
+    //   this.slider.refresh()
+    // })
+  },
+  methods: {
+    resize() {
       if (!this.slider) {
         return
       }
       this._setSliderWidth(true)
       this.slider.refresh()
-    })
-  },
-  methods: {
+      if (this.autoPlay) {
+        clearTimeout(this.timer)
+        this._play()
+      }
+    },
+    refresh () {
+      this.slider.refresh()
+    },
     addClass (el, className) {
       if (this.hasClass(el, className)) {
         return
@@ -73,6 +114,7 @@ export default {
     _setSliderWidth (isResize) {
       this.children = this.$refs.sliderGroup.children
       let width = 0
+
       let sliderWidth = this.$refs.slider.clientWidth
       for (let i = 0; i < this.children.length; i++) {
         let child = this.children[i]
@@ -80,8 +122,7 @@ export default {
         child.style.width = sliderWidth + 'px'
         width += sliderWidth
       }
-
-      if (this.loop && !isResize) {
+      if (this.loop && !isResize && this.children.length>1) {
         width += 2 * sliderWidth
       }
       this.$refs.sliderGroup.style.width = width + 'px'
@@ -99,13 +140,13 @@ export default {
           threshold: 0.3,
           speed: 400
         }
-      })
-
+    })
       for (let i = 0; i < this.$refs.sliderGroup.getElementsByTagName('img').length; i++) {
         this.$refs.sliderGroup.getElementsByTagName('img')[i].onerror = (ev) => {
           ev.target.style.height = '1px'
         }
       }
+
       this.slider.on('scrollEnd', () => {
         let pageIndex = this.slider.getCurrentPage().pageX
         this.currentPageIndex = pageIndex
@@ -135,6 +176,7 @@ export default {
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .slider
     min-height: 1px
+    width: 100%
     .slider-group
       position: relative
       overflow: hidden

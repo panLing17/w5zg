@@ -1,29 +1,32 @@
 <template lang="pug">
-  .useDetailBox
-    .totalPrice(v-show="selectType==0")
-      span.desc 可用总额：
-      span.price {{totalBalance}}
-      span.desc 元
-    ul.contentList(v-show="data && data.length")
-      li.item(v-for="(item, index) in data")
-        .left(:style="{'background-image': selectType==0?'url(' + require('./redBg.png') + ')':'url(' + require('./grayBg.png') + ')'}")
-          .balance
-            .icon ￥
-            span {{item.tn_balance | number}}
-          .balanceDesc 可用余额
-        .right(:style="{'background-image': selectType==0?'url(' + require('./keyong.png') + ')':selectType==1?'url(' + require('./yishiyong.png') + ')':'url(' + require('./yiguoqi.png') + ')'}")
-          .totalBalance 面额：￥{{item.tn_amount | number}}
-          .desc1 领券：{{item.tn_created_time}}
-          .desc2 有效期：{{item.tn_end_time}}
-          .no 券号：{{item.tn_serial_number}}
-    .noData(v-show="!data")
-      img(src="./noResult.png")
-      .noDataDesc {{selectType==0?'没有可用的现金券哦！':selectType==1?'您没有已使用的现金券！':'您没有已过期的现金券！'}}
-    no-more(v-show="data && data.length")
+  scroll.useDetailBox(:data="data")
+    div.wrapper
+      .ulWrapper
+        .totalPrice(v-show="selectType==0 && totalBalance>0")
+          span.desc 可用总额：
+          span.price {{totalBalance}}
+          span.desc 元
+        ul.contentList(v-show="data && data.length")
+          li.item(v-for="(item, index) in data")
+            .left(:style="{'background-image': selectType==0?'url(' + require('./redBg.png') + ')':'url(' + require('./grayBg.png') + ')'}")
+              .balance
+                .icon ￥
+                span {{item.tn_balance | number}}
+              .balanceDesc 可用余额
+            .right(:style="{'background-image': selectType==0?'url(' + require('./keyong.png') + ')':selectType==1?'url(' + require('./yishiyong.png') + ')':'url(' + require('./yiguoqi.png') + ')'}")
+              .totalBalance 面额：￥{{item.tn_amount | number}}
+              .desc1 领券：{{item.tn_created_time}}
+              .desc2 有效期：{{item.tn_end_time}}
+              .no 券号：{{item.tn_serial_number}}
+        .noData(v-show="!data")
+          img(src="./noResult.png")
+          .noDataDesc {{selectType==0?'没有可用的现金券哦！':selectType==1?'您没有已使用的现金券！':'您没有已过期的现金券！'}}
+      no-more(v-show="data && data.length")
 </template>
 
 <script>
   import NoMore from 'components/noMore'
+  import Scroll from 'components/scroll'
     export default {
       name: "useDetail",
       data () {
@@ -37,11 +40,10 @@
           let t = 0
           if (this.data) {
             this.data.forEach(item => {
-              console.log(t)
               t += item.tn_balance
             })
           }
-          return t
+          return parseFloat(t.toFixed(2))
         }
       },
       created () {
@@ -82,27 +84,36 @@
         }
       },
       components: {
-        NoMore
+        NoMore,
+        Scroll
       }
     }
 </script>
 
 <style scoped>
   .useDetailBox {
-    padding: 0.26rem .4rem 0;
     /*margin-top: 2.26rem;*/
-    min-height: calc(100vh - 2.43rem);
+    height: calc(100vh - 2.43rem);
     overflow-x: hidden;
+  }
+  .wrapper {
+
+  }
+  .ulWrapper {
+    padding: 0.26rem .4rem 0;
+    min-height: calc(100vh - 4.04rem);
   }
   .contentList {
     margin-top: .26rem;
-    min-height: calc(100vh - 4.04rem);
   }
   .item {
     height: 2.93rem;
     display: flex;
     background: #fff;
     margin-bottom: .26rem;
+  }
+  .item:last-child {
+    margin-bottom: 0;
   }
   .item .left {
     flex: none;

@@ -29,9 +29,27 @@ import './api/apiType'
 import Message from 'vue-multiple-message'
 // 分享插件
 import share from './plugIn/share/index'
+//图片懒加载
+import VueLazyLoad from 'vue-lazyload'
 import scroll from './plugIn/scroll/index'
-Vue.use(scroll)
 
+import AdTag from 'views/home/src/goodsList/adTag'
+import Advert from 'views/home/src/goodsList/advert'
+import Notify from '@/plugIn/notification/index.js'
+
+Vue.router = router
+Vue.use(Notify)
+Vue.use(AdTag)
+Vue.use(Advert)
+Vue.use(scroll)
+Vue.use(VueLazyLoad, {
+  loading: require('assets/img/default.png'),
+  filter: {
+    webp (listener, options) {
+        listener.src = 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/' + listener.src + '?x-oss-process=style/compress'
+    }
+  }
+})
 
 
 Vue.prototype.$message = Message

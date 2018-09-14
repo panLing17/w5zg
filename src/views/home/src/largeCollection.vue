@@ -1,27 +1,32 @@
 <template lang="pug">
   .largeConllection
-    nav-bar(background="white")
+    nav-bar(background="white", v-if="navShow")
       .topLeft(slot="left", @click="$router.go(-1)")
         img(src="../../../assets/img/back@2x.png", style="width:.3rem")
       .topCenter(slot="center", style="width: 5rem;text-align: center;") {{$route.query.title}}
-      .topRight(slot="right")
+      .topRight(slot="right", @click="shareClick")
+        img(v-if="shareShow", src="../../../assets/img/shareImg.png", style="width: .58rem")
     .mescroll#largeMescroll
       .content(ref="largeConllection")
         ul.list
-          li.item(v-for="(item, index) in bankList", @click="toNext(item.url_type,item.url,item.id,item.relate_id, item.title)", :key="index")
+          li.item(v-for="(item, index) in bankList", @click="toNext(item, item.url_type,item.url,item.id,item.relate_id, item.title)", :key="index")
             img(:src="item.image | img-filter", style="width: 100%; height: 100%;")
     <!--.noData(v-if="isEmpty") 暂无更多活动-->
 </template>
 
 <script>
+  import {activityShare} from 'assets/js/mixin.js'
     export default {
       name: "largeCollection",
+      mixins:[activityShare],
       data () {
         return {
-          bankList: []
+          bankList: [],
+          id: ''
         }
       },
       created () {
+        this.id = this.$route.query.actId
         this.getList();
       },
       computed: {
@@ -34,48 +39,32 @@
           }
         }
       },
-      // deactivated () {
-      //   this.$store.commit('setPosition', {
-      //     path: '/largeCollection',
-      //     y: this.mescroll.getScrollTop()
-      //   })
-      // },
-      // activated () {
-      //   let _this = this
-      //   this.$store.state.position.forEach((now) => {
-      //     if (now.path === '/largeCollection') {
-      //       _this.mescroll.scrollTo(now.y, 0);
-      //     }
-      //   })
-      // },
-      // beforeRouteEnter (to, from , next) {
-      //   to.meta.keepAlive = false
-      //   next();
-      // },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
         this.mescroll.destroy()
       },
-      mounted () {
-        this.$mescrollInt("largeMescroll",this.upCallback, () => {
-          // this.$store.state.position.forEach((now) => {
-          //   if (now.path === this.$route.path) {
-          //     this.mescroll.scrollTo(now.y, 0);
-          //   }
-          // })
-        }, (obj) => {
-          this.$store.commit('setPosition', {
-            path: this.$route.path,
-            y: obj.preScrollY
+      activated () {
+        let _this = this
+        if (this.id != this.$route.query.actId) {
+          this.id = this.$route.query.actId
+          this.getList();
+        }else {
+          this.$store.state.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              _this.mescroll.scrollTo(now.y, 0);
+            }
           })
-        });
+        }
       },
-      // beforeRouteLeave (to, from, next) {
-      //   if (to.path === '/home/sports') {
-      //     to.meta.keepAlive = true
-      //   }
-      //   next()
-      // },
+      deactivated () {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: this.mescroll.getScrollTop()
+        })
+      },
+      mounted () {
+        this.$mescrollInt("largeMescroll",this.upCallback, () => {}, () => {})
+      },
       methods: {
         upCallback: function (page) {
           // this.mescroll.endErr()
@@ -89,7 +78,7 @@
             url: this.$apiApp + 'acActivityContent/acActivityContentList',
             methods: 'get',
             params: {
-              actId: this.$route.query.actId,
+              actId: this.id,
               parentType: this.$route.query.parentType,
               conType: '481'
             }
@@ -104,43 +93,9 @@
             })
           })
         },
-        toNext (type, url, id, relateId, title) {
-          switch (type) {
-            // 跳外链
-            case '143': window.location.href = url; break;
-            // 跳3级页面 362代表从2级跳3级
-            case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id,title: title}}); break;
-            // 跳商品详情
-            case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
-            // 跳3级页面模板2
-            case '149': this.$router.push({ path: '/activity', query: { actId: id, title: title, parentType: '362'}}); break;
-          }
+        toNext (item, type, url, id, relateId, title) {
+          this.$method.goActivity.call(this, item, 2)
         }
-        // upCallback: function(page) {
-        //   let self = this;
-        //   this.getListDataFromNet(page.num, page.size, function(curPageData) {
-        //     if(page.num === 1) self.bankList = []
-        //     self.bankList = self.bankList.concat(curPageData)
-        //     self.mescroll.endSuccess(curPageData.length)
-        //   }, function() {
-        //     //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-        //     self.mescroll.endErr();
-        //   })
-        // },
-        // getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        //   let self = this
-        //   self.$ajax({
-        //     method: 'post',
-        //     url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
-        //     params: {
-        //       page: pageNum,
-        //       rows: pageSize
-        //     },
-        //     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        //   }).then(function (response) {
-        //     successCallback&&successCallback(response.data.data);//成功回调
-        //   })
-        // }
       }
     }
 </script>

@@ -64,6 +64,7 @@
             },
           }).then(function (response) {
             self.activityGoods = response.data.data
+            self.getData()
           })
         }
       },
@@ -79,12 +80,33 @@
         }).then(function (response) {
           for (let i in response.data.data) {
             response.data.data[i].ra_default === '011' ? response.data.data[i].ra_default = true : response.data.data[i].ra_default = false
+            // if (response.data.data[i].ra_default === '011') {
+            //   response.data.data[i].ra_default = true
+            //   self.$store.commit('setAddressM', true)
+            // } else {
+            //   response.data.data[i].ra_default = false
+            // }
           }
           self.list = response.data.data
+
+          for (let j in self.list) {
+            if (self.list[j].ra_default) {
+              return self.$store.commit('setAddressM', true)
+            }
+            self.$store.commit('setAddressM', false)
+          }
         })
       },
       locationDefault (id) {
 
+      },
+      // 判断是否已经设置了默认地址
+      judgeM(){
+        for (let j in this.list) {
+          if (this.list[j].ra_default) {
+            return this.$store.commit('setAddressM', this.list[j].ra_default)
+          }
+        }
       },
       // 询问是否删除
       makeSure (id,index) {
@@ -92,6 +114,10 @@
           title: '删除地址',
           message: '确定要删除么',
           confirm: () => {
+            // if (this.list[index].ra_default && this.list.length>1) {
+            //   let defaultIndex = (index+1)%this.list.length
+            //   this.defaultChange(true,defaultIndex,this.list[defaultIndex].id)
+            // }
             let self = this
             self.$ajax({
               method: 'delete',
@@ -101,7 +127,8 @@
               },
               headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
             }).then(function (response) {
-              self.list.splice(index,1)
+              // self.list.splice(index,1)
+              self.getData()
             })
           },
           noConfirm: () => {
@@ -128,7 +155,6 @@
       changeLocation (item) {
         this.$router.push({path: '/my/localAdd', query:{id:item.id}})
         this.$store.commit('transferGive',item)
-        console.log(item)
       }
     }
   }

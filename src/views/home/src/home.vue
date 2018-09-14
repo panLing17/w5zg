@@ -1,34 +1,46 @@
 <template lang="pug">
   div
-    .homeHeader
+    .homeHeader(:class="{active: homeHeaderActive}")
       .homeHeaderLeft(@click="$router.push('/page')")
-        img.fenleiImg(src="../../../assets/img/fenlei@2x.png")
-      .homeHeaderCenter(@click="$router.push('/home/searchHistory')")
-        input.headerSearchInput(type="text", placeholder="请输入商品类别 例如: 男装")
-        img.searchImg(src="../../../assets/img/ic_home_search@2x.png")
+        img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
+        .activeHeaderLeft(v-show="homeHeaderActive")
+          img.fenleiImg(src="../../../assets/img/fenlei@2x.png", @click.prevent="")
+      .homeHeaderCenter(@click="$router.push('/search')")
+        input.headerSearchInput(type="text", :placeholder="placeholder")
+        img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->
-      .homeHeaderRight(@click="$router.push('/service')")
-        img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png")
+      .homeHeaderRight(@click="$router.push({path:'/inform',query:{num:0}})")
+        .infoCount(v-show="informNum>0") {{informNum.toString().length>2?'99':informNum}}
+        img.headerImg(src="../../../assets/img/xiaoxi1.png", v-show="!homeHeaderActive", @click.prevent="")
+        .activeHeaderRight(v-show="homeHeaderActive")
+          img.xiaoxiImg(src="../../../assets/img/xiaoxi@2x.png", @click.prevent="")
     div.homeBox.mescroll#homeMescroll(:class="{positionFixed:positionFixed}", v-loading="loadingFlag<4")
-      .banner
+      .banner(v-if="banner.length")
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
-        slider
-          div(v-for="(item, index) in banner" :key="index")
-            a(@click.prevent="goActivity(index)")
+        slider(:data="banner", ref="bannerSlider")
+          div(v-for="(item, index) in banner")
+            a(@click.prevent="goActivity(item)")
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
         //.shanxing
+      .firstFloorADList(v-if="firstFloor && firstFloor.length", @click="goActivity(firstFloor[0])")
+        img(:src="firstFloor[0].ac_phone_image | img-filter", @click.prevent="")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
       <!--.tradingArea(@click="$router.push('/searchTradingArea')")-->
         <!--img.areaImg(src="../../../assets/img/trading.png")-->
       <!--.member(@click="showAnimate")-->
         <!--img.memberImg(src="../../../assets/img/menber.png")-->
-      .title1
+      //.title1
       w-activity(:listData="activityGoods")
-      .title2
-      recommend(ref="recommend")
+      //.title2
+      .secondFloor(v-if="secondFloor.length")
+        slider(:data="secondFloor")
+          div(v-for="(item, index) in secondFloor")
+            a(@click.prevent="goActivity(item)")
+              img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
+      goods-list(:data="goodsList")
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
@@ -47,12 +59,16 @@
                 .dec1 现金券
                 .dec2 领取后3个月内有效
           .rightBtn(@click.stop="closeTicket") 立即使用
-    .animateWrapper(v-if="animateShow", @click="animateShow=false")
-      .animate
-        span(:class="{play:animateShow}") 敬
-        span(:class="{play:animateShow}") 请
-        span(:class="{play:animateShow}") 期
-        span(:class="{play:animateShow}") 待
+    .popAd(v-if="popAdShow", @click="popUpAd=[]", @touchmove.prevent="")
+      .popAdContent
+        img.close(src="../../../assets/img/close@2x.png", @click.stop.prevent="hidePopAd", @touchmove.prevent="")
+        img.img(:src="popUpAd[0].ac_phone_image | img-filter", @click.stop.prevent="popAdToNext", @touchmove.prevent="")
+    <!--.animateWrapper(v-if="animateShow", @click="animateShow=false")-->
+      <!--.animate-->
+        <!--span(:class="{play:animateShow}") 敬-->
+        <!--span(:class="{play:animateShow}") 请-->
+        <!--span(:class="{play:animateShow}") 期-->
+        <!--span(:class="{play:animateShow}") 待-->
     //home-guide
 </template>
 <script>
@@ -65,6 +81,7 @@
   import store from '../../../vuex/store'
   import shareImg from '../../../assets/img/applogo@2x.png'
   import Slider from 'components/slider'
+  import GoodsList from './goodsList/goodsList'
 
   export default {
     name: 'home',
@@ -99,12 +116,25 @@
         ],
         banner: [],
         type: '',
-        animateShow: false
+        animateShow: false,
+        homeHeaderActive: false,
+        goodsList: [],
+        firstFloor: [],
+        secondFloor: [],
+        informNum: 0,
+        placeholder: '',
+        popUpAd: []
       }
     },
-    components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider},
+    components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
     computed: {
-      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket'])
+      ...mapState(['showTicket', 'userData', 'ticketMoney', 'position', 'showRegisterTicket', 'recommendAdvert']),
+      popAdShow () {
+        return this.popUpAd.length && !window.sessionStorage.getItem('popAd')
+      }
+    },
+    created() {
+      this.adSub = 0
     },
     activated () {
       // 首页分享
@@ -114,6 +144,7 @@
           this.mescroll.scrollTo(now.y, 0);
         }
       })
+      this.informNumCheck()
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn();
@@ -132,11 +163,12 @@
           }
         })
       }, (obj) => {
-        if (obj.preScrollY>100) {
-          this.navBarBg = 'rgba(255,255,255,1)'
+        if (obj.preScrollY>60) {
+          this.homeHeaderActive = true
         } else {
-          this.navBarBg = 'rgba(255,255,255,1)'
+          this.homeHeaderActive = false
         }
+
 
         this.$store.commit('setPosition', {
           path: this.$route.path,
@@ -162,12 +194,50 @@
       //this.judgeCityNum()
       // 首页分享
       // this.loadShare()
+      this.informNumCheck()
+      this._getDefaultWord()
     },
     beforeDestroy() {
       this.mescroll.hideTopBtn();
       this.mescroll.destroy()
     },
     methods: {
+      //弹屏隐藏
+      hidePopAd() {
+        sessionStorage.setItem('popAd', '1')
+        this.popUpAd = []
+      },
+      //弹屏广告跳转
+      popAdToNext() {
+        let temp = this.popUpAd.slice()
+        this.hidePopAd()
+        this.goActivity(temp[0])
+      },
+      //获取默认搜索词
+      _getDefaultWord() {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/v2/getDefaultSeWord',
+          params: {
+          }
+        }).then(function(res){
+          self.placeholder = res.data.data
+        })
+      },
+      //获取消息条数
+      informNumCheck(){
+        if (localStorage.getItem('token')) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+            params: {}
+          }).then(function (res) {
+            self.informNum = res.data.data.messageNum
+          })
+        }
+      },
       //一次性获取所有活动数据
       getAllActivity () {
         let self = this
@@ -180,6 +250,9 @@
           self.news = response.data.data.headlineList
           self.activityGoods = response.data.data.fourActList
           self.hotButton = response.data.data.tenActList
+          self.firstFloor = response.data.data.firstFloorADList
+          self.secondFloor = response.data.data.secondFloorAdList
+          self.popUpAd = response.data.data.popUpAd
           self.loadingFlag = 4
         })
       },
@@ -301,8 +374,24 @@
       upCallback: function (page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function (curPageData) {
-          self.$refs.recommend.more(curPageData, page.num, page.size)
+          // self.$refs.recommend.more(curPageData, page.num, page.size)
+          self.goodsList = self.goodsList.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
+
+          if (page.num%2===1) {
+            setTimeout(() =>{
+              self.$advert(self.recommendAdvert.advert[self.adSub%self.recommendAdvert.advert.length])
+            }, 20)
+          }
+
+          if (page.num%2===0) {
+            setTimeout(() =>{
+              self.$adTag(self.recommendAdvert.tags[self.adSub%self.recommendAdvert.tags.length].data)
+              self.adSub++
+            }, 20)
+          }
+
+
         }, function () {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
@@ -385,41 +474,76 @@
       goSearch() {
         this.$router.push('/search')
       },
-      goActivity(index) {
-        switch (this.banner[index].ac_inlink_type) {
+      goActivity(item) {
+        // 外链解析
+        let f = ''
+        if (item.ac_outlink && item.ac_outlink.split('?').length===1) {
+          f = '?'
+        }else {
+          f = '&'
+        }
+        switch (item.ac_inlink_type) {
           // 跳三级
           case '145':
-            this.$router.push({
-              path: '/home/sports',
-              query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}
-            });
+            if (item.sh_id) {
+              this.$router.push({
+                path: '/home/sports',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
+              });
+            } else {
+              this.$router.push({
+                path: '/home/sports',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
+              });
+            }
+
             break;
           // 跳二级
           case '144':
-            this.$router.push({
-              path: '/home/largeCollection',
-              query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}
-            });
+            if (item.sh_id) {
+              this.$router.push({
+                path: '/home/largeCollection',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}
+              });
+            } else {
+              this.$router.push({
+                path: '/home/largeCollection',
+                query: {parentType: '363', actId: item.ac_id, title: item.ac_title}
+              });
+            }
+
             break;
           // 外部
           case '143':
-            window.location.href = this.banner[index].ac_outlink;
+            if (item.sh_id) {
+              window.location.href = item.ac_outlink + f + 'shId=' + item.sh_id;
+            } else {
+              window.location.href = item.ac_outlink
+            }
             break;
           // 店铺
           case '142':
-            this.$router.push({path: '/goodsDetailed', query: {id: this.banner[index].ac_inlink}});
+            this.$router.push({path: '/goodsDetailed', query: {id: item.ac_inlink}});
             break;
           // 商品
           case '141':
-            this.$router.push({path: '/goodsDetailed', query: {id: this.banner[index].ac_inlink}});
+            this.$router.push({path: '/goodsDetailed', query: {id: item.ac_inlink}});
             break;
           // 跳二级模板2
           case '148':
-            this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: this.banner[index].ac_id, title: this.banner[index].ac_title}})
+            if (item.sh_id) {
+              this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title, shId: item.sh_id}})
+            } else {
+              this.$router.push({path: '/twoLevel', query: {parentType: '363', actId: item.ac_id, title: item.ac_title}})
+            }
             break;
           // 跳3级页面模板2
           case '149':
-            this.$router.push({ path: '/activity', query: { actId: this.banner[index].ac_id, title: this.banner[index].ac_title, parentType: '363'}});
+            if (item.sh_id) {
+              this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363', shId: item.sh_id}});
+            } else {
+              this.$router.push({ path: '/activity', query: { actId: item.ac_id, title: item.ac_title, parentType: '363'}});
+            }
             break;
         }
       }
@@ -428,6 +552,18 @@
 </script>
 
 <style scoped>
+  .infoCount {
+    width: .426rem;
+    height: .32rem;
+    background: #f70057;
+    border-radius: .16rem;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    color: #fff;
+    font-size: .24rem;
+  }
   .homeHeader {
     position: absolute;
     top: 0;
@@ -435,26 +571,40 @@
     z-index: 100;
     display: flex;
     align-items: center;
-    height: 1.3rem;
+    height: 1.2rem;
     overflow: hidden;
-    background: #fff;
+    /*background: #fff;*/
     width: 100%;
+    padding: .2rem .26rem 0;
   }
-  .homeHeaderLeft {
-    padding: 0 .26rem 0 .4rem;
+  .homeHeader.active {
+    background: #fff;
+    box-shadow: 0 3px 10px -5px #5E5E5E;
+    /*padding: 0 .53rem;*/
+  }
+  .headerImg {
+    width: 1rem;
+  }
+  .homeHeaderLeft, .homeHeaderRight {
     font-size: 0;
+    height: 1rem;
+    width: 1rem;
+    text-align: center;
   }
-  .homeHeaderLeft:after {
+  .homeHeaderRight {
+    position: relative;
+  }
+  .activeHeaderLeft:after {
     content: '分类';
   }
-  .homeHeaderRight:after {
-    content: '客服';
+  .activeHeaderRight:after {
+    content: '消息';
   }
-  .homeHeaderLeft:after, .homeHeaderRight:after {
+  .activeHeaderLeft:after, .activeHeaderRight:after {
     display: block;
     text-align: center;
     font-size: 10px;
-    color: rgb(102, 102, 102);
+    color: #666;
     line-height: 1;
     margin-top: .05rem;
   }
@@ -462,13 +612,11 @@
     width: .58rem;
     pointer-events: none;
   }
-  .homeHeaderRight {
-    padding: 0 .4rem 0 .26rem;
-    font-size: 0;
-  }
+
   .homeHeaderCenter {
+    margin: 0 .4rem;
     flex: 1;
-    height: .77rem;
+    height: .8rem;
     border-radius: .4rem;
     border: 1px solid rgb(236,236,236);
     position: relative;
@@ -589,13 +737,13 @@
 
   .homeBox {
     background: #f2f2f2;
-    padding-top: 1.3rem;
+    /*padding-top: 1.3rem;*/
     padding-bottom: 2rem;
     min-height: 100vh;
   }
 
   .news {
-    margin-top: 6px;
+    border-top: 1px solid #E2E1E1;
   }
 
   .title1, .title2 {
@@ -817,6 +965,53 @@
     margin-bottom: .2rem;
     font-size: 0;
   }
+  .firstFloorADList {
+    font-size: 0;
+    max-height: 2.4rem;
+    overflow: hidden;
+  }
+  .firstFloorADList img {
+    width: 100%;
+  }
+  .secondFloor {
+    max-height: 2.4rem;
+    overflow: hidden;
+    position: relative;
+    margin: 0.13rem 0;
+  }
+  .popAd {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,.7);
+    z-index: 200;
+    height: 100vh;
+  }
+  .popAdContent {
+    width: 8rem;
+    height: 8rem;
+    overflow: hidden;
+    font-size: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .popAdContent .close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: .8rem;
+  }
+  .popAdContent .img {
+    width: 100%;
+  }
+
+
+
+
+
   .animateWrapper {
     position: fixed;
     top: 0;

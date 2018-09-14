@@ -9,7 +9,11 @@
             img(src="../../../assets/img/message@2x.png", v-if="false")
             img(src="../../../assets/img/my_account@2x.png", @click="$router.push('/my/accountB')", v-if="userData.member_type === '092'")
             <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
-            img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
+            .wrapSet(v-if="false")
+              img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
+            .wrapXiao(@click="$router.push({path:'/inform',query:{num:0}})")
+              .badge2(v-if="informNum!==0", :class="{top: informNum.toString().length>3}") {{informNum.toString().length>3?'999':informNum}}
+              img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem")
         p.center
           ul.headPic
             li(@click="$router.push('/my/settings')")
@@ -66,9 +70,13 @@
             li(@click="$router.push('/reservations')")
               img(src="../../../assets/img/ic_center_yyty@2x.png")
               .words 预约体验
+            li(@click="$router.push('/collection')")
+              img(src="../../../assets/img/shoucang@2x.png")
+              .badge(v-if="collectionNum!==0", :class="{top: collectionNum.toString().length>3}") {{collectionNum.toString().length>3?'999':collectionNum}}
+              .words 收藏夹
             li(@click="goNetKingCard")
               img(src="../../../assets/img/my_card@2x.png")
-              .badge(v-if="netcardCount!==0", :class="{top: netcardCount.toString().length>3}") {{netcardCount.toString().length>3?'999':netcardCount}}
+              <!--.badge(v-if="netcardCount!==0", :class="{top: netcardCount.toString().length>3}") {{netcardCount.toString().length>3?'999':netcardCount}}-->
               .words 现金券
             li(v-if="userData.member_type === '091'", @click="goAllCard")
               img(src="../../../assets/img/my_cashcoupon@2x.png")
@@ -76,14 +84,21 @@
             li(@click="goBankCard")
               img(src="../../../assets/img/my_bankcard@2x.png")
               .words 银行卡
+          ul.bottom
             li(@click="$router.push('/my/footMark')")
               img(src="../../../assets/img/ic_center_zj@2x.png")
               .badge(v-if="footmarkNum && footmarkNum!==0", :class="{top: footmarkNum.toString().length>3}") {{footmarkNum.toString().length>3?'999':footmarkNum}}
               .words 浏览记录
-          ul.bottom
-            li(@click="$router.push('/service')")
+            li(@click="$router.push({path:'/inform',query:{num:1}})")
+              img(src="../../../assets/img/daohuotongzhi@2x.png")
+              .badge(v-if="reachGoodsNum && reachGoodsNum!==0", :class="{top: reachGoodsNum.toString().length>3}") {{reachGoodsNum.toString().length>3?'999':reachGoodsNum}}
+              .words 到货通知
+            li(@click="$router.push('/service')").service
               img(src="../../../assets/img/service2@2x.png")
               .words 客服中心
+            li(@click="$router.push('/cProblems')").cProblem
+              img(src="../../../assets/img/cProblems.png")
+              .words 常见问题
       .title
         img(src="../../../assets/img/recommend.png")
       recommend#dataId(ref="recommend")
@@ -105,6 +120,9 @@
     name: 'my',
     data () {
       return {
+        reachGoodsNum: 0,
+        collectionNum: 0,
+        informNum: 0,
         animateShow: '',
         nameShow: '', // 控制上滑时显示的用户名
         footmarkNum: 0,
@@ -121,23 +139,34 @@
     },
     components: {myGuide, recommend},
     computed: mapState(['userData', 'position']),
+    watch:{
+      '$route'(to,from) {
+        if (from.path === '/goodsDetailed') {
+          this.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              this.mescroll.scrollTo(now.y, 0)
+            }
+          })
+        }
+      }
+    },
     created () {
       this.getOrderCount()
     },
     activated () {
+      this.collectionNumCheck()
+
       this.getUserData()
       this.getFootmarkNum()
       this.getOrderCount()
-      this.getNetcardsCount()
-      this.position.forEach((now) => {
-        if (now.path === this.$route.path) {
-          this.mescroll.scrollTo(now.y, 0)
-        }
-      })
+      // this.getNetcardsCount()
+
       // 判断页面是否向上滚动
       // window.addEventListener('scroll',this.judgeScroll,true);
       // 改变下拉刷新的样式
       // this.changeStyles();
+      this.reachGoodsNumCheck()
+      this.informNumCheck()
     },
     beforeRouteLeave (to, from, next) {
       this.mescroll.hideTopBtn()
@@ -156,6 +185,9 @@
           y: obj.preScrollY
         })
       })
+      this.reachGoodsNumCheck() // 到货通知数量
+      this.collectionNumCheck() // 收藏数量
+      this.informNumCheck() // 消息通知数量
       this.getUserData()
       this.getFootmarkNum()
       // 切换动画HACK
@@ -173,6 +205,43 @@
       // window.removeEventListener('scroll', this.judgeScroll);
     },
     methods: {
+      // 获取收藏夹的收藏商品数量
+      collectionNumCheck(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteNum',
+          params: {
+          }
+        }).then(function (res) {
+          self.collectionNum = res.data.data
+        })
+      },
+      // 查询用户消息条数
+      informNumCheck(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          params: {
+          }
+        }).then(function (res) {
+          self.informNum = res.data.data.messageNum
+        })
+      },
+      // 查询到货通知消息条数
+      reachGoodsNumCheck(){
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          params: {
+            msType: 802
+          }
+        }).then(function (res) {
+          self.reachGoodsNum = res.data.data.messageNum
+        })
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -258,7 +327,7 @@
             self.getUserInfo()
           }
           if (response.data.data.member_type === '091') {
-            self.getNetcardsCount()
+            // self.getNetcardsCount()
             if (response.data.data.reg_present === '11') {
               self.$store.commit('setShowRegisterTicket', false)
             } else {
@@ -385,11 +454,17 @@
     font-size: .4rem;
     line-height: .8rem;
   }
-  .toper .righter img{
-    width: .7rem;
+  .toper .righter{
+    display: flex;
+    align-items: center;
   }
-  .toper .righter img:nth-child(2){
-    margin-left: .2rem;
+  .toper .righter img{
+    width: .58rem;
+    height: .58rem;
+    vertical-align: top;
+  }
+  .toper .righter img:last-child{
+    margin-left: .37rem;
   }
   .head .center{
     margin-top: .3rem;
@@ -482,6 +557,9 @@
     padding-bottom: .2rem;
     background-color: rgb(242,242,242);
   }
+  .wrapMyTreasure{
+    padding-bottom: 0;
+  }
 	.myOrderForm,
 	.myTreasure{
 		background-color: #fff;
@@ -499,7 +577,7 @@
 		font-size: .4rem;
 	}
   .myOrderForm ul.top li:nth-child(2){
-    padding-top: .1rem;
+    padding-top: .08rem;
     font-size: .3rem;
   }
 	.myOrderForm ul.bottom{
@@ -535,8 +613,31 @@
 	.myTreasure ul.bottom{
 		padding: .4rem .4rem 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
 	}
+  .myTreasure ul.bottom:nth-child(3){
+    padding: .4rem .4rem 0;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .myTreasure ul.bottom:nth-child(3) li{
+    margin-right: .73rem;
+  }
+  .myTreasure ul.bottom:nth-child(3) li:nth-child(2){
+    margin-right: .6rem;
+  }
+  .myTreasure ul.bottom li{
+    margin-right: .9rem;
+  }
+  .myTreasure ul.bottom li:nth-child(5){
+    margin-right: 0;
+  }
+  .myTreasure ul.bottom li.service{
+    margin-right: .57rem;
+  }
+  .myTreasure ul.bottom li.cProblem{
+
+  }
 	.myTreasure ul.bottom li img{
 		width: .96rem;
 	}
@@ -556,16 +657,17 @@
   }
   /*推荐*/
   .title{
-    height: 1rem;
     width: 100%;
     position: relative;
     display: flex;
     background: #f2f2f2;
     justify-content: center;
     align-items: center;
+    padding: .37rem 0;
   }
   .title img{
-    width: 55%;
+    width: 4.18rem;
+    height: .58rem;
   }
   .badge {
     padding: 0 .1rem;
@@ -589,7 +691,6 @@
     right: .1rem;
     top: -.105rem;
     color: #fff;
-
   }
 
   .myTreasure ul.bottom li {
@@ -649,5 +750,31 @@
       transform: translate(0) rotate(0) scale(1);
       opacity: 1;
     }
+  }
+  .wrapXiao{
+    position: relative;
+  }
+  .badge2 {
+    padding: 0 .1rem;
+    border-radius: .4rem;
+    background: #fff;
+    color: rgb(246,0,87);
+    font-size: .25rem;
+    position: absolute;
+    right: -.05rem;
+    top: -.15rem;
+    line-height: .37rem;
+  }
+  .badge2.top {
+    width: .8rem;
+    overflow: hidden;
+    padding: 0 .1rem 0 0;
+  }
+  .badge2.top:after {
+    content: '+';
+    position: absolute;
+    right: .1rem;
+    top: -.105rem;
+    color: #fff;
   }
 </style>

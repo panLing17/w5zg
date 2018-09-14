@@ -10,6 +10,7 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoods", :key="index", :list="i")
+    specChange(ref="specChange")
     onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
@@ -19,6 +20,7 @@
   import disableGoods from './sendDisableGoods'
   import citySelect from './citySelect'
   import {mapState} from 'vuex'
+  import specChange from './specChange'
   import {bus} from '../../../bus'
   export default {
     name: 'express',
@@ -35,7 +37,7 @@
         disableGoods: []
       }
     },
-    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect},
+    components:{goodsCard, disableGoods, citySelect, onlyStoreSelect,specChange},
     computed:{
       allClick(){
         return this.$store.state.shoppingCartAllChecked
@@ -78,6 +80,10 @@
       // bus.$on('expressGetData',()=>{this.getData()})
     },
     methods: {
+      openSpecChange (id, spec) {
+        this.$refs['specChange'].show = true
+        this.$refs['specChange'].init(id, spec)
+      },
       storeChange (data) {
         let {
           bs_city_no: cityId,
@@ -177,15 +183,28 @@
           url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
           params: {},
         }).then(function (response) {
+          console.log(response.data.data.commList)
           // 转为数组
           let array = []
+          let topIndex = {}
           for (let i in response.data.data.commList) {
             if (response.data.data.commList[i].checked === '011') {
               response.data.data.commList[i].checked = true
             } else {
               response.data.data.commList[i].checked = false
             }
-            response.data.data.commList[i].shoppingCartVOList.forEach((now)=>{
+            response.data.data.commList[i].shoppingCartVOList.forEach((now, index) => {
+              // 如果是降价通知过来的，需将商品第一个显示
+              if (self.$store.state.informGoods) {
+                if (self.$store.state.informGoods.rel_id == now.sc_id && self.$store.state.informGoods.gspu_id == now.gspu_id) {
+                  self.$emit('scroll')
+                  self.$store.commit('setInformGoods', null)
+                  topIndex = {
+                    first: i,
+                    second: index
+                  }
+                }
+              }
               if (now.checked === '011') {
                 now.checked = true
               } else {
@@ -195,6 +214,19 @@
               now.editClose = true
             })
             array.push(response.data.data.commList[i])
+          }
+          // 交换位置
+          if (topIndex.first) {
+            let temp = array[topIndex.first].shoppingCartVOList[0]
+            if (topIndex.second != 0) {
+              array[topIndex.first].shoppingCartVOList[0] = array[topIndex.first].shoppingCartVOList[topIndex.second]
+              array[topIndex.first].shoppingCartVOList[topIndex.second] = temp
+            }
+            if (topIndex.first != 0) {
+              temp = array[0]
+              array[0] = array[topIndex.first]
+              array[topIndex.first] = temp
+            }
           }
           self.goodsList = array
           self.disableGoods = response.data.data.failure

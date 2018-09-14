@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '../vuex/store.js'
 import Message from 'vue-multiple-message'
-// 用户操作（登录注册等）
+// 用户操作（  登录注册等 ）
 import User from '../views/user/index.js'
 // 主要操作页总路由
 import Main from '../views/main'
@@ -35,6 +35,15 @@ import Acitivity from '../views/home/src/activity/index'
 import Marketing from '../views/common/src/marketing/index'
 
 import shareImg from '../assets/img/applogo@2x.png'
+
+//收藏夹
+import Collection from '../views/collection/index.js'
+
+//通知
+import Inform from '../views/inform/index.js'
+
+// 常见问题
+import CProblems from '../views/cProblems/index.js'
 
 Vue.use(Router)
 const router = new Router ({
@@ -283,30 +292,38 @@ const router = new Router ({
         keepAlive: true
       }
     },
-    // {
-    //   path: '/marketing/rankingList',
-    //   name: '排行榜',
-    //   component: Marketing.rankingList,
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // {
-    //   path: '/marketing/prizeResult',
-    //   name: '获奖结果',
-    //   component: Marketing.prizeResult,
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // {
-    //   path: '/marketing/selectSize',
-    //   name: '选择尺码',
-    //   component: Marketing.selectSize,
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
+    {
+      path: '/activity',
+      name: '活动集合',
+      component: Acitivity.activity,
+      children: [
+        {
+          path: '',
+          name: '活动集合内容',
+          component: Acitivity.activityContent
+        }
+      ]
+    },
+    {
+      path: '/twoLevel',
+      name: '新二级活动',
+      component: Acitivity.twoLevel
+    },
+    {
+      path: '/home/largeCollection',
+      name: '二级活动',
+      component: Home.largeCollection
+    },
+    {
+      path: '/home/sports',
+      name: '三级活动',
+      component: Home.sports
+    },
+    {
+      path: '/search',
+      name: '新搜索',
+      component: Common.search
+    },
     {
       path: '/',
       name: '应用',
@@ -371,45 +388,18 @@ const router = new Router ({
               meta: {
                 keepAlive: true
               }
-            },
-            {
-              path: '/home/largeCollection',
-              name: '二级活动',
-              component: Home.largeCollection
-            },
-            {
-              path: '/home/sports',
-              name: '三级活动',
-              component: Home.sports
-            },
-            {
-              path: '/activity',
-              name: '活动集合',
-              component: Acitivity.activity,
-              children: [
-                {
-                  path: '',
-                  name: '活动集合内容',
-                  component: Acitivity.activityContent
-                }
-              ]
-            },
-            {
-              path: '/twoLevel',
-              name: '新二级活动',
-              component: Acitivity.twoLevel
             }
           ]
         },
         {
           path: '/home/searchHistory',
           name: '搜索历史',
-          component: Home.searchHistory
+          component: Home.searchHistory,
         },
         {
           path: '/page',
           name: '分类',
-          component: Page.page,
+          component: Page.page
         },
         {
           path: '/page/commodityList',
@@ -429,10 +419,11 @@ const router = new Router ({
             {
               path: '/',
               name: '购物车',
+              redirect: '/shoppingCart/express',
               component: ShoppingCart.shoppingCart,
               children: [
                 {
-                  path: '/',
+                  path: '/shoppingCart/self',
                   name: '购物车',
                   component: ShoppingCart.giveSelf
                 },
@@ -444,7 +435,40 @@ const router = new Router ({
               ]
             }
           ]
-        }, {
+        },
+        {
+          path: '/cAnswers',
+          name: '收藏夹',
+          component: CProblems.cAnswer,
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: '/cProblems',
+          name: '收藏夹',
+          component: CProblems.cProblem,
+          meta: {
+            keepAlive: false
+          }
+        },
+        {
+          path: '/collection',
+          name: '收藏夹',
+          component: Collection.collection,
+          meta: {
+            keepAlive: false
+          }
+        },
+        {
+          path: '/inform',
+          name: '通知',
+          component: Inform.inform,
+          meta: {
+            keepAlive: false
+          }
+        },
+        {
           path: '/my',
           name: '我的',
           component: My.index,
@@ -943,8 +967,8 @@ router.beforeEach ((to, from, next) => {
 router.afterEach((to, from) => {
   new Vue().$initShare({
     sharePhoto: getLocationHref() + '/' + shareImg.split('/w5mall-web/')[1],
-    shareTitle: '万物直供商城正品保障',
-    shareDesc: '万物直供商城价格优惠，正品保障，支持专柜提货，快来买买买',
+    shareTitle: '万物直供商城 正品保障',
+    shareDesc: '万物直供商城，价格优惠，正品保障，支持专柜提货！',
     link: getLocationHref() + '/?#' + to.fullPath
   })
 })

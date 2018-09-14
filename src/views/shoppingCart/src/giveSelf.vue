@@ -10,6 +10,7 @@
         span 失效商品
         .delete(@click="clearAllDisableGoods") 清空失效商品
       disable-goods(v-for="(i,index) in disableGoodsList", :key="index", :list="i")
+    specChange(ref="specChange")
     onlyStoreSelect(:show="changeStoreFlag", @close="changeStoreFlag = false", @change="storeChange")
 </template>
 
@@ -17,6 +18,7 @@
   import onlyStoreSelect from '../../goods/src/onlyStoreSelect'
   import selfGoods from './selfGoods'
   import disableGoods from './sendDisableGoods'
+  import specChange from './specChange'
   import {mapState} from 'vuex'
   import {bus} from '../../../bus'
   export default {
@@ -35,7 +37,7 @@
     computed: {
       ...mapState(['shoppingCartSelected'])
     },
-    components: {selfGoods, disableGoods, onlyStoreSelect},
+    components: {selfGoods, disableGoods, onlyStoreSelect, specChange},
     mounted () {
       this.getData()
       bus.$on('selfCarryUpData',()=>{
@@ -51,6 +53,10 @@
     //   })
     // },
     methods: {
+      openSpecChange (id, spec) {
+        this.$refs['specChange'].show = true
+        this.$refs['specChange'].init(id, spec)
+      },
       storeChange (data) {
         let storeId = this.nowGoodsData.sc_id
         // 执行切换请求
@@ -112,9 +118,22 @@
           // })
 
           // console.log(storeListOfJson)
-            response.data.data.commList.forEach((now)=>{
+
+            let topIndex = {}
+            response.data.data.commList.forEach((now, index)=>{
               let checkedFlag = 0
-              now.shoppingCartVOList.forEach((sonNow)=>{
+              now.shoppingCartVOList.forEach((sonNow, i)=>{
+                // 如果是降价通知过来的，需将商品第一个显示
+                if (self.$store.state.informGoods) {
+                  if (self.$store.state.informGoods.rel_id == sonNow.sc_id && self.$store.state.informGoods.gspu_id == sonNow.gspu_id) {
+                    self.$store.commit('setInformGoods', null)
+                    topIndex = {
+                      first: index,
+                      second: i
+                    }
+                  }
+                }
+
                 if (sonNow.checked !== '011') {
                   checkedFlag += 1
                 }
@@ -134,6 +153,21 @@
                 sonNow.editClose = true
               })
             })
+          // 交换位置
+          if (topIndex.first) {
+            let temp = response.data.data.commList[topIndex.first].shoppingCartVOList[0]
+            if (topIndex.second != 0) {
+              response.data.data.commList[topIndex.first].shoppingCartVOList[0] = response.data.data.commList[topIndex.first].shoppingCartVOList[topIndex.second]
+              response.data.data.commList[topIndex.first].shoppingCartVOList[topIndex.second] = temp
+            }
+            if (topIndex.first != 0) {
+              temp = response.data.data.commList[0]
+              response.data.data.commList[0] = response.data.data.commList[topIndex.first]
+              response.data.data.commList[topIndex.first] = temp
+            }
+          }
+
+
           self.goodsList = response.data.data.commList
           self.disableGoodsList = response.data.data.failure
           self.$nextTick(()=>{
@@ -143,7 +177,6 @@
         })
       },
       changeType (data,fun) {
-        console.log(data)
         this.$confirm({
           title: '更换配送方式',
           message: '确定要更换为快递配送吗？',

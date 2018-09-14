@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut")
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
-      .main(v-show="show")
+      .main.mescroll#locationSelect(v-show="show")
         .title
           img(src="../../../assets/img/Page1@2x.png", @click="close")
         .locationList(ref="locationList")
@@ -46,35 +46,27 @@
       location: Array
     },
     mounted () {
-      setTimeout(() => {
-        if (this.locationSelectScroll) {
-          this.locationSelectScroll.refresh()
-        }else {
-          this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
-        }
-      }, 20)
     },
     watch:{
       show (val) {
         if (val) {
-          //   // mescroll初始化
-          //   this.$mescrollInt("locationSelect",this.upCallback)
-          //   this.mescroll.lockDownScroll(true)
-          //   setTimeout(()=>{
-          //     this.mescroll.hideUpScroll()
-          //   },500)
-          // } else {
-          //   this.mescroll.hideTopBtn();
-          //   this.mescroll.destroy()
-          // }
-          setTimeout(() => {
-            if (this.locationSelectScroll) {
-              this.locationSelectScroll.refresh()
-            }else {
-              this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
-            }
-          }, 20)
+          // mescroll初始化
+          this.$mescrollInt("locationSelect",this.upCallback)
+          this.mescroll.lockDownScroll(true)
+          setTimeout(()=>{
+            this.mescroll.hideUpScroll()
+          },500)
+        } else {
+          this.mescroll.hideTopBtn();
+          this.mescroll.destroy()
         }
+        /*setTimeout(() => {
+          if (this.locationSelectScroll) {
+            this.locationSelectScroll.refresh()
+          }else {
+            this.locationSelectScroll = new BScroll(this.$refs.locationList, {click: true})
+          }
+        }, 20)*/
       }
     },
     methods:{
@@ -141,11 +133,12 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 104;
+    padding-bottom: 2rem;
   }
   .title {
     height: 1.3rem;
@@ -160,7 +153,7 @@
   /*-------------*/
   .locationList {
     /*overflow-y: auto;*/
-    height: 7.42rem;
+    /*height: 7.42rem;*/
     padding: 0 .53rem;
     overflow: hidden;
   }
@@ -206,24 +199,27 @@
   }
   .button {
     /*height: 1.5rem;*/
-    /*width: 100%;*/
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
+    margin-top: .3rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .moren {
     color: rgb(245,0,87);
     margin-right: .1rem;
   }
   .btn {
-    height: 1.28rem;
+    height: 1rem;
+    width: 7rem;
+    border-radius: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     background: rgb(245,0,87);
     color: #fff;
-    font-size: .48rem;
+    font-size: .4rem;
   }
   .btn img {
     margin-right: .2rem;

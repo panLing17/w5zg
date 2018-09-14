@@ -17,6 +17,7 @@
   export default {
     name: 'app',
     mounted() {
+      this.getAddressData()
       this.getDictionaries()
       // this.getLocation()
       if (localStorage.hasOwnProperty('token')) {
@@ -138,6 +139,26 @@
             } else {
               self.$store.commit('setShowRegisterTicket', false)
             }
+          }
+        })
+      },
+
+      getAddressData () {
+        if (!localStorage.hasOwnProperty('token')) {
+          return
+        }
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'receivingAddress/addresses',
+          params: {},
+        }).then(function (response) {
+          for (let i in response.data.data) {
+            //response.data.data[i].ra_default === '011' ? response.data.data[i].ra_default = true : response.data.data[i].ra_default = false
+            if (response.data.data[i].ra_default === '011') {
+              return self.$store.commit('setAddressM', true)
+            }
+            self.$store.commit('setAddressM', false)
           }
         })
       }
