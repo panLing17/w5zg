@@ -18,8 +18,7 @@
               .righters 点击查看 ＞
             .centers
               img(:src="items.ms_thumbnail | img-filter")
-            <!--.downner <span>{{items.content}}</span>-->
-            .downner <span>按实际贷款卡了圣诞节啦拉的记录卡时间拉力赛的距离假两件的拉斯加拉力赛的捡垃圾了阿拉斯加的拉时间的了解奥丝蓝黛家里的加拉时间的拉斯加的阿迪吉拉斯的吉拉斯肯德基拉三等奖拉三季度了</span>
+            .downner <span>{{items.content}}</span>
 </template>
 
 <script>
