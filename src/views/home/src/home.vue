@@ -1,10 +1,10 @@
 <template lang="pug">
   div
     .homeHeader(:class="{active: homeHeaderActive}")
-      .homeHeaderLeft(@click="$router.push('/page')")
-        img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
+      .homeHeaderLeft(@click="toScan")
+        img.headerImg(src="../../../assets/img/sao.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderLeft(v-show="homeHeaderActive")
-          img.fenleiImg(src="../../../assets/img/fenlei@2x.png", @click.prevent="")
+          img.fenleiImg(src="../../../assets/img/sao2.png", @click.prevent="")
       .homeHeaderCenter(@click="$router.push('/search')")
         input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
@@ -202,6 +202,16 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 去扫一扫
+      toScan() {
+        wx.scanQRCode({
+          needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: function (res) {
+            var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+          }
+        });
+      },
       //弹屏隐藏
       hidePopAd() {
         sessionStorage.setItem('popAd', '1')
@@ -595,7 +605,7 @@
     position: relative;
   }
   .activeHeaderLeft:after {
-    content: '分类';
+    content: '扫一扫';
   }
   .activeHeaderRight:after {
     content: '消息';
