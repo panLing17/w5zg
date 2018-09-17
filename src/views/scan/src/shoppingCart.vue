@@ -30,13 +30,13 @@
               .priceWrapper
                 .direct 实付价:<span>{{item.direct_supply_price}}</span>
                 .counter 专柜价:{{item.counter_price}}
-              .del
+              .del(@click="delGoods(item)")
                 img(src="./img/del.png")
         // 失效商品
         .invalid
           .header
             .left 失效商品共 2 件
-            .right 情况失效商品
+            .right 清空失效商品
           ul.itemWrapper
             li.item(v-for="(item, index) in data.commList[0].shoppingCartVOList")
               .left
@@ -46,17 +46,29 @@
                 .name {{item.gi_name}}
                 .size {{sizeFormat(item.specVOList)}}
                 .desc 该商品已失效
-                .del
+                .del(@click="delGoods(item)")
                   img(src="./img/del.png")
+        .bottom
+          .left
+          .center 已到最底部
+          .right
+    .toolbar
+      .left
+        .top (不含运费)实付:<span>￥2635.55</span>
+        .bottom 现金券可抵扣:￥33.6
+      .right 结算(5)
+    tips-pop(:data="temp")
 </template>
 
 <script>
   import Scroll from 'components/scroll'
+  import TipsPop from './tipsPop'
   export default {
     name: "shoppingCart",
     data() {
       return {
-        data: []
+        data: [],
+        temp: [0,0,0,0,0,0,0,0]
       }
     },
     created() {
@@ -104,10 +116,22 @@
         })
         str = str.substring(0, str.length-1)
         return str
+      },
+      // 删除商品
+      delGoods(item) {
+        this.$verify({
+          content: '确认删除所选商品吗？',
+          rightText: '删除',
+          leftText: '取消',
+          rightFn: (item) => {
+
+          }
+        })
       }
     },
     components: {
-      Scroll
+      Scroll,
+      TipsPop
     }
   }
 </script>
@@ -181,6 +205,7 @@
     }
     .contentWrapper {
       height calc(100% - 4rem)
+      overflow hidden
       .itemWrapper {
         background-color #fff
         .item {
@@ -188,6 +213,9 @@
           display flex
           border-bottom 1px solid #e7e7e7
           position relative
+          &:last-child {
+            border none
+          }
           .left {
             font-size 0
             width 2.4rem
@@ -322,6 +350,7 @@
           font-size .32rem
           font-weight 400
           background-color #fff
+          border-bottom 1px solid #e7e7e7
           .left {
             color #666
           }
@@ -329,6 +358,60 @@
             color #f8085c
           }
         }
+      }
+      .bottom {
+        display flex
+        justify-content center
+        align-items center
+        height 1.44rem
+        .left, .right {
+          background-color #999
+          height 1px
+          width 1.8rem
+        }
+        .center {
+          color #999
+          font-size .26rem
+          font-weight 400
+        }
+      }
+    }
+    .toolbar {
+      display flex
+      height 1.44rem
+      position fixed
+      bottom 0
+      left 0
+      width 100%
+      background-color #fff
+      .left {
+        flex 1
+        display flex
+        flex-direction column
+        justify-content center
+        align-items flex-end
+        padding-right .32rem
+        font-size .32rem
+        font-weight 400
+        color #333
+        .top {
+          span {
+            color #f70057
+            font-size .42rem
+          }
+        }
+        .bottom {
+          margin-top .16rem
+        }
+      }
+      .right {
+        width 3.2rem
+        background-color #f70057
+        color #fff
+        font-size .42rem
+        font-weight 500
+        line-height 1.44rem
+        text-align center
       }
     }
   }
