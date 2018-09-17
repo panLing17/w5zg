@@ -45,6 +45,9 @@ import Inform from '../views/inform/index.js'
 // 常见问题
 import CProblems from '../views/cProblems/index.js'
 
+// 扫毛购
+import Scan from '../views/scan/index.js'
+
 Vue.use(Router)
 const router = new Router ({
   routes: [
@@ -323,6 +326,14 @@ const router = new Router ({
       path: '/search',
       name: '新搜索',
       component: Common.search
+    },
+    {
+      path: '/scan/shoppingCart',
+      name: '扫码购购物车',
+      component: Scan.shoppingCart,
+      meta:{
+        keepAlive: true
+      }
     },
     {
       path: '/',
