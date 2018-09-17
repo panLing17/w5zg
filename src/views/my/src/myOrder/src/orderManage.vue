@@ -42,7 +42,7 @@
                     span.price 合计 :
                       strong.priceNum {{item.oi_total_price | price-filter}}
             .button
-              .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请' && item.buttonL !== '删除订单'") {{item.buttonL}}
+              .cancel(@click="buttonLeft($event,item.total_order_id)" v-show="item.buttonL !== '再次购买' && item.buttonL !== '提醒发货' && item.buttonL !== '申请退款' && item.buttonL !== '物流信息' && item.buttonL !== '取消申请'") {{item.buttonL}}
               .pay(@click="buttonRight($event,item.total_order_id,item.oi_pay_price)" :class="{a:item.order_status !== '待付款'}" v-show="item.buttonR !== '删除订单' && item.buttonR !== '再次购买' && item.buttonR !== '确认收货' && item.buttonR !== '物流信息' && item.buttonR !== '提货码' && item.buttonR !== '物流信息' && item.buttonR !== '取消申请'") {{item.buttonR}}
       .noData(v-if="isEmpty")
         img(src="../../../../../assets/img/emptyOrder.png")
@@ -87,7 +87,6 @@
 
       },
       activated () {
-        //this.keepStatus();
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0);
@@ -95,22 +94,15 @@
         })
       },
       mounted(){
-        //this.jump();
         this.keepStatus();
         this.$mescrollInt("orderManageMescroll",this.upCallback,()=>{
-          // this.position.forEach((now) => {
-          //     if (now.path === this.$route.path) {
-          //       this.mescroll.scrollTo(now.y, 0);
-          //     }
-          //   })
+
           }, (obj) => {
             this.$store.commit('setPosition', {
               path: this.$route.path,
               y: obj.preScrollY
             })
         });
-
-        //this.request();
 
       },
       beforeDestroy () {
@@ -145,14 +137,9 @@
         jumpToSearch(){
           this.$router.push('/my/searchOrder');
         },
-        //判断上一页点击的索引值
-        jump(){
-          this.request();
-        },
 
         //点击tab切换
         check(item,index){
-          //this.mescroll.scrollTo(0,0);
           this.contentFlag = false;
           this.num = index;
           let lineDiv = document.getElementsByClassName("lineDiv")[0];
@@ -182,9 +169,7 @@
             lineDiv.style.left = "80%";
             this.$router.replace({path:'/my/orderManage',query:{nums:index,states:this.state,lefts:lineDiv.style.left}});
           }
-          //this.request();
           this.mescroll.resetUpScroll();
-          //this.mescroll.triggerDownScroll();
         },
         //保持状态判断
         keepStatus(){
@@ -227,26 +212,6 @@
             this.$router.push('/my/checkLogistics');
           }
           if (e.target.innerText === "取消订单") {
-            // this.$confirm({
-            //   title: '确认',
-            //   message: '真的要这样做吗',
-            //   confirm: () => {
-            //     //alert('确定')
-            //     let self = this;
-            //     self.$ajax({
-            //       method:"patch",
-            //       url:self.$apiTransaction + "order/cancel/"+id,
-            //       params:{}
-            //     }).then(function(res){
-            //       //self.request();
-            //       self.mescroll.resetUpScroll();
-            //       self.$message.success('取消成功！');
-            //     })
-            //   },
-            //   noConfirm: () => {
-            //     //alert('取消')
-            //   }
-            // })
             this.shows = true
             this.totalOrderId = id
           }
@@ -263,7 +228,6 @@
                     totalOrderId:id
                   }
                 }).then(function(res){
-                  //self.request();
                   self.mescroll.resetUpScroll();
                   if (res.data.code === '186') {
                     self.$message('此商品存在退货情况！')
@@ -304,7 +268,6 @@
               url:self.$apiTransaction + "order/confirmTakeGood/"+id,
               params:{}
             }).then(function(res){
-              //self.request();
               self.mescroll.resetUpScroll();
             })
           }
@@ -371,7 +334,7 @@
                 }
               }
               if (response.data.data[i].order_status === "已取消") {
-                arr[i].buttonL = "取消申请";
+                arr[i].buttonL = "删除订单";
                 arr[i].buttonR = "再次购买";
                 arr[i].orderStatus = "已取消";
               }
@@ -384,73 +347,6 @@
             successCallback&&successCallback(arr);//成功回调
           })
         },
-
-        request(){
-          let self = this;
-          self.$ajax({
-            method: 'post',
-            url:self.$apiTransaction + 'order/orderByStatus',
-            params:{
-              status: self.state,
-              page: 1,
-              rows: 8
-            },
-            headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-          }).then(function(response){
-            self.contentFlag = true;
-            self.orderDetail = response.data.data;
-            if (self.orderDetail.length === 0) {
-              self.emptys();
-            }
-            for (var i=0; i<self.orderDetail.length; i++) {
-              if (self.orderDetail[i].order_status === "（退货）售后") {
-                self.orderDetail[i].buttonL = "取消申请";
-                self.orderDetail[i].buttonR = "取消申请";
-                self.orderDetail[i].orderStatus = "（退货）售后";
-              }
-              if (self.orderDetail[i].order_status === "待付款") {
-                self.orderDetail[i].buttonL = "取消订单";
-                self.orderDetail[i].buttonR = "支付";
-                self.orderDetail[i].orderStatus = "待付款";
-              }
-              if (self.orderDetail[i].order_status === "待收货/待提货") {
-                if (self.orderDetail[i].delivery_ways === "自提") {
-                  self.orderDetail[i].buttonL = "申请退款";
-                  self.orderDetail[i].buttonR = "提货码";
-                  self.orderDetail[i].orderStatus = "待自提";
-                }
-                if (self.orderDetail[i].delivery_ways === "快递配送") {
-                  self.orderDetail[i].buttonL = "物流信息";
-                  self.orderDetail[i].buttonR = "确认收货";
-                  self.orderDetail[i].orderStatus = "待收货";
-                }
-
-              }
-              if (self.orderDetail[i].order_status === "待发货/待备货") {
-                if (self.orderDetail[i].delivery_ways === "自提") {
-                  self.orderDetail[i].buttonL = "申请退款";
-                  self.orderDetail[i].buttonR = "提货码";
-                  self.orderDetail[i].orderStatus = "待备货";
-                }
-                if (self.orderDetail[i].delivery_ways === "快递配送") {
-                  self.orderDetail[i].buttonL = "提醒发货";
-                  self.orderDetail[i].buttonR = "物流信息";
-                  self.orderDetail[i].orderStatus = "待发货";
-                }
-              }
-              if (response.data.data[i].order_status === "已取消") {
-                self.orderDetail[i].buttonL = "取消申请";
-                self.orderDetail[i].buttonR = "再次购买";
-                self.orderDetail[i].orderStatus = "已取消";
-              }
-              if (response.data.data[i].order_status === "已完成") {
-                self.orderDetail[i].buttonL = "删除订单";
-                self.orderDetail[i].buttonR = "再次购买";
-                self.orderDetail[i].orderStatus = "已完成";
-              }
-            }
-          })
-        }
       }
     }
 </script>
@@ -683,9 +579,7 @@
   .slide-fade-leave-active {
     transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
   }
-  .slide-fade-enter, .slide-fade-leave-to
-  /* .slide-fade-leave-active for below version 2.1.8 */ {
-    /*transform: translateX(30px);*/
+  .slide-fade-enter, .slide-fade-leave-to{
     opacity: 0;
   }
 </style>
