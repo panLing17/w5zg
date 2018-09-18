@@ -336,6 +336,14 @@ const router = new Router ({
       }
     },
     {
+      path: '/scan/orderConfirm',
+      name: '扫码购订单确认',
+      component: Scan.orderConfirm,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
