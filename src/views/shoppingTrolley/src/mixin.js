@@ -22,7 +22,7 @@ export const shoppingCart = {
         }
       }).then(function (res) {
         if(res) {
-
+          goods.checked = goods.checked==='011'?'012':'011'
         }
       })
 
