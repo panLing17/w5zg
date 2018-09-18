@@ -56,11 +56,13 @@
         span 实付：
         span.price ￥25.6
       .right 提交订单
+    express
 </template>
 
 <script>
   import Scroll from 'components/scroll'
   import ToggleButton from 'components/toggleButton'
+  import Express from './express'
   export default {
     name: "orderConfirm",
     data() {
@@ -73,7 +75,8 @@
     },
     components: {
       Scroll,
-      ToggleButton
+      ToggleButton,
+      Express
     }
   }
 </script>
