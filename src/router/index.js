@@ -324,27 +324,7 @@ const router = new Router ({
       name: '新搜索',
       component: Common.search
     },
-    {
-      path: '/inform',
-      name: '通知',
-      component: Inform.inform,
-      children: [
-        {
-          path: '/',
-          redirect: '/inform/systemM'
-        },
-        {
-          path: '/inform/systemM',
-          name: '系统通知',
-          component: Inform.systemM
-        },
-        {
-          path: '/inform/activityM',
-          name: '活动通知',
-          component: Inform.activityM
-        }
-      ]
-    },
+
     {
       path: '/',
       name: '应用',
@@ -454,6 +434,27 @@ const router = new Router ({
                   component: ShoppingCart.express
                 }
               ]
+            }
+          ]
+        },
+        {
+          path: '/inform',
+          name: '通知',
+          component: Inform.inform,
+          children: [
+            {
+              path: '/',
+              redirect: '/inform/systemM'
+            },
+            {
+              path: '/inform/systemM',
+              name: '系统通知',
+              component: Inform.systemM
+            },
+            {
+              path: '/inform/activityM',
+              name: '活动通知',
+              component: Inform.activityM
             }
           ]
         },
