@@ -375,11 +375,11 @@
     width 100%
     height 100vh
     background-color rgba(0,0,0,.5)
-    z-index 20
+    z-index 100
   }
   .content {
     height $height-pop-details
-    z-index 20
+    z-index 100
     position fixed
     bottom 0
     left 0

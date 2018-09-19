@@ -4,9 +4,11 @@
     .listWrapper(v-show="!isEmpty")
       item(
       :data="data",
-      @goods-change="goodsChange"
+      @goods-change="goodsChange",
+      @change-ways="changeWays"
       )
-
+    select-city(ref="selectCity", :addressList="[]", @select-city="selectCity")
+    select-store(ref="selectStore", :data="storeList", @store-select="selectStore")
 </template>
 
 <script>
@@ -14,6 +16,10 @@
   import NoData from './noData'
   // 列表
   import Item from './item'
+  // 城市选择弹框
+  import SelectCity from 'views/goodsDetails/express'
+  // 自提门店选择弹框
+  import SelectStore from 'views/goodsDetails/selectStore'
   import {shoppingCart} from "./mixin"
 
   export default {
@@ -22,6 +28,8 @@
     data() {
       return {
         data: {}, // 快递配送合集
+        addressList: [], //收货地址合集
+        storeList: [], //门店集合
       }
     },
     activated() {
@@ -40,7 +48,6 @@
           params: {}
         }).then(function (res) {
           if(res) {
-            self.dataFormat(res.data.data)
             self.data = res.data.data
           }
         })
@@ -48,7 +55,9 @@
     },
     components: {
       NoData,
-      Item
+      Item,
+      SelectCity,
+      SelectStore
     }
   }
 </script>

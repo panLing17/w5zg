@@ -22,7 +22,7 @@
 <script>
   import Scroll from 'components/scroll'
   export default {
-    name: "express",
+    name: "selectCity",
     props: {
       addressList: {
         type: Array,
@@ -86,7 +86,7 @@
     left 0
     width 100%
     height 100vh
-    z-index 20
+    z-index 110
   }
   .express {
     .contentWrapper {
@@ -95,7 +95,7 @@
       left 0
       width 100%
       height $height-pop-details
-      z-index 30
+      z-index 110
       background #fff
       .title {
         height 1.33rem

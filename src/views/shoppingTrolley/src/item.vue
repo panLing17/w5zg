@@ -3,7 +3,7 @@
     .commList
       ul.storeWrapper
         li.store(v-for="(item, index) in data.commList")
-          .storeTitle(@click="item.checked = item.checked==='011'? '012': '011'")
+          .storeTitle(@click="$emit('goods-change', {index})")
             .left
               img(src="./gou.png", v-show="item.checked==='011'")
               .noChecked(v-show="item.checked==='012'")
@@ -41,7 +41,7 @@
                         img(src="./btn.png")
                         .pop
                           .sanjiao
-                          .popItem(v-show="goods.carry_type===1")
+                          .popItem(v-show="(goods.delivery_ways==='167' && goods.carry_type===1) || goods.delivery_ways==='168'", @click.stop="$emit('change-ways', {index, i})")
                             img(src="./refresh.png")
                             span {{goods.delivery_ways==='167'?'专柜提货':'快递配送'}}
                           .popItem(v-show="goods.delivery_ways==='168'")
@@ -301,7 +301,7 @@
                           width 100%
                           height 100vh
                           z-index 10
-                          background-color rgba(0,0,0,0)
+                          background-color rgba(0, 0, 0, 0)
                         }
                         .sanjiao {
                           position absolute
@@ -312,12 +312,12 @@
                           height 0
                           border-width .16rem
                           border-style solid
-                          border-color transparent transparent rgba(0,0,0,.8) transparent
+                          border-color transparent transparent rgba(0, 0, 0, .8) transparent
                         }
                         .popItem {
                           width 2.77rem
                           height 1rem
-                          background-color rgba(0,0,0,.8)
+                          background-color rgba(0, 0, 0, .8)
                           display flex
                           align-items center
                           border-bottom 1px solid #999

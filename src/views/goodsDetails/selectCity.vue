@@ -111,7 +111,7 @@
     left 0
     width 100%
     height 100vh
-    z-index 40
+    z-index 120
   }
   img {
     pointer-events none
@@ -123,7 +123,7 @@
       bottom 0
       left 0
       width 100%
-      z-index 40
+      z-index 120
       background #fff
       .title {
         height 1.33rem

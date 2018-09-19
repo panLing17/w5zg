@@ -97,7 +97,7 @@
     left 0
     width 100%
     height 100vh
-    z-index 30
+    z-index 110
   }
   .contentWrapper {
     height $height-pop-details
@@ -106,7 +106,7 @@
     left 0
     width 100%
     background-color #fff
-    z-index 30
+    z-index 110
     .title {
       height 1.33rem
       display flex
