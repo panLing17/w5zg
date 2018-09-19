@@ -64,7 +64,7 @@
         focus: false,
         placeholder: '', //默认搜索词
         brandReset: true, //品牌列表是否重新赋值
-        prevUrl: '', //上一个路由地址
+        prevUrl: '', // 来处URL
       }
     },
     directives: {
@@ -72,17 +72,8 @@
         // 指令的定义
         inserted: function (el) {
           el.focus()
-        },
-        // update: function (el) {
-        //   alert('update')
-        //   el.focus()
-        // }
+        }
       }
-    },
-    beforeRouteEnter(to, from, next) {
-      next((vm) => {
-        vm.prevUrl = from.path
-      })
     },
     created() {
       if (this.$route.query.key) {
@@ -401,6 +392,9 @@
       // 输入框里搜索词发生变化时调联想搜索接口
       query(newQuery) {
         this.associativeSearchFn(newQuery)
+      },
+      $route(to, from) {
+        this.prevUrl = from.path
       }
     },
     components: {
