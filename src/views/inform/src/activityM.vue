@@ -18,8 +18,7 @@
               .righters 点击查看 ＞
             .centers
               img(:src="items.ms_thumbnail | img-filter")
-            <!--.downner <span>{{items.content}}</span>-->
-            .downner <span>按实际贷款卡了圣诞节啦拉的记录卡时间拉力赛的距离假两件的拉斯加拉力赛的捡垃圾了阿拉斯加的拉时间的了解奥丝蓝黛家里的加拉时间的拉斯加的阿迪吉拉斯的吉拉斯肯德基拉三等奖拉三季度了</span>
+            .downner <span>{{items.content}}</span>
 </template>
 
 <script>
@@ -196,6 +195,7 @@
   .conts .upper .lefters{
     display: flex;
     align-items: center;
+    width: 75%;
   }
   .conts .upper .lefters .pointer{
     width: .21rem;
@@ -205,8 +205,15 @@
     margin-right: .16rem;
   }
   .conts .upper .lefters .titleN{
+    width: 80%;
     font-size: .37rem;
     color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
   .conts .upper .righters{
     font-size: .3rem;

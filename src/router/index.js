@@ -468,7 +468,7 @@ const router = new Router ({
           children: [
             {
               path: '/',
-              redirect: '/inform/systemM'
+              redirect: '/inform/systemM',
             },
             {
               path: '/inform/systemM',
