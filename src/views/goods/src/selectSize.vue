@@ -476,13 +476,22 @@
         if (disable) {
           return
         }
-
-
+        let indexArr = []
+        this.spec.forEach((item, index) => {
+          if (item.valueIndex>-1) {
+            indexArr.push(index)
+          }
+          item.specValue.forEach(i => {
+            i.gray = false
+          })
+        })
         this.graySpecData.forEach(item => {
-          this.spec.forEach(s => {
-            s.specValue.forEach(ss => {
+          this.spec.forEach((s, index) => {
+            if (!indexArr.includes(index)) {
+              s.specValue.forEach(ss => {
 
-            })
+              })
+            }
           })
         })
         // let arr = []
