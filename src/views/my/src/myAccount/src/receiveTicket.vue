@@ -47,11 +47,11 @@
       return {
         phone: '',
         isLoginFlag: false,
-        showSuccess: true,
+        showSuccess: false,
         url: '',
         price: 0,
         loadingFlag: false,
-        getSuccess: true
+        getSuccess: false
       }
     },
     created () {
@@ -238,7 +238,6 @@
     position: relative;
     background: url("../../../../../assets/img/quan2@2x.png") no-repeat top left;
     background-size: 100% 100%;
-
   }
   .price {
     position: absolute;
