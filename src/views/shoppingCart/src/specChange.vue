@@ -22,8 +22,8 @@
           .emitGoods
             .emitGoodsTitle 配送方式
             ul.emitGoodsButtons
-              li(:class="{checked:emitType === 'express'}", @click="openSelectLocation('express')") 快递配送
-              li(:class="{checked:emitType === 'counter'}", @click="openSelectLocation('counter')") 专柜自提
+              li(:class="{checked:emitType === 'express'}", @click="emitType = 'express'") 快递配送
+              li(:class="{checked:emitType === 'counter'}", @click="emitType = 'counter'") 专柜自提
               p.clearBoth
           .address
             .expressAddress(@click="openSelectLocation", v-if="emitType === 'express'")
@@ -317,8 +317,7 @@
       },
 
       // 打开地址选择
-      openSelectLocation (type) {
-        this.emitType = type
+      openSelectLocation () {
         if (this.emitType === 'counter') {
           this.onlyStoreSelect = true
         } else {
