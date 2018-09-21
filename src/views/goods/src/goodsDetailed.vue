@@ -127,7 +127,7 @@
           p 客服
         .leftSmallButtons
           .shoppingCartCount(v-if="shoppingCartCount>0") {{shoppingCartCount}}
-          img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
+          img(src="../../../assets/img/shoppingCart@2x.png", @click="goShoppingCart")
           p 购物车
         .leftSmallButtons
           img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0", @click="changeCollect1()")
@@ -396,6 +396,14 @@
       }
     },
     methods:{
+      // 跳往购物车
+      goShoppingCart() {
+        if (this.disTypeName==='快递配送') {
+          this.$router.push('/shoppingCart/express')
+        } else {
+          this.$router.push('/shoppingCart/self')
+        }
+      },
       // 从预约地址返回到选择规格
       backPrev(){
         this.selectFlag = true
