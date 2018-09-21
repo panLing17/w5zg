@@ -1134,10 +1134,10 @@
   }
   /* 规格部分 */
   .spec{
-    padding-top: .5rem;
+    padding-top: .2rem;
   }
   .spec>li{
-    margin-bottom: .4rem;
+    margin-bottom: .1rem;
   }
   .spec>li .title{
     font-size: .42rem;
@@ -1152,7 +1152,7 @@
     padding: .2rem .3rem;
     border:  solid 1px #999;
     margin-left: .4rem;
-    margin-bottom: .4rem;
+    margin-bottom: .1rem;
     border-radius: .2rem;
     transition: background-color .3s, color .3s;
   }
@@ -1170,16 +1170,15 @@
   /* 选择数量部分 */
   .count {
     border-bottom: solid 1px #eee;
-    margin-top: .5rem;
     font-size: .4rem;
-    padding: .4rem;
+    padding: .2rem .4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
   /* 配送方式 */
   .express {
-    margin-top: .4rem;
+    margin-top: .2rem;
     padding: 0 .4rem;
   }
   .express>h1{
@@ -1209,7 +1208,7 @@
   }
   /* 配送地址 */
   .address {
-    margin-top: .4rem;
+    margin-top: .2rem;
     padding: 0 .4rem;
   }
   .address>h1{
