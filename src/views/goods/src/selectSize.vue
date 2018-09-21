@@ -31,7 +31,7 @@
               li(v-for="(item,fatherIndex) in spec")
                 .title {{item.specName}}
                 ul.content
-                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc','y')") {{i.value}}
+                  li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc','y')") {{i.value}}
                   p(style="clear:both")
               //.yuyue(v-if="yuyueF")
                 .titles 预约专柜
@@ -476,66 +476,92 @@
         if (disable) {
           return
         }
-        let indexArr = []
-        this.spec.forEach((item, index) => {
-          if (item.valueIndex>-1) {
-            indexArr.push(index)
-          }
-          item.specValue.forEach(i => {
-            i.gray = false
-          })
-        })
-        this.graySpecData.forEach(item => {
-          this.spec.forEach((s, index) => {
-            if (!indexArr.includes(index)) {
+        // 置灰
+        if (key) {
+          // 反选
+          if (this.spec[index].valueIndex===oIndex) {
+            this.spec[index].valueIndex = -1
+            let valueArr = []
+            this.spec.forEach((item, index) => {
+              if (item.valueIndex > -1) {
+                valueArr.push({
+                  index: index,
+                  value: item.specValue[item.valueIndex].value
+                })
+              }
+            })
+            this.spec.forEach((s, sIndex)=>{
               s.specValue.forEach(ss => {
-
+                let flag = false
+                for(let i=0;i<this.graySpecData.length;i++) {
+                  if (this.graySpecData[i].includes(ss.value)) {
+                    let count = 0
+                    valueArr.forEach(value => {
+                      if (this.graySpecData[i].includes(value.value)){
+                        count++
+                      } else if(sIndex === value.index) {
+                        count++
+                      }
+                    })
+                    if (count === valueArr.length) {
+                      flag = true
+                    }
+                  }
+                }
+                if (!flag) {
+                  ss.gray = true
+                } else {
+                  ss.gray = false
+                }
               })
-            }
-          })
-        })
-        // let arr = []
-        // // 置灰
-        // this.spec.forEach(item => {
-        //   item.specValue.forEach(i => {
-        //     i.gray = false
-        //   })
-        // })
-        // if (key) {
-        //   this.spec.forEach((item, i) => {
-        //     if (index !== i) {
-        //       item.specValue.forEach(now => {
-        //         let flag = false
-        //         this.graySpecData.forEach((gray) => {
-        //           gray.forEach(g => {
-        //             if (g === key) {
-        //               if (gray.includes(now.value)) {
-        //                 let count = 0
-        //                 this.spec.forEach(temp => {
-        //                   if (temp.valueIndex > -1) {
-        //                     count++
-        //                     if (gray.includes(temp.specValue[temp.valueIndex].value) && gray.includes(now.value)) {
-        //                       console.log(now.value)
-        //                       console.log(temp.specValue[temp.valueIndex].value)
-        //                       console.log(gray)
-        //                       flag = true
-        //                     }
-        //                   }
-        //                 })
-        //                 if (count===1) {
-        //                   flag = true
-        //                 }
-        //               }
-        //             }
-        //           })
-        //         })
-        //         if (!flag) {
-        //           now.gray = true
-        //         }
-        //       })
-        //     }
-        //   })
-        // }
+            })
+
+          }else {
+            // 正常选
+            this.spec[index].valueIndex = oIndex
+            let valueArr = []
+            this.spec.forEach((item, index) => {
+              if (item.valueIndex > -1) {
+                valueArr.push({
+                  index: index,
+                  value: item.specValue[item.valueIndex].value
+                })
+              }
+            })
+
+            this.spec.forEach((s, sIndex) => {
+              if (sIndex!==index) {
+                s.specValue.forEach(ss => {
+                  let flag = false
+                  for(let i=0;i<this.graySpecData.length;i++) {
+                    if (this.graySpecData[i].includes(ss.value)) {
+                      let count = 0
+                      valueArr.forEach(value => {
+                        if (this.graySpecData[i].includes(value.value)){
+                          count++
+                        } else if(sIndex === value.index) {
+                          count++
+                        }
+                      })
+                      if (count === valueArr.length) {
+                        flag = true
+                      }
+                    }
+                  }
+                  if (!flag) {
+                    ss.gray = true
+                  } else {
+                    ss.gray = false
+                  }
+                })
+              }
+            })
+          }
+          }
+
+
+
+
 
 
         if (kkk === 'y') {
@@ -653,7 +679,7 @@
         // 若无则正常
           // 若已经选择，则进行反选
           if (e.target.className === 'specChecked') {
-            this.spec[index].valueIndex = -1
+            // this.spec[index].valueIndex = -1
             // 能与反选列能组成可选规格的规格全部可选
             // let reverseSpec = []  // 反选规格的整行集合
             // let reverseSpecRel = [] // 由反选集合所筛选出的可选集合
@@ -862,7 +888,6 @@
           }
           self.$emit('load',data)
           self.selectedSpec = data.spec
-          console.log(self.selectedSpec)
 
         })
       },

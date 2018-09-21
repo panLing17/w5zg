@@ -528,7 +528,7 @@
           let self = this
           self.$ajax({
             method: 'post',
-            url: self.$apiGoods + 'goods/spu/skuStatusUnchecked',
+            url: self.$apiGoods + 'goods/spu/findSkuStatus',
             params: {
               gspuId: self.$route.query.id
             },

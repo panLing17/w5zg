@@ -987,7 +987,7 @@
     max-height: 2.4rem;
     overflow: hidden;
     position: relative;
-    margin: 0.13rem 0;
+    margin: 0 0 .13rem;
   }
   .popAd {
     position: fixed;
