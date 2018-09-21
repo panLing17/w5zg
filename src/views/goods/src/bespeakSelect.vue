@@ -121,7 +121,10 @@
       addBespeak (item) {
         this.bsId = item.bs_id
         if (!this.bsId) {
-          this.$message.warning('请选择门店')
+          this.$notify({
+            content: '请选择门店',
+            bottom: 1.8
+          })
           return
         }
         let self = this

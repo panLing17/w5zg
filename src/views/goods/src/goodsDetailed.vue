@@ -849,7 +849,10 @@
         // 如果没登录，直接跳往登录
         if (!localStorage.hasOwnProperty('token')) {
           this.$router.push('/login')
-          this.$message.warning('请先登录')
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
           return
         }
         // 判断库存
@@ -870,7 +873,10 @@
         // 如果没登录，直接跳往登录
         if (!localStorage.hasOwnProperty('token')) {
           this.$router.push('/login')
-          this.$message.warning('请先登录')
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
           return
         }
         // 判断库存
@@ -1001,7 +1007,10 @@
           }).then(function (response) {
             // 关闭选择
             self.onlyStoreSelect = false
-            self.$message.success('添加购物车成功')
+            self.$notify({
+              content: '添加购物车成功',
+              bottom: 1.8
+            })
           })
         }
       },
@@ -1052,7 +1061,10 @@
               self.$store.commit('transferGive', orderData)
               self.$router.push({path: '/confirmOrder', query:{since:'false',type:'direct'}})
             } else {
-              self.$message.error('库存不足')
+              self.$notify({
+                content: '库存不足',
+                bottom: 1.8
+              })
             }
           })
         }
@@ -1071,7 +1083,10 @@
               goodsNum: self.content
             }
           }).then(function (response) {
-            self.$message.success('添加购物车成功')
+            self.$notify({
+              content: '添加购物车成功',
+              bottom: 1.8
+            })
           })
         }
       },
@@ -1097,7 +1112,10 @@
                 this.onlyStoreChange()
                 this.selectFlag = false
               } else {
-                this.$message.warning('请选择收货/自提地址')
+                this.$notify({
+                  content: '请选择收货/自提地址',
+                  bottom: 1.8
+                })
               }
             } else {
               // 为配送订单并且已选地址直接进入下一步
@@ -1120,7 +1138,10 @@
                 this.selectFlag = false
                 this.onlyStoreChange()
               } else {
-                this.$message.warning('请选择收货/自提地址')
+                this.$notify({
+                  content: '请选择收货/自提地址',
+                  bottom: 1.8
+                })
               }
             } else {
               this.selectFlag = false

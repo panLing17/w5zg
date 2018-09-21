@@ -248,9 +248,15 @@
           }
         })
         if (flag>0) {
-          this.$message.warning('请选择规格')
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
         } else {
-          this.$message.warning('库存不足')
+          this.$notify({
+            content: '库存不足',
+            bottom: 1.8
+          })
         }
       },
       // 预约体验
@@ -395,7 +401,10 @@
         })
         if (flag>0) {
           this.$parent.initPriceFlag = true
-          this.$message.warning('请选择规格')
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
           return
         }
         this.$parent.disTypeName = data
@@ -427,7 +436,10 @@
         })
         if (flag>0) {
           this.$parent.initPriceFlag = true
-          this.$message.warning('请选择规格')
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
           return
         }
         this.$parent.selectCityShow()
@@ -448,7 +460,10 @@
         })
         if (flag>0) {
           this.$parent.initPriceFlag = true
-          this.$message.warning('请选择规格')
+          this.$notify({
+            content: '请选择规格',
+            bottom: 1.8
+          })
           return
         }
         let data = {
@@ -466,7 +481,10 @@
         if (this.realGoodsData.storage_num>0 && this.realGoodsData.storage_num >= this.content) {
           this.$emit('confirm', data)
         } else {
-          this.$message.error('商品库存不足')
+          this.$notify({
+            content: '商品库存不足',
+            bottom: 1.8
+          })
         }
       },
       /*removeTouchDisable () {
@@ -916,7 +934,10 @@
           // 此条为了恢复屏幕触摸事件
           this.$emit('buy', data)
         } else {
-          this.$message.error('商品库存不足')
+          this.$notify({
+            content: '商品库存不足',
+            bottom: 1.8
+          })
         }
 
       },
