@@ -30,6 +30,7 @@
             ul.spec
               li(v-for="(item,fatherIndex) in spec")
                 .title {{item.specName}}
+                  span(v-show="item.valueIndex===-1") 请选择
                 ul.content
                   li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc','y')") {{i.value}}
                   p(style="clear:both")
@@ -1250,6 +1251,12 @@
   .selectSizeContent {
     height: 7.92rem;
     overflow: hidden;
+  }
+  .selectSizeContent .title span {
+    color: #f70057;
+    font-size: .32rem;
+    font-weight: 400;
+    margin-left: .26rem;
   }
   .headerClose {
     position: absolute;
