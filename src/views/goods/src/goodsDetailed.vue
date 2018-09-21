@@ -819,6 +819,10 @@
               }
             })
           })
+          // 如果只有一个规格默认选中
+          if (newData.length===1 && newData[0].specValue.length===1) {
+            newData[0].valueIndex = 0
+          }
           self.spec = newData
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true

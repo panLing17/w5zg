@@ -171,7 +171,7 @@
     },
     watch:{
       spec (newSpec) {
-        if (newSpec) {
+        if (newSpec.length) {
           setTimeout(() => {
             if (this.selstSizeScroll) {
               this.selstSizeScroll.refresh()
