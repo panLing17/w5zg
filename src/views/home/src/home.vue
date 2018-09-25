@@ -834,7 +834,7 @@
 
   .adWrapper {
     position: fixed;
-    top: 9.5rem;
+    top: 10.8rem;
     right: -0.2rem;
     z-index: 101;
   }
