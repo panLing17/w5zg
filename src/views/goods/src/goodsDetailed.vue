@@ -154,6 +154,10 @@
     // 新手教程
     //goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
+    // 加入购物车动效
+    transition(name="scale")
+      .circle(v-show="addGoods")
+        img(:src="skuImg | img-filter")
 </template>
 
 <script>
@@ -243,7 +247,8 @@
         shareFlag: {
           banner: false,
           title: false
-        }
+        },
+        addGoods: false
       }
     },
     computed:{
@@ -262,7 +267,7 @@
       tong () {
         return parseInt(this.goodsData.counter_interval)
       },*/
-      ...mapState(['location', 'userData','skuId', 'transfer','shoppingCartGoodsNum'])
+      ...mapState(['location', 'userData','skuId', 'transfer','shoppingCartGoodsNum', 'skuImg'])
     },
     components: {locationSelect, selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
@@ -1015,6 +1020,11 @@
           }).then(function (response) {
             // 关闭选择
             self.onlyStoreSelect = false
+            // 加入购物车动画
+            self.addGoods = true
+            setTimeout(()=>{
+              self.addGoods = false
+            }, 0)
             self.$notify({
               content: '添加购物车成功',
               bottom: 1.8
@@ -1091,6 +1101,10 @@
               goodsNum: self.content
             }
           }).then(function (response) {
+            self.addGoods = true
+            setTimeout(()=>{
+              self.addGoods = false
+            }, 0)
             self.$notify({
               content: '添加购物车成功',
               bottom: 1.8
@@ -1760,6 +1774,27 @@
     margin-left: 15px;
     color: rgb(247,0,87);
     border: solid 1px rgb(247,0,87);
+  }
+  .circle {
+    position: fixed;
+    top: 8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .circle img {
+    width: 100%;
+  }
+  .circle.scale-leave-active {
+    transition: all 1s;
+  }
+  .circle.scale-leave-to {
+    transform: scale(0.1) translate3d(-30rem,60rem,0);
+    transform-origin:50% 50%;
+    opacity: 0;
   }
 </style>
 <style>
