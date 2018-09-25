@@ -17,7 +17,7 @@
             li.specItem(v-for="(i,specIndex) in spec")
               .valueName {{i.specName}}
               ul.valueList
-                li(@click="i.valueIndex=index;specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index}") {{item.value}}
+                li(@click="specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index, gray: item.gray}") {{item.value}}
                 p.clearBoth
           .emitGoods
             .emitGoodsTitle 配送方式
@@ -75,7 +75,8 @@
         locationFlag: false,
         locationList: [],
         onlyStoreSelect: false,
-        selectCity: false
+        selectCity: false,
+        grayList: []
       }
     },
     watch: {
@@ -174,7 +175,12 @@
         this.selectCity = true
       },
       // 点击spec
-      specClick () {
+      specClick (specIndex, index) {
+        if (this.spec[specIndex].specValue[index].gray) {
+          return
+        }
+        this.spec[specIndex].valueIndex = index
+        this.grayFormat(specIndex)
         // 获取选中的规格
         let specData = {
           //'W5MALLTOKEN': localStorage.getItem('token'),
@@ -248,7 +254,6 @@
         this.skuId = allData.gsku_id
 
         this.spcGoodsData = allData
-        console.log(allData)
         // 默认选
         let specValueList = []
         allData.specVOList.forEach((now)=>{
@@ -278,8 +283,55 @@
           let newData = self.specGray(response.data.data)
           // 选中默认
           newData = self.returnSelectedJson(newData, spec)
-
           self.spec = newData
+          self.getGray(id)
+        })
+      },
+      // 获取置灰规格
+      getGray(id) {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/skuStatusUnchecked',
+          params: {
+            gspuId: id
+          }
+        }).then(function (response) {
+          self.grayList = response.data.data
+          self.grayFormat()
+        })
+      },
+      // 置灰格式化
+      grayFormat(target) {
+        let temp = []
+        this.spec.forEach((sp, index) => {
+          if (sp.valueIndex > -1) {
+            temp.push({value: sp.specValue[sp.valueIndex], index: index})
+          }
+        })
+
+        this.spec.forEach((sp, index) => {
+          if (index !== (target?target:0)) {
+            sp.specValue.forEach(v => {
+              let flag = false
+              this.grayList.forEach(d => {
+                if (d.includes(v.value)) {
+                  let count = 0
+                  temp.forEach(t => {
+                    if (d.includes(t.value.value)) {
+                      count++
+                    } else if (t.index === index) {
+                      count++
+                    }
+                  })
+                  if (count === temp.length) {
+                    flag = true
+                  }
+                }
+              })
+              v.gray = flag? true:false
+            })
+          }
         })
       },
       submit (reach) {
@@ -580,5 +632,10 @@
     align-items center
     justify-content center
     font-size .4rem
+  }
+  .gray {
+    background: #E8E8E8;
+    color: white !important;
+    border: solid 1px #E8E8E8 !important;
   }
 </style>
