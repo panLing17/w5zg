@@ -438,6 +438,27 @@ const router = new Router ({
           ]
         },
         {
+          path: '/inform',
+          name: '通知',
+          component: Inform.inform,
+          children: [
+            {
+              path: '/',
+              redirect: '/inform/systemM'
+            },
+            {
+              path: '/inform/systemM',
+              name: '系统通知',
+              component: Inform.systemM
+            },
+            {
+              path: '/inform/activityM',
+              name: '活动通知',
+              component: Inform.activityM
+            }
+          ]
+        },
+        {
           path: '/cAnswers',
           name: '收藏夹',
           component: CProblems.cAnswer,

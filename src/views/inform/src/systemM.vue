@@ -74,7 +74,7 @@
             console.log(this.$route.query.num)
             this.$store.commit('setInformNum', this.$route.query.num)
             this.judgeType()
-            //this.mescroll.resetUpScroll()
+            this.mescroll.resetUpScroll()
           } else {
             this.position.forEach((now) => {
               if (now.path === this.$route.path) {
