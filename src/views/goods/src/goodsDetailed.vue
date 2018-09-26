@@ -327,6 +327,7 @@
       })*/
     },
     mounted () {
+      this.clicks() //点击量
       // 是否收藏
       this.isCollect()
       this.getGoodsDetailed()
@@ -396,6 +397,19 @@
       }
     },
     methods:{
+      // 点击量
+      clicks(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + '/goods/sku/updateSpuClickNum',
+          params:{
+            spuId: self.$route.query.id
+          }
+        }).then(function (res) {
+
+        })
+      },
       // 从预约地址返回到选择规格
       backPrev(){
         this.selectFlag = true

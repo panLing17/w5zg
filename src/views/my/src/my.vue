@@ -11,7 +11,7 @@
             <!--img(src="../../../assets/img/consumerdetails@2x.png", @click="$router.push('/my/accountC')", v-else)-->
             .wrapSet(v-if="false")
               img(src="../../../assets/img/my_set@2x.png", @click="routergoSet()")
-            .wrapXiao(@click="$router.push({path:'/inform',query:{num:0}})")
+            .wrapXiao(@click="$router.push({path:'/inform/systemM',query:{num:0}})")
               .badge2(v-if="informNum!==0", :class="{top: informNum.toString().length>3}") {{informNum.toString().length>3?'999':informNum}}
               img(src="../../../assets/img/xiaoxi2@2x.png", style="width:.58rem;height:.58rem")
         p.center
@@ -89,7 +89,7 @@
               img(src="../../../assets/img/ic_center_zj@2x.png")
               .badge(v-if="footmarkNum && footmarkNum!==0", :class="{top: footmarkNum.toString().length>3}") {{footmarkNum.toString().length>3?'999':footmarkNum}}
               .words 浏览记录
-            li(@click="$router.push({path:'/inform',query:{num:1}})")
+            li(@click="$router.push({path:'/inform/systemM',query:{num:1}})")
               img(src="../../../assets/img/daohuotongzhi@2x.png")
               .badge(v-if="reachGoodsNum && reachGoodsNum!==0", :class="{top: reachGoodsNum.toString().length>3}") {{reachGoodsNum.toString().length>3?'999':reachGoodsNum}}
               .words 到货通知
@@ -221,12 +221,12 @@
       informNumCheck(){
         let self = this
         self.$ajax({
-          method: 'post',
-          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          method: 'get',
+          url: self.$apiMember + '/ucMessage/queryMessageNum',
           params: {
           }
         }).then(function (res) {
-          self.informNum = res.data.data.messageNum
+          self.informNum = res.data.data.totalNum
         })
       },
       // 查询到货通知消息条数

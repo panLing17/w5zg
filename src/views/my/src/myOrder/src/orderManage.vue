@@ -339,7 +339,7 @@
                 arr[i].orderStatus = "已取消";
               }
               if (response.data.data[i].order_status === "已完成") {
-                arr[i].buttonL = "删除订单";
+                arr[i].buttonL = "取消申请";
                 arr[i].buttonR = "再次购买";
                 arr[i].orderStatus = "已完成";
               }
