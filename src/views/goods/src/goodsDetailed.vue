@@ -332,6 +332,7 @@
       })*/
     },
     mounted () {
+      this.clicks() //点击量
       // 是否收藏
       this.isCollect()
       this.getGoodsDetailed()
@@ -408,6 +409,19 @@
         } else {
           this.$router.push('/shoppingCart/self')
         }
+      },
+      // 点击量
+      clicks(){
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + '/goods/sku/updateSpuClickNum',
+          params:{
+            spuId: self.$route.query.id
+          }
+        }).then(function (res) {
+
+        })
       },
       // 从预约地址返回到选择规格
       backPrev(){
@@ -525,15 +539,19 @@
       },
       // 显示预约
       yuyueShow () {
-        if (this.initPriceFlag) {
-          //this.$message.warning('请选择规格')
-          this.selectFlag = true
-          this.yuyueF = true
-          this.backFlag = false
-          return
+        if (localStorage.hasOwnProperty('token')) {
+          if (this.initPriceFlag) {
+            //this.$message.warning('请选择规格')
+            this.selectFlag = true
+            this.yuyueF = true
+            this.backFlag = false
+            return
+          }
+          this.bespeakFlag = true
+          this.backFlag = true
+        } else{
+          this.$router.push('/login/login2')
         }
-        this.bespeakFlag = true
-        this.backFlag = true
       },
       // 获取实际不存在规格（置灰）
       getRelSpec () {

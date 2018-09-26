@@ -9,7 +9,7 @@
         input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
         <!--span.searchDesc 请输入商品类别 例如: 男装-->
-      .homeHeaderRight(@click="$router.push({path:'/inform',query:{num:0}})")
+      .homeHeaderRight(@click="goToMessage()")
         .infoCount(v-show="informNum>0") {{informNum.toString().length>2?'99':informNum}}
         img.headerImg(src="../../../assets/img/xiaoxi1.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderRight(v-show="homeHeaderActive")
@@ -212,6 +212,13 @@
           }
         });
       },
+      goToMessage(){
+        if (localStorage.hasOwnProperty('token')) {
+          this.$router.push({path:'/inform/systemM',query:{num:0}})
+        } else{
+          this.$router.push('/login/login2')
+        }
+      },
       //弹屏隐藏
       hidePopAd() {
         sessionStorage.setItem('popAd', '1')
@@ -240,11 +247,11 @@
         if (localStorage.getItem('token')) {
           let self = this
           self.$ajax({
-            method: 'post',
-            url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+            method: 'get',
+            url: self.$apiMember + '/ucMessage/queryMessageNum',
             params: {}
           }).then(function (res) {
-            self.informNum = res.data.data.messageNum
+            self.informNum = res.data.data.totalNum
           })
         }
       },

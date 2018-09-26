@@ -5,12 +5,12 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(type="text",@click="goInit()", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(ref="input", type="text",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
     // 未搜索时
-    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit", ref="searchInit")
+    search-init(v-show="searchInit", @wordSearch="wordSearch", :showFlag="searchInit", ref="searchInit", @input-blur="inputBlur")
     // 联想查询
     associative-query(:data="associativeQuery", @associativeSelect="associativeSelect", v-show="associativeQuery.length")
     // 搜索结果
@@ -64,7 +64,7 @@
         focus: false,
         placeholder: '', //默认搜索词
         brandReset: true, //品牌列表是否重新赋值
-        prevUrl: '', //上一个路由地址
+        prevUrl: '', // 来处URL
       }
     },
     directives: {
@@ -72,16 +72,8 @@
         // 指令的定义
         inserted: function (el) {
           el.focus()
-        },
-        update: function (el) {
-          el.focus()
         }
       }
-    },
-    beforeRouteEnter(to, from, next) {
-      next((vm) => {
-        vm.prevUrl = from.path
-      })
     },
     created() {
       if (this.$route.query.key) {
@@ -231,7 +223,7 @@
         this.searchInit = false
         //关闭过滤器
         this.$refs.searchResult.closeFilter()
-        this.focus = false
+        this.inputBlur()
         // 如果搜索结果触底就调相似/热搜接口
         if (this.searchEnd) {
           this.searchOther()
@@ -390,12 +382,19 @@
             this.searchInit = true
           }
         }
+      },
+      // 让搜索框失去焦点
+      inputBlur() {
+        this.$refs.input.blur()
       }
     },
     watch: {
       // 输入框里搜索词发生变化时调联想搜索接口
       query(newQuery) {
         this.associativeSearchFn(newQuery)
+      },
+      $route(to, from) {
+        this.prevUrl = from.path
       }
     },
     components: {
@@ -416,6 +415,7 @@
     position: relative;
     height: 100vh;
     overflow: hidden;
+    background: #fff;
   }
   .searchHeader {
     display: flex;

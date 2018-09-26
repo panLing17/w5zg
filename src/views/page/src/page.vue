@@ -5,7 +5,7 @@
         <!--img(src="../../../assets/img/location.png")-->
         <!--span.city {{cityName}}-->
       <!--.topCenter(slot="center")-->
-    .searchInput(@click="$router.push({path:'/search'})")
+    .searchInput(@click="$router.push('/search')")
       img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
       input(type="text", :placeholder="placeholder", unselectable='on')
       <!--img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg-->

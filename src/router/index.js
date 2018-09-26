@@ -327,6 +327,7 @@ const router = new Router ({
       name: '新搜索',
       component: Common.search
     },
+
     {
       path: '/scan/shoppingCart',
       name: '扫码购购物车',
@@ -456,6 +457,27 @@ const router = new Router ({
           ]
         },
         {
+          path: '/inform',
+          name: '通知',
+          component: Inform.inform,
+          children: [
+            {
+              path: '/',
+              redirect: '/inform/systemM'
+            },
+            {
+              path: '/inform/systemM',
+              name: '系统通知',
+              component: Inform.systemM
+            },
+            {
+              path: '/inform/activityM',
+              name: '活动通知',
+              component: Inform.activityM
+            }
+          ]
+        },
+        {
           path: '/cAnswers',
           name: '收藏夹',
           component: CProblems.cAnswer,
@@ -483,9 +505,22 @@ const router = new Router ({
           path: '/inform',
           name: '通知',
           component: Inform.inform,
-          meta: {
-            keepAlive: false
-          }
+          children: [
+            {
+              path: '/',
+              redirect: '/inform/systemM',
+            },
+            {
+              path: '/inform/systemM',
+              name: '系统通知',
+              component: Inform.systemM
+            },
+            {
+              path: '/inform/activityM',
+              name: '活动通知',
+              component: Inform.activityM
+            }
+          ]
         },
         {
           path: '/my',
