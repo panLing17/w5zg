@@ -194,7 +194,9 @@
   }
   .conts .upper .lefters{
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    width: 60%;
   }
   .conts .upper .lefters .pointer{
     width: .21rem;
@@ -206,6 +208,12 @@
   .conts .upper .lefters .titleN{
     font-size: .37rem;
     color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
   .conts .upper .righters{
     font-size: .3rem;
