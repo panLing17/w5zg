@@ -21,10 +21,12 @@
       mixins:[activityShare],
       data () {
         return {
-          bankList: []
+          bankList: [],
+          id: ''
         }
       },
       created () {
+        this.id = this.$route.query.actId
         this.getList();
       },
       computed: {
@@ -37,48 +39,32 @@
           }
         }
       },
-      // deactivated () {
-      //   this.$store.commit('setPosition', {
-      //     path: '/largeCollection',
-      //     y: this.mescroll.getScrollTop()
-      //   })
-      // },
-      // activated () {
-      //   let _this = this
-      //   this.$store.state.position.forEach((now) => {
-      //     if (now.path === '/largeCollection') {
-      //       _this.mescroll.scrollTo(now.y, 0);
-      //     }
-      //   })
-      // },
-      // beforeRouteEnter (to, from , next) {
-      //   to.meta.keepAlive = false
-      //   next();
-      // },
       beforeDestroy () {
         this.mescroll.hideTopBtn();
         this.mescroll.destroy()
       },
-      mounted () {
-        this.$mescrollInt("largeMescroll",this.upCallback, () => {
-          // this.$store.state.position.forEach((now) => {
-          //   if (now.path === this.$route.path) {
-          //     this.mescroll.scrollTo(now.y, 0);
-          //   }
-          // })
-        }, (obj) => {
-          this.$store.commit('setPosition', {
-            path: this.$route.path,
-            y: obj.preScrollY
+      activated () {
+        let _this = this
+        if (this.id != this.$route.query.actId) {
+          this.id = this.$route.query.actId
+          this.getList();
+        }else {
+          this.$store.state.position.forEach((now) => {
+            if (now.path === this.$route.path) {
+              _this.mescroll.scrollTo(now.y, 0);
+            }
           })
-        });
+        }
       },
-      // beforeRouteLeave (to, from, next) {
-      //   if (to.path === '/home/sports') {
-      //     to.meta.keepAlive = true
-      //   }
-      //   next()
-      // },
+      deactivated () {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: this.mescroll.getScrollTop()
+        })
+      },
+      mounted () {
+        this.$mescrollInt("largeMescroll",this.upCallback, () => {}, () => {})
+      },
       methods: {
         upCallback: function (page) {
           // this.mescroll.endErr()
@@ -92,7 +78,7 @@
             url: this.$apiApp + 'acActivityContent/acActivityContentList',
             methods: 'get',
             params: {
-              actId: this.$route.query.actId,
+              actId: this.id,
               parentType: this.$route.query.parentType,
               conType: '481'
             }
@@ -109,42 +95,7 @@
         },
         toNext (item, type, url, id, relateId, title) {
           this.$method.goActivity.call(this, item, 2)
-          // switch (type) {
-          //   // 跳外链
-          //   case '143': window.location.href = url; break;
-          //   // 跳3级页面 362代表从2级跳3级
-          //   case '145': this.$router.push({path: '/home/sports',query:{parentType: '362',actId:id,title: title}}); break;
-          //   // 跳商品详情
-          //   case '141': this.$router.push({ path: '/goodsDetailed', query: { id: relateId }}); break;
-          //   // 跳3级页面模板2
-          //   case '149': this.$router.push({ path: '/activity', query: { actId: id, title: title, parentType: '362'}}); break;
-          // }
         }
-        // upCallback: function(page) {
-        //   let self = this;
-        //   this.getListDataFromNet(page.num, page.size, function(curPageData) {
-        //     if(page.num === 1) self.bankList = []
-        //     self.bankList = self.bankList.concat(curPageData)
-        //     self.mescroll.endSuccess(curPageData.length)
-        //   }, function() {
-        //     //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
-        //     self.mescroll.endErr();
-        //   })
-        // },
-        // getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
-        //   let self = this
-        //   self.$ajax({
-        //     method: 'post',
-        //     url:self.$apiGoods +  'goodsSearch/goodsRecommendationList',
-        //     params: {
-        //       page: pageNum,
-        //       rows: pageSize
-        //     },
-        //     headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        //   }).then(function (response) {
-        //     successCallback&&successCallback(response.data.data);//成功回调
-        //   })
-        // }
       }
     }
 </script>

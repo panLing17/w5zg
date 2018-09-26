@@ -4,7 +4,7 @@
       .bg(v-if="show", @click="close")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       //.main(v-show="show", @touchstart="touchStart", @touchmove="touchMove").mescroll#selectSize
-      .main(v-show="show", :class="{changeH:yuyueF}")#selectSize
+      .main(v-show="show")#selectSize
         .selectSizeHeader
           .photosBox()
             ul.photos(:style="{width:5 * list.length + 'rem'}", :class="{smallPhoto:smallPhotoFlag}")
@@ -17,7 +17,7 @@
             .store(v-else) {{realGoodsData.storage_num>0?'有货':'无货'}}
             .size
               span(v-if="selectedSpec.length === 0") 选择规格
-              span(v-if="selectedSpec.length > 0")(v-for="spec in selectedSpec", style="margin-right:.2rem") {{spec.gspec_value}}
+              span(v-if="selectedSpec.length > 0", v-for="spec in selectedSpec", style="margin-right:.2rem") {{spec.gspec_value}}
           .goodsData(:class="{smallGoodsData:smallPhotoFlag}" v-else)
             .price(v-if="realGoodsData.storage_num>0") {{realGoodsData.direct_supply_price | price-filter}}
             .price(v-else) {{0 | price-filter}}
@@ -25,7 +25,7 @@
             .size 选择 颜色 尺寸
           .headerClose(@click="close")
             img(src="../../../assets/img/Group10@2x.png")
-        .selectSizeContent(ref="selstSizeScroll", :class="{changeH2:yuyueF}")
+        .selectSizeContent(ref="selstSizeScroll")
           div(style="padding-bottom: .8rem;")
             ul.spec
               li(v-for="(item,fatherIndex) in spec")
@@ -33,13 +33,13 @@
                 ul.content
                   li(v-for="(i,index) in item.specValue", :class="{specChecked:item.valueIndex === index,disableSelect:i.gray}", @click="!i.gray?item.valueIndex=index:'';getStoreNum($event,i.value, fatherIndex,i.gray,item.valueIndex,index,'suc','y')") {{i.value}}
                   p(style="clear:both")
-              .yuyue(v-if="yuyueF")
+              //.yuyue(v-if="yuyueF")
                 .titles 预约专柜
                 .conts(v-show="!yuyueFlag") 请先选择商品规格
-                bes(:show="yuyueFlag", @succ="succ")
+                //bes(:show="yuyueFlag", @succ="succ")
             .count(v-if="!yuyueF")
               span 购买数量
-              w-counter(v-model="content", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
+              w-counter(v-model="content", @countPlusError="countPlusError", :min="1", :max="realGoodsData.storage_num", :width="'100px'")
             .express(v-if="!yuyueF")
               h1 配送方式
               .buttonTab
@@ -93,6 +93,7 @@
     components:{bes},
     data () {
       return {
+        bespeakFlag: '',
         noticeFlag3: '',
         HFlags: '',
         yuyueSuc: '',
@@ -236,26 +237,25 @@
       this.getFreight()
     },
     methods:{
+      // 数量增加不了处理
+      countPlusError() {
+        //若所有层级都选择了规格则继续
+        let flag = 0
+        this.spec.forEach((now)=>{
+          if (now.valueIndex === -1) {
+            flag+=1
+          }
+        })
+        if (flag>0) {
+          this.$message.warning('请选择规格')
+        } else {
+          this.$message.warning('库存不足')
+        }
+      },
       // 预约体验
       yuyueBtn() {
         if (this.yuyueFlag) {
-          let self = this
-          self.$ajax({
-            method: 'post',
-            url: self.$apiGoods + 'goods/addTryOn',
-            params: self.yuyueSuc,
-          }).then(function (response) {
-            self.noticeFlag2 = true
-            let t = 2
-            let timer1 = setInterval(function () {
-              t--
-              if (t==0) {
-                self.noticeFlag2 = false
-                self.$emit('ok')
-                clearInterval(timer1)
-              }
-            },1000)
-          })
+          this.$emit('besShow')
         } else{
           let self = this
           this.noticeFlag3 = true
@@ -292,6 +292,7 @@
               if (t==0) {
                 self.noticeFlag = false
                 self.$emit('reachgoods')
+                clearInterval(timer)
               }
             },1000)
           }
@@ -928,7 +929,7 @@
     /*padding-bottom: 1.5rem;*/
     background-color: white;
     width: 100%;
-    height: 10rem;
+    height: 12rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -1156,7 +1157,7 @@
     border-bottom:1px solid #eee;
   }
   .selectSizeContent {
-    height: 5.92rem;
+    height: 7.92rem;
     overflow: hidden;
   }
   .headerClose {

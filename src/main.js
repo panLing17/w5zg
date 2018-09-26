@@ -35,12 +35,20 @@ import scroll from './plugIn/scroll/index'
 
 import AdTag from 'views/home/src/goodsList/adTag'
 import Advert from 'views/home/src/goodsList/advert'
+import Notify from '@/plugIn/notification/index.js'
 
+Vue.router = router
+Vue.use(Notify)
 Vue.use(AdTag)
 Vue.use(Advert)
 Vue.use(scroll)
 Vue.use(VueLazyLoad, {
-  loading: require('assets/img/default.png')
+  loading: require('assets/img/default.png'),
+  filter: {
+    webp (listener, options) {
+        listener.src = 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/' + listener.src + '?x-oss-process=style/compress'
+    }
+  }
 })
 
 

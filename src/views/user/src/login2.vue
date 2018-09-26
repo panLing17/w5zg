@@ -1,46 +1,26 @@
 <template lang="pug">
   .phoneLogin
-    <!--nav-bar(background="white")-->
-      <!--.topLeft(slot="left", @click="$router.go(-1)")-->
-        <!--img(src="../../../assets/img/back@2x.png", style="width:.3rem")-->
-      <!--.topCenter(slot="center") 验证码登录-->
-      <!--.topRight(slot="right")-->
     .content
       .form
         .phone
           .iconWrapper
-            img.icon(:src="!iconFlag.phone?require('../../../assets/img/用户图标@2x.png'):require('../../../assets/img/用户图标-点亮@2x.png')")
-          input.input(type="number", placeholder="请输入您的手机号", v-model="form.phone", @input="lightUp")
+            img.icon(:src="!iconFlag.phone?require('../../../assets/img/login/Icon_phone@2x.png'):require('../../../assets/img/login/Icon_phone_checked@2x.png')")
+          input.input(type="number", pattern="1[0-9]{10}", placeholder="手机号", v-model="form.phone", @input="lightUp")
+          .iconWrapper(v-show="form.phone.length", @click="clear")
+            img.icon(src="../../../assets/img/login/Icon_del@2x.png")
+        .zhinengWrapper
+          #sc(v-if="showSC")
+          .timer(v-show="!showSC")  {{timerNum}} 秒后可重新获取
         .code
           .iconWrapper
-            img.icon(:src="!iconFlag.code?require('../../../assets/img/密码2@2x.png'):require('../../../assets/img/密码-点亮@2x.png')")
-          input.input(type="text", placeholder="请输入手机验证码", v-model="form.code", @input="lightUp")
-          .codeBtn(:style="{background:codeBtn.bg}", @click="sendCode") {{codeBtn.text}}
+            img.icon(:src="!iconFlag.code?require('../../../assets/img/login/Icon_editor@2x.png'):require('../../../assets/img/login/Icon_editor_checked@2x.png')")
+          input.input(type="text", placeholder="验证码", v-model="form.code", @input="lightUp")
       .btn(@click="login") 登入 / 注册
-      .tips(@click="$refs.agreement.mShow()") 《万物直供用户协议》
+      .tips(@click="$refs.agreement.mShow()") 用户注册代表同意<span>《万物直供用户协议》</span>
+      .call 客服电话: 4008-947-999
     transition(name="fade")
       .mask(v-if="popShow.code", @click="hidePop")
-    <!--transition(name="fade")-->
-      <!--.popWrapper(v-if="popShow.code")-->
-        <!--.close(@click.stop="hidePop")-->
-        <!--.popContent-->
-          <!--.imgWrapper-->
-            <!--img.codeImg(:src="codeUrl")-->
-          <!--.refresh(@click="getImgCode")-->
-            <!--img.refreshImg(src="../../../assets/img/refresh@2x.png")-->
-        <!--.inputWrapper-->
-          <!--ul.inputList(@click="codeFocus")-->
-            <!--li.inputItem {{codeItem[0]}}-->
-            <!--li.inputItem {{codeItem[1]}}-->
-            <!--li.inputItem {{codeItem[2]}}-->
-            <!--li.inputItem {{codeItem[3]}}-->
-          <!--input.trueInput(ref="trueInput", @input="writeCode", v-model="code")-->
     agreement(ref="agreement")
-    transition(name="fade")
-      .popWrapper(v-show="popShow.code")
-        .close(@click.stop="hidePop")
-        .popContent
-          #sc(v-if="showSC")
 </template>
 
 <script>
@@ -71,10 +51,6 @@
           phone: false,
           code: false,
         },
-        codeBtn: {
-          text: '发送验证码',
-          bg: 'rgb(245,0,87)'
-        },
         form: {
           phone: '',
           code: ''
@@ -83,7 +59,8 @@
         sessionId: '',
         sendCodeFlag: false,
         showSC: true,
-        timer: null
+        timer: null,
+        timerNum: 60
       }
     },
     created () {
@@ -98,13 +75,17 @@
       }
     },
     methods: {
+      clear() {
+        this.form.phone = ''
+        this.lightUp()
+      },
       _initSc () {
         let _this = this
         this.$nextTick(()=>{
           var ic = new smartCaptcha({
             renderTo: '#sc',
-            width: '299',
-            height: '1rem',
+            width: '8rem',
+            height: '1.2rem',
             default_txt: '获取验证码',
             success_txt: '获取成功，请查收短信',
             fail_txt: '点击按钮刷新',
@@ -123,9 +104,11 @@
                   }
                 }).then(function (response) {
                   if (response) {
-                    _this.scFlag = true
-                    _this.sessionId = data.sessionId
-                    _this.sendCodeAjax()
+                      _this.showSC = false
+                      _this.scFlag = true
+                      _this.sessionId = data.sessionId
+                      _this.sendCodeAjax()
+
                   }
                 })
               }
@@ -136,42 +119,56 @@
       },
       sendCodeAjax () {
         let _this = this
-        this.$ajax({
-          method: 'post',
-          url: _this.$apiMember + 'sms/sendCodeByAfs',
-          params: {
-            sessionId: this.sessionId,
-            mobile : this.form.phone,
-            W5MALLTOKEN: this.W5MALLTOKEN
-          }
-        }).then(function (response) {
-          _this.popShow.code = false
-          if (response) {
-            _this.sendCodeFlag = true
-            //倒计时
-            _this.showSC = false
-            let count = 60
-            _this.codeBtn.bg = '#ccc'
-            _this.codeBtn.text = count + 's'
-            if (_this.timer) {
-              clearInterval(_this.timer)
+        if (!this.phoneReg.test(this.form.phone)) {
+          this.scFlag = false
+          this.$notify({
+            content: '手机号格式不正确',
+            bottom: 4
+          })
+          this.$nextTick(()=>{
+            this.showSC = true
+            this._initSc()
+          })
+        } else {
+          this.$ajax({
+            method: 'post',
+            url: _this.$apiMember + 'sms/sendCodeByAfs',
+            params: {
+              sessionId: this.sessionId,
+              mobile: this.form.phone,
+              W5MALLTOKEN: this.W5MALLTOKEN
             }
-            _this.timer = setInterval(()=>{
-              count--
-              if (count <= 0) {
+          }).then(function (response) {
+            _this.popShow.code = false
+            if (response) {
+              _this.$notify({
+                content: '验证码已发送，请稍后',
+                bottom: 4
+              })
+              _this.sendCodeFlag = true
+              //倒计时
+              let count = 60
+              if (_this.timer) {
                 clearInterval(_this.timer)
-                _this.codeBtn.text = '获取验证码'
-                _this.codeBtn.bg = 'rgb(245,0,87)'
-                _this.showSC = true
-                _this.scFlag = false
-                _this._initSc()
-              } else {
-                _this.codeBtn.text = count + 's'
               }
+              _this.timer = setInterval(() => {
+                count--
+                if (count < 0) {
+                  clearInterval(_this.timer)
+                  _this.showSC = true
+                  _this.scFlag = false
+                  _this.timerNum = 60
+                  _this._initSc()
+                } else {
+                  _this.timerNum = count
+                }
 
-            }, 1000)
-          }
-        })
+              }, 1000)
+            } else {
+              _this.showSC = true
+            }
+          })
+        }
       },
       openTips () {
         this.popShow.tips=true
@@ -229,65 +226,9 @@
         }).then(function (response) {
           if (response) {
             self.W5MALLTOKEN = response.data.data
-            // self.getImgCode()
           }
         })
       },
-      // writeCode () {
-      //   if (this.code.trim().length > 4) {
-      //     this.code = this.code.substring(0,4)
-      //     return
-      //   }
-      //   this.codeItem = this.code.split('')
-      //   if (this.code.trim().length === 4) {
-      //     if (!this.codeFlag) {
-      //       return
-      //     }
-      //     this.codeFlag = false
-      //     let self = this
-      //     self.$ajax({
-      //       method: 'post',
-      //       url: self.$apiMember + 'sms/sendCode',
-      //       params: {
-      //         mobile: this.form.phone,
-      //         gCode: this.code,
-      //         W5MALLTOKEN: this.W5MALLTOKEN
-      //       }
-      //     }).then(function (response) {
-      //       self.code = ''
-      //       self.codeItem = []
-      //       if (response && response.data.optSuc) {
-      //         self.$message.success($code('2612'))
-      //         self.popShow.code = false
-      //         self.codeBtn.bg = '#999'
-      //         let count = 60;
-      //         self.codeBtn.text = count+'s'
-      //         let timer = setInterval(()=> {
-      //           count--;
-      //           self.codeBtn.text = count+'s'
-      //           if (count===0) {
-      //             self.codeBtn.bg = 'rgb(245,0,87)'
-      //             self.codeBtn.text = '重新发送'
-      //             self.codeFlag = true
-      //             clearInterval(timer)
-      //           }
-      //         },1000)
-      //       }else{
-      //         self.getImgCode()
-      //         self.codeFlag = true
-      //       }
-      //     })
-      //   }
-      // },
-      // codeFocus () {
-      //   this.$nextTick(() => {
-      //     this.$refs.trueInput.focus()
-      //   })
-      // },
-      // getImgCode () {
-      //   this.version += 1
-      //   this.codeUrl = this.$apiMember + 'member/picCode/150/75/60?v=' + this.version + '&W5MALLTOKEN=' + this.W5MALLTOKEN
-      // },
       sendCode () {
         if (!this.phoneReg.test(this.form.phone)) {
           this.$message.error('手机号码格式不正确！');
@@ -296,8 +237,6 @@
         if (this.showSC) {
           this.popShow.code = true
         }
-
-        // this.codeFocus()
 
       },
       lightUp () {
@@ -321,42 +260,43 @@
     color:#999;
   }
   .phoneLogin {
-    background: rgb(242,242,242);
+    background: #fff;
     width: 100%;
     position: absolute;
     z-index: 100;
   }
   .content {
     background: #fff;
+    width: 8rem;
+    margin: 0 auto;
     height: calc(100vh - 1.3rem);
+    position: relative;
   }
   .form {
-    padding: 1.5rem 1rem 0;
+    padding: .8rem 0 0;
   }
   .phone, .code {
-    height: 1rem;
+    height: 1.17rem;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #f2f2f2;
+    border-bottom: 1px solid #999;
   }
   .iconWrapper {
     flex: none;
-    width: 1rem;
   }
-  .phone .icon {
-    width: .4rem;
-  }
+
   .input {
+    margin-left: .19rem;
     flex: 1;
     width: 100%;
     height: 100%;
     border: none;
     outline: none;
     color: rgb(51,51,51);
-    font-size: .4rem;
+    font-size: .37rem;
   }
   .code {
-    margin-top: 1.2rem;
+    margin-top: .21rem;
   }
   .codeBtn {
     flex: none;
@@ -368,12 +308,12 @@
     border-radius: .2rem;
     font-size: .4rem;
   }
-  .code .icon {
-    width: .46rem;
+  .icon {
+    width: .64rem;
   }
   .btn {
-    margin: 2.37rem auto 0;
-    width: 6rem;
+    margin: 1rem auto 0;
+    width: 6.9rem;
     height: 1rem;
     font-size: .4rem;
     color: #fff;
@@ -470,10 +410,13 @@
     margin-left: -100%;
   }
   .tips {
-    margin-top: 2rem;
-    font-size: .3rem;
-    color: #999;
+    margin-top: .53rem;
+    font-size: .29rem;
+    color: #333;
     text-align: center;
+  }
+  .tips span {
+    color: #f70057;
   }
   .agreementWrapper {
     position: absolute;
@@ -534,10 +477,13 @@
     font-weight: bold;
     margin-right: .1rem;
   }
+  .zhinengWrapper {
+    margin-top: .42rem;
+    width: 8rem;
+    height: 1.2rem;
+  }
   #sc {
-    margin: .1rem auto 0;
-    /*width: 7.5rem;*/
-    width: 299px;
+    margin: 0 auto;
   }
   input  {
     -webkit-appearance: none;
@@ -549,5 +495,21 @@
     border: 1px solid #ddd;
     outline: none;
     padding-left: .5rem;
+  }
+  .call {
+    font-size:.32rem;
+    color:rgba(102,102,102,1);
+    margin-top: 4.5rem;
+    width: 100%;
+    text-align: center;
+  }
+  .timer {
+    width: 100%;
+    height: 100%;
+    background: #ccc;
+    color: #fff;
+    font-size: .37rem;
+    line-height: 1.2rem;
+    text-align: center;
   }
 </style>

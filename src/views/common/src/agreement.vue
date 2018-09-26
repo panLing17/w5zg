@@ -329,7 +329,7 @@
     background: #fff;
     width: 80%;
     height: 70%;
-    z-index: 201;
+    z-index: 9999;
     border-radius: .1rem;
     overflow: hidden;
   }

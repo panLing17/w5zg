@@ -33,8 +33,12 @@
 
     },
     activated() {
-      this._initParams()
-      this.getTabList()
+      if (this.actId != this.$route.query.actId) {
+        this.tabActive = 0
+        this._initParams()
+        this.getTabList()
+      }
+
     },
     deactivated() {},
     mounted () {

@@ -33,6 +33,13 @@ function getClientHeight(){
   return clientHeight;
 }
 
+function getStyle (el, attr) {
+  if(el.currentStyle) {
+    return el.currentStyle[attr];
+  } else {
+    return getComputedStyle(el, false)[attr];
+  }
+}
 function arrayPrice(value) {
   let fixNum;
   let fixedNum;
@@ -50,7 +57,6 @@ function arrayPrice(value) {
 
   return arr
 }
-
 function back() {
   // android交互
   if (typeof w5zgApp !== 'undefined') {
@@ -96,7 +102,7 @@ function goActivity(data, from) {
       } else {
         this.$router.push({path: '/home/sports',query:{parentType: from,actId: data.id, title: data.title}});
       }
-       break;
+      break;
     // 跳商品详情页 取relate_id
     case '141': this.$router.push({ path: '/goodsDetailed' }); break;
     // 跳2级页面
@@ -106,7 +112,7 @@ function goActivity(data, from) {
       } else {
         this.$router.push({path: '/home/largeCollection',query:{parentType: from,actId: data.id, title: data.title}});
       }
-       break;
+      break;
     // 跳3级页面模板2
     case '149':
       if (data.sh_id) {
@@ -114,7 +120,7 @@ function goActivity(data, from) {
       } else {
         this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: from}});
       }
-       break;
+      break;
     // 跳三级页面模板2
     case '148':
       if (data.sh_id) {
@@ -125,4 +131,4 @@ function goActivity(data, from) {
       break;
   }
 }
-export default { transformDate, imgUrlFilter, getClientHeight, arrayPrice, back, goActivity }
+export default {transformDate, imgUrlFilter, getClientHeight, arrayPrice, getStyle, back, goActivity}

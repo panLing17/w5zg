@@ -13,7 +13,7 @@
           div(v-for="tag in banner", style="width:100%" , @click="goActivity(tag.link,tag.linkType)")
             img(:src="tag.gi_img_url | img-filter" , style="width:100%;height:10rem")
       .goodsInfo
-        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type===1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)">赔付电话4008-947-999</span>
+        .tags <span class="tag" @click="tips(0)" v-if="goodsData.carry_type===1">专柜提货(体验)</span><span class="tag2" @click="tips(0)" v-else>暂仅快递配送</span><span class="tag" @click="tips(1)" v-if="goodsData.carry_type===1">专柜比价,未省钱,白送</span><span class="tag" @click="tips(2)" v-if="goodsData.carry_type===1">赔付电话4008-947-999</span><span class="tag2" v-else>客服电话4008-947-999</span>
         .goodsName  {{goodsData.gi_name}}
         <!-- a(href="tel:4008-947-999") -->
           //.stateChuiNiu(@click="saveMoneyTipsFlag = true")
@@ -140,12 +140,12 @@
             li 每次99款
         .left(@click="shoppingCartAdd") 加入购物车
         .right(@click="buy") 立即购买
-      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok")
+      select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok", @besShow="besShow")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
     city-select(:show="selectCity", @close="closeSelectCity", @change="cityChange", :type="disTypeName")
     onlyStoreSelect(:show="onlyStoreSelect", @close="onlyStoreSelect = false", @change="locationChange")
-    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="bespeakFlag = false")
+    bespeakSelect(:show="bespeakFlag", @change="onlyStoreChange", @close="yuyueSucc", @backPrev="backPrev", :backFlag="backFlag")
     card-tips(:show="cardTipsFlag", @close="cardTipsFlag = false")
     tag-tips(:show="tagTipsFlag", @close="tagTipsFlag = false")
     saveMoneyTips(:show="saveMoneyTipsFlag", @close="saveMoneyTipsFlag = false")
@@ -178,6 +178,7 @@
     name: "goods-detailed",
     data () {
       return {
+        backFlag: '',
         yuyueF: false,
         k: '',
         j: '',
@@ -395,6 +396,19 @@
       }
     },
     methods:{
+      // 从预约地址返回到选择规格
+      backPrev(){
+        this.selectFlag = true
+        this.bespeakFlag = false
+      },
+      yuyueSucc(){
+        this.bespeakFlag = false
+      },
+      // 显示选择预约地址
+      besShow(){
+        this.bespeakFlag = true
+        this.selectFlag = false
+      },
       // 预约体验成功
       ok() {
         this.selectFlag = false
@@ -498,13 +512,19 @@
       },
       // 显示预约
       yuyueShow () {
-        if (this.initPriceFlag) {
-          //this.$message.warning('请选择规格')
-          this.selectFlag = true
-          this.yuyueF = true
-          return
+        if (localStorage.hasOwnProperty('token')) {
+          if (this.initPriceFlag) {
+            //this.$message.warning('请选择规格')
+            this.selectFlag = true
+            this.yuyueF = true
+            this.backFlag = false
+            return
+          }
+          this.bespeakFlag = true
+          this.backFlag = true
+        } else{
+          this.$router.push('/login/login2')
         }
-        this.bespeakFlag = true
       },
       // 获取实际不存在规格（置灰）
       getRelSpec () {
@@ -525,22 +545,25 @@
       },
       // 检测是否可自提
       checkStore () {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
-          params: {
-            gskuId: self.$store.state.skuId
-          },
-        }).then(function (response) {
-          if(response.data.data.length<1){
-            self.disableCabinet = true
-            self.disTypeName = '快递配送'
-          } else {
-            self.disableCabinet = false
-          }
+        if(this.$store.state.skuId) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
+            params: {
+              gskuId: self.$store.state.skuId
+            },
+          }).then(function (response) {
+            if(response.data.data.length<1){
+              self.disableCabinet = true
+              self.disTypeName = '快递配送'
+            } else {
+              self.disableCabinet = false
+            }
 
-        })
+          })
+        }
+
       },
       selectCityOpen(){
         this.selectCity = true
@@ -1275,10 +1298,25 @@
     transform: scale(.8,.8);
     margin-left: -.5rem;
   }
-  .tags>.tag:last-child {
+  .tags>.tag2{
+    display: inline-block;
+    padding: .05rem .2rem;
+    font-size: .3rem;
+    font-weight: 500;
+    border-radius: 1rem;
+    color: rgb(244,108,62);
+    background: rgb(255,239,232);
+    transform: scale(.8,.8);
+    margin-left: -.5rem;
+  }
+  .tags>.tag:last-child{
     border: none;
     background: none;
     text-decoration: underline;
+  }
+  .tags>.tag2:last-child {
+    border: none;
+    background: none;
   }
   .price {
     display: flex;

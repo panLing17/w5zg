@@ -319,36 +319,11 @@ const router = new Router ({
       name: '三级活动',
       component: Home.sports
     },
-    // {
-    //   path: '/collection',
-    //   name: '收藏夹',
-    //   component: Collection.collection
-    // },
-
-    // {
-    //   path: '/marketing/rankingList',
-    //   name: '排行榜',
-    //   component: Marketing.rankingList,
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // {
-    //   path: '/marketing/prizeResult',
-    //   name: '获奖结果',
-    //   component: Marketing.prizeResult,
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
-    // {
-    //   path: '/marketing/selectSize',
-    //   name: '选择尺码',
-    //   component: Marketing.selectSize,
-    //   meta: {
-    //     keepAlive: true
-    //   }
-    // },
+    {
+      path: '/search',
+      name: '新搜索',
+      component: Common.search
+    },
     {
       path: '/',
       name: '应用',

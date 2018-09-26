@@ -1,16 +1,16 @@
 <template lang="pug">
   .wrapPage
-    nav-bar
-      .topLeft(slot="left")
-        img(src="../../../assets/img/location.png")
-        span.city {{cityName}}
-      .topCenter(slot="center")
-        .searchInput(@click="$router.push({path:'/home/searchHistory',query:{jumps:'page'}})")
-          img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
-          input(type="text", placeholder="请输入商品名称", readonly, unselectable='on')
-          img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg
-      .topRight(slot="right")
-        img(src="../../../assets/img/msg_0.png" v-show="false")
+    <!--nav-bar-->
+      <!--.topLeft(slot="left")-->
+        <!--img(src="../../../assets/img/location.png")-->
+        <!--span.city {{cityName}}-->
+      <!--.topCenter(slot="center")-->
+    .searchInput(@click="$router.push({path:'/search'})")
+      img(src="../../../assets/img/searchInput搜索图标@2x.png").leftImg
+      input(type="text", :placeholder="placeholder", unselectable='on')
+      <!--img(src="../../../assets/img/home扫描@2x.png" v-show="true" @click="scan()").rightImg-->
+      <!--.topRight(slot="right")-->
+        <!--img(src="../../../assets/img/msg_0.png" v-show="false")-->
     .content(v-loading="loadingFlag < 2")
       .left(ref='lefters')
         ul
@@ -22,9 +22,9 @@
               span.point
               span.letter {{item.gc_name}}
             ul.listOfGoods
-              li(v-for="items in item.childList" @click="$router.push({path:'/page/commodityList',query:{msg:items.gc_keywords,flags:1,jumps:'page'}})").wrapImg
+              li(v-for="items in item.childList" @click="$router.push({path:'/search',query:{key: items.gc_keywords, from: 1}})").wrapImg
                 div(style="width: 1.9rem; height: 1.9rem; overflow: hidden; font-size: 0;")
-                  img(v-lazy="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+items.gc_icon+'?x-oss-process=style/compress'")
+                  img(v-lazy="items.gc_icon", :key="items.gc_icon")
                 .words {{items.gc_name}}
 </template>
 
@@ -45,12 +45,14 @@
         productList: [],
         loadingFlag: 0,
         rightShowFlag: '', // 控制右侧内容的显隐
-        tabNums: ''
+        tabNums: '',
+        placeholder:''
       }
     },
     computed: mapState(['position']),
     created () {
       this.request()
+      this._getDefaultWord()
     },
     beforeDestroy () {
       this.mescroll.hideTopBtn();
@@ -58,13 +60,25 @@
     },
     mounted () {
       // 判断显示城市的字数
-      this.judgeCityNum()
+      //this.judgeCityNum()
       // 一级分类
       //this.request()
       // 判断显示当前城市
-      this.judgeCity()
+      //this.judgeCity()
     },
     methods: {
+      //获取默认搜索词
+      _getDefaultWord() {
+        let self =this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goodsSearch/v2/getDefaultSeWord',
+          params: {
+          }
+        }).then(function(res){
+          self.placeholder = res.data.data
+        })
+      },
       keepState () {
         if (this.$route.query.tabNum == undefined) {
           this.secondLevel(this.pageName[0].gc_id)
@@ -289,16 +303,22 @@
   }
   /*搜索框样式--开始*/
   .searchInput{
-    width: 6.5rem;
-    height: .7rem;
-    background-color: rgb(238,238,238);
-    border-radius: .9rem;
+    width: 8rem;
+    height: 1.3rem;
+    margin 0 auto;
+    background: #fff;
     line-height: .7rem;
+    display: flex;
+    align-items: center;
+    position relative
   }
   .searchInput img.leftImg{
+    position absolute
+    left .3rem;
+    top: 50%;
+    transform translateY(-50%)
     width: .45rem;
     vertical-align: middle;
-    margin-left: .3rem;
   }
   .searchInput img.rightImg{
     width: .45rem;
@@ -306,12 +326,16 @@
     margin-left: .2rem;
   }
   .searchInput input{
-    width: 70%;
+    border-radius: .9rem;
+    padding-left: .8rem;
+    background-color: rgb(238,238,238);
+    width: 100%;
+    height: .7rem;
     border: 0;
     outline: none;
     font-size: .3rem;
     margin-left: .2rem;
-    background-color: rgb(238,238,238);
+
   }
   /*搜索框样式--结束*/
   .topRight{

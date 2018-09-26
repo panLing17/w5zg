@@ -31,7 +31,7 @@ export const activityShare = {
         shareTitle: '',
         shareContent: '',
         shareImg: '',
-        shareUrl: window.location.href.replace(/\?*#/, "?#"),
+        shareUrl: '',
         navShow: true,
         shareId: ''
       }
@@ -44,11 +44,8 @@ export const activityShare = {
     },
     activated() {
       this.showShare()
-      if (this.shareId != this.$route.query.shId) {
-        this.shareId = this.$route.query.shId
-        this.getShareContent()
-      }
-
+      this.shareId = this.$route.query.shId
+      this.getShareContent()
       this.setTitle()
     },
     methods: {
@@ -66,6 +63,7 @@ export const activityShare = {
       },
       getShareContent() {
         let self = this
+        this.shareUrl = window.location.href.replace(/\?*#/, "?#")
         if (!this.$route.query.shId || this.$route.query.shId=='undefined' || (typeof this.$route.query.shId)=='undefined') {
           this.shareTitle = '万物直供商城 正品保障'
           this.shareContent = '万物直供商城，价格优惠，正品保障，支持专柜提货！'
