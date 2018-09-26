@@ -138,8 +138,10 @@
           ul(@click="yuyueShow")
             li 预约体验
             li 每次99款
-        .left(@click="shoppingCartAdd") 加入购物车
-        .right(@click="buy") 立即购买
+        .left(@click="shoppingCartAdd", v-if="goodsData.gi_status === '221'") 加入购物车
+        .left(v-if="goodsData.gi_status === '222'").sellOutL 加入购物车
+        .right(@click="buy", v-if="goodsData.gi_status === '221'") 立即购买
+        .right(v-if="goodsData.gi_status === '222'").sellOutR 立即购买
       select-size(v-if="selectSizeShow", :carryType="goodsData.carry_type", :lock="disableCabinet", :expressType="disTypeName", :show="selectFlag", :photos="banner", :spec="spec", :graySpecData="graySpecData", :onlySelectSpec="onlySelectSpec", @close="selectClose", @buy="removeTouchDisable", @confirm="confirmSpec", @load="specLoad", @reachgoods="reachGoods", :yuyueF="yuyueF", @ok="ok", @besShow="besShow")
       //store-select(:show="selectStoreFlag", :type="ofBuy", @close="closeSelectStore", @change="storeChange")
       //share-select(:show="selectShare", @close="selectShare = false", :sharePhoto="banner", :shareTitle="goodsData.gi_name")
@@ -1711,6 +1713,9 @@
     background: #ff8500;
     font-size: .4rem;
     color: white;
+  }
+  .sellOutL,.sellOutR{
+    opacity: 0.3 !important;
   }
   .buttons .right{
     flex-grow: 1.5;

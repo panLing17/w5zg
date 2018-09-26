@@ -1,6 +1,14 @@
 <template>
   <div ref="wrapper">
-    <slot></slot>
+    <div>
+      <div v-if="pulldown" class="pulldown"
+           :style="`margin-top:${dragTip.translate}px`">
+        <div class="clear" v-if="dragTip.showLoding">
+          <div>{{dragTip.text}}</div>
+        </div>
+      </div>
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -8,6 +16,15 @@
 import BScroll from 'better-scroll'
 export default {
   name: 'scroll',
+  data(){
+    return{
+      dragTip:{
+        text:"下拉刷新",
+        translate:-50,
+        showLoding:false
+      }
+    }
+  },
   props: {
     probeType: {
       type: Number,
@@ -26,6 +43,10 @@ export default {
       default: false
     },
     pullup: {
+      type: Boolean,
+      default: false
+    },
+    pulldown: {
       type: Boolean,
       default: false
     },
@@ -62,7 +83,7 @@ export default {
         scrollY: this.scrollY,
         scrollX: this.scrollX,
         stopPropagation: this.stopPropagation,
-        bounce: !this.pullup
+        bounce: this.pullup?false:this.pulldown?false:true
       })
       if (this.listenScroll) {
         let me = this
@@ -71,9 +92,32 @@ export default {
         })
       }
       if (this.pullup) {
-        this.scroll.on('scrollEnd', () => {
+        this.scroll.on('scrollEnd', (pos) => {
           if (this.scroll.y <= (this.scroll.maxScrollY + 50)) {
-            this.$emit('scrollToEnd')
+            this.$emit('scrollToEnd',pos)
+          }
+        })
+      }
+      // 是否派发顶部下拉事件，用于下拉刷新
+      if(this.pulldown) {
+        this.scroll.on('scroll', (pos) => {
+          //显示下拉刷新loding
+          this.dragTip.showLoding = true
+          if (pos.y >= 50) {
+            this.dragTip.text = "释放刷新"
+          }
+        })
+        this.scroll.on('touchEnd', (pos) => {
+          console.log(pos)
+          console.log(123)
+          if (pos.y >= 50) {
+            this.dragTip.translate = 0
+            this.dragTip.text = "刷新中..."
+            //重新初始化
+            // this.$on('scroll.finishLoad', this.resetParams);
+            this.$emit('pullDownFun', pos)
+          } else {
+            this.resetParams()
           }
         })
       }
@@ -82,6 +126,20 @@ export default {
           this.$emit('beforeScroll')
         })
       }
+    },
+    resetParams(){
+      setTimeout(() => {
+        this.dragTip = {
+          text:"下拉刷新",
+          translate: -50,
+          showLoding:false
+        }
+      },600)
+      // this.dragTip = {
+      //   text:"下拉刷新",
+      //   translate: -50,
+      //   showLoding:false
+      // }
     },
     enable () {
       this.scroll && this.scroll.enable()
@@ -110,5 +168,23 @@ export default {
 </script>
 
 <style scoped>
+  .scroll-wrap{
+    height:100%;
+    overflow:hidden;
+  }
+    /* 下拉刷新 */
+  .pulldown{
+    width:100%;
+    height:50px;
+    position:relative;
+  }
+  .clear{
+    padding:10px 0px;
+    font-size:.28rem;
+    position:absolute;
+    left:50%;
+    top:5px;
+    transform:translate(-50%,0);
+  }
 
 </style>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  scroll.useDetailBox(:data="data")
+  scroll.useDetailBox(ref="scroll", :data="data", :pulldown="true", @pullDownFun="pullDownFun")
     div.wrapper
       .ulWrapper
         .totalPrice(v-show="selectType==0 && totalBalance>0")
@@ -32,6 +32,7 @@
       data () {
         return {
           selectType: 0,
+          statusNum: 0,
           data: []
         }
       },
@@ -58,12 +59,13 @@
         '$route' (to, from) {
           this.selectType = to.params.id;
           if (this.selectType == 0) {
-            this.getData(1);
+            this.statusNum = 1
           }else if (this.selectType == 1) {
-            this.getData(0);
+            this.statusNum = 0
           }else {
-            this.getData(2);
+            this.statusNum = 2
           }
+          this.getData(this.statusNum)
         }
       },
       methods: {
@@ -77,12 +79,16 @@
             params: {status:status}
           }).then(function (response) {
             if (response.data.data.length) {
+              _this.$refs.scroll.resetParams()
               _this.data = response.data.data;
             }
-
           })
-        }
+        },
+        pullDownFun(){
+          this.getData(this.statusNum)
+        },
       },
+
       components: {
         NoMore,
         Scroll

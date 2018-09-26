@@ -12,7 +12,7 @@
         li.special.item(:class="{'active':itemActive===1}", @click="itemChange(1)") 收入
         li.normalR.item(:class="{'active':itemActive===2}", @click="itemChange(2)") 支出
         li.line
-    scroll.content(ref="scroll", :data="cashDetail", :pullup="pullup", @scrollToEnd="loadMore", :probeType="probeType", @scroll="scroll", :listenScroll="listenScroll")
+    scroll.content(ref="scroll", :data="cashDetail", :pullup="pullup", @scrollToEnd="loadMore", :probeType="probeType", @scroll="scroll", :listenScroll="listenScroll", :pulldown="pulldown", @pullDownFun="pullDownFun")
       div
         .balanceBox(ref="balanceBox")
           .balance {{balance | number2}}
@@ -55,6 +55,7 @@
           balance: 0,
           tradeType: '',
           pullup: true,
+          pulldown: true,
           page: 1,
           rows: 10,
           hasMore: true,
@@ -105,8 +106,11 @@
         }
       },
       methods: {
+        pullDownFun(){
+          this.getData()
+        },
         scroll(pos) {
-          console.log(-pos.y+'==========='+this.$refs.balanceBox.offsetHeight)
+          // console.log(-pos.y+'==========='+this.$refs.balanceBox.offsetHeight)
           if (-pos.y >= this.$refs.balanceBox.offsetHeight) {
             this.tabBoxActive = true
           }else {
@@ -135,6 +139,7 @@
             params: form
           }).then(function (response) {
             if (response) {
+              self.$refs.scroll.resetParams()
               if (response.data.data) {
                 self.cashDetail = self.cashDetail.concat(response.data.data.rows)
                 if (self.cashDetail.length === 0 || self.cashDetail.length<self.rows) {

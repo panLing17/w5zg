@@ -160,7 +160,6 @@
       this.getFootmarkNum()
       this.getOrderCount()
       // this.getNetcardsCount()
-
       // 判断页面是否向上滚动
       // window.addEventListener('scroll',this.judgeScroll,true);
       // 改变下拉刷新的样式
