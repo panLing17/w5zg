@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!--<a href="w5zg://pszh.com/test/scheme?name=google&page=1" style="position: fixed; top: 0; left: 0;z-index: 99999;display: block; width: 100%;height: 500px;background-color: red;">打开app</a>-->
     <transition name="fade" , mode="out-in">
       <keep-alive>
         <router-view v-if="!$route.meta.keepAlive"/>
@@ -17,6 +18,10 @@
   export default {
     name: 'app',
     mounted() {
+      // this.toApp()
+
+
+
       this.getAddressData()
       this.getDictionaries()
       // this.getLocation()
@@ -30,6 +35,21 @@
       ...mapState(['keepAliveFlag'])
     },
     methods: {
+      // toApp() {
+      //   let startTime = Date.now();
+      //   let ifr = document.createElement('iframe')
+      //   ifr.src = 'w5zg://pszh.com/test/scheme?name=google&page=1'
+      //   ifr.style.display = 'none'
+      //   document.body.appendChild(ifr)
+      //   var t = setTimeout(function() {
+      //     var endTime = Date.now();
+      //     if (!startTime || (endTime - startTime < 1500)) {
+      //       window.location.href = '#/download'
+      //     } else {
+      //
+      //     }
+      //     }, 1000);
+      // },
       getDictionaries() {
         let self = this
         self.$ajax({
