@@ -42,7 +42,7 @@
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
       goods-list(:data="goodsList")
       .bottomPlaceholder
-    .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
+    .adWrapper(@click.stop="$router.push('/registerTicket')", :style="{top: fbPosition+'px'}", @touchstart="fbstart($event)", @touchmove="fbmove($event)", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
     .mask(@click.stop="closeTicket", v-if="showTicket")
     .adWrapper2(v-if="showTicket")
@@ -123,7 +123,9 @@
         secondFloor: [],
         informNum: 0,
         placeholder: '',
-        popUpAd: []
+        popUpAd: [],
+        fbPosition: 10.8,
+        htmlFontSize: document.getElementsByTagName('html')[0].style.fontSize
       }
     },
     components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
@@ -155,6 +157,9 @@
       next();
     },
     mounted() {
+      this.$nextTick(() => {
+        this.fbPosition *= parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize'))
+      })
       document.title = '万物直供'
       this.$mescrollInt("homeMescroll", this.upCallback, () => {
         this.position.forEach((now) => {
@@ -202,6 +207,29 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 新人领券浮标滑动
+      fbstart(e) {
+        e.preventDefault()
+        let touch = e.touches[0];
+        this.startX = touch.pageX;
+        this.startY = touch.pageY;
+      },
+      fbmove(e) {
+        e.preventDefault()
+        let touch = e.touches[0];
+        let deltaX = touch.pageX - this.startX;
+        let deltaY = touch.pageY - this.startY;
+        this.startY = touch.pageY
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+          this.fbPosition += deltaY
+          let maxTop = document.documentElement.clientHeight - 60
+          if (this.fbPosition <= 0) {
+            this.fbPosition = 0
+          } else if (this.fbPosition>=maxTop) {
+            this.fbPosition = maxTop
+          }
+        }
+      },
       // 去扫一扫
       toScan() {
         wx.scanQRCode({
@@ -841,7 +869,7 @@
 
   .adWrapper {
     position: fixed;
-    top: 10.8rem;
+    /*top: 10.8rem;*/
     right: -0.2rem;
     z-index: 101;
   }
