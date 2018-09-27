@@ -213,7 +213,10 @@
     justify-content: space-between;
     position: relative;
   }
-
+  .goodsType{
+    background: url("../../../assets/img/noLoadPic.png") no-repeat top;
+    background-size: 100% 68%;
+  }
   .goodsType>img {
     width: 100%;
     height: 4.8rem;

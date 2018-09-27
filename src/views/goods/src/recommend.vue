@@ -12,13 +12,13 @@
           //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         <!--.advertType(v-if="item.type === '333'", @click="goActivity(item)")-->
-          <!--img(:src="item.image | img-filter")-->
+        <!--img(:src="item.image | img-filter")-->
         // 标签布局
         <!--ul.tagType(v-if="item.type === '334'")-->
-          <!--.tagTitle-->
-            <!--.text 细分-->
-            <!--.line-->
-          <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
+        <!--.tagTitle-->
+        <!--.text 细分-->
+        <!--.line-->
+        <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     ul.goodsList.right(:style="{background:background}", ref="right")
       li(v-for="item in listData.right")
         // 正常商品布局
@@ -31,13 +31,13 @@
           //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         <!--.advertType(v-if="item.type === '333'", @click="goActivity(item)")-->
-          <!--img(:src="item.image | img-filter")-->
+        <!--img(:src="item.image | img-filter")-->
         // 标签布局
         <!--ul.tagType(v-if="item.type === '334'")-->
-          <!--.tagTitle-->
-            <!--.text 细分-->
-            <!--.line-->
-          <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
+        <!--.tagTitle-->
+        <!--.text 细分-->
+        <!--.line-->
+        <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     div(style="clear:both")
 </template>
 
@@ -155,17 +155,17 @@
         this.$method.goActivity.call(this, data, 1)
         // switch (data.url_type) {
         //   // 跳外链
-        //   case '143': window.location.href = data.url; break;
+        //   case '143': window.location.href = data.url + '?shId=' + data.sh_id; break;
         //   // 跳3级页面 361代表从1级跳3级
-        //   case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: data.id, title: data.title}}); break;
+        //   case '145': this.$router.push({path: '/home/sports',query:{parentType: '361',actId: data.id, title: data.title, shId: data.sh_id}}); break;
         //   // 跳商品详情页 取relate_id
         //   case '141': this.$router.push({ path: '/goodsDetailed', query: { id: data.relate_id }}); break;
         //   // 跳2级页面
-        //   case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: data.id, title: data.title}}); break;
+        //   case '144': this.$router.push({path: '/home/largeCollection',query:{parentType: '361',actId: data.id, title: data.title, shId: data.sh_id}}); break;
         //   // 跳3级页面模板2
-        //   case '149': this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: '361'}}); break;
+        //   case '149': this.$router.push({ path: '/activity', query: { actId: data.id, title: data.title, parentType: '361', shId: data.sh_id}}); break;
         //   // 跳三级页面模板2
-        //   case '148': this.$router.push({path: '/twoLevel', query: {parentType: '361',actId: data.id, title: data.title}}); break;
+        //   case '148': this.$router.push({path: '/twoLevel', query: {parentType: '361',actId: data.id, title: data.title, shId: data.sh_id}}); break;
         // }
 
         /*let {
@@ -213,7 +213,10 @@
     justify-content: space-between;
     position: relative;
   }
-
+  .goodsType{
+    background: url("../../../assets/img/noLoadPic.png") no-repeat top;
+    background-size: 100% 68%;
+  }
   .goodsType>img {
     width: 100%;
     height: 4.8rem;

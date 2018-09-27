@@ -1,7 +1,7 @@
 <template>
   <div ref="wrapper">
     <div>
-      <div v-if="pulldown" class="pulldown"
+      <div v-if="pulldown&&dragTip.showLoding" class="pulldown"
            :style="`margin-top:${dragTip.translate}px`">
         <div class="clear" v-if="dragTip.showLoding">
           <div>{{dragTip.text}}</div>
@@ -108,15 +108,12 @@ export default {
           }
         })
         this.scroll.on('touchEnd', (pos) => {
-          console.log(pos)
-          console.log(123)
           if (pos.y >= 50) {
             this.dragTip.translate = 0
             this.dragTip.text = "刷新中..."
-            //重新初始化
-            // this.$on('scroll.finishLoad', this.resetParams);
             this.$emit('pullDownFun', pos)
           } else {
+            //重新初始化
             this.resetParams()
           }
         })
@@ -134,7 +131,7 @@ export default {
           translate: -50,
           showLoding:false
         }
-      },600)
+      },200)
       // this.dragTip = {
       //   text:"下拉刷新",
       //   translate: -50,
@@ -158,10 +155,20 @@ export default {
     }
   },
   watch: {
+    // data () {
+    //   setTimeout(() => {
+    //     this.refresh()
+    //   }, 200)
+    // }
     data () {
-      setTimeout(() => {
+      setTimeout(()=>{
         this.refresh()
-      }, 200)
+        new BScroll(this.$refs.wrapper,{
+          probeType:this.probeType,
+          click:this.click,
+          scrollX:this.scrollX
+        })
+      },20)
     }
   }
 }

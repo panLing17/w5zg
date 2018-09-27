@@ -107,6 +107,7 @@
       },
       methods: {
         pullDownFun(){
+          this.$refs.scroll.resetParams()
           this.getData()
         },
         scroll(pos) {
@@ -139,7 +140,7 @@
             params: form
           }).then(function (response) {
             if (response) {
-              self.$refs.scroll.resetParams()
+              //self.$refs.scroll.resetParams()
               if (response.data.data) {
                 self.cashDetail = self.cashDetail.concat(response.data.data.rows)
                 if (self.cashDetail.length === 0 || self.cashDetail.length<self.rows) {

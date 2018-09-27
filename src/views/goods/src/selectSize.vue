@@ -944,7 +944,7 @@
     width: 100%;
     height: 1.2rem;
     display: flex;
-    border: solid 1px rgb(244,0,87);
+    /*border: solid 1px rgb(244,0,87);*/
   }
   .bottomButton div{
     display: flex;
@@ -968,7 +968,7 @@
   .bottomButton .right2{
     flex-grow: 1;
     height: 100%;
-    background: rgb(244,0,87);
+    background: #9D4AAD;
     font-size: .4rem;
     color: white;
   }

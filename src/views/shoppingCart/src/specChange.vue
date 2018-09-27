@@ -582,4 +582,7 @@
     justify-content center
     font-size .4rem
   }
+  .reachGoods{
+    background-color #9D4AAD
+  }
 </style>

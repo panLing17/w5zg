@@ -42,6 +42,8 @@
           font-size 0
           height 4.9333rem
           overflow hidden
+          background url("../../../../assets/img/noLoadPic.png") no-repeat center
+          background-size 100%
           img {
             width 100%
           }
