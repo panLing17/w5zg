@@ -5,10 +5,11 @@
       item(
       :data="data",
       @goods-change="goodsChange",
-      @change-ways="changeWays"
+      @change-ways="changeWays",
+      @delete-Goods="delGoods",
       )
     select-city(ref="selectCity", :addressList="[]", @select-city="selectCity")
-    select-store(ref="selectStore", :data="storeList", @store-select="selectStore")
+    select-store(ref="selectStore", :from="1", :data="storeList", @store-select="selectStore")
 </template>
 
 <script>

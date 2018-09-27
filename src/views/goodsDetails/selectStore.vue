@@ -1,9 +1,9 @@
 <template lang="pug">
   .selectStore
     transition(name="fade")
-      .mask(v-show="selectStoreShow", @click="hide()", @touchmove.prevent="")
+      .mask(v-show="selectStoreShow", :class="{background: from===1}", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .contentWrapper(v-show="selectStoreShow")
+      .contentWrapper(v-show="selectStoreShow", :style="{bottom: from===0?0:'1.38rem'}")
         .title
           .left(@click="hide")
             img(src="./back2.png")
@@ -28,6 +28,10 @@
   export default {
     name: "selectStore",
     props: {
+      from: {
+        type: Number,
+        default: 0
+      },
       data: {
         type: Array,
         default() {
@@ -98,11 +102,13 @@
     width 100%
     height 100vh
     z-index 110
+    &.background {
+      background-color rgba(0,0,0,.5)
+    }
   }
   .contentWrapper {
     height $height-pop-details
     position fixed
-    bottom 0
     left 0
     width 100%
     background-color #fff

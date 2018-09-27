@@ -9,6 +9,10 @@ export const shoppingCart = {
     }
   },
   methods: {
+    // 删除商品
+    delGoods(obj) {
+
+    },
     // 商品选中
     goodsChange(obj) {
       let params
@@ -90,6 +94,8 @@ export const shoppingCart = {
     },
     selectCity() {
     },
-    selectStore() {}
+    selectStore(obj) {
+      console.log(obj)
+    }
   }
 }

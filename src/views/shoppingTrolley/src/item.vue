@@ -47,7 +47,7 @@
                           .popItem(v-show="goods.delivery_ways==='168'")
                             img(src="./address.png")
                             span 提货门店
-                          .popItem
+                          .popItem(@click="delGoods($emit('delete-Goods', {index, i}))")
                             img(src="./del.png")
                             span 删除
           .address(v-show="item.store_address")
