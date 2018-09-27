@@ -30,7 +30,6 @@
       return {
         data: {}, // 快递配送合集
         addressList: [], //收货地址合集
-        storeList: [], //门店集合
       }
     },
     activated() {

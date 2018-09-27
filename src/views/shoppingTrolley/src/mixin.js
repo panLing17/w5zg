@@ -1,4 +1,10 @@
 export const shoppingCart = {
+  data() {
+    return {
+      storeList: [], //门店集合
+      updateGoods: {}, // 配送方式切换时存放选中的商品下标
+    }
+  },
   computed: {
     isEmpty() {
       if ((this.data.commList && this.data.commList.length) || (this.data.failure && this.data.failure.length)) {
@@ -11,7 +17,24 @@ export const shoppingCart = {
   methods: {
     // 删除商品
     delGoods(obj) {
+      let scIdArray = ''
+      if ((typeof obj.i) === 'number') {
+        scIdArray = this.data['commList'][obj.index].shoppingCartVOList[obj.i].sc_id
+      } else {
 
+      }
+      let self = this
+      self.$ajax({
+        method: 'get',
+        url: self.$apiGoods + 'shoppingCart/v2/shoppingCart/delete',
+        params: {
+          scIdArray: scIdArray
+        },
+      }).then(function (response) {
+        if(response) {
+
+        }
+      })
     },
     // 商品选中
     goodsChange(obj) {
@@ -63,6 +86,7 @@ export const shoppingCart = {
     },
     // 配送方式切换
     changeWays(obj) {
+      this.updateGoods = obj
       let goods = this.data['commList'][obj.index].shoppingCartVOList[obj.i]
       let self = this
       if (goods.delivery_ways==='168') {
@@ -87,15 +111,35 @@ export const shoppingCart = {
         }).then(function (response) {
           if(response) {
             self.storeList = response.data.data
-
           }
         })
       }
     },
     selectCity() {
     },
+    // 切换为门店自提
     selectStore(obj) {
-      console.log(obj)
+      let goods = this.data['commList'][this.updateGoods.index].shoppingCartVOList[this.updateGoods.i]
+      let self = this
+      self.$ajax({
+        method: 'post',
+        url: self.$apiGoods + 'shoppingCart/v2/updateShoppingCart',
+        params: {
+          scId: goods.sc_id,
+          gskuId: goods.gsku_id,
+          provinceNo: obj.bs_province_no,
+          cityNo: obj.bs_city_no,
+          deliveryWays: 168,
+          bsId: obj.bs_id
+        },
+      }).then(function (response) {
+        if(response) {
+          self.data['commList'][self.updateGoods.index].shoppingCartVOList.splice(self.updateGoods.i, 1)
+          if (self.data['commList'][self.updateGoods.index].shoppingCartVOList.length===0) {
+            self.data['commList'].splice(self.updateGoods.index, 1)
+          }
+        }
+      })
     }
   }
 }
