@@ -1,7 +1,7 @@
 <template lang="pug">
   .bottomList(:style="{background:background}")
     ul.goodsList.left(:style="{background:background}", ref="left")
-      li(v-for="item in listData.left")
+      li(v-for="item in listData.left", v-if="item.type !== '333'&&item.type !== '334'")
         // 正常商品布局
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
@@ -20,7 +20,7 @@
         <!--.line-->
         <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     ul.goodsList.right(:style="{background:background}", ref="right")
-      li(v-for="item in listData.right")
+      li(v-for="item in listData.right", v-if="item.type !== '333'&&item.type !== '334'")
         // 正常商品布局
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
@@ -215,7 +215,7 @@
   }
   .goodsType{
     background: url("../../../assets/img/noLoadPic.png") no-repeat top;
-    background-size: 100% 68%;
+    background-size: 100% 67%;
   }
   .goodsType>img {
     width: 100%;

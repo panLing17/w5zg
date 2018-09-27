@@ -7,7 +7,7 @@
     .tabQ(v-if="mstype == ''")
       ul
         li(v-for="(item, index) in titles", :class="{cli:nums === index}", @click="tabQie(item, index)") {{item}}
-          span {{ index===0?'('+recordS+')':'('+recordA+')' }}
+          span {{ index===0?recordS===0?'':'('+recordS+')':recordA===0?'':'('+recordA+')' }}
       .lineDiv(ref="lineD", :class="{lefts:leftF}")
     .contList#collectMescroll(:class="{tops:topF}")
       router-view

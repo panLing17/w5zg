@@ -1,7 +1,7 @@
 <template lang="pug">
   .bottomList(:style="{background:background}")
     ul.goodsList.left(:style="{background:background}", ref="left")
-      li(v-for="item in listData.left")
+      li(v-for="item in listData.left", v-if="item.type !== '333'&&item.type !== '334'")
         // 正常商品布局
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
@@ -12,15 +12,15 @@
           //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         <!--.advertType(v-if="item.type === '333'", @click="goActivity(item)")-->
-          <!--img(:src="item.image | img-filter")-->
+        <!--img(:src="item.image | img-filter")-->
         // 标签布局
         <!--ul.tagType(v-if="item.type === '334'")-->
-          <!--.tagTitle-->
-            <!--.text 细分-->
-            <!--.line-->
-          <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
+        <!--.tagTitle-->
+        <!--.text 细分-->
+        <!--.line-->
+        <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     ul.goodsList.right(:style="{background:background}", ref="right")
-      li(v-for="item in listData.right")
+      li(v-for="item in listData.right", v-if="item.type !== '333'&&item.type !== '334'")
         // 正常商品布局
         .goodsType(v-if="item.type === '0'", @click.prevent="goGoods(item.gspu_id)")
           img(:src="item.gi_image_url | img-filter")
@@ -31,13 +31,13 @@
           //.cabinetPrice {{item.counter_price>=item.retail_price ? '专柜价' : '专柜折后价'}} {{item.counter_price | price-filter}}
         // 广告图布局
         <!--.advertType(v-if="item.type === '333'", @click="goActivity(item)")-->
-          <!--img(:src="item.image | img-filter")-->
+        <!--img(:src="item.image | img-filter")-->
         // 标签布局
         <!--ul.tagType(v-if="item.type === '334'")-->
-          <!--.tagTitle-->
-            <!--.text 细分-->
-            <!--.line-->
-          <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
+        <!--.tagTitle-->
+        <!--.text 细分-->
+        <!--.line-->
+        <!--li(v-for="(i,p) in item.data", :key="p", @click="searchKeyword(i)", :class="{tagTypeChecked:p<8}") {{i}}-->
     div(style="clear:both")
 </template>
 
@@ -215,7 +215,7 @@
   }
   .goodsType{
     background: url("../../../assets/img/noLoadPic.png") no-repeat top;
-    background-size: 100% 68%;
+    background-size: 100% 67%;
   }
   .goodsType>img {
     width: 100%;
@@ -240,13 +240,13 @@
     word-break: break-all;
   }
   /*.text::after {*/
-    /*content:"...";*/
-    /*font-weight:bold;*/
-    /*position:absolute;*/
-    /*bottom:0;*/
-    /*right:0;*/
-    /*padding:0 20px 1px 45px;*/
-    /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
+  /*content:"...";*/
+  /*font-weight:bold;*/
+  /*position:absolute;*/
+  /*bottom:0;*/
+  /*right:0;*/
+  /*padding:0 20px 1px 45px;*/
+  /*background:url(http://newimg88.b0.upaiyun.com/newimg88/2014/09/ellipsis_bg.png) repeat-y;*/
   /*}*/
 
   .text span {

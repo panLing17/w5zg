@@ -88,7 +88,6 @@
           this.getData(this.statusNum)
         },
       },
-
       components: {
         NoMore,
         Scroll
