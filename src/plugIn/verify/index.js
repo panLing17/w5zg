@@ -14,7 +14,6 @@ const verify = function (options) {
   instance.vm = instance.$mount()
   document.body.appendChild(instance.vm.$el)
   instance.vm.verifyShow = true
-
   return instance.vm
 }
 

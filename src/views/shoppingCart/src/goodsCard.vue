@@ -5,7 +5,7 @@
         w-checkbox(v-model="checked", @change="storeAllClick")
         p {{storeName}}
       transition-group(tag="div", :name="animate")
-        .goodsBox(v-for="(i,index) in list", :key="index")
+        .goodsBox(v-for="(i,index) in list", ref="goodsBox", :key="index", @touchstart="touchstart($event)", @touchmove="touchmove($event)", @touchend="touchend($event, i, index)", @contextmenu.prevent="")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
               .checkbox(@click.stop="")
@@ -51,10 +51,12 @@
                     li(@click="changeType(i,index)", v-if="i.storage_num>0 && i.carry_type === 1")
                       img(src="../../../assets/img/shoppingCartChange.png")
                       p 专柜自提
-                    li(@click="deleteGoods(i.sc_id, index)")
-                      img(src="../../../assets/img/shoppingCartDelete.png")
-                      p 删除
-
+                    <!--li(@click="deleteGoods(i.sc_id, index)")-->
+                      <!--img(src="../../../assets/img/shoppingCartDelete.png")-->
+                      <!--p 删除-->
+          .maskBox(v-show="i.maskShow", @click="i.maskShow=false")
+            .collection(@click="goCollection(i, index)") 移入<br/>收藏夹
+            .delete(@click="deleteGoods(i, index)") 删除
 </template>
 
 <script>
@@ -86,6 +88,32 @@
       }
     },
     methods: {
+      // 长按操作
+      touchstart(e) {
+        this.longClick=0;
+        this.timeOutEvent = setTimeout(()=>{
+        //此处为长按事件-----在此显示遮罩层及删除按钮
+          this.longClick=1;//假如长按，则设置为1
+          },500);
+        let touch = e.touches[0];
+        this.touchY = touch.clientY;
+      },
+      touchmove(e) {
+        clearTimeout(this.timeOutEvent);
+        this.timeOutEvent = 0;
+        let touch = e.touches[0]
+        if(Math.abs(touch.clientY - this.touchY) < 10){
+          e.preventDefault();
+        }
+      },
+      touchend(e, item) {
+        clearTimeout(this.timeOutEvent);
+        if(this.timeOutEvent!=0 && this.longClick==1){
+          e.preventDefault()
+          item.maskShow = true
+        }
+        return false;
+      },
       // 打开修改规格
       openSpecChange (id,spec) {
         this.$parent.openSpecChange(id, spec)
@@ -161,29 +189,51 @@
           })
         }
       },
-      deleteGoods (id, index) {
-        this.$confirm({
-          title: '删除购物商品',
-          message: '确定要删除么',
-          confirm: () => {
+      // 移入收藏夹
+      goCollection(item, index) {
+        item.maskShow = false
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'gcFavoritesInfo/saveGcFavorite',
+          params: {
+            gspuId: item.gspu_id
+          },
+        }).then(function (response) {
+          if (response) {
+            self.list.splice(index,1)
+            self.$notify({
+              content: '移入收藏夹成功',
+              bottom: 3.2
+            })
+            // 移完删除
+            self.delAjax(item)
+          }
+        })
+      },
+      delAjax(item) {
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: item.sc_id
+          },
+        }).then(function (response) {
+          self.$emit('clearGoods')
+        })
+      },
+      // 删除商品
+      deleteGoods (item, index) {
+        item.maskShow = false
+        this.$verify({
+          content: '确认删除所选商品吗？',
+          leftText: '取消',
+          rightText: '删除',
+          rightFn: () => {
             this.animateName = 'fadeOut'
             this.list.splice(index,1)
-            let self = this
-            self.$ajax({
-              method: 'delete',
-              url:self.$apiApp +  'shoppingCart/shoppingCart/delete',
-              params: {
-                scIdArray: id
-              },
-            }).then(function (response) {
-              self.$emit('clearGoods')
-              // let goodsNum = self.$store.state.shoppingCartGoodsNum
-              // goodsNum.sendNum-=1
-              // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
-            })
-          },
-          noConfirm: () => {
-
+            this.delAjax(item)
           }
         })
 
@@ -212,7 +262,7 @@
 <style scoped>
   .goodsCardBox{
     background-color: white;
-    padding: 0 .2rem;
+    /*padding: 0 .2rem;*/
   }
   .title{
     font-weight: 600;
@@ -220,12 +270,15 @@
     display: flex;
     align-items: center;
     border-bottom: 1px solid #eee;
+    padding: 0 .2rem;
   }
   .title p{
     margin-left: 5px;
   }
   .goodsBox {
     background-color: white;
+    padding: 0 .2rem;
+    position: relative;
   }
   .main{
     /*height: 2.2rem;*/
@@ -493,5 +546,37 @@
   .fadeOut-enter, .fadeOut-leave-to
     /* .slide-fade-leave-active for below version 2.1.8 */ {
     opacity: 0;
+  }
+
+  .maskBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.7rem;
+    align-items: center;
+  }
+  .maskBox .collection, .maskBox .delete {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    font-size: .42rem;
+    text-align: center;
+  }
+  .maskBox .collection {
+    background-color: #f70057;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .maskBox .delete {
+    line-height: 2.1rem;
+    background-color: #ececec;
+    color: #666;
   }
 </style>

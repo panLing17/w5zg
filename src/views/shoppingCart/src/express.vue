@@ -210,7 +210,7 @@
               } else {
                 now.checked = false
               }
-
+              now.maskShow = false
               now.editClose = true
             })
             array.push(response.data.data.commList[i])
