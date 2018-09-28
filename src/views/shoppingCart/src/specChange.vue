@@ -19,24 +19,24 @@
               ul.valueList
                 li(@click="specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index, gray: item.gray}") {{item.value}}
                 p.clearBoth
-          .emitGoods
-            .emitGoodsTitle 配送方式
-            ul.emitGoodsButtons
-              li(:class="{checked:emitType === 'express'}", @click="emitType = 'express'") 快递配送
-              li(:class="{checked:emitType === 'counter'}", @click="emitType = 'counter'") 专柜自提
-              p.clearBoth
-          .address
-            .expressAddress(@click="openSelectLocation", v-if="emitType === 'express'")
-              .text
-                img(src="../../../assets/img/location.png")
-                span {{location.province.name}}
-                span {{location.city.name}}
-              img.more(src="../../../assets/img/more.png")
-            .selfAddress(@click="openStoreSelect", v-if="emitType === 'counter'")
-              .text
-                img(src="../../../assets/img/location.png")
-                span {{counterText}}
-              img.more(src="../../../assets/img/more.png")
+          <!--.emitGoods-->
+            <!--.emitGoodsTitle 配送方式-->
+            <!--ul.emitGoodsButtons-->
+              <!--li(:class="{checked:emitType === 'express'}", @click="emitType = 'express'") 快递配送-->
+              <!--li(:class="{checked:emitType === 'counter'}", @click="emitType = 'counter'") 专柜自提-->
+              <!--p.clearBoth-->
+          <!--.address-->
+            <!--.expressAddress(@click="openSelectLocation", v-if="emitType === 'express'")-->
+              <!--.text-->
+                <!--img(src="../../../assets/img/location.png")-->
+                <!--span {{location.province.name}}-->
+                <!--span {{location.city.name}}-->
+              <!--img.more(src="../../../assets/img/more.png")-->
+            <!--.selfAddress(@click="openStoreSelect", v-if="emitType === 'counter'")-->
+              <!--.text-->
+                <!--img(src="../../../assets/img/location.png")-->
+                <!--span {{counterText}}-->
+              <!--img.more(src="../../../assets/img/more.png")-->
           .bottomButton
             .confirm(@click="submit", v-if="kucunF") 确定
             .reachGoods(v-else, @click="reachInform") 到货通知
@@ -68,7 +68,7 @@
         storeId: '',
         spec: [],
         show: false,
-        emitType: 'express',
+        emitType: '',
         counterText: '请选择门店',
         normalGoods: false,
         storeDownGoods: false,
@@ -76,7 +76,9 @@
         locationList: [],
         onlyStoreSelect: false,
         selectCity: false,
-        grayList: []
+        grayList: [],
+        province: '',
+        city: ''
       }
     },
     watch: {
@@ -256,10 +258,13 @@
         this.spcGoodsData = allData
         // 默认选
         let specValueList = []
+        this.emitType = allData.delivery_ways==='167'?'express':'counter'
+        this.storeId = allData.store_id?allData.store_id : ''
+        this.province = allData.province
+        this.city = allData.city
         allData.specVOList.forEach((now)=>{
           specValueList.push(now.gspec_value)
         })
-
         oldData.forEach((now)=>{
           now.specValue.forEach((sonNow, sonIndex)=>{
             if (specValueList.includes(sonNow.value)) {
@@ -339,10 +344,10 @@
         if (this.emitType === 'express') {
           type = 167
         } else {
-          if (!this.storeId) {
-            this.$message.warning('请选择门店')
-            return
-          }
+          // if (!this.storeId) {
+          //   this.$message.warning('请选择门店')
+          //   return
+          // }
           type = 168
         }
         let self = this
@@ -352,8 +357,10 @@
           params: {
             scId: self.spcGoodsData.sc_id,
             gskuId: self.skuId,
-            provinceNo: self.$store.state.location.province.id,
-            cityNo: self.$store.state.location.city.id,
+            // provinceNo: self.$store.state.location.province.id,
+            provinceNo: this.province,
+            cityNo: this.city,
+            // cityNo: self.$store.state.location.city.id,
             deliveryWays: type,
             bsId: self.storeId
           }
@@ -458,6 +465,9 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  .mescroll {
+    height: auto;
+  }
   .notice{
     position: fixed;
     width: 100%;
@@ -487,7 +497,8 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 70%;
+    /*height: 70%;*/
+    height: 13.18rem;
     position: fixed;
     bottom: 0;
     padding-bottom: $height-footer;

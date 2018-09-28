@@ -34,7 +34,8 @@
         passwordType: 'password',
         form: {
           mobile: '',
-          pwd: ''
+          pwd: '',
+          loginClientType: '473'
         },
         iconFlag: {
           phone: false,

@@ -5,7 +5,14 @@
         w-checkbox(v-model="checked", @change="storeAllClick")
         p {{storeName}}
       transition-group(tag="div", :name="animate")
-        .goodsBox(v-for="(i,index) in list", ref="goodsBox", :key="index", @touchstart="touchstart($event)", @touchmove="touchmove($event)", @touchend="touchend($event, i, index)", @contextmenu.prevent="")
+        .goodsBox(v-for="(i,index) in list",
+        ref="goodsBox",
+        :key="index",
+        @touchstart="touchstart($event)",
+        @touchmove="touchmove($event)",
+        @touchend="touchend($event, i, index)",
+        @contextmenu.prevent="",
+        :style="{'padding-bottom': (!i.difference_price && i.carry_type !== 1)?'0.42rem':0}")
           transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
             .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
               .checkbox(@click.stop="")
@@ -40,10 +47,10 @@
                   //img(src="../../../assets/img/next@2x.png")
                 w-counter(v-model="i.goods_num", @change="countChange(i.sc_id,i.gsku_id,i.goods_num)", :min="1", :max="i.storage_num", width="4rem")
               .specOk(@click="edit(true,index)") 完成
-          .bottomOperation
+          .bottomOperation(v-show="i.difference_price || (i.storage_num>0 && i.carry_type === 1)")
             .more
               p(:class="{opc0:i.difference_price<=0}")  比加入时降{{i.difference_price | price-filter}}
-              .moreRight
+              .moreRight(v-if="i.storage_num>0 && i.carry_type === 1")
                 img(src="../../../assets/img/shoppingCartMore.png")
                 .moreOperation
                   .sanjiao
