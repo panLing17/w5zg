@@ -591,7 +591,14 @@
     justify-content: space-between;
   }
   .moreRight {
-    position: relative;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: .2rem;
   }
   .bottomOperation> .more>.moreRight:hover .moreOperation {
     display: block;
@@ -602,8 +609,7 @@
     padding: 1px .2rem;
   }
   .bottomOperation> .more> .moreRight>img{
-    height: .4rem;
-    margin-right: .4rem;
+    width: .64rem;
   }
   .bottomOperation> .more .moreRight .moreOperation {
     display: none;
