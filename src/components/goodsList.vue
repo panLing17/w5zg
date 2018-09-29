@@ -6,7 +6,7 @@
           img(:src="item.gi_image_url | img-filter")
         .goodsNameWrapper
           .flag(v-show="item.carry_type===1") 专柜提货
-          span {{item.gi_name}}
+          span {{item.goods_name}}
         .priceWrapper
           ul
             li.desc 实付价：￥

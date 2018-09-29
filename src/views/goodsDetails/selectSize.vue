@@ -30,7 +30,8 @@
                 ul.specValue
                   li(v-for="(value, i) in item.spec_value",
                     @click="specChange(index, i)",
-                    :class="{active: item.checked===i}") {{value}}
+                    :class="{active: item.checked===i, gray: value.gray}"
+                    ) {{value.value}}
             // 数量加减---------------------------------------------------------------------------------
             .counteWrapper(v-show="fromType!==2")
               .left 购买数量
@@ -46,13 +47,13 @@
               .typeBtn
                 .btn(:class="{active: shippingMethods===0}", @click="shippingMethodsChange(0)") 快递配送
                 .btn(v-if="carryType===1", :class="{active: shippingMethods===1}", @click="shippingMethodsChange(1)") 专柜自提
-              .address1(v-show="shippingMethods===0")
-                .desc 配送地址
-                .addressText(@click="openPop(0)")
-                  img.addressImg(src="./address.png")
-                  span(v-if="!address.text") 请选择配送地址
-                  span(v-else) {{address.text}}
-                  img.arrowImg(src="./arrow.png")
+              <!--.address1(v-show="shippingMethods===0")-->
+                <!--.desc 配送地址-->
+                <!--.addressText(@click="openPop(0)")-->
+                  <!--img.addressImg(src="./address.png")-->
+                  <!--span(v-if="!address.text") 请选择配送地址-->
+                  <!--span(v-else) {{address.text}}-->
+                  <!--img.arrowImg(src="./arrow.png")-->
               .address1(v-show="shippingMethods===1")
                 .desc 专柜地址<span>(提货地影响库存，请正确选择）</span>
                 .addressText(@click="openPop(1)")
@@ -65,7 +66,7 @@
           .two(v-show="bottomBtnType===0")
             div(@click="submitGoods(2)") 加入购物车
             div(@click="submitGoods(4)") 立即购买
-          .one(v-show="bottomBtnType===1", @click="saveReachGoods") 到货通知
+          .one(v-show="bottomBtnType===1", @click="saveReachGoods", style="{'background-color':'#9D4AAD'}") 到货通知
           .one(v-show="bottomBtnType===2 || bottomBtnType===4", @click="submitGoods(bottomBtnType)") 确定
           .one(v-show="bottomBtnType===3", @click="addTry") 预约体验
 </template>
@@ -129,6 +130,10 @@
         default() {
           return {}
         }
+      },
+      // 品牌ID
+      brandId: {
+        type: Number
       }
     },
     computed: {
@@ -142,6 +147,10 @@
     watch:{
       selectSizeShow(val) {
         if (val) {
+          // 如果规格默认选中调sku接口
+          if(this.specGroup.length===1 && this.specGroup[0].checked>-1) {
+            this.getSku()
+          }
           setTimeout(()=>{
             this.$refs.selectSizeScroll.refresh()
           }, 520)
@@ -163,9 +172,61 @@
       // 规格选择
       specChange(index, i) {
         let temp = this.specGroup[index]
-        temp.checked = i
+        if (this.specGroup[index].checked === i) {
+          temp.checked = -1
+        } else {
+          temp.checked = i
+        }
         this.specGroup.splice(index, 1, temp)
+
+        let params = {
+          gspu_id: this.spuId
+        }
+        let indexArr = []
+        this.specGroup.forEach((item, s) => {
+          if (item.checked>-1) {
+            params['spec_name'+ (s+1)] = item.spec_name
+            params['spec_value'+ (s+1)] = item.spec_value[item.checked].value
+            indexArr.push(s)
+          }
+        })
+        // 如果没有选中规格把置灰都去掉
+        if (indexArr.length===0) {
+          this.specGroup.forEach(item => {
+            item.spec_value.forEach(value => {
+              value.flag = false
+            })
+          })
+        } else if (indexArr.length < this.specGroup.length) { // 如果规格都选了不需要查置灰
+          this.specHidden(params, indexArr)
+        }
         this.getSku()
+      },
+      // 根据选中的规格调有哪些需隐藏
+      specHidden(params, indexArr) {
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'gcdetails/getSkuSpecDetail',
+          params: params,
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (res) {
+          if (res) {
+            self.specGroup.forEach((group, gi) => {
+              if (!indexArr.includes(gi)) {
+                group.spec_value.forEach(value => {
+                  let flag = true
+                  res.data.data.forEach(item => {
+                    if (item['spec_value'+(gi+1)] === value.value) {
+                      flag = false
+                    }
+                  })
+                  value.gray = flag
+                })
+              }
+            })
+          }
+        })
       },
       // 根据规格调sku信息
       getSku() {
@@ -174,7 +235,8 @@
         }
         let flag = true
         let params = {
-          gspu_id: this.spuId
+          gspu_id: this.spuId,
+          bi_id: this.brandId
         }
         // 如果有-1表示还有规格没有选择
         this.specGroup.forEach((item, index)=>{
@@ -183,7 +245,7 @@
             return false
           }
           params['spec_name'+(index+1)] = item.spec_name
-          params['spec_value'+(index+1)] = item.spec_value[item.checked]
+          params['spec_value'+(index+1)] = item.spec_value[item.checked].value
         })
 
         if (flag) {
@@ -321,14 +383,14 @@
           return
         }
 
-        if (this.shippingMethods===0 && !this.address.province) {
-          this.$notify({
-            content: '请选择配送地址',
-            bottom: 1.8
-          })
-          return
-        }
-
+        // if (this.shippingMethods===0 && !this.address.province) {
+        //   this.$notify({
+        //     content: '请选择配送地址',
+        //     bottom: 1.8
+        //   })
+        //   return
+        // }
+        //
         if (this.shippingMethods===1 && !this.store.bs_id) {
           this.$notify({
             content: '请选择自提门店',
@@ -479,6 +541,11 @@
               &.active {
                 color #f70057
                 border-color #f70057
+              }
+              &.gray {
+                color #fff
+                border-color #e8e8e8
+                background-color #e8e8e8
               }
               &.noStorage {
                 color #666

@@ -84,6 +84,10 @@
     .adWrapper
       img(src="./ad.png")
     // 详情图片---------------------------------------------------------------------------------------------------
+    .detailsImgTop
+      .left
+      .center 商品详情
+      .right
     .detailsImgWrapper(ref="detailsImgWrapper", v-html="goodsData.gi_desc")
     .goodsListWrapper
       .title
@@ -123,6 +127,7 @@
                 :address="address",
                 :fromType="fromType",
                 :store="store",
+                :brandId="goodsData.bi_id",
                 @selection-size="selectionOfSize",
                 @shipping-change="shippingMethodsChange",
                 @save-goods="saveReachGoods",
@@ -254,7 +259,18 @@
         if (data.spec_group && data.spec_group.length) {
           data.spec_group.forEach(item => {
             item.checked = -1
-            item.spec_value = item.spec_value.split(',')
+            let temp = item.spec_value.split(',')
+            item.spec_value = []
+            temp.forEach(value => {
+              item.spec_value.push({
+                value: value,
+                gray: false
+              })
+            })
+            // 如果只有一个规格默认选中
+            if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) {
+              item.checked = 0
+            }
             // 判断是否是从到货通知过来，如果是需把规格选中 等待接口好了再写
             // if (informGoods) {
             //   let s = informGoods.gspec_values.split(',')
@@ -453,9 +469,9 @@
           params: {
             gskuId: this.skuData.gsku_id,
             deliveryWays: this.shippingMethods===0?167:168, // 167为快递 168为自提
-            province: this.shippingMethods===0?this.address.province:this.store.bs_province_no,
-            city: this.shippingMethods===0?this.address.city:this.store.bs_city_no,
-            storeId: this.store.bs_id,
+            // province: this.shippingMethods===0?this.address.province:this.store.bs_province_no,
+            // city: this.shippingMethods===0?this.address.city:this.store.bs_city_no,
+            storeId: this.goodsData.bi_id,
             goodsNum: this.count
           },
         }).then(function (res) {
@@ -595,7 +611,8 @@
           method: 'post',
           url: self.$apiGoods + 'gcdetails/goodsRecommendationList',
           params: {
-            page: pageNum
+            page: pageNum,
+            rows: pageSize
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
@@ -952,6 +969,24 @@
       width 100%
     }
   }
+  .detailsImgTop {
+    display flex
+    align-items center
+    justify-content center
+    height .96rem
+    background-color #f2f2f2
+    .left, .right{
+      width 1.5rem
+      height 1px
+      background-color #ccc
+    }
+    .center {
+      font-size .37rem
+      color #666
+      font-weight 400
+      margin 0 .3rem 0 .3rem
+    }
+  }
   .detailsImgWrapper {
     font-size 0
     img {
@@ -1051,7 +1086,7 @@
           text-align center
           color #fff
           font-size .4rem
-          background-color #f70057
+          background-color #9D4AAD
         }
       }
     }
