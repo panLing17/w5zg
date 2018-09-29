@@ -20,13 +20,12 @@
     mounted() {
       // this.toApp()
 
-
-
       this.getAddressData()
       this.getDictionaries()
       // this.getLocation()
       if (localStorage.hasOwnProperty('token')) {
         this.getUserData()
+        this.addLoginLog()
       } else {
         this.$store.commit('setShowRegisterTicket', true)
       }
@@ -50,6 +49,16 @@
       //     }
       //     }, 1000);
       // },
+      addLoginLog() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'member/addLoginLog',
+          params: {}
+        }).then(function (response) {
+
+        })
+      },
       getDictionaries() {
         let self = this
         self.$ajax({
