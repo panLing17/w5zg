@@ -61,9 +61,9 @@
   }
   .ifra {
     width: 100%;
-    height: calc(100vh + 48px);
+    height: calc(100vh - 1.3rem);
     position: absolute;
-    top: -48px;
+    top: 1.3rem;
   }
   .ifra h2{
     display: none;
