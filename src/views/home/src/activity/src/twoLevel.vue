@@ -41,7 +41,7 @@
         brand: {
           show: true,
           status: false,
-          height: '5.67rem',
+          height: '5.58rem',
           auto: 'none'
         },
         category: {
@@ -215,7 +215,7 @@
         this.$nextTick(() => {
           this.brand.auto = this.$refs.brand.offsetHeight + 'px'
           this.category.auto = this.$refs.category.offsetHeight + 'px'
-          this.brand.height = '5.67rem'
+          this.brand.height = '5.58rem'
           this.category.height = '4.03rem'
         })
       },
@@ -225,7 +225,7 @@
           if (this.brand.status) {
             this.brand.height = this.brand.auto
           } else {
-            this.brand.height = '5.67rem'
+            this.brand.height = '5.58rem'
           }
         }
 
