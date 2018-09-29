@@ -99,7 +99,7 @@
         .block(@click="goService")
           img(src="./service.png")
           span 客服
-        .block(@click="$router.push('/shoppingCart')")
+        .block(@click="goShoppingCart")
           div
             img(src="./shoppingcart.png")
             .badge(v-if="shoppingCartNum.toString().length<=2 && shoppingCartNum!==0") {{shoppingCartNum}}
@@ -194,7 +194,7 @@
       this.spuId = Number(to.query.id)
       this.getDetailsData()
       this.queryFavorite()
-      this.getAddress()
+      // this.getAddress()
       this.getGoodsNum()
       next()
     },
@@ -202,11 +202,8 @@
       this.spuId = Number(this.$route.query.id)
       this.getDetailsData()
       this.queryFavorite()
-      this.getAddress()
+      // this.getAddress()
       this.getGoodsNum()
-    },
-    updated() {
-      this.updateImg()
     },
     mounted() {
       this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, (obj) => {
@@ -248,7 +245,10 @@
             self.banner = res.data.data.spu_banner
             self.minusPrice = self.goodsData.min_counter_price - self.goodsData.min_direct_supply_price
             self.$nextTick(()=>{
-              self.updateImg()
+              // 如果规格默认选中调sku接口
+              if(self.goodsData.spec_group.length===1 && self.goodsData.spec_group[0].checked>-1) {
+                self.$refs.selectSize.getSku()
+              }
             })
           }
         })
@@ -511,7 +511,7 @@
         if (this.shippingMethods===0 && !this.address.province) {
           this.$refs.selectSize.show()
           this.$notify({
-            content: '请选择配送地址',
+            content: '请选择配送方式',
             bottom: 1.8
           })
           return
@@ -581,6 +581,14 @@
           })
         }
       },
+      goShoppingCart() {
+        if (this.shippingMethods===0) {
+          this.$router.push('/shoppingCart/express')
+        } else {
+          this.$router.push('/shoppingCart/self')
+        }
+
+      },
       // 前往客服
       goService () {
         let goodsData = {
@@ -625,16 +633,6 @@
           this.$router.go(-1)
         } else {
           this.$router.push('/home')
-        }
-      },
-      updateImg () {
-        // 解决v-html的内容css没有效果
-        let len = this.$refs.detailsImgWrapper.getElementsByTagName('img').length
-        let iArr = this.$refs.detailsImgWrapper.getElementsByTagName('img')
-        if (len > 0) {
-          for (let i=0;i<len; i++) {
-            iArr[i].style.width = '100%'
-          }
         }
       }
     },
@@ -989,9 +987,6 @@
   }
   .detailsImgWrapper {
     font-size 0
-    img {
-      width 100%
-    }
   }
   .goodsListWrapper {
     background-color #f2f2f2
@@ -1090,5 +1085,10 @@
         }
       }
     }
+  }
+</style>
+<style>
+  .detailsImgWrapper img {
+    width: 100%;
   }
 </style>

@@ -147,10 +147,6 @@
     watch:{
       selectSizeShow(val) {
         if (val) {
-          // 如果规格默认选中调sku接口
-          if(this.specGroup.length===1 && this.specGroup[0].checked>-1) {
-            this.getSku()
-          }
           setTimeout(()=>{
             this.$refs.selectSizeScroll.refresh()
           }, 520)

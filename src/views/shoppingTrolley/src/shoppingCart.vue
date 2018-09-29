@@ -61,7 +61,8 @@
           method: 'post',
           url: self.$apiGoods + 'gcdetails/goodsRecommendationList',
           params: {
-            page: pageNum
+            page: pageNum,
+            rows: pageSize
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
