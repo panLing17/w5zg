@@ -114,6 +114,10 @@
           div(@click="buy") 立即购买
         .one(v-show="bottomBtnType===1")
           div(@click="saveReachGoods") 到货通知
+    // 加入购物车特效---------------------------------------------------------------------------------
+    transition(name="scale")
+      .circle(v-show="showCircle")
+        img(:src="skuData.logo | img-filter")
     // 标签说明-----------------------------------------------------------------------------------------------------
     tag-desc(ref="tagDesc")
     // 规格选择-----------------------------------------------------------------------------------------------------
@@ -187,6 +191,7 @@
         storeList: [], // 门店合集
         store: {}, // 选中的门店信息
         count: 1, // 商品数量
+        showCircle: false, // 是否显示加入购物车动效
       }
     },
     beforeRouteUpdate(to,from,next) {
@@ -462,6 +467,11 @@
       },
       // 加入购物车接口
       addShoppingCart(callback) {
+        this.showCircle = true
+        setTimeout(()=>{
+          this.showCircle = false
+        }, 0)
+
         let self = this
         self.$ajax({
           method: 'post',
@@ -576,9 +586,8 @@
       // 规格弹框点击确定按钮回调
       submitGoods(flag) {
         if (flag===2) {
-          this.addShoppingCart(() => {
-            this.$refs.selectSize.hide()
-          })
+          this.$refs.selectSize.hide()
+          this.addShoppingCart()
         }
       },
       goShoppingCart() {
@@ -1085,6 +1094,27 @@
         }
       }
     }
+  }
+  .circle {
+    position: fixed;
+    top: 8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .circle img {
+    width: 100%;
+  }
+  .circle.scale-leave-active {
+    transition: all 1s;
+  }
+  .circle.scale-leave-to {
+    transform: scale(0.1) translate3d(-30rem,60rem,0);
+    transform-origin:50% 50%;
+    opacity: 0;
   }
 </style>
 <style>

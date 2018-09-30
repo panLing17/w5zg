@@ -26,7 +26,7 @@
             // 规格------------------------------------------------------------------------------------
             .specGroup
               .spec(v-for="(item, index) in specGroup")
-                .specName {{item.spec_name}}
+                .specName {{item.spec_name}}<span v-show="item.checked===-1">请选择</span>
                 ul.specValue
                   li(v-for="(value, i) in item.spec_value",
                     @click="specChange(index, i)",
@@ -69,6 +69,7 @@
           .one(v-show="bottomBtnType===1", @click="saveReachGoods", style="{'background-color':'#9D4AAD'}") 到货通知
           .one(v-show="bottomBtnType===2 || bottomBtnType===4", @click="submitGoods(bottomBtnType)") 确定
           .one(v-show="bottomBtnType===3", @click="addTry") 预约体验
+
 </template>
 
 <script>
@@ -167,6 +168,10 @@
     methods:{
       // 规格选择
       specChange(index, i) {
+        // 如果点击置灰return
+        if (this.specGroup[index].spec_value[i].gray) {
+          return
+        }
         let temp = this.specGroup[index]
         if (this.specGroup[index].checked === i) {
           temp.checked = -1
@@ -175,31 +180,40 @@
         }
         this.specGroup.splice(index, 1, temp)
 
+        let name = 'spec_name' + (index+1)
+        let value = 'spec_value' + (index+1)
         let params = {
-          gspu_id: this.spuId
+          gspu_id: this.spuId,
+          [name]: this.specGroup[index].spec_name,
+          [value]: this.specGroup[index].spec_value[i].value
         }
         let indexArr = []
-        this.specGroup.forEach((item, s) => {
+        if (this.specGroup[index].checked>-1) {
+          indexArr.push({
+            index: index,
+            i: i
+          })
+        }
+        let checkedArr = []
+        this.specGroup.forEach((item, index) => {
           if (item.checked>-1) {
-            params['spec_name'+ (s+1)] = item.spec_name
-            params['spec_value'+ (s+1)] = item.spec_value[item.checked].value
-            indexArr.push(s)
+            checkedArr.push(index)
           }
         })
         // 如果没有选中规格把置灰都去掉
-        if (indexArr.length===0) {
+        if (checkedArr.length===0) {
           this.specGroup.forEach(item => {
             item.spec_value.forEach(value => {
-              value.flag = false
+              value.gray = false
             })
           })
-        } else if (indexArr.length < this.specGroup.length) { // 如果规格都选了不需要查置灰
-          this.specHidden(params, indexArr)
+        } else { // 如果规格都选了不需要查置灰
+          this.specHidden(params, indexArr, checkedArr)
         }
         this.getSku()
       },
-      // 根据选中的规格调有哪些需隐藏
-      specHidden(params, indexArr) {
+      // 根据选中的规格调有哪些需隐藏 简称置灰
+      specHidden(params, indexArr, checkedArr) {
         let self = this
         self.$ajax({
           method: 'post',
@@ -209,16 +223,38 @@
         }).then(function (res) {
           if (res) {
             self.specGroup.forEach((group, gi) => {
-              if (!indexArr.includes(gi)) {
-                group.spec_value.forEach(value => {
-                  let flag = true
-                  res.data.data.forEach(item => {
-                    if (item['spec_value'+(gi+1)] === value.value) {
-                      flag = false
-                    }
+              if (indexArr[0].index !== gi) {
+                if (group.checked===-1) {
+                  group.spec_value.forEach(value => {
+                    let flag = true
+                    res.data.data.forEach(item => {
+                      if (item['spec_value'+(gi+1)] === value.value) {
+                        flag = false
+                      }
+                    })
+                    value.gray = flag
                   })
-                  value.gray = flag
-                })
+                } else {
+                  group.spec_value.forEach(value => {
+                    let flag = true
+                    res.data.data.forEach(item => {
+                      if (item['spec_value'+(gi+1)] === value.value) {
+                        let count = 0
+                        checkedArr.forEach((c) => {
+                          if (self.specGroup[c].spec_value[self.specGroup[c].checked].value === item['spec_value'+(c+1)]) {
+                            count++
+                          } else if (c===gi) {
+                            count++
+                          }
+                        })
+                        if (count===checkedArr.length) {
+                          flag = false
+                        }
+                      }
+                    })
+                    value.gray = flag
+                  })
+                }
               }
             })
           }
@@ -518,6 +554,11 @@
             font-size .426rem
             color #333
             font-weight 500
+            span {
+              margin-left .26rem
+              color #f70057
+              font-size .32rem
+            }
           }
           .specValue {
             margin-top .18rem
@@ -693,4 +734,5 @@
       }
     }
   }
+
 </style>
