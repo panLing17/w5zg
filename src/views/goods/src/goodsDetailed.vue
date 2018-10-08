@@ -920,7 +920,7 @@
           }]
           // 传入中转
           this.$store.commit('transferGive', orderData)
-          this.$router.push({path: '/confirmOrder', query: {since: 'true', type: 'direct'}})
+          this.$router.push({path: '/orderConfirm', query: {since: 'true', type: 'direct'}})
         }
         if (this.shoppingCartFlag) {
           // 如果操作来自添加购物车按钮
@@ -978,7 +978,7 @@
           }]
           // 传入中转
           this.$store.commit('transferGive', orderData)
-          this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
+          this.$router.push({path: '/orderConfirm', query:{since:'true',type:'direct'}})
         }
         if (this.shoppingCartFlag) {
           // 如果操作来自添加购物车按钮
@@ -1046,7 +1046,7 @@
             if (response.data.data.storage_num>0) {
               // 传入中转
               self.$store.commit('transferGive', orderData)
-              self.$router.push({path: '/confirmOrder', query:{since:'false',type:'direct'}})
+              self.$router.push({path: '/orderConfirm', query:{since:'false',type:'direct'}})
             } else {
               self.$message.error('库存不足')
             }

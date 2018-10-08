@@ -66,7 +66,7 @@
           .two(v-show="bottomBtnType===0")
             div(@click="submitGoods(2)") 加入购物车
             div(@click="submitGoods(4)") 立即购买
-          .one(v-show="bottomBtnType===1", @click="saveReachGoods", style="{'background-color':'#9D4AAD'}") 到货通知
+          .one(v-show="bottomBtnType===1", @click="saveReachGoods", style="background-color:#9D4AAD;") 到货通知
           .one(v-show="bottomBtnType===2 || bottomBtnType===4", @click="submitGoods(bottomBtnType)") 确定
           .one(v-show="bottomBtnType===3", @click="addTry") 预约体验
 
@@ -180,13 +180,6 @@
         }
         this.specGroup.splice(index, 1, temp)
 
-        let name = 'spec_name' + (index+1)
-        let value = 'spec_value' + (index+1)
-        let params = {
-          gspu_id: this.spuId,
-          [name]: this.specGroup[index].spec_name,
-          [value]: this.specGroup[index].spec_value[i].value
-        }
         let indexArr = []
         if (this.specGroup[index].checked>-1) {
           indexArr.push({
@@ -194,12 +187,39 @@
             i: i
           })
         }
+
         let checkedArr = []
         this.specGroup.forEach((item, index) => {
           if (item.checked>-1) {
             checkedArr.push(index)
           }
         })
+        let name
+        let value
+        let params
+        if (indexArr.length) {
+          name = 'spec_name' + (index+1)
+          value = 'spec_value' + (index+1)
+          params = {
+            gspu_id: this.spuId,
+            [name]: this.specGroup[index].spec_name,
+            [value]: this.specGroup[index].spec_value[i].value
+          }
+        } else if (checkedArr.length){
+          params = {
+            gspu_id: this.spuId
+          }
+          checkedArr.forEach((item) => {
+            name = 'spec_name' + (item+1)
+            value = 'spec_value' + (item+1)
+            params[name] = this.specGroup[item].spec_name
+            params[value] = this.specGroup[item].spec_value[this.specGroup[item].checked].value
+          })
+        }
+
+
+
+
         // 如果没有选中规格把置灰都去掉
         if (checkedArr.length===0) {
           this.specGroup.forEach(item => {
@@ -222,41 +242,60 @@
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (res) {
           if (res) {
-            self.specGroup.forEach((group, gi) => {
-              if (indexArr[0].index !== gi) {
-                if (group.checked===-1) {
+            // if (!indexArr.length) {
+            //   self.specGroup.forEach((group, gi) => {
+            //     group.spec_value.forEach(value => {
+            //       let flag = true
+            //       res.data.data.forEach(item => {
+            //         if (group.spec_name===params[name]) {
+            //           flag = false
+            //         } else if (item['spec_value'+(gi+1)] === value.value) {
+            //           let count = 0
+            //           checkedArr.forEach((c) => {
+            //             if (self.specGroup[c].spec_value[self.specGroup[c].checked].value === item['spec_value'+(c+1)]) {
+            //               count++
+            //             } else if (c===gi) {
+            //               count++
+            //             }
+            //           })
+            //           if (count===checkedArr.length) {
+            //             flag = false
+            //           }
+            //         }
+            //       })
+            //       value.gray = flag
+            //     })
+            //   })
+            // } else {
+              self.specGroup.forEach((group, gi) => {
+                if (!indexArr.length || indexArr[0].index !== gi) {
                   group.spec_value.forEach(value => {
                     let flag = true
-                    res.data.data.forEach(item => {
-                      if (item['spec_value'+(gi+1)] === value.value) {
-                        flag = false
-                      }
-                    })
-                    value.gray = flag
-                  })
-                } else {
-                  group.spec_value.forEach(value => {
-                    let flag = true
-                    res.data.data.forEach(item => {
-                      if (item['spec_value'+(gi+1)] === value.value) {
-                        let count = 0
-                        checkedArr.forEach((c) => {
-                          if (self.specGroup[c].spec_value[self.specGroup[c].checked].value === item['spec_value'+(c+1)]) {
-                            count++
-                          } else if (c===gi) {
-                            count++
+                    if (group.spec_name===params[name]) {
+                      flag = false
+                    } else {
+                      res.data.data.forEach(item => {
+                        if (item['spec_value' + (gi + 1)] === value.value) {
+                          let count = 0
+                          checkedArr.forEach((c) => {
+                            if (self.specGroup[c].spec_value[self.specGroup[c].checked].value === item['spec_value' + (c + 1)]) {
+                              count++
+                            } else if (c === gi) {
+                              count++
+                            }
+                          })
+                          if (count === checkedArr.length) {
+                            flag = false
                           }
-                        })
-                        if (count===checkedArr.length) {
-                          flag = false
                         }
-                      }
-                    })
+                      })
+                    }
+
                     value.gray = flag
                   })
                 }
-              }
-            })
+              })
+            // }
           }
         })
       },
@@ -407,6 +446,14 @@
       },
       // 确定按钮点击
       submitGoods(flag) {
+        if (!localStorage.getItem('token')) {
+          this.$notify({
+            content: '请先登录！',
+            bottom: 1.8
+          })
+          this.$router.push('/login')
+          return
+        }
         if (!this.skuData.gsku_id) {
           this.$notify({
             content: '请选择规格',

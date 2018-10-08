@@ -167,7 +167,7 @@
   import AddTry from './addTry'
   // 自提门店
   import SelectStore from './selectStore'
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapMutations} from 'vuex'
   export default {
     name: "goodsDetails",
     data () {
@@ -445,7 +445,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiApp + 'shoppingCart/v2/countCartNum',
+          url: self.$apiGoods + 'shoppingCart/v2/countCartNum',
           params: {},
         }).then(function (res) {
           if (res) {
@@ -481,7 +481,7 @@
             deliveryWays: this.shippingMethods===0?167:168, // 167为快递 168为自提
             // province: this.shippingMethods===0?this.address.province:this.store.bs_province_no,
             // city: this.shippingMethods===0?this.address.city:this.store.bs_city_no,
-            storeId: this.goodsData.bi_id,
+            storeId: this.store.bs_id,
             goodsNum: this.count
           },
         }).then(function (res) {
@@ -490,7 +490,7 @@
               content: '加入购物车成功',
               bottom: 1.8
             })
-            self.shoppingCartNum++
+            self.shoppingCartNum += self.count
             callback && callback()
           }
         })
@@ -498,7 +498,15 @@
       // 立即购买按钮点击
       buy() {
         this.fromType = 3
-        this.btnCommon()
+        this.btnCommon(this.saveBuyData)
+      },
+      // 立即购买存数据
+      saveBuyData() {
+        this.skuData.shippingMethods = this.shippingMethods
+        this.skuData.from = 0
+        this.skuData.goodsCount = this.count
+        this.setConfirmData(this.skuData)
+        this.$router.push('/orderConfirm')
       },
       // 点击加入购物车和立即购买按钮共同的逻辑
       btnCommon(callback) {
@@ -585,9 +593,11 @@
       },
       // 规格弹框点击确定按钮回调
       submitGoods(flag) {
+        this.$refs.selectSize.hide()
         if (flag===2) {
-          this.$refs.selectSize.hide()
           this.addShoppingCart()
+        } else if(flag===4) {
+          this.saveBuyData()
         }
       },
       goShoppingCart() {
@@ -643,7 +653,10 @@
         } else {
           this.$router.push('/home')
         }
-      }
+      },
+      ...mapMutations({
+        setConfirmData: 'setConfirmData'
+      })
     },
     components: {
       Slider,

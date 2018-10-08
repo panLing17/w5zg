@@ -49,6 +49,8 @@ import CProblems from '../views/cProblems/index.js'
 import GoodsDetails from '../views/goodsDetails/goodsDetails'
 //新购物车
 import ShoppingTrolley from '../views/shoppingTrolley/index'
+// 新确认订单
+import OrderConfirm from '../views/orderConfirm/orderConfirm'
 
 Vue.use(Router)
 const router = new Router ({
@@ -142,9 +144,9 @@ const router = new Router ({
         keepAlive: true
       }
     }, {
-      path: '/confirmOrder',
+      path: '/orderConfirm',
       name: '确认订单',
-      component: Goods.confirmOrder,
+      component: OrderConfirm,
       meta: {
         keepAlive: true
       }
