@@ -139,6 +139,7 @@
                 @open-pop="openPop",
                 @count="getCount",
                 @submit-goods="submitGoods"
+                @change-bottom-btn="changeBottomBtn"
                 )
     // 配送地址选择---------------------------------------------------------------------------------------------------------
     express(ref="express", :addressList="addressList", @address-change="addressChange", @select-city="$refs.selectCity.show()")
@@ -231,6 +232,10 @@
       }
     },
     methods: {
+      // 将按钮置为到货通知
+      changeBottomBtn() {
+        this.bottomBtnType = 1
+      },
       // 根据spuid获取详情内容
       getDetailsData() {
         if (!this.spuId) {
@@ -264,14 +269,8 @@
         if (data.spec_group && data.spec_group.length) {
           data.spec_group.forEach(item => {
             item.checked = -1
-            let temp = item.spec_value.split(',')
-            item.spec_value = []
-            temp.forEach(value => {
-              item.spec_value.push({
-                value: value,
-                gray: false
-              })
-            })
+            item.spec_value = item.spec_value.split(',')
+
             // 如果只有一个规格默认选中
             if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) {
               item.checked = 0

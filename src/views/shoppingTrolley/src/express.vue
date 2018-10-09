@@ -3,7 +3,7 @@
     no-data(v-show="isEmpty")
     .listWrapper(v-show="!isEmpty")
       ul.goodsWrapper
-        li.goods(v-for="(goods, i) in data.commList")
+        li.goods(v-for="(goods, i) in data.commList", @touchstart="touchstart($event)", @touchmove="touchmove($event)", @touchend="touchend($event, i)", @contextmenu.prevent="")
           .left(@click="goodsChange(goods)")
             img(src="./gou.png", v-show="goods.checked==='011'")
             .noChecked(v-show="goods.checked==='012'")
@@ -39,11 +39,29 @@
                       span {{goods.delivery_ways==='167'?'专柜提货':'快递配送'}}
                     .popItem(v-show="goods.delivery_ways==='168'")
                       img(src="./address.png")
-                      span 提货门店
-                    .popItem(@click="delGoods($emit('delete-Goods', {index, i}))")
-                      img(src="./del.png")
-                      span 删除
-    select-city(ref="selectCity", :addressList="[]", @select-city="selectCity")
+                      span 专柜自提
+          .maskBox(v-show="goods.maskShow", @click="closeMask(i)")
+            .collection(@click="goCollection(goods, i)") 移入<br/>收藏夹
+            .delete(@click="deleteGoods(goods, i)") 删除
+      .failure(v-if="data.failure && data.failure.length")
+        .title
+          .left 失效商品共 {{data.failure.length}} 件
+          .right 清空失效商品
+        .content
+          ul.itemWrapper
+            li.item(v-for="goods in data.failure")
+              .left
+                .mask 失效
+                img(:src="goods.logo | img-filter")
+              .right
+                .name {{goods.gi_name}}
+                .size
+                  ul
+                    li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
+                .text 该商品已失效
+              .del
+                img(src="./del2.png")
+    select-size()
     select-store(ref="selectStore", :from="1", :data="storeList", @store-select="selectStore")
 </template>
 
@@ -52,20 +70,28 @@
   import NoData from './noData'
   // 列表
   import Card from './card'
-  // 城市选择弹框
-  import SelectCity from 'views/goodsDetails/express'
   // 自提门店选择弹框
   import SelectStore from 'views/goodsDetails/selectStore'
+  import SelectSize from './selectSize'
+  import {mapMutations, mapGetters} from 'vuex'
+  import {shoppingCart} from "./mixin"
 
   export default {
     name: "express",
+    mixins: [shoppingCart],
     data() {
       return {
         data: {}, // 快递配送合集
         addressList: [], //收货地址合集
       }
     },
+    computed: {
+      ...mapGetters(['shoppingCartCheckedCount', 'shoppingCartGoodsNum'])
+    },
     created() {
+      this.getExpressList()
+    },
+    activated() {
       this.getExpressList()
     },
     methods: {
@@ -79,30 +105,126 @@
         }).then(function (res) {
           if(res) {
             self.data = res.data.data
+            // 判断是否全选,和选中数量
+            let count = 0
+            self.data.commList.forEach(item=>{
+              if (item.checked === '011') {
+                count++
+              }
+              item.maskShow = false
+            })
+            if (count===self.data.commList.length) {
+              self.$emit('all-change', true)
+            }
+            self.setCheckedCount(count)
+            console.log(self.data)
           }
         })
+      },
+      // 全选
+      selectAll(flag) {
+        if (flag) {
+          this.setCheckedCount(this.data.commList.length)
+        } else {
+          this.setCheckedCount(0)
+        }
+        let arr = []
+        this.data.commList.forEach(item=> {
+          if (flag && item.checked==='012') {
+            arr.push(item.sc_id)
+          }
+          if (!flag && item.checked==='011') {
+            arr.push(item.sc_id)
+          }
+          item.checked=flag?'011':'012'
+        })
+        let params = {
+          scIdArray: arr.join(','),
+          checked: flag
+        }
+        this.selectAjax(params)
       },
       // 商品选中
       goodsChange(goods) {
+        let params = {
+          scIdArray: goods.sc_id,
+          checked: goods.checked==='011'?false:true
+        }
         goods.checked = goods.checked==='011'?'012':'011'
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'shoppingCart/v2/selectShoppingCart',
-          params: {
-            scIdArray: goods.sc_id,
-            checked: goods.checked==='011'?false:true
-          }
-        }).then(function (res) {
-
-        })
+        let temp = goods.checked==='011'?(this.shoppingCartCheckedCount+1) : (this.shoppingCartCheckedCount-1)
+        this.setCheckedCount(temp)
+        if (this.shoppingCartCheckedCount===this.data.commList.length) {
+          this.$emit('all-change', true)
+        } else {
+          this.$emit('all-change', false)
+        }
+        this.selectAjax(params)
       },
+      // 关闭删除蒙版
+      closeMask(i) {
+        let t = this.data.commList[i]
+        t.maskShow = false
+        this.data.commList.splice(i, 1, t)
+      },
+      // 删除商品
+      deleteGoods(goods, index) {
+        let params = {
+          scIdArray: goods.sc_id
+        }
+        if (goods.checked==='011') {
+          this.setCheckedCount(this.shoppingCartCheckedCount-1)
+        }
+        this.data.commList.splice(index, 1)
+        this.setShoppingCartCount({
+          sendNum: this.shoppingCartGoodsNum.sendNum-1
+        })
+        this.deleteAjax(params)
+      },
+      // 移入收藏夹
+      goCollection(goods, index) {
+        this.data.commList.splice(index, 1)
+        this.setShoppingCartCount({
+          sendNum: this.shoppingCartGoodsNum.sendNum-1
+        })
+        let params = {
+          gspuId: goods.gspu_id
+        }
+        this.collectionAjax(params)
+      },
+      // 批量删除
+      deleteAll() {
+        let arr = []
+        let count = 0
+        let indexArr = []
+        this.data.commList.forEach((item, index) => {
+          if (item.checked==='011') {
+            arr.push(item.sc_id)
+            count++
+            indexArr.push(index)
+          }
+        })
+        indexArr.forEach(item => {
+          this.data.commList.splice(item, 1)
+        })
+        this.setCheckedCount(this.shoppingCartCheckedCount-count)
+        this.setShoppingCartCount({
+          sendNum: this.shoppingCartGoodsNum.sendNum-count
+        })
+        let params = {
+          scIdArray: arr.join(',')
+        }
+        this.deleteAjax(params)
+      },
+      ...mapMutations({
+        setCheckedCount: 'setShoppingCartCheckedCount',
+        setShoppingCartCount: 'shoppingCartGoodsNumChange'
+      })
     },
     components: {
       NoData,
       Card,
-      SelectCity,
-      SelectStore
+      SelectStore,
+      SelectSize
     }
   }
 </script>
@@ -111,6 +233,7 @@
   .goods {
     display flex
     padding-top .26rem
+    position relative
     &:last-child .right {
       border none
     }
@@ -325,6 +448,113 @@
               }
             }
           }
+        }
+      }
+    }
+  }
+  .maskBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.7rem;
+    align-items: center;
+  }
+  .maskBox .collection, .maskBox .delete {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    font-size: .42rem;
+    text-align: center;
+  }
+  .maskBox .collection {
+    background-color: #f70057;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .maskBox .delete {
+    line-height: 2.1rem;
+    background-color: #ececec;
+    color: #666;
+  }
+  .failure {
+    border-top .26rem solid #f3f3f3
+    .title {
+      height 1.2rem
+      display flex
+      align-items center
+      justify-content space-between
+      padding 0 .5rem 0 .4rem
+      border-bottom 1px solid #e7e7e7
+      .left {
+        color #666
+        font-weight 400
+        font-size .32rem
+      }
+      .right {
+        color #f8085c
+        font-weight 400
+        font-size .32rem
+      }
+    }
+    .content {
+      padding 0 .4rem 0 1.17rem
+      .item {
+        display flex
+        height 2.9rem
+        align-items center
+        .left {
+          width 2.4rem
+          height 2.4rem
+          border-radius .13rem
+          overflow hidden
+          position relative
+          img {
+            width 100%
+          }
+          .mask {
+            position absolute
+            width 100%
+            height 100%
+            top 0
+            left 0
+            background-color rgba(0,0,0,.5)
+            color #fff
+            font-size .32rem
+            font-weight 400
+            text-align center
+            line-height 2.4rem
+          }
+        }
+        .right {
+          margin-left .32rem
+          width calc(100% - 2.72rem)
+          .name {
+            color #23262F
+            font-size .32rem
+            line-height .42rem
+            font-weight 400
+            overflow : hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+          .size, .text {
+            margin-top .26rem
+            color #999
+            font-size .32rem
+            font-weight 400
+          }
+        }
+        .del {
+          position absolute
         }
       }
     }

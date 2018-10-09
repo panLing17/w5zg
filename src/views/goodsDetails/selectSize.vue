@@ -30,8 +30,8 @@
                 ul.specValue
                   li(v-for="(value, i) in item.spec_value",
                     @click="specChange(index, i)",
-                    :class="{active: item.checked===i, gray: value.gray}"
-                    ) {{value.value}}
+                    :class="{active: item.checked===i}"
+                    ) {{value}}
             // 数量加减---------------------------------------------------------------------------------
             .counteWrapper(v-show="fromType!==2")
               .left 购买数量
@@ -47,13 +47,6 @@
               .typeBtn
                 .btn(:class="{active: shippingMethods===0}", @click="shippingMethodsChange(0)") 快递配送
                 .btn(v-if="carryType===1", :class="{active: shippingMethods===1}", @click="shippingMethodsChange(1)") 专柜自提
-              <!--.address1(v-show="shippingMethods===0")-->
-                <!--.desc 配送地址-->
-                <!--.addressText(@click="openPop(0)")-->
-                  <!--img.addressImg(src="./address.png")-->
-                  <!--span(v-if="!address.text") 请选择配送地址-->
-                  <!--span(v-else) {{address.text}}-->
-                  <!--img.arrowImg(src="./arrow.png")-->
               .address1(v-show="shippingMethods===1")
                 .desc 专柜地址<span>(提货地影响库存，请正确选择）</span>
                 .addressText(@click="openPop(1)")
@@ -168,10 +161,6 @@
     methods:{
       // 规格选择
       specChange(index, i) {
-        // 如果点击置灰return
-        if (this.specGroup[index].spec_value[i].gray) {
-          return
-        }
         let temp = this.specGroup[index]
         if (this.specGroup[index].checked === i) {
           temp.checked = -1
@@ -180,124 +169,7 @@
         }
         this.specGroup.splice(index, 1, temp)
 
-        let indexArr = []
-        if (this.specGroup[index].checked>-1) {
-          indexArr.push({
-            index: index,
-            i: i
-          })
-        }
-
-        let checkedArr = []
-        this.specGroup.forEach((item, index) => {
-          if (item.checked>-1) {
-            checkedArr.push(index)
-          }
-        })
-        let name
-        let value
-        let params
-        if (indexArr.length) {
-          name = 'spec_name' + (index+1)
-          value = 'spec_value' + (index+1)
-          params = {
-            gspu_id: this.spuId,
-            [name]: this.specGroup[index].spec_name,
-            [value]: this.specGroup[index].spec_value[i].value
-          }
-        } else if (checkedArr.length){
-          params = {
-            gspu_id: this.spuId
-          }
-          checkedArr.forEach((item) => {
-            name = 'spec_name' + (item+1)
-            value = 'spec_value' + (item+1)
-            params[name] = this.specGroup[item].spec_name
-            params[value] = this.specGroup[item].spec_value[this.specGroup[item].checked].value
-          })
-        }
-
-
-
-
-        // 如果没有选中规格把置灰都去掉
-        if (checkedArr.length===0) {
-          this.specGroup.forEach(item => {
-            item.spec_value.forEach(value => {
-              value.gray = false
-            })
-          })
-        } else { // 如果规格都选了不需要查置灰
-          this.specHidden(params, indexArr, checkedArr)
-        }
         this.getSku()
-      },
-      // 根据选中的规格调有哪些需隐藏 简称置灰
-      specHidden(params, indexArr, checkedArr) {
-        let self = this
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'gcdetails/getSkuSpecDetail',
-          params: params,
-          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
-        }).then(function (res) {
-          if (res) {
-            // if (!indexArr.length) {
-            //   self.specGroup.forEach((group, gi) => {
-            //     group.spec_value.forEach(value => {
-            //       let flag = true
-            //       res.data.data.forEach(item => {
-            //         if (group.spec_name===params[name]) {
-            //           flag = false
-            //         } else if (item['spec_value'+(gi+1)] === value.value) {
-            //           let count = 0
-            //           checkedArr.forEach((c) => {
-            //             if (self.specGroup[c].spec_value[self.specGroup[c].checked].value === item['spec_value'+(c+1)]) {
-            //               count++
-            //             } else if (c===gi) {
-            //               count++
-            //             }
-            //           })
-            //           if (count===checkedArr.length) {
-            //             flag = false
-            //           }
-            //         }
-            //       })
-            //       value.gray = flag
-            //     })
-            //   })
-            // } else {
-              self.specGroup.forEach((group, gi) => {
-                if (!indexArr.length || indexArr[0].index !== gi) {
-                  group.spec_value.forEach(value => {
-                    let flag = true
-                    if (group.spec_name===params[name]) {
-                      flag = false
-                    } else {
-                      res.data.data.forEach(item => {
-                        if (item['spec_value' + (gi + 1)] === value.value) {
-                          let count = 0
-                          checkedArr.forEach((c) => {
-                            if (self.specGroup[c].spec_value[self.specGroup[c].checked].value === item['spec_value' + (c + 1)]) {
-                              count++
-                            } else if (c === gi) {
-                              count++
-                            }
-                          })
-                          if (count === checkedArr.length) {
-                            flag = false
-                          }
-                        }
-                      })
-                    }
-
-                    value.gray = flag
-                  })
-                }
-              })
-            // }
-          }
-        })
       },
       // 根据规格调sku信息
       getSku() {
@@ -316,7 +188,7 @@
             return false
           }
           params['spec_name'+(index+1)] = item.spec_name
-          params['spec_value'+(index+1)] = item.spec_value[item.checked].value
+          params['spec_value'+(index+1)] = item.spec_value[item.checked]
         })
 
         if (flag) {
@@ -327,23 +199,28 @@
             params: params
           }).then(function(res){
             if (res) {
-              self.storageNum = res.data.data.storage_num
-              // 切换底部按钮
-              if (self.storageNum===0 && self.fromType!==2) {
+              if (typeof res.data.data !== 'undefined') {
+                self.storageNum = res.data.data.storage_num
+                // 切换底部按钮
+                if (self.storageNum===0 && self.fromType!==2) {
+                  self.bottomBtnType = 1
+                } else if(self.storageNum>0 && self.fromType===0) {
+                  self.bottomBtnType = 0
+                } else if (self.storageNum>0 && self.fromType===1) {
+                  self.bottomBtnType = 2
+                } else if(self.storageNum>0 && self.fromType===3) {
+                  self.bottomBtnType = 4
+                }else if (self.fromType===2) {
+                  self.bottomBtnType = 3
+                }
+                self.selectionSizeFormat(res.data.data)
+                self.skuData = res.data.data
+                self.$emit('count', self.count)
+                self.$emit('selection-size', self.skuData)
+              }else {
                 self.bottomBtnType = 1
-              } else if(self.storageNum>0 && self.fromType===0) {
-                self.bottomBtnType = 0
-              } else if (self.storageNum>0 && self.fromType===1) {
-                self.bottomBtnType = 2
-              } else if(self.storageNum>0 && self.fromType===3) {
-                self.bottomBtnType = 4
-              }else if (self.fromType===2) {
-                self.bottomBtnType = 3
+                self.$emit('change-bottom-btn')
               }
-              self.selectionSizeFormat(res.data.data)
-              self.skuData = res.data.data
-              self.$emit('count', self.count)
-              self.$emit('selection-size', self.skuData)
             }
           })
         }

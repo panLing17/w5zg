@@ -15,6 +15,65 @@ export const shoppingCart = {
     }
   },
   methods: {
+    // 长按操作
+    touchstart(e) {
+      this.longClick=0;
+      this.timeOutEvent = setTimeout(()=>{
+        //此处为长按事件-----在此显示遮罩层及删除按钮
+        this.longClick=1;//假如长按，则设置为1
+      },500);
+      let touch = e.touches[0];
+      this.touchY = touch.clientY;
+    },
+    touchmove(e) {
+      clearTimeout(this.timeOutEvent);
+      this.timeOutEvent = 0;
+      let touch = e.touches[0]
+      if(Math.abs(touch.clientY - this.touchY) < 10){
+        e.preventDefault();
+      }
+    },
+    touchend(e, i) {
+      clearTimeout(this.timeOutEvent);
+      if(this.timeOutEvent!=0 && this.longClick==1){
+        e.preventDefault()
+        let t = this.data.commList[i]
+        t.maskShow = true
+        this.data.commList.splice(i, 1, t)
+      }
+      return false;
+    },
+    // 选中接口
+    selectAjax(params) {
+      let self = this
+      self.$ajax({
+        method: 'post',
+        url: self.$apiGoods + 'shoppingCart/v2/selectShoppingCart',
+        params: params
+      }).then(function (res) {
+
+      })
+    },
+    // 删除接口
+    deleteAjax(params) {
+      let self = this
+      self.$ajax({
+        method: 'delete',
+        url: self.$apiGoods + 'shoppingCart/v2/shoppingCart/delete',
+        params: params,
+      }).then(function (response) {
+      })
+    },
+    // 收藏接口
+    collectionAjax(params) {
+      let self = this
+      self.$ajax({
+        method: 'post',
+        url: self.$apiGoods + 'gcdetails/saveGcFavorite',
+        params: params,
+      }).then(function (response) {
+      })
+    },
     // 删除商品
     delGoods(obj) {
       let scIdArray = ''
