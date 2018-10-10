@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="selectSizeShow", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .content(@touchmove.prevent="", v-show="selectSizeShow")
+      .content(@touchmove.prevent="", v-if="selectSizeShow")
         // 头部-----------------------------------------------------------------------------------------
         .top
           .imgWrapper
@@ -11,10 +11,9 @@
           .textWrapper
             .price {{priceShow | price-filter}}
             .size
-              .no(v-show="!selectionSize.length") 请选择规格
-              .yes(v-show="selectionSize.length")
+              .yes
                 ul
-                  li(v-for="item in selectionSize") {{item.value}}
+                  li(v-for="item in selectionSizeText") {{item.value}}
             .desc
               .yes(v-show="storageNum>0") 有货
               .no(v-show="storageNum===0") 无货
@@ -34,43 +33,23 @@
                   ) {{value}}
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
-          .one(v-show="bottomBtnType===1", @click="saveReachGoods", style="background-color:#9D4AAD;") 到货通知
-          .one(v-show="bottomBtnType===2", @click="submitGoods(bottomBtnType)") 确定
+          .one(v-show="bottomBtnType===1", @click="saveReachGoods",  style="background-color:#9D4AAD;") 到货通知
+          .one(v-show="bottomBtnType===2", @click="submitGoods") 确定
 </template>
 
 <script>
+  import Scroll from 'components/scroll'
   export default {
     name: "selectSize",
     props: {
-      // 商品图片
-      imgUrl: {
-        type: String,
-        default: ''
-      },
-      // 商品价格
-      price: {
-        type: Number,
-        default: 0
+      resetSpec: {
+        type: Object
       },
       // 商品规格
       specGroup: {
         type: Array,
         default() {
           return []
-        }
-      },
-      spuId: {
-        type: Number
-      },
-      // 打开此弹框按钮类型
-      fromType: {
-        type: 0
-      },
-      // 选中的自提门店信息
-      store: {
-        type: Object,
-        default() {
-          return {}
         }
       }
     },
@@ -83,6 +62,130 @@
         bottomBtnType: 2, // 底部按钮类型 0为默认，即显示加入购物车、立即购买 1为到货通知 2为确定从加入购物车来 4为确定从立即购买来 3为预约体验
       }
     },
+    computed: {
+      logo () {
+        return this.skuData.logo?this.skuData.logo:this.resetSpec.imgUrl
+      },
+      priceShow() {
+        return this.skuData.direct_supply_price?this.skuData.direct_supply_price:this.resetSpec.price
+      },
+      selectionSizeText() {
+        return this.selectionSize.length?this.selectionSize:this.resetSpec.selectionSize
+      }
+    },
+    methods: {
+      show() {
+        this.selectSizeShow = true
+      },
+      hide() {
+        this.selectSizeShow = false
+      },
+      specChange(index, i) {
+        let temp = this.specGroup[index]
+        if (this.specGroup[index].checked === i) {
+          temp.checked = -1
+        } else {
+          temp.checked = i
+        }
+        this.specGroup.splice(index, 1, temp)
+
+        this.getSku()
+      },
+      getSku() {
+        let flag = true
+        let params = {
+          gspu_id: this.resetSpec.spuId
+        }
+        // 如果有-1表示还有规格没有选择
+        this.specGroup.forEach((item, index)=>{
+          if (item.checked === -1) {
+            flag = false
+            return false
+          }
+          params['spec_name'+(index+1)] = item.spec_name
+          params['spec_value'+(index+1)] = item.spec_value[item.checked]
+        })
+
+        if (flag) {
+          let self =this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + 'gcdetails/getSkuBySpecInfo',
+            params: params
+          }).then(function(res){
+            if (res) {
+              if (typeof res.data.data !== 'undefined') {
+                self.storageNum = res.data.data.storage_num
+                if(res.data.data.storage_num===0) {
+                  self.bottomBtnType = 1
+                } else {
+                  self.bottomBtnType = 2
+                }
+                self.selectionSizeFormat(res.data.data)
+                self.skuData = res.data.data
+              }else {
+                self.storageNum = 0
+                self.bottomBtnType = 1
+              }
+            }
+          })
+        }
+      },
+      selectionSizeFormat(data) {
+        let temp = []
+        for(let i=1; i<=5; i++) {
+          if (data['spec_name'+i].length>0 && data['spec_value'+i].length>0) {
+            temp.push({
+              name: data['spec_name'+i],
+              value: data['spec_value'+i]
+            })
+          }
+        }
+        data.selectionSize = temp
+        this.selectionSize = temp
+      },
+      saveReachGoods() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
+          params: {
+            gsku_id: this.skuData.gsku_id
+          }
+        }).then(function (res) {
+          if (res) {
+            self.$notify({
+              content: '如果30天内到货,会通过系统消息提醒您',
+              bottom: 3
+            })
+          }
+        })
+      },
+      submitGoods() {
+        if (this.skuData.gsku_id) {
+          let self = this
+          self.$ajax({
+            method: 'post',
+            url: self.$apiGoods + '/shoppingCart/v2/updateShoppingCart',
+            params: {
+              scId : this.resetSpec.scId,
+              gskuId: this.skuData.gsku_id
+            }
+          }).then(function (res) {
+            if (res) {
+              self.$emit('spec-change', {
+                spec: self.selectionSize,
+                skuId: self.skuData.gsku_id
+              })
+            }
+          })
+        }
+        this.hide()
+      }
+    },
+    components: {
+      Scroll
+    }
   }
 </script>
 
@@ -110,13 +213,13 @@
     width 100%
     height 100vh
     background-color rgba(0,0,0,.5)
-    z-index 100
+    z-index 400
   }
   .content {
     height $height-pop-details
-    z-index 100
+    z-index 400
     position fixed
-    bottom 0
+    bottom $height-footer
     left 0
     width 100%
     background-color #fff
@@ -187,8 +290,8 @@
     .center {
       height "calc(%s - 4.21rem)" % $height-pop-details
       overflow hidden
-      padding 0 .4rem
       .specGroup {
+        padding 0 .4rem
         .spec {
           padding .4rem .0 0
           .specName {
@@ -241,7 +344,7 @@
       }
     }
     .bottom {
-      position fixed
+      position absolute
       bottom 0
       left 0
       width 100%

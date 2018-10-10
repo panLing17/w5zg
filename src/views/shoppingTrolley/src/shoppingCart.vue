@@ -13,7 +13,7 @@
           span(:class="{active: navActive===1}") 专柜自提({{shoppingCartGoodsNum.carryNum}})
     // 内容--------------------------------------------------------------------------------------
     .contentWrapper
-      router-view(ref="childView", @all-change="allChange")
+      router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange")
     // 全选--------------------------------------------------------------------------------------
     .allSelect(v-show="allSelectShow && !sliceShow")
       .white
@@ -23,9 +23,9 @@
             .noChecked(v-show="!allChecked")
           .text 全选
         .right
-          .top (不含运费)实付：
-          .bottom 现金券可抵扣：
-      .red 结算({{shoppingCartCheckedCount}})
+          .top (不含运费)实付: <span>{{totalPrice | price-filter}}</span>
+          .bottom 现金券可抵扣: {{totalTicket | price-filter}}
+      .red 结算({{totalCount}})
     // 整理--------------------------------------------------------------------------------------
     .sliceIcon(v-show="allSelectShow && !sliceShow", @click="sliceShow=true")
       img(src="./slice.png")
@@ -56,7 +56,10 @@
         navActive: 0,
         allChecked: false,
         allSelectShow: false,
-        sliceShow: false
+        sliceShow: false,
+        totalPrice: 0,
+        totalTicket: 0,
+        totalCount: '0'
       }
     },
     computed: {
@@ -88,6 +91,12 @@
       this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, () => {})
     },
     methods: {
+      // 总价格、总立减现金券
+      totalChange(data) {
+        this.totalPrice = data.payPrice
+        this.totalTicket = data.netCard
+        this.totalCount = data.selectNum
+      },
       // 删除
       deleteGoods() {
         this.$refs.childView.deleteAll()
@@ -270,6 +279,11 @@
         color #333
         font-weight 400
         margin-right .2rem
+        text-align right
+        span {
+          color #f70057
+          font-size .42rem
+        }
       }
     }
     .red {

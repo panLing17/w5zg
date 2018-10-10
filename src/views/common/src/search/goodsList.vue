@@ -10,7 +10,7 @@
         .priceWrapper
           ul
             li.desc 实付价：￥
-            li.price(v-for="price in $method.arrayPrice(item.skus_city[0].direct_supply_price)") {{price}}
+            li.price(v-for="price in $method.arrayPrice(item.min_direct_supply_price)") {{price}}
 </template>
 
 <script>

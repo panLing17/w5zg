@@ -76,13 +76,8 @@ const state = {
   informGoods: null,
   // 跳确认订单页
   confirmData: {},
-  // 购物车选中数量
-  shoppingCartCheckedCount: 0
 }
 const mutations = {
-  setShoppingCartCheckedCount(state, data) {
-    state.shoppingCartCheckedCount = data
-  },
   setConfirmData (state, data) {
     state.confirmData = data
   },
@@ -225,8 +220,7 @@ const getters = {
   transfer: state => state.transfer,
   userData: state => state.userData,
   shoppingCartGoodsNum: state => state.shoppingCartGoodsNum,
-  confirmData: state => state.confirmData,
-  shoppingCartCheckedCount: state => state.shoppingCartCheckedCount
+  confirmData: state => state.confirmData
 }
 const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({

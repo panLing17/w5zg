@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="selectStoreShow", :class="{background: from===1}", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .contentWrapper(v-show="selectStoreShow", :style="{bottom: from===0?0:'1.38rem'}")
+      .contentWrapper(v-if="selectStoreShow", :style="{bottom: from===0?0:'1.38rem'}")
         .title
           .left(@click="hide")
             img(src="./back2.png")
@@ -101,7 +101,7 @@
     left 0
     width 100%
     height 100vh
-    z-index 110
+    z-index 400
     &.background {
       background-color rgba(0,0,0,.5)
     }
@@ -112,7 +112,7 @@
     left 0
     width 100%
     background-color #fff
-    z-index 110
+    z-index 400
     .title {
       height 1.33rem
       display flex

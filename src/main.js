@@ -36,12 +36,14 @@ import scroll from './plugIn/scroll/index'
 import AdTag from 'views/home/src/goodsList/adTag'
 import Advert from 'views/home/src/goodsList/advert'
 import Notify from '@/plugIn/notification/index.js'
+import Verify from '@/plugIn/verify/index.js'
 
 Vue.router = router
 Vue.use(Notify)
 Vue.use(AdTag)
 Vue.use(Advert)
 Vue.use(scroll)
+Vue.use(Verify)
 Vue.use(VueLazyLoad, {
   loading: require('assets/img/default.png'),
   filter: {

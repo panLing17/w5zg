@@ -221,7 +221,7 @@
       })
     },
     computed: {
-      ...mapGetters(['userData']),
+      ...mapGetters(['userData', 'shoppingCartGoodsNum']),
       // 实付价
       directSupplyPrice() {
         return this.skuData.direct_supply_price ? this.skuData.direct_supply_price : this.goodsData.min_direct_supply_price
@@ -478,8 +478,6 @@
           params: {
             gskuId: this.skuData.gsku_id,
             deliveryWays: this.shippingMethods===0?167:168, // 167为快递 168为自提
-            // province: this.shippingMethods===0?this.address.province:this.store.bs_province_no,
-            // city: this.shippingMethods===0?this.address.city:this.store.bs_city_no,
             storeId: this.store.bs_id,
             goodsNum: this.count
           },
@@ -490,6 +488,10 @@
               bottom: 1.8
             })
             self.shoppingCartNum += self.count
+            let t = self.shippingMethods===0?'sendNum':'carryNum'
+            self.setShoppingCartCount({
+              [t]: self.shoppingCartGoodsNum[t] + 1
+            })
             callback && callback()
           }
         })
@@ -654,7 +656,8 @@
         }
       },
       ...mapMutations({
-        setConfirmData: 'setConfirmData'
+        setConfirmData: 'setConfirmData',
+        setShoppingCartCount: 'shoppingCartGoodsNumChange'
       })
     },
     components: {

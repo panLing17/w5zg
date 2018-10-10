@@ -43,7 +43,7 @@
         query: '', //搜索词
         associativeQuery: [], //联想词列表
         searchResult: { //搜索列表
-          aggs: [],
+          aggs: {},
           rows: []
         },
         likesResult: [], //近似商品列表
@@ -121,7 +121,7 @@
       goInit() {
         this.$refs.searchResult.hideTop()
         this.searchResult = {
-          aggs: [],
+          aggs: {},
           rows: []
         }
         this.associativeQuery = []
@@ -154,7 +154,7 @@
         this.query = ''
         this.$refs.searchResult.hideTop()
         this.searchResult = {
-          aggs: [],
+          aggs: {},
           rows: []
         }
         this.associativeQuery = []

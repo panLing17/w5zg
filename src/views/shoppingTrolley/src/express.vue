@@ -14,14 +14,14 @@
             .info
               .name {{goods.gi_name}}
               .tool
-                .detail
+                .detail(@click="specChange(goods, i)")
                   ul
                     li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                 .countWrapper
-                  .minus
+                  .minus(@click="minus(goods)")
                     img(src="./minus.png")
                   .count {{goods.goods_num}}
-                  .add
+                  .add(@click="add(goods)")
                     img(src="./add.png")
               .priceWrapper
                 .leftPrice
@@ -34,11 +34,8 @@
                   img(src="./btn.png")
                   .pop
                     .sanjiao
-                    .popItem(v-show="(goods.delivery_ways==='167' && goods.carry_type===1) || goods.delivery_ways==='168'", @click.stop="$emit('change-ways', {index, i})")
+                    .popItem(v-show="(goods.delivery_ways==='167' && goods.carry_type===1)", @click.stop="changeWays(goods, i)")
                       img(src="./refresh.png")
-                      span {{goods.delivery_ways==='167'?'专柜提货':'快递配送'}}
-                    .popItem(v-show="goods.delivery_ways==='168'")
-                      img(src="./address.png")
                       span 专柜自提
           .maskBox(v-show="goods.maskShow", @click="closeMask(i)")
             .collection(@click="goCollection(goods, i)") 移入<br/>收藏夹
@@ -46,10 +43,10 @@
       .failure(v-if="data.failure && data.failure.length")
         .title
           .left 失效商品共 {{data.failure.length}} 件
-          .right 清空失效商品
+          .right(@click="delAllFailure") 清空失效商品
         .content
           ul.itemWrapper
-            li.item(v-for="goods in data.failure")
+            li.item(v-for="(goods, index) in data.failure")
               .left
                 .mask 失效
                 img(:src="goods.logo | img-filter")
@@ -59,9 +56,13 @@
                   ul
                     li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                 .text 该商品已失效
-              .del
+              .del(@click="delFailureGoods(goods, index)")
                 img(src="./del2.png")
-    select-size()
+    select-size(ref="selectSize",
+                :specGroup="specList",
+                :resetSpec="resetSpec",
+                @spec-change="specChangeRight"
+                )
     select-store(ref="selectStore", :from="1", :data="storeList", @store-select="selectStore")
 </template>
 
@@ -81,18 +82,31 @@
     mixins: [shoppingCart],
     data() {
       return {
-        data: {}, // 快递配送合集
-        addressList: [], //收货地址合集
+        data: {}, // 快递配送购物车合集
+        specList: [], // 商品规格
+        resetSpec: {}, // 更改规格时初始化的参数
+        specCurrentIndex: -1, // 更改规格当前商品的下标
       }
     },
     computed: {
-      ...mapGetters(['shoppingCartCheckedCount', 'shoppingCartGoodsNum'])
+      ...mapGetters(['shoppingCartGoodsNum'])
+    },
+    watch: {
+      totalCount(newVal) {
+        if (Number(newVal)===this.data.commList.length) {
+          this.$emit('all-change', true)
+        } else {
+          this.$emit('all-change', false)
+        }
+      }
     },
     created() {
       this.getExpressList()
+      this.queryCartMoneyAjax('167')
     },
     activated() {
       this.getExpressList()
+      this.queryCartMoneyAjax('167')
     },
     methods: {
       // 获取快递配送数据
@@ -115,19 +129,14 @@
             })
             if (count===self.data.commList.length) {
               self.$emit('all-change', true)
+            } else {
+              self.$emit('all-change', false)
             }
-            self.setCheckedCount(count)
-            console.log(self.data)
           }
         })
       },
       // 全选
       selectAll(flag) {
-        if (flag) {
-          this.setCheckedCount(this.data.commList.length)
-        } else {
-          this.setCheckedCount(0)
-        }
         let arr = []
         this.data.commList.forEach(item=> {
           if (flag && item.checked==='012') {
@@ -142,7 +151,9 @@
           scIdArray: arr.join(','),
           checked: flag
         }
-        this.selectAjax(params)
+        this.selectAjax(params, ()=>{
+          this.queryCartMoneyAjax('167')
+        })
       },
       // 商品选中
       goodsChange(goods) {
@@ -151,14 +162,9 @@
           checked: goods.checked==='011'?false:true
         }
         goods.checked = goods.checked==='011'?'012':'011'
-        let temp = goods.checked==='011'?(this.shoppingCartCheckedCount+1) : (this.shoppingCartCheckedCount-1)
-        this.setCheckedCount(temp)
-        if (this.shoppingCartCheckedCount===this.data.commList.length) {
-          this.$emit('all-change', true)
-        } else {
-          this.$emit('all-change', false)
-        }
-        this.selectAjax(params)
+        this.selectAjax(params, ()=>{
+          this.queryCartMoneyAjax('167')
+        })
       },
       // 关闭删除蒙版
       closeMask(i) {
@@ -168,21 +174,68 @@
       },
       // 删除商品
       deleteGoods(goods, index) {
+        this.$verify({
+          content: '确认删除所选商品吗？',
+          leftText: '取消',
+          rightText: '删除',
+          rightFn: () => {
+            let params = {
+              scIdArray: goods.sc_id
+            }
+            this.data.commList.splice(index, 1)
+            this.setShoppingCartCount({
+              sendNum: this.shoppingCartGoodsNum.sendNum-1
+            })
+            this.deleteAjax(params, ()=>{
+              this.queryCartMoneyAjax('167')
+              this.$notify({
+                content: '删除成功',
+                bottom: 3.2
+              })
+            })
+          }
+        })
+      },
+      // 删除失效商品
+      delFailureGoods(goods, index) {
         let params = {
           scIdArray: goods.sc_id
         }
-        if (goods.checked==='011') {
-          this.setCheckedCount(this.shoppingCartCheckedCount-1)
-        }
-        this.data.commList.splice(index, 1)
-        this.setShoppingCartCount({
-          sendNum: this.shoppingCartGoodsNum.sendNum-1
+        this.data.failure.splice(index, 1)
+        this.deleteAjax(params, ()=>{
+          this.$notify({
+            content: '删除成功',
+            bottom: 3.2
+          })
         })
-        this.deleteAjax(params)
+      },
+      // 清空失效商品
+      delAllFailure() {
+        this.$verify({
+          content: '确定要清除所有失效商品吗？',
+          leftText: '取消',
+          rightText: '确定',
+          rightFn: () => {
+            let params
+            let arr = []
+            this.data.failure.forEach(item => {
+              arr.push(item.sc_id)
+            })
+            params = {
+              scIdArray: arr.join(',')
+            }
+            this.data.failure = []
+            this.deleteAjax(params, ()=>{
+              this.$notify({
+                content: '删除成功',
+                bottom: 3.2
+              })
+            })
+          }
+        })
       },
       // 移入收藏夹
       goCollection(goods, index) {
-        this.data.commList.splice(index, 1)
         this.setShoppingCartCount({
           sendNum: this.shoppingCartGoodsNum.sendNum-1
         })
@@ -190,6 +243,13 @@
           gspuId: goods.gspu_id
         }
         this.collectionAjax(params)
+        let params2  ={
+          scIdArray: goods.sc_id
+        }
+        this.deleteAjax(params2, () => {
+          this.queryCartMoneyAjax('167')
+        })
+        this.data.commList.splice(index, 1)
       },
       // 批量删除
       deleteAll() {
@@ -206,17 +266,74 @@
         indexArr.forEach(item => {
           this.data.commList.splice(item, 1)
         })
-        this.setCheckedCount(this.shoppingCartCheckedCount-count)
         this.setShoppingCartCount({
           sendNum: this.shoppingCartGoodsNum.sendNum-count
         })
         let params = {
           scIdArray: arr.join(',')
         }
-        this.deleteAjax(params)
+        this.deleteAjax(params, ()=>{
+          this.queryCartMoneyAjax('167')
+          this.$notify({
+            content: '删除成功',
+            bottom: 3.2
+          })
+        })
+      },
+      // 规格切换
+      specChange(goods, i) {
+        this.specCurrentIndex = i
+        this.specChangeCommon(goods)
+      },
+      // 规格切换完成
+      specChangeRight(data) {
+        let temp = this.data.commList[this.specCurrentIndex]
+        temp.gsku_id = data.skuId
+        temp.specVOList = []
+        data.spec.forEach(item=>{
+          temp.specVOList.push({
+            gspec_name: item.name,
+            gspec_value: item.value
+          })
+        })
+        this.data.commList.splice(this.specCurrentIndex, temp)
+      },
+      // 切换配送方式
+      changeWays(goods, index) {
+        this.specCurrentIndex = index
+        this.$verify({
+          content: '确定要切换为“专柜自提”？',
+          leftText: '取消',
+          rightText: '确定',
+          rightFn: () => {
+            let params = {
+              gspu_id: goods.gspu_id,
+              gsku_id: goods.gsku_id
+            }
+            this.storeListAjax(params, (data)=>{
+              this.storeList = data
+              this.$refs.selectStore.show()
+            })
+          }
+        })
+      },
+      // 门店选择后切换为自提
+      selectStore(data) {
+        let params = {
+          scId: this.data.commList[this.specCurrentIndex].sc_id,
+          deliveryWays: '168',
+          bsId: data.bs_id
+        }
+        this.updateAjax(params, ()=>{
+          this.queryCartMoneyAjax('167')
+        })
+        this.setShoppingCartCount({
+          sendNum: this.shoppingCartGoodsNum.sendNum-1,
+          carryNum: this.shoppingCartGoodsNum.carryNum+1
+        })
+        this.data.commList.splice(this.specCurrentIndex, 1)
       },
       ...mapMutations({
-        setCheckedCount: 'setShoppingCartCheckedCount',
         setShoppingCartCount: 'shoppingCartGoodsNumChange'
       })
     },
@@ -230,6 +347,9 @@
 </script>
 
 <style scoped lang="stylus">
+  .listWrapper {
+    border-top .26rem solid #f3f3f3
+  }
   .goods {
     display flex
     padding-top .26rem
@@ -374,6 +494,9 @@
           justify-content space-between
           position relative
           height .58rem
+          &:hover .btn .pop {
+            display block
+          }
           .cut {
             line-height .45rem
             padding 0 .13rem
@@ -388,11 +511,6 @@
             top 0
             font-size 0
             align-self flex-end
-            &:hover {
-              .pop {
-                display block
-              }
-            }
             img {
               width .58rem
             }
@@ -509,6 +627,11 @@
         display flex
         height 2.9rem
         align-items center
+        border-bottom 1px solid #d7d7d7
+        position relative
+        &:last-child {
+          border none
+        }
         .left {
           width 2.4rem
           height 2.4rem
@@ -552,9 +675,24 @@
             font-size .32rem
             font-weight 400
           }
+          .size {
+            ul {
+              display flex
+              li {
+                line-height 1
+                margin-right .1rem
+              }
+            }
+          }
         }
         .del {
           position absolute
+          right .4rem
+          bottom .26rem
+          font-size 0
+          img {
+            width .64rem
+          }
         }
       }
     }

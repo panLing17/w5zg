@@ -1,8 +1,15 @@
 export const shoppingCart = {
+  props: {
+    totalCount: {
+      type: String
+    }
+  },
   data() {
     return {
       storeList: [], //门店集合
       updateGoods: {}, // 配送方式切换时存放选中的商品下标
+
+      goodsDetail: {}
     }
   },
   computed: {
@@ -44,24 +51,29 @@ export const shoppingCart = {
       return false;
     },
     // 选中接口
-    selectAjax(params) {
+    selectAjax(params, callback) {
       let self = this
       self.$ajax({
         method: 'post',
         url: self.$apiGoods + 'shoppingCart/v2/selectShoppingCart',
         params: params
       }).then(function (res) {
-
+        if (res) {
+          callback && callback()
+        }
       })
     },
     // 删除接口
-    deleteAjax(params) {
+    deleteAjax(params, callback) {
       let self = this
       self.$ajax({
         method: 'delete',
         url: self.$apiGoods + 'shoppingCart/v2/shoppingCart/delete',
         params: params,
       }).then(function (response) {
+        if (response) {
+          callback && callback()
+        }
       })
     },
     // 收藏接口
@@ -72,133 +84,139 @@ export const shoppingCart = {
         url: self.$apiGoods + 'gcdetails/saveGcFavorite',
         params: params,
       }).then(function (response) {
-      })
-    },
-    // 删除商品
-    delGoods(obj) {
-      let scIdArray = ''
-      if ((typeof obj.i) === 'number') {
-        scIdArray = this.data['commList'][obj.index].shoppingCartVOList[obj.i].sc_id
-      } else {
-
-      }
-      let self = this
-      self.$ajax({
-        method: 'get',
-        url: self.$apiGoods + 'shoppingCart/v2/shoppingCart/delete',
-        params: {
-          scIdArray: scIdArray
-        },
-      }).then(function (response) {
-        if(response) {
-
+        if (response) {
+          self.$notify({
+            content: '移入收藏成功',
+            bottom: 3.2
+          })
         }
       })
     },
-    // 商品选中
-    goodsChange(obj) {
-      let params
-      let goods
-      let goodsArr
-      if ((typeof obj.i) === 'number') {
-        goods = this.data['commList'][obj.index].shoppingCartVOList[obj.i]
-        params = {
-          scIdArray: goods.sc_id,
-          checked: goods.checked==='011'?false:true
-        }
-        goods.checked = goods.checked==='011'?'012':'011'
-        let c = 0
-        this.data['commList'][obj.index].shoppingCartVOList.forEach(item => {
-          if (item.checked==='011') {
-            c++
-          }
-        })
-        if (c === this.data['commList'][obj.index].shoppingCartVOList.length) {
-          this.data['commList'][obj.index].checked = '011'
-        } else {
-          this.data['commList'][obj.index].checked = '012'
-        }
-      } else {
-        goodsArr = this.data['commList'][obj.index]
-        let temp = ''
-        goodsArr.shoppingCartVOList.forEach(item => {
-          temp += item.sc_id+','
-        })
-        params = {
-          scIdArray: temp.substring(0, temp.length-1),
-          checked: goodsArr.checked==='011'?false:true
-        }
-        goodsArr.shoppingCartVOList.forEach(item => {
-          item.checked = goodsArr.checked==='011'?'012':'011'
-        })
-        goodsArr.checked = goodsArr.checked==='011'?'012':'011'
-      }
-
+    // 商品明细数据接口
+    goodsDetailAjax(gspuId, callback) {
       let self = this
       self.$ajax({
         method: 'post',
-        url: self.$apiGoods + 'shoppingCart/v2/selectShoppingCart',
-        params: params
-      }).then(function (res) {
+        url: self.$apiGoods + 'gcdetails/spu/detail',
+        params: {
+          gspuId: gspuId
+        },
+      }).then(function (response) {
+        if (response) {
+          self.goodsDetail = response.data.data
+          callback && callback()
+        }
       })
-
     },
-    // 配送方式切换
-    changeWays(obj) {
-      this.updateGoods = obj
-      let goods = this.data['commList'][obj.index].shoppingCartVOList[obj.i]
-      let self = this
-      if (goods.delivery_ways==='168') {
-        self.$refs.selectCity.show()
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'receivingAddress/addresses',
-          params: {},
-        }).then(function (response) {
-          if(response) {
-            self.addressList = response.data.data
-          }
-        })
-      } else {
-        self.$refs.selectStore.show()
-        self.$ajax({
-          method: 'post',
-          url: self.$apiGoods + 'goods/spu/findStoreListBySkuId',
-          params: {
-            gskuId: goods.gsku_id
-          },
-        }).then(function (response) {
-          if(response) {
-            self.storeList = response.data.data
-          }
-        })
-      }
-    },
-    selectCity() {
-    },
-    // 切换为门店自提
-    selectStore(obj) {
-      let goods = this.data['commList'][this.updateGoods.index].shoppingCartVOList[this.updateGoods.i]
+    // 更新购物车接口
+    updateAjax(params, callback) {
       let self = this
       self.$ajax({
         method: 'post',
         url: self.$apiGoods + 'shoppingCart/v2/updateShoppingCart',
-        params: {
-          scId: goods.sc_id,
-          gskuId: goods.gsku_id,
-          provinceNo: obj.bs_province_no,
-          cityNo: obj.bs_city_no,
-          deliveryWays: 168,
-          bsId: obj.bs_id
-        },
+        params: params,
       }).then(function (response) {
-        if(response) {
-          self.data['commList'][self.updateGoods.index].shoppingCartVOList.splice(self.updateGoods.i, 1)
-          if (self.data['commList'][self.updateGoods.index].shoppingCartVOList.length===0) {
-            self.data['commList'].splice(self.updateGoods.index, 1)
-          }
+        if (response) {
+          callback && callback()
         }
       })
-    }
+    },
+    // 更新数量接口
+    updateCountAjax(params) {
+      let self = this
+      self.$ajax({
+        method: 'post',
+        url: self.$apiGoods + 'shoppingCart/v2/shoppingCart',
+        params: params,
+      }).then(function (response) {
+      })
+    },
+    // 获取门店接口
+    storeListAjax(params, callback) {
+      let self =this
+      self.$ajax({
+        method: 'post',
+        url: self.$apiGoods + 'shoppingCart/v2/getStoreListBySkuId',
+        params: params
+      }).then(function(res){
+        if(res) {
+          callback && callback(res.data.data)
+        }
+      })
+    },
+    // 选中购物车卡券的计算接口
+    queryCartMoneyAjax(deliveryWays) {
+      let self =this
+      self.$ajax({
+        method: 'get',
+        url: self.$apiGoods + 'shoppingCart/v2/queryCartMoney',
+        params: {
+          deliveryWays: deliveryWays
+        }
+      }).then(function(res){
+        if(res) {
+          self.$emit('total-change', res.data.data)
+        }
+      })
+    },
+    // 公共规格切换方法
+    specChangeCommon(goods) {
+      let selectionSize = []
+      goods.specVOList.forEach(item=>{
+        selectionSize.push({
+          value: item.gspec_value
+        })
+      })
+      this.resetSpec = {
+        imgUrl: goods.logo,
+        price: goods.direct_supply_price,
+        selectionSize: selectionSize,
+        spuId: goods.gspu_id,
+        scId: goods.sc_id
+      }
+      this.goodsDetailAjax(goods.gspu_id, ()=>{
+        this.goodsDetail.spec_group.forEach((item, index) => {
+          item.spec_value = item.spec_value.split(',')
+          item.spec_value.forEach((value, j) => {
+            if (value===goods.specVOList[index].gspec_value) {
+              item.checked = j
+            }
+          })
+        })
+
+        this.specList = this.goodsDetail.spec_group
+        this.$refs.selectSize.show()
+      })
+    },
+    // 公共数量加
+    add(goods) {
+      if ((goods.goods_num+1)>=goods.storage_num) {
+        this.$notify({
+          content: '库存不足',
+          bottom: 3.2
+        })
+        return
+      }
+      goods.goods_num++
+      let params = {
+        scId: goods.sc_id,
+        gskuId: goods.gsku_id,
+        num: goods.goods_num
+      }
+      this.updateCountAjax(params)
+    },
+    // 公共数量减
+    minus(goods) {
+      if (goods.goods_num===1) {
+        return
+      }
+      goods.goods_num--
+      let params = {
+        scId: goods.sc_id,
+        gskuId: goods.gsku_id,
+        num: goods.goods_num
+      }
+      this.updateCountAjax(params)
+    },
   }
 }
