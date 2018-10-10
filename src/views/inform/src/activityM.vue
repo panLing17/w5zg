@@ -17,6 +17,7 @@
                 .titleN(:class="{active2:items.ms_status === '5303'}") {{items.ms_title}}
               .righters 点击查看 ＞
             .centers
+              .markDiv 活动结束
               img(:src="items.ms_thumbnail | img-filter")
             .downner <span>{{items.content}}</span>
 </template>
@@ -222,6 +223,19 @@
   .conts .centers{
     width: 9.17rem;
     height: 3.2rem;
+    position: relative;
+  }
+  .conts .centers .markDiv{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,.5);
+    text-align: center;
+    line-height: 3.2rem;
+    font-size: .48rem;
+    color: #fff;
   }
   .conts .centers img{
     width: 9.17rem;

@@ -3,7 +3,9 @@
     <div>
       <div v-if="pulldown&&dragTip.showLoding" class="pulldown"
            :style="`margin-top:${dragTip.translate}px`">
+        <div class="loadTop"><img src="../assets/img/loadTop@2x.png"></div>
         <div class="clear" v-if="dragTip.showLoding">
+          <div class="fir"><img class="downLa" src="../assets/img/downLa.png"></div>
           <div>{{dragTip.text}}</div>
         </div>
       </div>
@@ -104,13 +106,15 @@ export default {
           //显示下拉刷新loding
           this.dragTip.showLoding = true
           if (pos.y >= 50) {
-            this.dragTip.text = "释放刷新"
+            this.dragTip.text = "松开刷新"
           }
         })
         this.scroll.on('touchEnd', (pos) => {
           if (pos.y >= 50) {
             this.dragTip.translate = 0
             this.dragTip.text = "刷新中..."
+            let downLa = document.getElementsByClassName('downLa')[0]
+            downLa.style.transform = 'rotateZ(180deg)'
             this.$emit('pullDownFun', pos)
           } else {
             //重新初始化
@@ -182,7 +186,7 @@ export default {
     /* 下拉刷新 */
   .pulldown{
     width:100%;
-    height:50px;
+    height:80px;
     position:relative;
   }
   .clear{
@@ -190,8 +194,48 @@ export default {
     font-size:.28rem;
     position:absolute;
     left:50%;
+    top:45px;
+    transform:translate(-50%,0);
+    display: flex;
+    align-items: center;
+  }
+  .clear .fir{
+    margin-right: .21rem;
+  }
+  .clear img{
+    width: .48rem;
+    height: .48rem;
+    vertical-align: middle;
+  }
+  .loadTop{
+    position:absolute;
+    left:50%;
     top:5px;
     transform:translate(-50%,0);
   }
+  .loadTop img{
+    width: 6.93rem;
+  }
+  /*.downLa{*/
+    /*animation: myKey .5s infinite;*/
 
+  /*}*/
+
+  /*@keyframes myKey {*/
+    /*0%{*/
+      /*transform: rotateZ(0deg);*/
+    /*}*/
+    /*25%{*/
+      /*transform: rotateZ(90deg);*/
+    /*}*/
+    /*50%{*/
+      /*transform: rotateZ(180deg);*/
+    /*}*/
+    /*75%{*/
+      /*transform: rotateZ(270deg);*/
+    /*}*/
+    /*100%{*/
+      /*transform: rotateZ(360deg);*/
+    /*}*/
+  /*}*/
 </style>
