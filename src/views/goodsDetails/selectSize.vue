@@ -339,14 +339,6 @@
           return
         }
 
-        // if (this.shippingMethods===0 && !this.address.province) {
-        //   this.$notify({
-        //     content: '请选择配送地址',
-        //     bottom: 1.8
-        //   })
-        //   return
-        // }
-        //
         if (this.shippingMethods===1 && !this.store.bs_id) {
           this.$notify({
             content: '请选择自提门店',

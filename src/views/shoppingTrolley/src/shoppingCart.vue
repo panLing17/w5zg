@@ -13,7 +13,7 @@
           span(:class="{active: navActive===1}") 专柜自提({{shoppingCartGoodsNum.carryNum}})
     // 内容--------------------------------------------------------------------------------------
     .contentWrapper
-      router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange")
+      router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange", @show-change="allSelectShowChange")
     // 全选--------------------------------------------------------------------------------------
     .allSelect(v-show="allSelectShow && !sliceShow")
       .white
@@ -25,7 +25,7 @@
         .right
           .top (不含运费)实付: <span>{{totalPrice | price-filter}}</span>
           .bottom 现金券可抵扣: {{totalTicket | price-filter}}
-      .red 结算({{totalCount}})
+      .red(@click="checkCart") 结算({{totalCount}})
     // 整理--------------------------------------------------------------------------------------
     .sliceIcon(v-show="allSelectShow && !sliceShow", @click="sliceShow=true")
       img(src="./slice.png")
@@ -65,32 +65,36 @@
     computed: {
       ...mapGetters(['shoppingCartGoodsNum', 'shoppingCartCheckedCount'])
     },
-    watch: {
-      shoppingCartGoodsNum: {
-        handler(newVal) {
-          if (newVal.sendNum>0 && this.$route.path==='/shoppingCart/express') {
-            this.allSelectShow = true
-          }
-          if (newVal.sendNum<=0 && this.$route.path==='/shoppingCart/express') {
-            this.allSelectShow = false
-          }
-          if (this.$route.path==='/shoppingCart/self' && newVal.carryNum>0) {
-            this.allSelectShow = true
-          }
-          if (this.$route.path==='/shoppingCart/self' && newVal.carryNum<=0) {
-            this.allSelectShow = false
-          }
-        },
-        deep: true
+    watch:{
+      '$route'(to) {
+        if(to.path==='/shoppingCart/express') {
+          this.navActive = 0
+        } else {
+          this.navActive = 1
+        }
       }
     },
-    activated() {
-      this.setAllSelectShow()
+    beforeRouteEnter(to, from, next) {
+      next(vm=>{
+        if(to.path==='/shoppingCart/express') {
+          vm.navActive = 0
+        } else {
+          vm.navActive = 1
+        }
+      })
     },
     mounted() {
       this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, () => {})
     },
     methods: {
+      // 点击结算
+      checkCart() {
+        this.$refs.childView.checkCart()
+      },
+      // 显示/隐藏底部结算
+      allSelectShowChange(flag) {
+        this.allSelectShow = flag
+      },
       // 总价格、总立减现金券
       totalChange(data) {
         this.totalPrice = data.payPrice
@@ -100,15 +104,6 @@
       // 删除
       deleteGoods() {
         this.$refs.childView.deleteAll()
-      },
-      // 设置是否显示全选
-      setAllSelectShow() {
-        if (this.$route.path==='/shoppingCart/express' && this.shoppingCartGoodsNum.sendNum>0) {
-          this.allSelectShow = true
-        }
-        if (this.$route.path==='/shoppingCart/self' && this.shoppingCartGoodsNum.carryNum>0) {
-          this.allSelectShow = true
-        }
       },
       // 反全选
       allChange(flag) {

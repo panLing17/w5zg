@@ -16,7 +16,7 @@
               .address
                 .default(v-if="item.ra_default==='011'") [默认地址]
                 .desc {{item.province_name}}{{item.city_name}}{{item.county_name}}{{item.ra_detailed_addr}}
-        .btn(@click="$emit('select-city')") 新增地址
+        .btn(@click="$router.push('/my/localAdd')") 新增地址
 </template>
 
 <script>

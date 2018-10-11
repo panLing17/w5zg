@@ -7,8 +7,6 @@ export const shoppingCart = {
   data() {
     return {
       storeList: [], //门店集合
-      updateGoods: {}, // 配送方式切换时存放选中的商品下标
-
       goodsDetail: {}
     }
   },
@@ -39,16 +37,6 @@ export const shoppingCart = {
       if(Math.abs(touch.clientY - this.touchY) < 10){
         e.preventDefault();
       }
-    },
-    touchend(e, i) {
-      clearTimeout(this.timeOutEvent);
-      if(this.timeOutEvent!=0 && this.longClick==1){
-        e.preventDefault()
-        let t = this.data.commList[i]
-        t.maskShow = true
-        this.data.commList.splice(i, 1, t)
-      }
-      return false;
     },
     // 选中接口
     selectAjax(params, callback) {
@@ -159,6 +147,19 @@ export const shoppingCart = {
         }
       })
     },
+    // 购物车校验接口
+    checkCartAjax(params, callback) {
+      let self =this
+      self.$ajax({
+        method: 'get',
+        url: self.$apiGoods + 'shoppingCart/v2/checkSubmitCartList',
+        params: params
+      }).then(function(res){
+        if(res) {
+          callback && callback(res.data.data)
+        }
+      })
+    },
     // 公共规格切换方法
     specChangeCommon(goods) {
       let selectionSize = []
@@ -190,7 +191,7 @@ export const shoppingCart = {
     },
     // 公共数量加
     add(goods) {
-      if ((goods.goods_num+1)>=goods.storage_num) {
+      if (goods.goods_num>=goods.storage_num) {
         this.$notify({
           content: '库存不足',
           bottom: 3.2
@@ -217,6 +218,6 @@ export const shoppingCart = {
         num: goods.goods_num
       }
       this.updateCountAjax(params)
-    },
+    }
   }
 }

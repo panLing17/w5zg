@@ -12,25 +12,30 @@
               .right {{item.store_name}}
             .storeContent
               ul.goodsWrapper
-                li.goods(v-for="(goods, i) in item.shoppingCartVOList")
-                  .left(@click="goodsCheckedChange(goods, index)")
+                li.goods(v-for="(goods, i) in item.shoppingCartVOList",
+                         @touchstart="touchstart($event)",
+                         @touchmove="touchmove($event)",
+                         @touchend="touchend($event, index, i)",
+                         @contextmenu.prevent=""
+                          )
+                  .left(@click.stop="goodsCheckedChange(goods, index)")
                     img(src="./gou.png", v-show="goods.checked==='011'")
                     .noChecked(v-show="goods.checked==='012'")
                   .right
-                    .logo
+                    .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
                       .mask(v-if="goods.goods_num>goods.storage_num") 库存不足
                       img(:src="goods.logo | img-filter")
                     .info
-                      .name {{goods.gi_name}}
+                      .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
                       .tool
-                        .detail(@click="specChange(goods, index, i)")
+                        .detail(@click.stop="specChange(goods, index, i)")
                           ul
                             li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                         .countWrapper
-                          .minus(@click="minus(goods)")
+                          .minus(@click.stop="minus(goods)")
                             img(src="./minus.png")
                           .count {{goods.goods_num}}
-                          .add(@click="add(goods)")
+                          .add(@click.stop="add(goods)")
                             img(src="./add.png")
                       .priceWrapper
                         .leftPrice
@@ -43,19 +48,22 @@
                           img(src="./btn.png")
                           .pop
                             .sanjiao
-                            .popItem(@click.stop="$emit('change-ways', {index, i})")
+                            .popItem(@click="changeWays(goods, index, i)")
                               img(src="./refresh.png")
-                              span '快递配送'
-                            .popItem(v-show="goods.delivery_ways==='168'")
+                              span 快递配送
+                            .popItem(@click="changeStore(goods, index, i)")
                               img(src="./address.png")
                               span 切换专柜
+                  .maskBox(v-show="goods.maskShow", @click.stop="closeMask(index, i)")
+                    .collection(@click.stop="goCollection(goods, index, i)") 移入<br/>收藏夹
+                    .delete(@click.stop="deleteGoods(goods, index, i)") 删除
             .address(v-show="item.store_address")
               img(src="./address2.png")
               span {{item.store_address}}
       .failure(v-if="data.failure && data.failure.length")
         .title
           .left 失效商品共 {{data.failure.length}} 件
-          .right 清空失效商品
+          .right(@click="delAllFailure") 清空失效商品
         .content
           ul
             li(v-for="(item, i) in data.failure")
@@ -70,7 +78,7 @@
                       ul
                         li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                     .text 该商品已失效
-                  .del(@click="delFailureGoods(goods, index)")
+                  .del(@click="delFailureGoods(goods, index, i)")
                     img(src="./del2.png")
     select-size(ref="selectSize",
                 :specGroup="specList",
@@ -78,6 +86,8 @@
                 @spec-change="specChangeRight"
                 )
     select-store(ref="selectStore", :from="1", :data="storeList", @store-select="selectStore")
+    // 结算失效库存不足弹框-----------------------------------------------------------------------
+    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @go-order="goOrderPage")
 </template>
 
 <script>
@@ -88,6 +98,7 @@
   import SelectSize from './selectSize'
   import {shoppingCart} from "./mixin"
   import {mapGetters, mapMutations} from 'vuex'
+  import CheckGoods from './checkGoods'
   export default {
     name: "self",
     mixins: [shoppingCart],
@@ -97,6 +108,8 @@
         specList: [], // 商品规格
         resetSpec: {}, // 更改规格时初始化的参数
         specCurrentIndex: {}, // 更改规格当前商品的下标
+        checkGoodsData: [], // 结算不合格商品
+        btnType: 0
       }
     },
     created() {
@@ -113,7 +126,7 @@
         this.data.commList.forEach(item=>{
           count += item.shoppingCartVOList.length
         })
-        if(Number(newVal)===count) {
+        if(Number(newVal)===count && count!==0) {
           this.$emit('all-change', true)
         } else {
           this.$emit('all-change', false)
@@ -124,6 +137,16 @@
       ...mapGetters(['shoppingCartGoodsNum'])
     },
     methods: {
+      touchend(e, index, i) {
+        clearTimeout(this.timeOutEvent);
+        if(this.timeOutEvent!=0 && this.longClick==1){
+          e.preventDefault()
+          let t = this.data.commList[index].shoppingCartVOList[i]
+          t.maskShow = true
+          this.data.commList[index].shoppingCartVOList.splice(i, 1, t)
+        }
+        return false;
+      },
       // 获取自提数据
       getSelfList() {
         let self = this
@@ -136,16 +159,25 @@
             self.data = res.data.data
             // 判断是否全选,和选中数量
             let count = 0
+            let totalCount = 0
             self.data.commList.forEach(item=>{
               if (item.checked === '011') {
                 count++
               }
-              item.maskShow = false
+              item.shoppingCartVOList.forEach(goods=>{
+                goods.maskShow = false
+                totalCount++
+              })
             })
-            if (count===self.data.commList.length) {
+            if (count===self.data.commList.length && count!==0) {
               self.$emit('all-change', true)
             } else {
               self.$emit('all-change', false)
+            }
+            if (totalCount===0) {
+              self.$emit('show-change', false)
+            } else {
+              self.$emit('show-change', true)
             }
           }
         })
@@ -214,14 +246,295 @@
         })
         this.data.commList[this.specCurrentIndex.index].shoppingCartVOList.splice(this.specCurrentIndex.i, temp)
       },
+      // 切换配送方式
+      changeWays(goods, index, i) {
+        this.$verify({
+          content: '确定要切换为“快递配送”？',
+          leftText: '取消',
+          rightText: '确定',
+          rightFn: () => {
+            let params = {
+              scId: goods.sc_id,
+              deliveryWays: '167'
+            }
+            this.updateAjax(params, ()=>{
+              this.queryCartMoneyAjax('168')
+            })
+            this.setShoppingCartCount({
+              sendNum: this.shoppingCartGoodsNum.sendNum+1,
+              carryNum: this.shoppingCartGoodsNum.carryNum-1
+            })
+            this.data.commList[index].shoppingCartVOList.splice(i, 1)
+            if (this.data.commList[index].shoppingCartVOList.length===0) {
+              this.data.commList.splice(index, 1)
+            }
+          }
+        })
+      },
+      // 切换专柜
+      changeStore(goods, index, i) {
+        this.specCurrentIndex = {
+          index: index,
+          i: i
+        }
+        let params = {
+          gspu_id: goods.gspu_id,
+          gsku_id: goods.gsku_id
+        }
+        this.storeListAjax(params, (data)=>{
+          this.storeList = data
+          this.$refs.selectStore.show()
+        })
+      },
+      // 专柜选择完成
+      selectStore(data) {
+        let goods =this.data.commList[this.specCurrentIndex.index].shoppingCartVOList[this.specCurrentIndex.i]
+        let params = {
+          scId: goods.sc_id,
+          bsId: data.bs_id
+        }
+        this.updateAjax(params)
+        this.data.commList[this.specCurrentIndex.index].store_address = data.bs_address
+      },
+      // 关闭删除蒙版
+      closeMask(index, i) {
+        let t = this.data.commList[index].shoppingCartVOList[i]
+        t.maskShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, 1, t)
+      },
+      // 移入收藏夹
+      goCollection(goods, index, i) {
+        this.setShoppingCartCount({
+          carryNum: this.shoppingCartGoodsNum.carryNum-1
+        })
+        let params = {
+          gspuId: goods.gspu_id
+        }
+        this.collectionAjax(params)
+        let params2  ={
+          scIdArray: goods.sc_id
+        }
+        this.deleteAjax(params2, () => {
+          this.queryCartMoneyAjax('168')
+        })
+        this.data.commList[index].shoppingCartVOList.splice(i, 1)
+        if (this.data.commList[index].shoppingCartVOList.length===0) {
+          this.data.commList.splice(index, 1)
+        }
+      },
+      // 删除商品
+      deleteGoods(goods, index, i) {
+        this.$verify({
+          content: '确认删除所选商品吗？',
+          leftText: '取消',
+          rightText: '删除',
+          rightFn: () => {
+            let params = {
+              scIdArray: goods.sc_id
+            }
+            this.setShoppingCartCount({
+              carryNum: this.shoppingCartGoodsNum.carryNum-1
+            })
+            this.deleteAjax(params, ()=>{
+              this.queryCartMoneyAjax('168')
+              this.$notify({
+                content: '删除成功',
+                bottom: 3.2
+              })
+            })
+            this.data.commList[index].shoppingCartVOList.splice(i, 1)
+            if (this.data.commList[index].shoppingCartVOList.length===0) {
+              this.data.commList.splice(index, 1)
+            }
+          }
+        })
+      },
+      // 删除失效商品
+      delFailureGoods(goods, index, i) {
+        let params = {
+          scIdArray: goods.sc_id
+        }
+        this.deleteAjax(params, ()=>{
+          this.$notify({
+            content: '删除成功',
+            bottom: 3.2
+          })
+        })
+        this.data.failure[index].shoppingCartVOList.splice(i, 1)
+        if (this.data.failure[index].shoppingCartVOList.length===0) {
+          this.data.failure.splice(index, 1)
+        }
+        this.setShoppingCartCount({
+          carryNum: this.shoppingCartGoodsNum.carryNum-1
+        })
+      },
+      // 清空失效商品
+      delAllFailure() {
+        this.$verify({
+          content: '确定要清除所有失效商品吗？',
+          leftText: '取消',
+          rightText: '确定',
+          rightFn: () => {
+            let params
+            let arr = []
+            let count = 0
+            this.data.failure.forEach(item => {
+              item.shoppingCartVOList.forEach(goods=>{
+                arr.push(goods.sc_id)
+                count++
+              })
+            })
+            this.setShoppingCartCount({
+              carryNum: this.shoppingCartGoodsNum.carryNum-count
+            })
+            params = {
+              scIdArray: arr.join(',')
+            }
+            this.data.failure = []
+            this.deleteAjax(params, ()=>{
+              this.$notify({
+                content: '删除成功',
+                bottom: 3.2
+              })
+            })
+          }
+        })
+      },
+      // 全选
+      selectAll(flag) {
+        let arr = []
+        this.data.commList.forEach(item=> {
+          item.shoppingCartVOList.forEach(goods=>{
+            if (flag && goods.checked==='012') {
+              arr.push(goods.sc_id)
+            }
+            if (!flag && goods.checked==='011') {
+              arr.push(goods.sc_id)
+            }
+            goods.checked=flag?'011':'012'
+          })
+          item.checked=flag?'011':'012'
+        })
+        let params = {
+          scIdArray: arr.join(','),
+          checked: flag
+        }
+        this.selectAjax(params, ()=>{
+          this.queryCartMoneyAjax('168')
+        })
+      },
+      // 批量删除
+      deleteAll() {
+        let arr = []
+        let count = 0
+        let indexArr = []
+        this.data.commList.forEach((item, index) => {
+          item.shoppingCartVOList.forEach((goods, i)=>{
+            if (goods.checked==='011') {
+              arr.push(goods.sc_id)
+              count++
+              indexArr.push({
+                index: index,
+                i: i
+              })
+            }
+          })
+        })
+        indexArr.forEach(item => {
+          this.data.commList[item.index].shoppingCartVOList.splice(item.i, 1)
+          if(this.data.commList[item.index].shoppingCartVOList.length===0) {
+            this.data.commList.splice(item.index, 1)
+          }
+        })
+        this.setShoppingCartCount({
+          sendNum: this.shoppingCartGoodsNum.sendNum-count
+        })
+        let params = {
+          scIdArray: arr.join(',')
+        }
+        this.deleteAjax(params, ()=>{
+          this.queryCartMoneyAjax('167')
+          this.$notify({
+            content: '删除成功',
+            bottom: 3.2
+          })
+        })
+      },
+      // 结算
+      checkCart() {
+        let arr = []
+        this.data.commList.forEach(item=>{
+          item.shoppingCartVOList.forEach(goods=>{
+            if (goods.checked==='011') {
+              arr.push(item.sc_id)
+            }
+          })
+        })
+        let params = {
+          scIdArray: arr.join(',')
+        }
+        this.checkCartAjax(params, (data)=>{
+          let count = 0
+          let type = 0
+          data.forEach(item=>{
+            if (item.status_flag!=='VALID') {
+              count++
+            }
+            if (item.status_flag==='BUY_NUM_OVER_STORAGE_NUM') {
+              type = 1
+            }
+          })
+          if (count>0) {
+            this.checkGoodsData = data
+            this.btnType = type
+            this.$refs.checkGoods.show()
+          } else {
+            this.goOrderPage(true)
+          }
+        })
+      },
+      // 跳往确认订单页
+      goOrderPage(flag) {
+        let temp = {
+          from: 1,
+          shippingMethods: 1
+        }
+        let arr = []
+        this.data.commList.forEach(item=>{
+          item.shoppingCartVOList.forEach(goods=>{
+            if (goods.checked==='011') {
+              arr.push(goods)
+            }
+          })
+        })
+        if(flag) {
+          temp.list = arr
+        } else {
+          let copyArr = arr.slice()
+          this.checkGoodsData.forEach(item=>{
+            if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
+              arr.forEach((goods, index)=>{
+                if (item.sc_id===goods.sc_id) {
+                  copyArr.splice(index, 1)
+                }
+              })
+            }
+          })
+          temp.list = copyArr
+        }
+        this.setConfirmData(temp)
+        this.$router.push('/orderConfirm')
+      },
       ...mapMutations({
-        setShoppingCartCount: 'shoppingCartGoodsNumChange'
+        setShoppingCartCount: 'shoppingCartGoodsNumChange',
+        setConfirmData: 'setConfirmData'
       })
     },
     components: {
       NoData,
       SelectStore,
-      SelectSize
+      SelectSize,
+      CheckGoods
     }
   }
 </script>
@@ -266,6 +579,7 @@
           .goods {
             display flex
             padding-top .26rem
+            position relative
             &:last-child .right {
               border none
             }
@@ -492,9 +806,10 @@
             margin-top .26rem
             margin-right .13rem
             width .26rem
+            align-self flex-start
           }
           span {
-            margin-top .26rem
+            margin-top .18rem
             color #666
             font-weight 400
             font-size .29rem
@@ -598,5 +913,36 @@
         }
       }
     }
+  }
+  .maskBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.7rem;
+    align-items: center;
+  }
+  .maskBox .collection, .maskBox .delete {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    font-size: .42rem;
+    text-align: center;
+  }
+  .maskBox .collection {
+    background-color: #f70057;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .maskBox .delete {
+    line-height: 2.1rem;
+    background-color: #ececec;
+    color: #666;
   }
 </style>

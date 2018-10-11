@@ -6,51 +6,59 @@
       .title 确认订单
     scroll.contentWrapper(:data="data")
       div
-        .addressWrapper(@click="openAddress")
+        .addressWrapper(@click="openAddress", v-show="confirmData.shippingMethods===0")
           .address(v-show="showAddress && showAddress.ra_name")
             .left
               .info 收货人：{{showAddress.ra_name}}<span>手机号：{{showAddress.ra_phone}}</span>
               .desc 收货地址：{{showAddress.province_name}}{{showAddress.city_name}}{{showAddress.county_name}}{{showAddress.ra_detailed_addr}}
             .right
               img(src="./more.png")
-          .noAddress(v-show="!showAddress")
+          .noAddress(v-show="!showAddress.ra_name")
             span 请添加收货地址
             img(src="./add2.png")
+        .addressWrapper(v-show="confirmData.shippingMethods===1")
+          .topItem
+            .desc 提货人：
+            input.text(v-model="selfForm.name")
+          .bottomItem
+            .desc 手机号：
+            input.text(v-model="selfForm.phone")
         .goodsList
           ul.listWrapper
-            li.item(v-for="item in data.shoppingCartVOList")
-              .storeName {{data.si_name}}
+            li.item
+              .storeName {{data.shop_Name}}
               .itemWrapper
                 .left
-                  img(src="item.logo | img-filter")
+                  img(src="data.logo | img-filter")
                 .right
-                  .name {{item.gi_name}}
+                  .name {{data.gi_name}}
                   .size
                     ul
-                      li(v-for="i in item.specVOList") {{i.gspec_value}};
-                  .price ¥ {{item.direct_supply_price}}
-                  .count X {{item.goods_num}}
-        .freight 运费:￥{{data.freight}}
+                      li(v-for="i in data.specVOList") {{i.gspec_value}};
+                  .price ¥ {{data.counter_price | price-filter2}}
+                  .count X {{data.goods_num}}
+        .freight(v-show="confirmData.shippingMethods===0") 运费:{{data.freight | price-filter}}
+        .freight(v-show="confirmData.shippingMethods===1") 专柜自提
         .total
           .totalCount 共计 {{totalCount}} 件商品<span>合计：</span>
-          .totalPrice ￥{{totalPrice | price-filter2}}
+          .totalPrice {{totalPrice | price-filter}}
         .ticketWrapper
           .block
             .left 现金券
             .right
               span 可抵扣{{ticketData.netCard}}元
-              toggle-button(v-model="cashSwitch", :optional="true")
+              toggle-button(v-model="cashSwitch", :optional="cashOptional")
           .block
             .left 通用券
             .right
               span 可抵扣{{ticketData.commTicket}}元
-              toggle-button(v-model="ticketSwitch", :optional="false")
+              toggle-button(v-model="ticketSwitch", :optional="ticketOptional")
         .discount(v-if="ticketData.backCommTicket>0") 确认收货后，本单可返{{ticketData.backCommTicket}}元通用券
     .bottom
       .left
         span 实付：
-        span.price ￥25.6
-      .right 提交订单
+        span.price {{directPrice | price-filter}}
+      .right(@click="checkOrder") 提交订单
     express(ref="express", :addressList="addressData", @address-change="addressChange")
 </template>
 
@@ -65,13 +73,20 @@
       return {
         data: [],
         cashSwitch: true,
+        cashOptional: true,
         ticketSwitch: false,
+        ticketOptional: true,
         cityNo: '',
         addressData: [],
         showAddress: {},
         ticketData: {},
         totalCount: 0,
-        totalPrice: 0
+        totalPrice: 0,
+        directPrice: 0,
+        selfForm: {
+          name: '',
+          phone: ''
+        }
       }
     },
     computed: {
@@ -83,7 +98,7 @@
       }
     },
     created() {
-      if (this.confirmData.from===0) {
+      if (this.confirmData.shippingMethods===0) {
         this.getAddress()
       } else {
         this.getData()
@@ -98,10 +113,19 @@
         }
         let url = ''
         let params
+        // from为0表示从商品详情过来 1表示从购物车过来
         if (this.confirmData.from===0) {
           params = {
             gskuId: this.confirmData.gsku_id,
             num: this.confirmData.goodsCount
+          }
+        } else {
+          let arr = []
+          this.confirmData.list.forEach(item=>{
+            arr.push(item.sc_id)
+          })
+          params = {
+            scIdArray: arr.join(',')
           }
         }
         if (this.confirmData.shippingMethods===0 && this.confirmData.from===0) {
@@ -111,6 +135,13 @@
         }
         if (this.confirmData.shippingMethods===1 && this.confirmData.from===0) {
           url = 'shoppingCart/v2/nowSubmitCarryList1'
+        }
+        if (this.confirmData.shippingMethods===0 && this.confirmData.from===1) {
+          url = 'shoppingCart/v2/submitSendList1'
+          params.cityNo = this.showAddress.ra_city ? this.showAddress.ra_city : ''
+        }
+        if (this.confirmData.shippingMethods===1 && this.confirmData.from===1) {
+          url = 'shoppingCart/v2/submitCarryList1'
         }
         let self = this
         self.$ajax({
@@ -127,6 +158,14 @@
       getTotal() {
         if (this.confirmData.from===0) {
           this.totalCount = this.confirmData.goodsCount
+          this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount)
+          if (this.confirmData.shippingMethods === 1) {
+            this.directPrice = Number(this.confirmData.goodsCount) * this.data.direct_supply_price
+          } else {
+            this.directPrice = Number(this.confirmData.goodsCount) * this.data.direct_supply_price + this.data.freight
+          }
+        } else {
+
         }
       },
       // 卡券
@@ -157,12 +196,14 @@
             if (self.ticketData.netCard>0) {
               self.cashSwitch=true
             } else {
+              self.cashOptional = false
               self.cashSwitch=false
             }
 
             if (self.ticketData.commTicket>0) {
               self.ticketSwitch=true
             } else {
+              self.ticketOptional = false
               self.ticketSwitch = false
             }
           }
@@ -186,12 +227,44 @@
           }
         })
       },
+      // 打开地址选择或者跳往新增地址
       openAddress() {
-        this.$refs.express.show()
+        if (this.addressData.length) {
+          this.$refs.express.show()
+        } else {
+          this.$router.push('/my/localAdd')
+        }
+
       },
+      // 地址选择后
       addressChange(item) {
         this.showAddress = item
-      }
+        this.getData()
+      },
+      // 提交订单
+      checkOrder() {
+        // 若从购物车过来需校验
+        if (this.confirmData.from===1) {
+          let params
+          let arr = []
+          this.confirmData.list.forEach(item=>{
+            arr.push(item.sc_id)
+          })
+          params = {
+            scIdArray: arr.join(',')
+          }
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiGoods + 'shoppingCart/v2/checkSubmitCartList',
+            params: {},
+          }).then(function (res) {
+            if (res) {
+
+            }
+          })
+        }
+      },
     },
     components: {
       Scroll,
@@ -214,15 +287,15 @@
       background-color #f70057
       position relative
       .back {
+        position absolute
+        top 0
+        left 0
         padding .33rem .4rem
         img {
           width .64rem
         }
       }
       .title {
-        position absolute
-        top 0
-        left 0
         line-height 1.3rem
         text-align center
         width 100%
@@ -264,7 +337,7 @@
         }
       }
       .address {
-        height 1.92rem
+        height 2.18rem
         background-color #fff
         border-top 1px solid #e7e7e7
         padding 0 .34rem 0 .4rem
@@ -300,7 +373,7 @@
       }
       .noAddress {
         border-top 1px solid #e7e7e7
-        height 1.92rem
+        height 2.18rem
         display flex
         align-items center
         justify-content center
@@ -313,6 +386,31 @@
           font-size .37rem
           color #333
           font-weight 400
+        }
+      }
+      .addressWrapper {
+        height 2.18rem
+        background-color #fff
+        .topItem, .bottomItem{
+          display flex
+          padding 0 .4rem
+          height .96rem
+          align-items center
+          color #333
+          font-size .32rem
+          font-weight 400
+          .desc {
+
+          }
+          .text {
+            flex 1
+            outline none
+            border none
+            border-bottom 1px solid #d7d7d7
+            line-height 2.18rem
+            margin-left .2rem
+            height 100%
+          }
         }
       }
       .goodsList {
@@ -398,7 +496,7 @@
         height .8rem
         line-height .8rem
         padding-right .58rem
-        color #333
+        color #9b9b9b
         font-weight 400
         font-size .32rem
         background-color #fff

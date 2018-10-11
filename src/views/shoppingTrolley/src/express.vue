@@ -4,42 +4,42 @@
     .listWrapper(v-show="!isEmpty")
       ul.goodsWrapper
         li.goods(v-for="(goods, i) in data.commList", @touchstart="touchstart($event)", @touchmove="touchmove($event)", @touchend="touchend($event, i)", @contextmenu.prevent="")
-          .left(@click="goodsChange(goods)")
+          .left(@click.stop="goodsChange(goods)")
             img(src="./gou.png", v-show="goods.checked==='011'")
             .noChecked(v-show="goods.checked==='012'")
           .right
-            .logo
+            .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
               .mask(v-if="goods.goods_num>goods.storage_num") 库存不足
               img(:src="goods.logo | img-filter")
             .info
-              .name {{goods.gi_name}}
+              .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
               .tool
-                .detail(@click="specChange(goods, i)")
+                .detail(@click.stop="specChange(goods, i)")
                   ul
                     li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                 .countWrapper
-                  .minus(@click="minus(goods)")
+                  .minus(@click.stop="minus(goods)")
                     img(src="./minus.png")
                   .count {{goods.goods_num}}
-                  .add(@click="add(goods)")
+                  .add(@click.stop="add(goods)")
                     img(src="./add.png")
               .priceWrapper
                 .leftPrice
                   span.desc 实付价:
                   span.price {{goods.direct_supply_price | price-filter}}
                 .rightPrice 专柜价:{{goods.counter_price | price-filter}}
-              .toolbar
+              .toolbar(@click.stop="")
                 .cut(v-show="goods.difference_price>0") 比加入时降{{goods.difference_price}}元
                 .btn
                   img(src="./btn.png")
                   .pop
                     .sanjiao
-                    .popItem(v-show="(goods.delivery_ways==='167' && goods.carry_type===1)", @click.stop="changeWays(goods, i)")
+                    .popItem(v-show="goods.carry_type===1", @click.stop="changeWays(goods, i)")
                       img(src="./refresh.png")
                       span 专柜自提
-          .maskBox(v-show="goods.maskShow", @click="closeMask(i)")
-            .collection(@click="goCollection(goods, i)") 移入<br/>收藏夹
-            .delete(@click="deleteGoods(goods, i)") 删除
+          .maskBox(v-show="goods.maskShow", @click.stop="closeMask(i)")
+            .collection(@click.stop="goCollection(goods, i)") 移入<br/>收藏夹
+            .delete(@click.stop="deleteGoods(goods, i)") 删除
       .failure(v-if="data.failure && data.failure.length")
         .title
           .left 失效商品共 {{data.failure.length}} 件
@@ -64,6 +64,8 @@
                 @spec-change="specChangeRight"
                 )
     select-store(ref="selectStore", :from="1", :data="storeList", @store-select="selectStore")
+    // 结算失效库存不足弹框-----------------------------------------------------------------------
+    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @go-order="goOrderPage")
 </template>
 
 <script>
@@ -76,7 +78,7 @@
   import SelectSize from './selectSize'
   import {mapMutations, mapGetters} from 'vuex'
   import {shoppingCart} from "./mixin"
-
+  import CheckGoods from './checkGoods'
   export default {
     name: "express",
     mixins: [shoppingCart],
@@ -86,6 +88,8 @@
         specList: [], // 商品规格
         resetSpec: {}, // 更改规格时初始化的参数
         specCurrentIndex: -1, // 更改规格当前商品的下标
+        checkGoodsData: [], // 结算不合格商品
+        btnType: 0
       }
     },
     computed: {
@@ -93,7 +97,7 @@
     },
     watch: {
       totalCount(newVal) {
-        if (Number(newVal)===this.data.commList.length) {
+        if (Number(newVal)===this.data.commList.length && this.data.commList.length!==0) {
           this.$emit('all-change', true)
         } else {
           this.$emit('all-change', false)
@@ -109,6 +113,16 @@
       this.queryCartMoneyAjax('167')
     },
     methods: {
+      touchend(e, i) {
+        clearTimeout(this.timeOutEvent);
+        if(this.timeOutEvent!=0 && this.longClick==1){
+          e.preventDefault()
+          let t = this.data.commList[i]
+          t.maskShow = true
+          this.data.commList.splice(i, 1, t)
+        }
+        return false;
+      },
       // 获取快递配送数据
       getExpressList() {
         let self = this
@@ -127,10 +141,15 @@
               }
               item.maskShow = false
             })
-            if (count===self.data.commList.length) {
+            if (count===self.data.commList.length && count!==0) {
               self.$emit('all-change', true)
             } else {
               self.$emit('all-change', false)
+            }
+            if (self.data.commList.length===0) {
+              self.$emit('show-change', false)
+            } else {
+              self.$emit('show-change', true)
             }
           }
         })
@@ -208,6 +227,9 @@
             bottom: 3.2
           })
         })
+        this.setShoppingCartCount({
+          sendNum: this.shoppingCartGoodsNum.sendNum-1
+        })
       },
       // 清空失效商品
       delAllFailure() {
@@ -224,6 +246,9 @@
             params = {
               scIdArray: arr.join(',')
             }
+            this.setShoppingCartCount({
+              sendNum: this.shoppingCartGoodsNum.sendNum-this.data.failure.length
+            })
             this.data.failure = []
             this.deleteAjax(params, ()=>{
               this.$notify({
@@ -333,15 +358,78 @@
         })
         this.data.commList.splice(this.specCurrentIndex, 1)
       },
+      // 结算
+      checkCart() {
+        let arr = []
+        this.data.commList.forEach(item=>{
+          if (item.checked==='011') {
+            arr.push(item.sc_id)
+          }
+        })
+        let params = {
+          scIdArray: arr.join(',')
+        }
+        this.checkCartAjax(params, (data)=>{
+          let count = 0
+          let type = 0
+          data.forEach(item=>{
+            if (item.status_flag!=='VALID') {
+              count++
+            }
+            if (item.status_flag==='BUY_NUM_OVER_STORAGE_NUM') {
+              type = 1
+            }
+          })
+          if (count>0) {
+            this.checkGoodsData = data
+            this.btnType = type
+            this.$refs.checkGoods.show()
+          } else {
+            this.goOrderPage(true)
+          }
+        })
+      },
+      // 跳往确认订单页
+      goOrderPage(flag) {
+        let temp = {
+          from: 1,
+          shippingMethods: 0
+        }
+        let arr = []
+        this.data.commList.forEach(item=>{
+          if (item.checked==='011') {
+            arr.push(item)
+          }
+        })
+        if(flag) {
+          temp.list = arr
+        } else {
+          let copyArr = arr.slice()
+          this.checkGoodsData.forEach(item=>{
+            if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
+              arr.forEach((goods, index)=>{
+                if (item.sc_id===goods.sc_id) {
+                  copyArr.splice(index, 1)
+                }
+              })
+            }
+          })
+          temp.list = copyArr
+        }
+        this.setConfirmData(temp)
+        this.$router.push('/orderConfirm')
+      },
       ...mapMutations({
-        setShoppingCartCount: 'shoppingCartGoodsNumChange'
+        setShoppingCartCount: 'shoppingCartGoodsNumChange',
+        setConfirmData: 'setConfirmData'
       })
     },
     components: {
       NoData,
       Card,
       SelectStore,
-      SelectSize
+      SelectSize,
+      CheckGoods
     }
   }
 </script>
