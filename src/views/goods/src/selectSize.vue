@@ -173,7 +173,7 @@
       addressCityName() {
         return this.giveGoodsAddress.city_name
       },
-      ...mapState(['userData','giveGoodsAddress','location', 'skuId']),
+      ...mapState(['userData','giveGoodsAddress','location','skuId']),
       ...mapGetters(['transfer'])
     },
     watch:{

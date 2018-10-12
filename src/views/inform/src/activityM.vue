@@ -17,7 +17,7 @@
                 .titleN(:class="{active2:items.ms_status === '5303'}") {{items.ms_title}}
               .righters 点击查看 ＞
             .centers
-              .markDiv 活动结束
+              .markDiv(v-if="Date.parse(items.close_time)<Date.parse(new Date())") 活动结束
               img(:src="items.ms_thumbnail | img-filter")
             .downner <span>{{items.content}}</span>
 </template>
@@ -64,25 +64,28 @@
         },
         // 活动通知点击后跳转哪个页面
         goToLinks(e){
-          console.log(e)
           if (e.url_type === '603') {
             this.$router.push({path:'/goodsDetailed',query:{id:e.relate_id}})
           } else{
-            window.location.href = e.url
+            if (Date.parse(e.close_time)>Date.parse(new Date())){
+              window.location.href = e.url
+            }
           }
           if (e.ms_status === '5303') {
-            let self = this
-            self.$ajax({
-              method: 'post',
-              url: self.$apiMember + '/ucMessageActivity/viewMessage',
-              params:{
-                maoId: e.mao_id
-              }
-            }).then(function (res) {
-              if (res.data.code === '081') {
-                //self.mescroll.resetUpScroll()
-              }
-            })
+            if (Date.parse(e.close_time)>Date.parse(new Date())) {
+              let self = this
+              self.$ajax({
+                method: 'post',
+                url: self.$apiMember + '/ucMessageActivity/viewMessage',
+                params:{
+                  maoId: e.mao_id
+                }
+              }).then(function (res) {
+                if (res.data.code === '081') {
+                  //self.mescroll.resetUpScroll()
+                }
+              })
+            }
           }
         },
         upCallback: function (page) {
@@ -107,7 +110,6 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            console.log(response.data.data.rows)
             successCallback&&successCallback(response.data.data.rows)//成功回调
           })
         }
