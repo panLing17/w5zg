@@ -21,65 +21,63 @@
         li 客服电话4008-947-999
     // 商品名称-------------------------------------------------------------------------------------------
     .goodsName {{goodsData.gi_name}}
-    // 价格----------------------------------------------------------------------------------------------
-    .priceWrapper
-      .real
-        .realTag 实付价
-        .realIcon ￥
-        .realPrice
-          ul
-            li(v-for="item in $method.arrayPrice(directSupplyPrice)") {{item}}
-      .other
-        .price1
-          span 专柜价:
-          span {{counterPrice | price-filter}}
-        .price2
-          span 用券立减:
-          span {{minusPrice | price-filter}}
-      .appointmentBtn(v-if="goodsData.carry_type===1", @click="addTry")
-        img(src="./xin.png")
-        span 预约体验
-    // 现金券-------------------------------------------------------------------------------------------------
-    .ticketWrapper
-      .left 余额:
-      .right
-        .ticket1
-          span 现金券
-          span {{userData.netcard_balance | price-filter}}
-        .ticket2
-          span 通用券
-          span {{userData.cash_balance | price-filter}}
-    // 规格-----------------------------------------------------------------------------------------------------
-    .sizeWrapper(@click="openSelectSizePop")
-      .left 规格:
-      .right
-        .noSize(v-show="!selectionOfSizeData.length") 请选择规格
-        .size(v-show="selectionOfSizeData.length")
-          ul
-            li(v-for="item in selectionOfSizeData")
-              .name {{item.name}}
-              .value ({{item.value}})
-      .arrow
-        img(src="./arrow.png")
-    // 配送方式选择---------------------------------------------------------------------------------------------
-    .distributionWrapper(@click="openSelectSizePop")
-      .left 配送:
-      .right
-        .btn(:class="{active: shippingMethods===0}") 快递配送
-        .btn(v-if="goodsData.carry_type===1", :class="{active: shippingMethods===1}") 专柜自提
-      .arrow
-        img(src="./arrow.png")
-    //地址展示---------------------------------------------------------------------------------------------------
-    .addressWrapper
-      .noAddress(v-show="(shippingMethods===1 && !store.bs_name) || (shippingMethods===0 && !address.text)") 请选择配送方式
-      .address(v-show="shippingMethods===0 && address.text")
-        img(src="./address.png")
-        span 配送至:
-        span {{address.text}}
-      .address(v-show="shippingMethods===1 && store.bs_name")
-        img(src="./address.png")
-        span 提货门店:
-        span {{store.bs_name}}
+    div(v-if="goodsData.gi_status==='221'")
+      // 价格----------------------------------------------------------------------------------------------
+      .priceWrapper
+        .real
+          .realTag 实付价
+          .realIcon ￥
+          .realPrice
+            ul
+              li(v-for="item in $method.arrayPrice(directSupplyPrice)") {{item}}
+        .other
+          .price1
+            span 专柜价:
+            span {{counterPrice | price-filter}}
+          .price2
+            span 用券立减:
+            span {{minusPrice | price-filter}}
+        .appointmentBtn(v-if="goodsData.carry_type===1", @click="addTry")
+          img(src="./xin.png")
+          span 预约体验
+      // 现金券-------------------------------------------------------------------------------------------------
+      .ticketWrapper
+        .left 余额:
+        .right
+          .ticket1
+            span 现金券
+            span {{userData.netcard_balance | price-filter}}
+          .ticket2
+            span 通用券
+            span {{userData.cash_balance | price-filter}}
+      // 规格-----------------------------------------------------------------------------------------------------
+      .sizeWrapper(@click="openSelectSizePop")
+        .left 规格:
+        .right
+          .noSize(v-show="!selectionOfSizeData.length") 请选择规格
+          .size(v-show="selectionOfSizeData.length")
+            ul
+              li(v-for="item in selectionOfSizeData")
+                .name {{item.name}}
+                .value ({{item.value}})
+        .arrow
+          img(src="./arrow.png")
+      // 配送方式选择---------------------------------------------------------------------------------------------
+      .distributionWrapper(@click="openSelectSizePop")
+        .left 配送:
+        .right
+          .btn(:class="{active: shippingMethods===0}") 快递配送
+          .btn(v-if="goodsData.carry_type===1", :class="{active: shippingMethods===1}") 专柜自提
+        .arrow
+          img(src="./arrow.png")
+      //地址展示---------------------------------------------------------------------------------------------------
+      .addressWrapper
+        .noAddress(v-show="(shippingMethods===1 && !store.bs_name) || shippingMethods===0") 请选择配送方式
+        .address(v-show="shippingMethods===1 && store.bs_name")
+          img(src="./address.png")
+          span 提货门店:
+          span {{store.bs_name}}
+    div.noGoodsBtn(v-if="goodsData.gi_status==='222'") 暂不销售
     // 横幅广告---------------------------------------------------------------------------------------------------
     .adWrapper
       img(src="./ad.png")
@@ -93,8 +91,28 @@
       .title
         img(src="./title@2x.png")
       goods-list(:data="goodsList")
+    // 下架提示------------------------------------------------------------------------------------------------------
+    .noGoodsText(v-if="goodsData.gi_status==='222'") 该商品已下架
+    .toolbarWrapper(v-if="goodsData.gi_status==='222'")
+      .left.noGoodsBottom
+        .block
+          img(src="./service.png")
+          span 客服
+        .block
+          div
+            img(src="./shoppingcart.png")
+            .badge(v-if="shoppingCartNum.toString().length<=2 && shoppingCartNum!==0") {{shoppingCartNum}}
+            .badge(v-if="shoppingCartNum.toString().length>2 && shoppingCartNum!==0") 99<span>+</span>
+          span 购物车
+        .block
+          img(src="./cc.png")
+          span 收藏
+      .right
+        .two
+          div(style="background-color: #FAD3A7") 加入购物车
+          div(style="background-color: #ECC0D0") 立即购买
     // 底部按钮------------------------------------------------------------------------------------------------------
-    .toolbarWrapper
+    .toolbarWrapper(v-if="goodsData.gi_status==='221'")
       .left
         .block(@click="goService")
           img(src="./service.png")
@@ -128,7 +146,6 @@
                 :specGroup="goodsData.spec_group",
                 :spuId="spuId",
                 :carryType="goodsData.carry_type",
-                :address="address",
                 :fromType="fromType",
                 :store="store",
                 :brandId="goodsData.bi_id",
@@ -141,10 +158,6 @@
                 @submit-goods="submitGoods"
                 @change-bottom-btn="changeBottomBtn"
                 )
-    // 配送地址选择---------------------------------------------------------------------------------------------------------
-    express(ref="express", :addressList="addressList", @address-change="addressChange", @select-city="$refs.selectCity.show()")
-    // 城市选择-------------------------------------------------------------------------------------------------------------
-    select-city(ref="selectCity", @city-change="cityChage")
     // 预约体验-------------------------------------------------------------------------------------------------------------
     add-try(ref="addTryPop", :data="storeList", :spuId="spuId")
     // 自提门店地址----------------------------------------------------------------------------------------------------------
@@ -180,8 +193,6 @@
         goodsList: [], // 推荐商品列表
         isFavorite: {}, // 是否收藏过
         selectionOfSizeData: [], // 选中的规格
-        addressList: [], //地址合集,
-        address: {}, //页面上地址显示
         cityData: {}, // 选择城市后的数据
         shippingMethods: 0, // 配送方式，0为快递 1为自提
         skuData: {}, // sku信息
@@ -196,20 +207,23 @@
       }
     },
     beforeRouteUpdate(to,from,next) {
+      this.$refs.selectSize.refreshData()
+      this.$refs.addTryPop.refreshData()
+      this.$refs.selectStore.refreshData()
       Object.assign(this.$data, this.$options.data())
       this.spuId = Number(to.query.id)
       this.getDetailsData()
       this.queryFavorite()
-      // this.getAddress()
       this.getGoodsNum()
+      this.updateClickCount()
       next()
     },
     created() {
       this.spuId = Number(this.$route.query.id)
       this.getDetailsData()
       this.queryFavorite()
-      // this.getAddress()
       this.getGoodsNum()
+      this.updateClickCount()
     },
     mounted() {
       this.$mescrollInt("goodsMescroll", this.upCallback, () => {}, (obj) => {
@@ -232,6 +246,18 @@
       }
     },
     methods: {
+      // 点击量更新
+      updateClickCount() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiGoods + 'goods/sku/updateSpuClickNum',
+          params:{
+            spuId: self.$route.query.id
+          }
+        }).then(function (res) {
+        })
+      },
       // 将按钮置为到货通知
       changeBottomBtn() {
         this.bottomBtnType = 1
@@ -260,6 +286,7 @@
                 self.$refs.selectSize.getSku()
               }
             })
+            self.shareGoods()
           }
         })
       },
@@ -363,46 +390,12 @@
           }
         })
       },
-      // 获取用户所有地址
-      getAddress() {
-        if (!localStorage.getItem('token')) {
-          return
-        }
-        let self = this
-        self.$ajax({
-          method: 'get',
-          url: self.$apiMember + 'receivingAddress/addresses',
-          params: {},
-        }).then(function (response) {
-          if(response) {
-            self.addressList = response.data.data
-            self.addressList.forEach(item => {
-              if (item.ra_default==='011') {
-                self.address = {
-                  text: item.province_name + item.city_name + item.county_name + item.ra_detailed_addr,
-                  province: item.ra_province,
-                  city: item.ra_city
-                }
-                return false
-              }
-            })
-          }
-        })
-      },
       // 配送地址切换
       addressChange(item) {
         this.address = {
           text: item.province_name + item.city_name + item.county_name + item.ra_detailed_addr,
           province: item.ra_province,
           city: item.ra_city
-        }
-      },
-      // 城市选择切换
-      cityChage(data) {
-        this.address = {
-          text: data.province.pro_name + data.city.city_name,
-          province: data.city.pro_no,
-          city: data.city.city_no
         }
       },
       // 配送方式切换
@@ -503,6 +496,11 @@
       },
       // 立即购买存数据
       saveBuyData() {
+
+        if (this.shippingMethods===1) {
+          this.skuData.bsId = this.store.bs_id
+          this.skuData.gsId = this.store.gs_id
+        }
         this.skuData.shippingMethods = this.shippingMethods
         this.skuData.from = 0
         this.skuData.goodsCount = this.count
@@ -527,7 +525,7 @@
           })
           return
         }
-        if (this.shippingMethods===0 && !this.address.province) {
+        if (this.shippingMethods===0) {
           this.$refs.selectSize.show()
           this.$notify({
             content: '请选择配送方式',
@@ -555,13 +553,27 @@
           this.$router.push('/login')
           return
         }
+        let params
+        if (this.skuData.gsku_id) {
+          params = {
+            gsku_id: this.skuData.gsku_id
+          }
+        } else {
+          let str = ''
+          this.goodsData.spec_group.forEach(item => {
+            str = str + item.spec_name+','+ item.spec_value[item.checked]+','
+          })
+          str = str.substring(0, str.length-1)
+          params = {
+            gspu_id: this.spuId,
+            spec: str
+          }
+        }
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
-          params: {
-            gsku_id: this.skuData.gsku_id
-          }
+          url: self.$apiMember + 'ucMessage/v2/saveReachGoodsMessageInfo',
+          params: params
         }).then(function (res) {
           if (res) {
             self.$notify({
@@ -621,6 +633,36 @@
         }
         this.$store.commit('getNowGoodsData',  goodsData)
         this.$router.push('/service')
+      },
+      // 分享
+      shareGoods () {
+        this.$initShare({
+          sharePhoto: this.$method.imgUrlFilter(this.goodsData.gi_image_url),
+          shareTitle: this.goodsData.gi_name,
+          shareDesc: '我发现了个宝贝,跟专卖店比贼便宜',
+          handleSuccess: () => {
+            let self = this
+            if (localStorage.hasOwnProperty('token') && localStorage.getItem('member_type') === '091') {
+              self.$ajax({
+                method: 'get',
+                url: self.$apiTransaction + 'netcardrule/share/present',
+                params: {}
+              }).then(function (response) {
+                if (response.data.optSuc) {
+                  self.$ajax({
+                    method: 'get',
+                    url: response.data.data,
+                    params: {}
+                  }).then(function (res) {
+                    if (res.data.optSuc) {
+                      self.$shareSuccess({ticketMoney: res.data.data})
+                    }
+                  })
+                }
+              })
+            }
+          }
+        })
       },
       // 获取推荐列表
       upCallback: function (page) {
@@ -1037,6 +1079,9 @@
       flex 1
       display flex
       background-color #fff
+      &.noGoodsBottom .block span {
+        color #aaa
+      }
       .block {
         flex 1
         display flex
@@ -1130,6 +1175,30 @@
     transform: scale(0.1) translate3d(-30rem,60rem,0);
     transform-origin:50% 50%;
     opacity: 0;
+  }
+  .noGoodsBtn {
+    width 2.6rem
+    height .74rem
+    line-height .74rem
+    text-align center
+    border 1px solid #f70057
+    border-radius .05rem
+    color #f70057
+    font-size .42rem
+    font-weight 500
+    margin .26rem 0 0 .4rem
+  }
+  .noGoodsText {
+    width 100%
+    height 1.17rem
+    line-height 1.17rem
+    text-align center
+    background-color rgba(0,0,0,.7)
+    position fixed
+    bottom 1.33rem
+    color #fff
+    font-size .42rem
+    font-weight 400
   }
 </style>
 <style>

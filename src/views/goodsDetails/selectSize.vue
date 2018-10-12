@@ -107,13 +107,6 @@
         type: Number,
         default: 0
       },
-      // 配送地址显示
-      address: {
-        type: Object,
-        default() {
-          return {}
-        }
-      },
       // 打开此弹框按钮类型
       fromType: {
         type: 0
@@ -347,6 +340,10 @@
           return
         }
         this.$emit('submit-goods', flag)
+      },
+      // 当页面刷新时数据初始化
+      refreshData() {
+        Object.assign(this.$data, this.$options.data())
       },
       hide() {
         this.selectSizeShow = false

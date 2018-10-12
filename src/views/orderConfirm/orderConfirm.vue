@@ -4,7 +4,7 @@
       .back(@click="$router.go(-1)")
         img(src="./back.png")
       .title 确认订单
-    scroll.contentWrapper(:data="data")
+    scroll.contentWrapper(:data="scrollData")
       div
         .addressWrapper(@click="openAddress", v-show="confirmData.shippingMethods===0")
           .address(v-show="showAddress && showAddress.ra_name")
@@ -24,7 +24,7 @@
             .desc 手机号：
             input.text(v-model="selfForm.phone")
         .goodsList
-          ul.listWrapper
+          ul.listWrapper(v-if="confirmData.from===0")
             li.item
               .storeName {{data.shop_Name}}
               .itemWrapper
@@ -37,8 +37,25 @@
                       li(v-for="i in data.specVOList") {{i.gspec_value}};
                   .price ¥ {{data.counter_price | price-filter2}}
                   .count X {{data.goods_num}}
-        .freight(v-show="confirmData.shippingMethods===0") 运费:{{data.freight | price-filter}}
-        .freight(v-show="confirmData.shippingMethods===1") 专柜自提
+              .freight(v-show="confirmData.shippingMethods===0") 运费:{{data.freight | price-filter}}
+              .freight(v-show="confirmData.shippingMethods===1") 专柜自提
+          ul(v-if="confirmData.from===1")
+            li(v-for="item in data.commList", style="border-bottom: .26rem solid #f3f3f3;")
+              ul.listWrapper
+                .storeName {{item.si_name}}
+                li.item(v-for="goods in item.shoppingCartVOList")
+                  .itemWrapper
+                    .left
+                      img(src="goods.logo | img-filter")
+                    .right
+                      .name {{goods.gi_name}}
+                      .size
+                        ul
+                          li(v-for="i in goods.specVOList") {{i.gspec_value}};
+                      .price ¥ {{goods.counter_price | price-filter2}}
+                      .count X {{goods.goods_num}}
+              .freight(v-show="confirmData.shippingMethods===0") 运费:{{item.freight | price-filter}}
+              .freight(v-show="confirmData.shippingMethods===1") 专柜自提
         .total
           .totalCount 共计 {{totalCount}} 件商品<span>合计：</span>
           .totalPrice {{totalPrice | price-filter}}
@@ -60,12 +77,15 @@
         span.price {{directPrice | price-filter}}
       .right(@click="checkOrder") 提交订单
     express(ref="express", :addressList="addressData", @address-change="addressChange")
+    check-goods(ref="checkGoods", :data="checkGoodsData", @submit-order="submitOrder(false)")
 </template>
 
 <script>
   import Scroll from 'components/scroll'
   import ToggleButton from 'components/toggleButton'
   import Express from './express'
+  // 不合格商品显示
+  import CheckGoods from 'views/shoppingTrolley/src/checkGoods'
   import {mapGetters} from 'vuex'
   export default {
     name: "orderConfirm",
@@ -86,18 +106,33 @@
         selfForm: {
           name: '',
           phone: ''
-        }
+        },
+        checkGoodsData: [],
+        btnType: 2
       }
     },
     computed: {
       ...mapGetters(['confirmData']),
+      scrollData() {
+        return [this.data]
+      }
     },
     watch: {
-      addressData(newValue) {
+      addressData() {
         this.getData()
+      },
+      cashSwitch() {
+        this.computedPrice()
+      },
+      ticketSwitch() {
+        this.computedPrice()
       }
     },
     created() {
+      if (typeof this.confirmData.from!=='number') {
+        this.$router.go(-1)
+        return
+      }
       if (this.confirmData.shippingMethods===0) {
         this.getAddress()
       } else {
@@ -108,9 +143,6 @@
     methods: {
       // 获取订单数据
       getData() {
-        if (typeof this.confirmData.from!=='number') {
-          this.$router.go(-1)
-        }
         let url = ''
         let params
         // from为0表示从商品详情过来 1表示从购物车过来
@@ -159,13 +191,37 @@
         if (this.confirmData.from===0) {
           this.totalCount = this.confirmData.goodsCount
           this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount)
-          if (this.confirmData.shippingMethods === 1) {
-            this.directPrice = Number(this.confirmData.goodsCount) * this.data.direct_supply_price
-          } else {
-            this.directPrice = Number(this.confirmData.goodsCount) * this.data.direct_supply_price + this.data.freight
-          }
         } else {
-
+          this.totalCount = this.data.totalNum
+          this.totalPrice = this.data.totalPrice
+        }
+        this.computedPrice()
+      },
+      // 计算实付价
+      computedPrice() {
+        if (typeof this.ticketData.netCard !=='number') {
+          return
+        }
+        let a = this.cashSwitch?this.ticketData.netCard:0
+        let b = this.ticketSwitch?this.ticketData.commTicket:0
+        let f = 0
+        if (this.confirmData.from===0) {
+          if (typeof this.data.freight !== 'number') {
+            return
+          }
+          f = this.data.freight
+        } else {
+          if (typeof this.data.commList !== 'object') {
+            return
+          }
+          this.data.commList.forEach(item=>{
+            f+=item.freight
+          })
+        }
+        if (this.confirmData.shippingMethods === 1) {
+          this.directPrice = this.totalPrice - a - b
+        } else {
+          this.directPrice = this.totalPrice - a - b + f
         }
       },
       // 卡券
@@ -180,9 +236,14 @@
             num: this.confirmData.goodsCount
           }
         } else {
+          let arr = []
           url = 'order/submitOrderCard'
+          this.confirmData.list.forEach(item=>{
+            arr.push(item.sc_id)
+          })
           params = {
-
+            gcIdArray: arr.join(','),
+            netCardFlag: this.cashSwitch?'011':'012'
           }
         }
         let self = this
@@ -206,6 +267,7 @@
               self.ticketOptional = false
               self.ticketSwitch = false
             }
+            self.computedPrice()
           }
         })
       },
@@ -257,19 +319,120 @@
           self.$ajax({
             method: 'get',
             url: self.$apiGoods + 'shoppingCart/v2/checkSubmitCartList',
-            params: {},
+            params: params,
           }).then(function (res) {
             if (res) {
-
+              let count = 0
+              let type = 4
+              res.data.data.forEach(item=>{
+                if (item.status_flag!=='VALID') {
+                  count++
+                }
+                if (item.status_flag==='BUY_NUM_OVER_STORAGE_NUM') {
+                  type = 2
+                }
+              })
+              if (count>0) {
+                self.checkGoodsData = res.data.data
+                self.btnType = type
+                self.$refs.checkGoods.show()
+              } else {
+                self.submitOrder(true)
+              }
             }
           })
+        } else {
+          this.submitOrder()
         }
       },
+      // 提交订单
+      submitOrder(flag) {
+        if (this.confirmData.shippingMethods===0 && !this.showAddress.id) {
+          this.$notify({
+            content: '请选择收货地址',
+            bottom: 3
+          })
+          return
+        }
+        if ((this.confirmData.shippingMethods===1 && this.selfForm.name.length===0) || (this.confirmData.shippingMethods===1 && this.selfForm.phone.length!==11)) {
+          this.$notify({
+            content: '请正确填写提货人信息',
+            bottom: 3
+          })
+          return
+        }
+        let url
+        let params
+        if (this.confirmData.from===0) {
+          params = {
+            gskuId: this.data.gsku_id,
+            netCardFlag: this.cashSwitch?'011':'012',
+            commonTicketFlag: this.ticketSwitch?'011':'012',
+            buyNum: this.confirmData.goodsCount
+          }
+          if (this.confirmData.shippingMethods === 0) {
+            url = 'order/v2/nowSendOrder'
+            params.deliveryId = this.showAddress.id
+            params.supplierId = this.data.shop_id
+          } else {
+            url = 'order/v2/submitNowCarryOrder'
+            params.carryPerson = this.selfForm.name
+            params.carryPhone = this.selfForm.phone
+            params.bsId = this.confirmData.bsId
+            params.supplierId = this.confirmData.gs_id
+          }
+        } else {
+          params = {
+            netCardFlag: this.cashSwitch?'011':'012',
+            commonTicketFlag: this.ticketSwitch?'011':'012',
+          }
+          if (this.confirmData.shippingMethods === 0) {
+            url = 'order/v2/submitSendOrder'
+            params.deliveryId = this.showAddress.id
+          } else {
+            url = 'order/v2/submitCarryOrder'
+            params.carryPerson = this.selfForm.name
+            params.carryPhone = this.selfForm.phone
+          }
+          let arr = []
+          this.confirmData.list.forEach(item=>{
+            arr.push(item.sc_id)
+          })
+          if (flag) {
+            params.gcIdArray = arr.join(',')
+          } else {
+            let copyArr = arr.slice()
+            this.checkGoodsData.forEach(item=>{
+              if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
+                arr.forEach((goods, index)=>{
+                  if (item.sc_id===goods.sc_id) {
+                    copyArr.splice(index, 1)
+                  }
+                })
+              }
+            })
+            params.gcIdArray = copyArr.join(',')
+          }
+        }
+
+
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url: self.$apiTransaction + url,
+          params: params
+        }).then(function (res) {
+          if (res) {
+            this.router.replace({path: '/payment', query:{id:1, price: 1}})
+          }
+        })
+      }
     },
     components: {
       Scroll,
       ToggleButton,
-      Express
+      Express,
+      CheckGoods
     }
   }
 </script>
@@ -429,11 +592,9 @@
           .itemWrapper {
             padding .26rem .40rem
             display flex
-            border-bottom 1px solid #d7d7d7
             position relative
-            &:last-child {
-              border none
-            }
+            border-bottom 1px solid #d7d7d7
+
             .left {
               width 1.8rem
               height 1.8rem
@@ -500,7 +661,6 @@
         font-weight 400
         font-size .32rem
         background-color #fff
-        border-top 1px solid #d7d7d7
         text-align right
       }
       .total {

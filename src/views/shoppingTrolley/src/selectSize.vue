@@ -145,13 +145,27 @@
         this.selectionSize = temp
       },
       saveReachGoods() {
+        let params
+        if (this.skuData.gslu_id) {
+          params = {
+            gsku_id: this.skuData.gsku_id
+          }
+        } else {
+          let str = ''
+          this.specGroup.forEach(item => {
+            str = str + item.spec_name+','+ item.spec_value[item.checked]+','
+          })
+          str = str.substring(0, str.length-1)
+          params = {
+            gspu_id: this.resetSpec.spuId,
+            spec: str
+          }
+        }
         let self = this
         self.$ajax({
           method: 'get',
           url: self.$apiMember + 'ucMessage/saveReachGoodsMessageInfo',
-          params: {
-            gsku_id: this.skuData.gsku_id
-          }
+          params: params
         }).then(function (res) {
           if (res) {
             self.$notify({

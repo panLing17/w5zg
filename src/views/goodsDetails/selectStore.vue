@@ -65,6 +65,10 @@
         this.$emit('store-select', item)
         this.hide()
       },
+      // 当页面刷新时数据初始化
+      refreshData() {
+        Object.assign(this.$data, this.$options.data())
+      },
       show() {
         this.selectStoreShow = true
       },

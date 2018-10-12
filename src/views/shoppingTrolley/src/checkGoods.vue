@@ -23,6 +23,10 @@
           .two(v-show="btnType===1")
             .left(@click="hide()") 返回购物车
             .right(@click="$emit('go-order', false)") 继续结算
+          .two(v-show="btnType===2")
+            .left(@click="$router.go(-1)") 返回购物车
+            .right(@click="$emit('submit-order', false)") 剔除商品
+          .one(v-show="btnType===3", @click="$router.go(-1)") 返回购物车
 </template>
 
 <script>
@@ -37,7 +41,7 @@
         }
       },
       btnType: {
-        type: Number // 0 返回购物车 1 继续结算
+        type: Number // 0 返回购物车 1 继续结算 2 剔除商品
       }
     },
     data() {
