@@ -463,10 +463,12 @@
       // 结算
       checkCart() {
         let arr = []
+        let selectedCount = 0
         this.data.commList.forEach(item=>{
           item.shoppingCartVOList.forEach(goods=>{
             if (goods.checked==='011') {
               arr.push(item.sc_id)
+              selectedCount++
             }
           })
         })
@@ -484,6 +486,9 @@
               type = 1
             }
           })
+          if (selectedCount>count) {
+            type = 1
+          }
           if (count>0) {
             this.checkGoodsData = data
             this.btnType = type

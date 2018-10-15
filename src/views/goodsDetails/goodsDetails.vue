@@ -95,10 +95,10 @@
     .noGoodsText(v-if="goodsData.gi_status==='222'") 该商品已下架
     .toolbarWrapper(v-if="goodsData.gi_status==='222'")
       .left.noGoodsBottom
-        .block
+        .block(@click="goService")
           img(src="./service.png")
           span 客服
-        .block
+        .block(@click="$router.push('/shoppingCart')")
           div
             img(src="./shoppingcart.png")
             .badge(v-if="shoppingCartNum.toString().length<=2 && shoppingCartNum!==0") {{shoppingCartNum}}

@@ -75,9 +75,9 @@
       .left
         span 实付：
         span.price {{directPrice | price-filter}}
-      .right(@click="checkOrder") 提交订单
+      .right(@click="submitOrder") 提交订单
     express(ref="express", :addressList="addressData", @address-change="addressChange")
-    check-goods(ref="checkGoods", :data="checkGoodsData", @submit-order="submitOrder(false)")
+    check-goods(ref="checkGoods", :data="checkGoodsData", @submit-order="submitOrder")
 </template>
 
 <script>
@@ -304,49 +304,7 @@
         this.getData()
       },
       // 提交订单
-      checkOrder() {
-        // 若从购物车过来需校验
-        if (this.confirmData.from===1) {
-          let params
-          let arr = []
-          this.confirmData.list.forEach(item=>{
-            arr.push(item.sc_id)
-          })
-          params = {
-            scIdArray: arr.join(',')
-          }
-          let self = this
-          self.$ajax({
-            method: 'get',
-            url: self.$apiGoods + 'shoppingCart/v2/checkSubmitCartList',
-            params: params,
-          }).then(function (res) {
-            if (res) {
-              let count = 0
-              let type = 4
-              res.data.data.forEach(item=>{
-                if (item.status_flag!=='VALID') {
-                  count++
-                }
-                if (item.status_flag==='BUY_NUM_OVER_STORAGE_NUM') {
-                  type = 2
-                }
-              })
-              if (count>0) {
-                self.checkGoodsData = res.data.data
-                self.btnType = type
-                self.$refs.checkGoods.show()
-              } else {
-                self.submitOrder(true)
-              }
-            }
-          })
-        } else {
-          this.submitOrder()
-        }
-      },
-      // 提交订单
-      submitOrder(flag) {
+      submitOrder() {
         if (this.confirmData.shippingMethods===0 && !this.showAddress.id) {
           this.$notify({
             content: '请选择收货地址',
@@ -398,21 +356,7 @@
           this.confirmData.list.forEach(item=>{
             arr.push(item.sc_id)
           })
-          if (flag) {
-            params.gcIdArray = arr.join(',')
-          } else {
-            let copyArr = arr.slice()
-            this.checkGoodsData.forEach(item=>{
-              if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
-                arr.forEach((goods, index)=>{
-                  if (item.sc_id===goods.sc_id) {
-                    copyArr.splice(index, 1)
-                  }
-                })
-              }
-            })
-            params.gcIdArray = copyArr.join(',')
-          }
+          params.gcIdArray = arr.join(',')
         }
 
 
@@ -423,7 +367,11 @@
           params: params
         }).then(function (res) {
           if (res) {
-            this.router.replace({path: '/payment', query:{id:1, price: 1}})
+            if (res.data.data.flag) {
+              self.$router.replace({path: '/payment', query:{id:res.data.data.totalOrderId, price: res.data.data.payPrice}})
+            } else {
+
+            }
           }
         })
       }
