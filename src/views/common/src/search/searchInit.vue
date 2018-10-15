@@ -111,6 +111,7 @@
     },
     methods: {
       hotMoreClick() {
+        this.$emit('input-blur')
         if (!this.hotMore) {
           this.hotHeight = this.hotHeight2
         } else {
@@ -122,6 +123,7 @@
         }, 550)
       },
       historyMoreClick() {
+        this.$emit('input-blur')
         if (!this.historyMore) {
           this.historyHeight = this.historyHeight2
         } else {
@@ -136,6 +138,7 @@
         this.$emit('wordSearch', item)
       },
       clearHistory () {
+        this.$emit('input-blur')
         this.$confirm({
           title: '确认',
           message: '清除所有搜索历史记录？',
@@ -155,6 +158,7 @@
         })
       },
       categoryChange(item, index, e) {
+        this.$emit('input-blur')
         if (this.currentCategory === index) {
           return
         }

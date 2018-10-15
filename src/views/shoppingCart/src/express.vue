@@ -1,5 +1,5 @@
 <template lang="pug">
-  .expressBox(:class="{minHeight: goodsList.length>0}")
+  .expressBox
     goods-card.goodsCard(v-for="(i,index) in goodsList", @clearGoods="clearGoods", :goodsList="goodsList", :key="index", @tab="changeType", :list="i.shoppingCartVOList", :checked="i.checked", :storeName="i.si_name", @selectChange="selectChange")
     div(v-if="goodsList.length<1").zeroGoodsBox
       img(src="../../../assets/img/cardZeroGoods.png").zeroGoods

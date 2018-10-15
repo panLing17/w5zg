@@ -259,7 +259,7 @@
           deliveryWays: deliveryNum,
           province: this.$store.state.location.province.id,
           city: this.$store.state.location.city.id,
-          storeId: items.si_id,
+          storeId: items.bs_id,
           goodsNum: items.goods_num
         }
         this.addShoppingCar(b)
@@ -271,7 +271,7 @@
           url: self.$apiGoods+ 'goods/shoppingCart/add',
           params: eve
         }).then(function (response) {
-          if (response.data.code = '081') {
+          if (response.data.code === '081') {
             self.$message.success('添加购物车成功')
           }
         })

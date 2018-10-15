@@ -104,8 +104,9 @@
       }
     },
     mounted () {
+      let _this = this
       setTimeout(() => {
-        this.refundReturnScroll = new BScroll(this.$refs.refundReturn, {
+        _this.refundReturnScroll = new BScroll(_this.$refs.refundReturn, {
           click: true
         })
       }, 20)
