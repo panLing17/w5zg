@@ -239,7 +239,7 @@
           let self = this
           self.$ajax({
             method: 'get',
-            url: self.$apiMember + '/ucMessage/queryMessageNum',
+            url: self.$apiMember + '/ucMessage/v2/queryMessageNum',
             params: {}
           }).then(function (res) {
             self.informNum = res.data.data.totalNum

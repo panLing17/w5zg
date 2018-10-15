@@ -221,7 +221,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + '/ucMessage/queryMessageNum',
+          url: self.$apiMember + '/ucMessage/v2/queryMessageNum',
           params: {
           }
         }).then(function (res) {
@@ -233,7 +233,7 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          url: self.$apiMember + '/ucMessage/v2/queryMemberMessageNum',
           params: {
             msType: 802
           }
