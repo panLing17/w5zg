@@ -75,8 +75,10 @@
             div 请先选择商品规格
         div(v-if="!yuyueF")
           .bottomButton(v-if="onlySelectSpec")
-            .left(v-show="noGoodsL", @click="goBuy") 立即购买
-            .right(v-show="noGoodsL", @click="addCart") 加入购物车
+            .left(v-show="noGoodsL&&goodsStatus==='221'", @click="goBuy") 立即购买
+            .left(v-show="noGoodsL&&goodsStatus!=='221'").sellOut 立即购买
+            .right(v-show="noGoodsL&&goodsStatus==='221'", @click="addCart") 加入购物车
+            .right(v-show="noGoodsL&&goodsStatus!=='221'").sellOut 加入购物车
             .right2(v-show="noGoodsE", @click="reachInform()") 到货通知
           .bottomButton(v-else)
             .right(v-show="noGoodsL", @click="confirm") 确定
@@ -125,6 +127,11 @@
         type: Boolean,
         default: false
       },
+      // 商品失效不能购买或加入购物车
+      goodsStatus:{
+        type: Number,
+        default: 0
+      },
       // 预约
       yuyueF:{
         type: Boolean,
@@ -167,7 +174,7 @@
       addressCityName() {
         return this.giveGoodsAddress.city_name
       },
-      ...mapState(['userData','giveGoodsAddress','location', 'skuId']),
+      ...mapState(['userData','giveGoodsAddress','location','skuId']),
       ...mapGetters(['transfer'])
     },
     watch:{
@@ -1057,12 +1064,15 @@
     width: 100%;
     height: 1.2rem;
     display: flex;
-    border: solid 1px rgb(244,0,87);
+    /*border: solid 1px rgb(244,0,87);*/
   }
   .bottomButton div{
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .bottomButton .sellOut{
+    opacity: .3 !important;
   }
   .bottomButton .left{
     flex-grow: 1;
@@ -1081,7 +1091,7 @@
   .bottomButton .right2{
     flex-grow: 1;
     height: 100%;
-    background: rgb(244,0,87);
+    background: #9D4AAD;
     font-size: .4rem;
     color: white;
   }

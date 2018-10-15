@@ -11,19 +11,19 @@
           .topper
             .leftT
               .point <span v-if="item.ms_status === '5303'"></span>
-              .title(:class="{active:item.ms_status === '5303'}") {{item.msType === '802'?'到货通知':'购物车降价通知'}}
+              .title(:class="{active:item.ms_status === '5303'}") {{item.ms_type === '802'?'到货通知':'购物车降价通知'}}
             .rightT {{item.notice_time}}
           .bottommer(@click="goTogGoods(item)")
             .leftB
               img(:src="item.ms_thumbnail | img-filter")
             .rightB
-              .text(v-if="item.msType === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
-              .text(v-if="item.msType !== '802'") {{item.ms_title}}
-              .attr {{item.gspec_values.toString().split(',')[0]}}{{item.gspec_values.toString().split(',')[1]? ';' + item.gspec_values.toString().split(',')[1]:''}}
+              .text(v-if="item.ms_type === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
+              .text(v-if="item.ms_type !== '802'") {{item.ms_title}}
+              .attr {{item.spec_value1}};{{item.spec_value2}}
               .price
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
-                .rightP(v-if="item.msType !== '802'") 已降价{{item.price_difference}}元,速抢!
-                .rightP(v-if="item.msType === '802'") 到货啦,速抢!
+                .rightP(v-if="item.ms_type !== '802'") 已降价{{item.price_difference}}元,速抢!
+                .rightP(v-if="item.ms_type === '802'") 到货啦,速抢!
 </template>
 
 <script>
@@ -55,7 +55,7 @@
           let self = this
           self.$ajax({
             method: 'get',
-            url: self.$apiMember + 'ucMessage/updateMessageStatus',
+            url: self.$apiMember + '/ucMessage/v2/updateMessageStatus',
             params:{
               msType: types
             }
@@ -116,7 +116,7 @@
         },
         goTogGoods(e){
           this.$store.commit('setInformGoods', e)
-          if (e.msType === '801') {
+          if (e.ms_type === '801') {
             // 跳购物车
             // 1.判断购物车里还有没有商品
             let self = this
@@ -165,7 +165,7 @@
               }
             })
 
-          } else if (e.msType === '802') {
+          } else if (e.ms_type === '802') {
             // 跳商品详情
             this.$router.push({
               path:'/goodsDetailed',
@@ -190,7 +190,7 @@
           let self = this
           self.$ajax({
             method: 'post',
-            url: self.$apiMember + 'ucMessage/queryMemberMessagePage',
+            url: self.$apiMember + '/ucMessage/v2/queryMemberMessagePage',
             params: {
               page: pageNum,
               rows: pageSize,

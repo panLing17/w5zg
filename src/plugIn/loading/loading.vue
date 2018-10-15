@@ -3,7 +3,7 @@
     transition(enter-active-class="animated fadeIn", leave-active-class="animated fadeOut", :duration="{ enter: 50, leave: 300 }")
       .bg(v-if="show", :style="{height:height}", @touchmove.prevent="")
         .box
-          img(src="../../assets/img/loading@2x.png")
+          img(src="./img/loading.gif")
 </template>
 
 <script>
@@ -57,8 +57,8 @@
     width: 100%;
     height: 100%;
   }
-  @keyframes f {
-    from {transform: rotate(0deg)}
-    to {transform: rotate(360deg)}
-  }
+  /*@keyframes f {*/
+    /*from {transform: rotate(0deg)}*/
+    /*to {transform: rotate(360deg)}*/
+  /*}*/
 </style>

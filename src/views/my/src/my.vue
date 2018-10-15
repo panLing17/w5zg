@@ -160,7 +160,6 @@
       this.getFootmarkNum()
       this.getOrderCount()
       // this.getNetcardsCount()
-
       // 判断页面是否向上滚动
       // window.addEventListener('scroll',this.judgeScroll,true);
       // 改变下拉刷新的样式
@@ -222,7 +221,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + '/ucMessage/queryMessageNum',
+          url: self.$apiMember + '/ucMessage/v2/queryMessageNum',
           params: {
           }
         }).then(function (res) {
@@ -234,7 +233,7 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiMember + '/ucMessage/queryMemberMessageNum',
+          url: self.$apiMember + '/ucMessage/v2/queryMemberMessageNum',
           params: {
             msType: 802
           }
