@@ -77,7 +77,7 @@
         span.price {{directPrice | price-filter}}
       .right(@click="submitOrder") 提交订单
     express(ref="express", :addressList="addressData", @address-change="addressChange")
-    check-goods(ref="checkGoods", :data="checkGoodsData", @submit-order="submitOrder")
+    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @submit-order="submitOrder(1)")
 </template>
 
 <script>
@@ -305,7 +305,7 @@
         this.getData()
       },
       // 提交订单
-      submitOrder() {
+      submitOrder(flag) {
         if (this.confirmData.shippingMethods===0 && !this.showAddress.id) {
           this.$notify({
             content: '请选择收货地址',
@@ -322,6 +322,7 @@
         }
         let url
         let params
+        let selectedCount = 0
         if (this.confirmData.from===0) {
           params = {
             gskuId: this.data.gsku_id,
@@ -356,7 +357,19 @@
           let arr = []
           this.confirmData.list.forEach(item=>{
             arr.push(item.sc_id)
+            selectedCount++
           })
+          if (flag===1) {
+            this.checkGoodsData.forEach(item=>{
+              if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
+                for(let i=arr.length-1;i>=0;i--) {
+                  if (item.sc_id===arr[i].sc_id) {
+                    arr.splice(i, 1)
+                  }
+                }
+              }
+            })
+          }
           params.gcIdArray = arr.join(',')
         }
 
@@ -371,7 +384,24 @@
             if (res.data.data.flag) {
               self.$router.replace({path: '/payment', query:{id:res.data.data.totalOrderId, price: res.data.data.payPrice}})
             } else {
-
+              let count = 0
+              let type = 3
+              res.data.data.commList.forEach(item=>{
+                if (item.status_flag!=='VALID') {
+                  count++
+                }
+                if (item.status_flag==='BUY_NUM_OVER_STORAGE_NUM') {
+                  type = 2
+                }
+              })
+              if (selectedCount>count) {
+                type = 2
+              }
+              if (count>0) {
+                self.checkGoodsData = res.data.data.commList
+                self.btnType = type
+                self.$refs.checkGoods.show()
+              }
             }
           }
         })
@@ -462,7 +492,7 @@
           font-size .37rem
           color #333
           font-weight 400
-          line-height 1
+          line-height 1.5
           .info, .desc {
             overflow hidden
             white-space nowrap
@@ -472,7 +502,7 @@
             }
           }
           .desc {
-            margin-top .32rem
+            margin-top .22rem
           }
         }
         .right {

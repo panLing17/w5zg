@@ -29,7 +29,7 @@
                 .specName {{item.spec_name}}<span v-show="item.checked===-1">请选择</span>
                 ul.specValue
                   li(v-for="(value, i) in item.spec_value",
-                    @click="specChange(index, i)",
+                    @click.stop="specChange(index, i, item)",
                     :class="{active: item.checked===i}"
                     ) {{value}}
             // 数量加减---------------------------------------------------------------------------------
@@ -153,15 +153,13 @@
     },
     methods:{
       // 规格选择
-      specChange(index, i) {
-        let temp = this.specGroup[index]
-        if (this.specGroup[index].checked === i) {
-          temp.checked = -1
+      specChange(index, i, item) {
+        if (item.checked === i) {
+          item.checked = -1
         } else {
-          temp.checked = i
+          item.checked = i
         }
-        this.specGroup.splice(index, 1, temp)
-
+        this.specGroup.splice(index, 1, item)
         this.getSku()
       },
       // 根据规格调sku信息
@@ -178,7 +176,6 @@
         this.specGroup.forEach((item, index)=>{
           if (item.checked === -1) {
             flag = false
-            return false
           }
           params['spec_name'+(index+1)] = item.spec_name
           params['spec_value'+(index+1)] = item.spec_value[item.checked]

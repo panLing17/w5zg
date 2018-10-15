@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="checkGoodsShow", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .content(@touchmove.prevent="", v-if="checkGoodsShow")
+      .content(@touchmove.prevent="", v-if="checkGoodsShow", :style="{bottom: (btnType===0||btnType===1)?'1.38rem':0}")
         scroll.contentWrapper(:data="data")
           div
             .title 抱歉，本单部分商品库存不足或失效，已为您降到最大库存
@@ -22,11 +22,11 @@
           .one(v-show="btnType===0", @click="hide()") 返回购物车
           .two(v-show="btnType===1")
             .left(@click="hide()") 返回购物车
-            .right(@click="$emit('go-order', false)") 继续结算
+            .right(@click="goOrder") 继续结算
           .two(v-show="btnType===2")
-            .left(@click="$router.go(-1)") 返回购物车
-            .right(@click="$emit('submit-order', false)") 剔除商品
-          .one(v-show="btnType===3", @click="$router.go(-1)") 返回购物车
+            .left(@click="$router.go(-1)") 返回
+            .right(@click="submitOrder") 剔除商品
+          .one(v-show="btnType===3", @click="$router.go(-1)") 返回
 </template>
 
 <script>
@@ -50,6 +50,14 @@
       }
     },
     methods: {
+      submitOrder() {
+        this.hide()
+        this.$emit('submit-order', false)
+      },
+      goOrder() {
+        this.hide()
+        this.$emit('go-order', false)
+      },
       show() {
         this.checkGoodsShow = true
       },
@@ -91,7 +99,6 @@
   }
   .content {
     position fixed
-    bottom $height-footer
     left 0
     width 100%
     height 11.33rem

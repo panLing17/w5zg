@@ -159,20 +159,10 @@ export default {
     }
   },
   watch: {
-    // data () {
-    //   setTimeout(() => {
-    //     this.refresh()
-    //   }, 200)
-    // }
     data () {
-      setTimeout(()=>{
+      setTimeout(() => {
         this.refresh()
-        new BScroll(this.$refs.wrapper,{
-          probeType:this.probeType,
-          click:this.click,
-          scrollX:this.scrollX
-        })
-      },20)
+      }, 200)
     }
   }
 }

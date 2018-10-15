@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="selectSizeShow", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .content(@touchmove.prevent="", v-if="selectSizeShow")
+      .content(@touchmove.prevent="", v-show="selectSizeShow")
         // 头部-----------------------------------------------------------------------------------------
         .top
           .imgWrapper
@@ -78,6 +78,7 @@
         this.selectSizeShow = true
       },
       hide() {
+        Object.assign(this.$data, this.$options.data())
         this.selectSizeShow = false
       },
       specChange(index, i) {
@@ -146,7 +147,7 @@
       },
       saveReachGoods() {
         let params
-        if (this.skuData.gslu_id) {
+        if (this.skuData.gsku_id) {
           params = {
             gsku_id: this.skuData.gsku_id
           }

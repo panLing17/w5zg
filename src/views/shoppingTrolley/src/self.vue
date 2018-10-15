@@ -234,17 +234,8 @@
         this.specChangeCommon(goods)
       },
       // 规格切换完成
-      specChangeRight(data) {
-        let temp = this.data.commList[this.specCurrentIndex.index].shoppingCartVOList[this.specCurrentIndex.i]
-        temp.gsku_id = data.skuId
-        temp.specVOList = []
-        data.spec.forEach(item=>{
-          temp.specVOList.push({
-            gspec_name: item.name,
-            gspec_value: item.value
-          })
-        })
-        this.data.commList[this.specCurrentIndex.index].shoppingCartVOList.splice(this.specCurrentIndex.i, temp)
+      specChangeRight() {
+        this.getSelfList()
       },
       // 切换配送方式
       changeWays(goods, index, i) {
@@ -515,17 +506,16 @@
         if(flag) {
           temp.list = arr
         } else {
-          let copyArr = arr.slice()
           this.checkGoodsData.forEach(item=>{
             if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
-              arr.forEach((goods, index)=>{
-                if (item.sc_id===goods.sc_id) {
-                  copyArr.splice(index, 1)
+              for(let i=arr.length-1;i>=0;i--) {
+                if (item.sc_id===arr[i].sc_id) {
+                  arr.splice(i, 1)
                 }
-              })
+              }
             }
           })
-          temp.list = copyArr
+          temp.list = arr
         }
         this.setConfirmData(temp)
         this.$router.push('/orderConfirm')

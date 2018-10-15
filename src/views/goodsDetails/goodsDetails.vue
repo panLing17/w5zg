@@ -235,7 +235,7 @@
       })
     },
     computed: {
-      ...mapGetters(['userData', 'shoppingCartGoodsNum']),
+      ...mapGetters(['userData', 'shoppingCartGoodsNum', 'informGoods']),
       // 实付价
       directSupplyPrice() {
         return this.skuData.direct_supply_price ? this.skuData.direct_supply_price : this.goodsData.min_direct_supply_price
@@ -292,25 +292,27 @@
       },
       // 规格格式化
       specFormat(data) {
-        let informGoods = this.$store.state.informGoods
         if (data.spec_group && data.spec_group.length) {
-          data.spec_group.forEach(item => {
+          data.spec_group.forEach((item, index) => {
             item.checked = -1
             item.spec_value = item.spec_value.split(',')
 
-            // 如果只有一个规格默认选中
-            if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) {
+
+            // 判断是否是从到货通知过来，如果是需把规格选中
+            if (this.informGoods) {
+              item.spec_value.forEach((goods, i) => {
+                if (goods === this.informGoods['spec_value'+(index+1)]) {
+                  item.checked = i
+                  this.selectionOfSizeData.push({
+                    name: item.spec_name,
+                    value: goods
+                  })
+                }
+              })
+            } else
+              if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
               item.checked = 0
             }
-            // 判断是否是从到货通知过来，如果是需把规格选中 等待接口好了再写
-            // if (informGoods) {
-            //   let s = informGoods.gspec_values.split(',')
-            //   s.forEach((sItem) => {
-            //     if (sonNow.value.trim() === item.trim()) {
-            //       now.valueIndex = sonIndex
-            //     }
-            //   })
-            // }
           })
         }
       },
