@@ -1,10 +1,10 @@
 <template lang="pug">
   div
     .homeHeader(:class="{active: homeHeaderActive}")
-      .homeHeaderLeft(@click="$router.push('/page')")
-        img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
+      .homeHeaderLeft(@click="toScan")
+        img.headerImg(src="../../../assets/img/sao.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderLeft(v-show="homeHeaderActive")
-          img.fenleiImg(src="../../../assets/img/fenlei@2x.png", @click.prevent="")
+          img.fenleiImg(src="../../../assets/img/sao2.png", @click.prevent="")
       .homeHeaderCenter(@click="$router.push('/search')")
         input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
@@ -42,7 +42,7 @@
               img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
       goods-list(:data="goodsList")
       .bottomPlaceholder
-    .adWrapper(@click.stop="$router.push('/registerTicket')", v-if="showRegisterTicket")
+    .adWrapper(@click.stop="$router.push('/registerTicket')", :style="{top: fbPosition+'px'}", @touchstart="fbstart($event)", @touchmove="fbmove($event)", v-if="showRegisterTicket")
       img(src="../../../assets/img/ad1.png")
     .mask(@click.stop="closeTicket", v-if="showTicket")
     .adWrapper2(v-if="showTicket")
@@ -123,7 +123,9 @@
         secondFloor: [],
         informNum: 0,
         placeholder: '',
-        popUpAd: []
+        popUpAd: [],
+        fbPosition: 10.8,
+        htmlFontSize: document.getElementsByTagName('html')[0].style.fontSize
       }
     },
     components: {hotButton, lNews, wActivity, recommend, homeGuide, Slider, GoodsList},
@@ -155,6 +157,9 @@
       next();
     },
     mounted() {
+      this.$nextTick(() => {
+        this.fbPosition *= parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize'))
+      })
       document.title = '万物直供'
       this.$mescrollInt("homeMescroll", this.upCallback, () => {
         this.position.forEach((now) => {
@@ -202,6 +207,39 @@
       this.mescroll.destroy()
     },
     methods: {
+      // 新人领券浮标滑动
+      fbstart(e) {
+        e.preventDefault()
+        let touch = e.touches[0];
+        this.startX = touch.pageX;
+        this.startY = touch.pageY;
+      },
+      fbmove(e) {
+        e.preventDefault()
+        let touch = e.touches[0];
+        let deltaX = touch.pageX - this.startX;
+        let deltaY = touch.pageY - this.startY;
+        this.startY = touch.pageY
+        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+          this.fbPosition += deltaY
+          let maxTop = document.documentElement.clientHeight - 60
+          if (this.fbPosition <= 0) {
+            this.fbPosition = 0
+          } else if (this.fbPosition>=maxTop) {
+            this.fbPosition = maxTop
+          }
+        }
+      },
+      // 去扫一扫
+      toScan() {
+        wx.scanQRCode({
+          needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+          scanType: ["qrCode","barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+          success: function (res) {
+            var result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+          }
+        });
+      },
       goToMessage(){
         if (localStorage.hasOwnProperty('token')) {
           this.$router.push({path:'/inform/systemM',query:{num:0}})
@@ -209,7 +247,6 @@
           this.$router.push('/login/login2')
         }
       },
-
       //弹屏隐藏
       hidePopAd() {
         sessionStorage.setItem('popAd', '1')
@@ -603,7 +640,7 @@
     position: relative;
   }
   .activeHeaderLeft:after {
-    content: '分类';
+    content: '扫一扫';
   }
   .activeHeaderRight:after {
     content: '消息';
@@ -832,7 +869,7 @@
 
   .adWrapper {
     position: fixed;
-    top: 9.5rem;
+    /*top: 10.8rem;*/
     right: -0.2rem;
     z-index: 101;
   }
@@ -985,7 +1022,7 @@
     max-height: 2.4rem;
     overflow: hidden;
     position: relative;
-    margin: 0.13rem 0;
+    margin: 0 0 .13rem;
   }
   .popAd {
     position: fixed;

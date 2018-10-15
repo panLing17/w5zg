@@ -40,6 +40,7 @@ import Verify from '@/plugIn/verify/index.js'
 
 Vue.router = router
 Vue.use(Notify)
+Vue.use(Verify)
 Vue.use(AdTag)
 Vue.use(Advert)
 Vue.use(scroll)

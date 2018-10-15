@@ -5,7 +5,7 @@
         img(src="./back.png")
       .center
         form(@submit.prevent="onSubmit")
-          input(ref="input", type="search",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
+          input(ref="input", type="text",@click="goInit()", @search="dataReset({clearFilter: true})", @enter="dataReset({clearFilter: true})", :placeholder="placeholder", v-model="query", v-focus="focus")
         img.searchImg(src="./search.png", @click.prevent="dataReset({clearFilter: true})")
         img.cancelImg(src="./cancel.png", v-show="query", @click="cancelQuery")
       .right(@click="dataReset({clearFilter: true})") 搜索
@@ -24,7 +24,7 @@
                   :sortFieldType="sortFieldType",
                   :likesResult="likesResult",
                   :hotResult="hotResult",
-                  @loadMore="search()",
+                  @loadMore="search(1)",
                   @brandSearch="brandSearch",
                   @priceSearch="priceSearch",
                   @priceFilter="priceFilter",
@@ -99,7 +99,7 @@
       }
       //切换focus可以使输入框聚焦
       this.focus = true
-      if (this.$route.query.key) {
+      if (this.$route.query.key != this.query) {
         this.query = this.$route.query.key
         this.dataReset({})
       }
@@ -216,7 +216,7 @@
         return false
       },
       // 调搜索接口
-      search () {
+      search (flag) {
         if (this.query.trim().length===0) {
           return
         }
@@ -247,7 +247,9 @@
           }
         }).then(function(res){
           if (res) {
-            self.$refs.searchInit._getHistory()
+            if (flag!==1) {
+              self.$refs.searchInit._getHistory()
+            }
             self.associativeQuery = []
             self.showResult = true
             if (!res.data.data.rows.length && self.page===1) {

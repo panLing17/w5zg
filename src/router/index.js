@@ -45,6 +45,8 @@ import Inform from '../views/inform/index.js'
 // 常见问题
 import CProblems from '../views/cProblems/index.js'
 
+// 扫毛购
+import Scan from '../views/scan/index.js'
 //新商品详情
 import GoodsDetails from '../views/goodsDetails/goodsDetails'
 //新购物车
@@ -338,6 +340,22 @@ const router = new Router ({
       path: '/goodsDetailed',
       name: '新详情',
       component: GoodsDetails,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/scan/shoppingCart',
+      name: '扫码购购物车',
+      component: Scan.shoppingCart,
+      meta:{
+        keepAlive: true
+      }
+    },
+    {
+      path: '/scan/orderConfirm',
+      name: '扫码购订单确认',
+      component: Scan.orderConfirm,
       meta: {
         keepAlive: true
       }

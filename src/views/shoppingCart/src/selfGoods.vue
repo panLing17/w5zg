@@ -6,7 +6,7 @@
           w-checkbox(v-model="storeItem.checked", @change="selectedChange(storeItem.checked,storeItem.store_name,true)")
           span {{storeItem.store_name}}
         transition-group(tag="div", :name="animate")
-          .goodsBox(v-for="(i,index) in storeItem.shoppingCartVOList", :key="index")
+          .goodsBox(v-for="(i,index) in storeItem.shoppingCartVOList", ref="goodsBox", :key="index", @touchstart="touchstart($event)", @touchmove="touchmove($event)", @touchend="touchend($event, i, index)", @contextmenu.prevent="")
             transition( leave-active-class="animated flipOutX", enter-active-class="animated flipInX", mode="out-in", :duration="{ enter: 600, leave: 400 }")
               .main(v-if="i.editClose", key="spec", @click="goGoodsDetail(i.gspu_id)")
                 .checkbox(@click.stop="")
@@ -54,9 +54,9 @@
                       li(@click="changeStore(storeIndex,index,i)", v-if="i.storage_num>0")
                         img(src="../../../assets/img/shoppingCartChange.png")
                         p 提货门店
-                      li(@click="deleteGoods(i.sc_id, storeIndex, index)")
-                        img(src="../../../assets/img/shoppingCartDelete.png")
-                        p 删除
+            .maskBox(v-show="i.maskShow", @click="i.maskShow=false")
+              .collection(@click="goCollection(i, storeIndex, index)") 移入<br/>收藏夹
+              .delete(@click="deleteGoods(i.sc_id, storeIndex, index)") 删除
         .bottom
           .left <img src="../../../assets/img/location.png"/>{{storeItem.store_address}}
           .right
@@ -112,6 +112,32 @@
       }
     },
     methods: {
+      // 长按操作
+      touchstart(e) {
+        this.longClick=0;
+        this.timeOutEvent = setTimeout(()=>{
+          //此处为长按事件-----在此显示遮罩层及删除按钮
+          this.longClick=1;//假如长按，则设置为1
+        },500);
+        let touch = e.touches[0];
+        this.touchY = touch.clientY;
+      },
+      touchmove(e) {
+        clearTimeout(this.timeOutEvent);
+        this.timeOutEvent = 0;
+        let touch = e.touches[0]
+        if(Math.abs(touch.clientY - this.touchY) < 10){
+          e.preventDefault();
+        }
+      },
+      touchend(e, item) {
+        clearTimeout(this.timeOutEvent);
+        if(this.timeOutEvent!=0 && this.longClick==1){
+          e.preventDefault()
+          item.maskShow = true
+        }
+        return false;
+      },
       countPlusError() {
         this.$message.warning('库存不足')
       },
@@ -277,35 +303,57 @@
 
         })
       },
+      // 移入收藏夹
+      goCollection(item, storeIndex, index) {
+        item.maskShow = false
+        let self = this
+        self.$ajax({
+          method: 'post',
+          url:self.$apiGoods +  'gcFavoritesInfo/saveGcFavorite',
+          params: {
+            gspuId: item.gspu_id
+          },
+        }).then(function (response) {
+          if (response) {
+            self.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
+            if (self.goodsList[storeIndex].shoppingCartVOList.length<1) {
+              self.goodsList.splice(storeIndex,1)
+            }
+            self.$notify({
+              content: '移入收藏夹成功',
+              bottom: 3.2
+            })
+            // 移完删除
+            self.delAjax(item.sc_id)
+          }
+        })
+      },
+      delAjax(id) {
+        let self = this
+        self.$ajax({
+          method: 'delete',
+          url: self.$apiApp + 'shoppingCart/shoppingCart/delete',
+          params: {
+            scIdArray: id
+          },
+        }).then(function (response) {
+          self.$emit('clear')
+        })
+      },
       deleteGoods(id, storeIndex, index) {
-        this.$confirm({
-          title: '删除购物商品',
-          message: '确定要删除么',
-          confirm: () => {
+        this.$verify({
+          content: '确认删除所选商品吗？',
+          leftText: '取消',
+          rightText: '删除',
+          rightFn: () => {
             this.animateName = 'fadeOut'
             this.goodsList[storeIndex].shoppingCartVOList.splice(index, 1)
             if (this.goodsList[storeIndex].shoppingCartVOList.length<1) {
               this.goodsList.splice(storeIndex,1)
             }
-            let self = this
-            self.$ajax({
-              method: 'delete',
-              url: self.$apiApp + 'shoppingCart/shoppingCart/delete',
-              params: {
-                scIdArray: id
-              },
-            }).then(function (response) {
-              self.$emit('clear')
-              // let goodsNum = self.$store.state.shoppingCartGoodsNum
-              // goodsNum.carryNum-=1
-              // self.$store.commit('shoppingCartGoodsNumChange',goodsNum)
-            })
-          },
-          noConfirm: () => {
-
+            this.delAjax(id)
           }
         })
-
       }
     }
   }
@@ -336,8 +384,9 @@
 
   .goodsBox {
     background-color: white;
-    margin-top: .1rem;
+    /*margin-top: .1rem;*/
     padding: 0 .2rem;
+    position: relative;
   }
 
   .main {
@@ -542,7 +591,14 @@
     justify-content: space-between;
   }
   .moreRight {
-    position: relative;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: .2rem;
   }
   .bottomOperation> .more>.moreRight:hover .moreOperation {
     display: block;
@@ -553,8 +609,7 @@
     padding: 1px .2rem;
   }
   .bottomOperation> .more> .moreRight>img{
-    height: .4rem;
-    margin-right: .4rem;
+    width: .64rem;
   }
   .bottomOperation> .more .moreRight .moreOperation {
     display: none;
@@ -628,5 +683,36 @@
     /* .slide-fade-leave-active for below version 2.1.8 */
   {
     opacity: 0;
+  }
+  .maskBox {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.5);
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1.7rem;
+    align-items: center;
+  }
+  .maskBox .collection, .maskBox .delete {
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 50%;
+    font-size: .42rem;
+    text-align: center;
+  }
+  .maskBox .collection {
+    background-color: #f70057;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .maskBox .delete {
+    line-height: 2.1rem;
+    background-color: #ececec;
+    color: #666;
   }
 </style>

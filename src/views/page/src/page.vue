@@ -263,6 +263,7 @@
     color: rgb(244,0,87) !important;
   }
   .wrapPage{
+    background-color: #fff;
     /*width: 100%;
     height: 100vh;*/
     /*overflow: hidden;*/
