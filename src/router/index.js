@@ -1031,7 +1031,10 @@ router.beforeEach ((to, from, next) => {
   // 购物车及我的页面权限处理
   if (to.name === '我的' || to.name === '购物车') {
     if (!localStorage.hasOwnProperty('token')) {
-      Message.warning('请先登录')
+      Vue.notify({
+        content: '请先登录',
+        bottom: 3
+      })
       next({path:'/login'})
     } else {
       next()

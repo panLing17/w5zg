@@ -205,12 +205,13 @@
         let a = this.cashSwitch?this.ticketData.netCard:0
         let b = this.ticketSwitch?this.ticketData.commTicket:0
         let f = 0
-        if (this.confirmData.from===0) {
+        if (this.confirmData.from===0 && this.confirmData.shippingMethods===0) {
           if (typeof this.data.freight !== 'number') {
             return
           }
           f = this.data.freight
-        } else {
+        }
+        if(this.confirmData.from===1 && this.confirmData.shippingMethods===0){
           if (typeof this.data.commList !== 'object') {
             return
           }
