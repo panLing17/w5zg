@@ -172,7 +172,7 @@
       next()
     },
     mounted () {
-      this.$mescrollInt('myMescroll', this.upCallback, () => {
+      this.$mescrollInt('myMescroll', this.upCallback,  () => {
         this.position.forEach((now) => {
           if (now.path === this.$route.path) {
             this.mescroll.scrollTo(now.y, 0)
@@ -183,7 +183,7 @@
           path: this.$route.path,
           y: obj.preScrollY
         })
-      })
+      },this.downCallback, true)
       this.reachGoodsNumCheck() // 到货通知数量
       this.collectionNumCheck() // 收藏数量
       this.informNumCheck() // 消息通知数量
@@ -221,7 +221,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiMember + '/ucMessage/v2/queryMessageNum',
+          url: self.$apiMember + 'ucMessage/v2/queryMessageNum',
           params: {
           }
         }).then(function (res) {
@@ -233,7 +233,7 @@
         let self = this
         self.$ajax({
           method: 'post',
-          url: self.$apiMember + '/ucMessage/v2/queryMemberMessageNum',
+          url: self.$apiMember + 'ucMessage/v2/queryMemberMessageNum',
           params: {
             msType: 802
           }
@@ -362,6 +362,18 @@
       },
       routergoSet: function () {
         this.$router.push({name: '我的设置', query: {routeParams: this.name}})
+      },
+      downCallback(){
+        this.reachGoodsNumCheck() // 到货通知数量
+        this.collectionNumCheck() // 收藏数量
+        this.informNumCheck() // 消息通知数量
+        this.getUserData()
+        this.getFootmarkNum()
+        // 切换动画HACK
+        this.animateHack()
+        // 控制升级会员图片的切换
+        this.picShow()
+        this.mescroll.resetUpScroll()
       },
       upCallback: function (page) {
         let self = this

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import image from '../assets/img/top@2x.png'
 let load = require('../assets/img/downLa.png')
 let loadTop = require('../assets/img/loadTop@2x.png')
-Vue.prototype.$mescrollInt = function (id,upFun,init,scrollWatch,downFun) {
+Vue.prototype.$mescrollInt = function (id,upFun,init,scrollWatch,downFun,downRe) {
   //创建MeScroll对象,down可以不用配置,因为内部已默认开启下拉刷新,重置列表数据为第一页
   //解析: 下拉回调默认调用mescroll.resetUpScroll(); 而resetUpScroll会将page.num=1,再执行up.callback,从而实现刷新列表数据为第一页;
   let self = this;
@@ -54,7 +54,9 @@ Vue.prototype.$mescrollInt = function (id,upFun,init,scrollWatch,downFun) {
       onScroll: scrollWatch
     },
     down: {
-      use: true,
+      use: downRe?true:false,
+      // auto: false,
+      callback: downFun, //下拉回调
       warpClass: "mescroll-downwarp", //容器,装载布局内容,参见mescroll.css
       resetClass: "mescroll-downwarp-reset", //高度重置的动画,参见mescroll.css
       htmlContent: '<p class="downwarp-progress1"><img class="loadTop" src="'+loadTop+'"></p><p class="wrapLoad"><img class="loadC" src="'+load+'"><span class="downwarp-tip">下拉刷新</span></p>', //布局内容

@@ -19,7 +19,7 @@
             .rightB
               .text(v-if="item.ms_type === '802'") 您关注的【<span>{{item.ms_title.toString().substring(0,29) + '...'}}</span>】已到货，手慢无哦！
               .text(v-if="item.ms_type !== '802'") {{item.ms_title}}
-              .attr {{item.spec_value1}};{{item.spec_value2}}
+              .attr {{item.spec_value1}}<span>{{item.spec_value2?';':''}}</span>{{item.spec_value2}}
               .price
                 .leftP <span>实付价:</span><strong>{{item.new_direct_supply_price | price-filter}}</strong>
                 .rightP(v-if="item.ms_type !== '802'") 已降价{{item.price_difference}}元,速抢!
@@ -97,9 +97,13 @@
             path: this.$route.path,
             y: obj.preScrollY
           })
-        })
+        },this.downCallback, true)
       },
       methods:{
+        downCallback(){
+          this.judgeType()
+          this.mescroll.resetUpScroll()
+        },
         judgeType(){
           if (this.$route.query.num == 0){
             this.mstype = ''
@@ -201,7 +205,7 @@
             console.log(response.data.data.rows)
             successCallback&&successCallback(response.data.data.rows)//成功回调
           })
-        },
+        }
       }
     }
 </script>

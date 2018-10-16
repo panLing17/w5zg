@@ -85,6 +85,7 @@
 
   export default {
     name: 'home',
+    inject: ['reload'],
     data() {
       return {
         // 整页的固定定位，如果一直有的话会影响页面切换效果
@@ -174,7 +175,7 @@
           path: this.$route.path,
           y: obj.preScrollY
         })
-      })
+      },this.downCallback, true)
 
       // 获取所有活动
       this.getAllActivity()
@@ -378,6 +379,17 @@
         setTimeout(function () {
           self.positionFixed = true
         }, 0)
+      },
+      downCallback(){
+        // 获取所有活动
+        this.getAllActivity()
+        // 动画hack
+        this.animateHack()
+        //判断显示当前的城市
+        this.judgeCity()
+        this.informNumCheck()
+        this._getDefaultWord()
+        this.mescroll.resetUpScroll()
       },
       upCallback: function (page) {
         let self = this;

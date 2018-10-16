@@ -95,11 +95,15 @@
           y: obj.preScrollY
         })
         this.quchuStyle()
-      })
+      },this.downCallback,true)
 
 
     },
     methods: {
+      downCallback(){
+        this.getLists()
+        this.mescroll.resetUpScroll()
+      },
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll(isLock)
@@ -279,6 +283,7 @@
       zhengli() {
         this.zheng = !this.zheng
         if (this.zheng != 0) {
+          this.mescroll.lockDownScroll(true)
           this.zhengSFlag = true
           this.contLists.forEach((i) => {
             if (i.gi_status === '221') {
@@ -287,6 +292,7 @@
           })
           this.selectedAll = false
         } else {
+          this.mescroll.lockDownScroll(false)
           this.zhengSFlag = false
         }
         // this.$nextTick(()=>{
