@@ -3,7 +3,7 @@
     // 头部-------------------------------------------------------------------------------------
     .header
       .title
-        .left
+        .left(@click="$router.go(-1)")
           img(src="./back.png")
         .center 购物车
       .nav
@@ -166,7 +166,7 @@
     top 0
     left 0
     width 100%
-    z-index 40
+    z-index 9999
     .title {
       height $height-header
       background-color #f70057
@@ -174,6 +174,9 @@
       .left {
         padding .36rem .4rem
         font-size 0
+        position absolute
+        top 0
+        left 0
         img {
           width .58rem
         }
@@ -182,10 +185,9 @@
         font-size .48rem
         color #fff
         font-weight 500
-        position absolute
-        top 50%
-        left 50%
-        transform translate(-50%, -50%)
+        width 100%
+        line-height $height-header
+        text-align center
       }
     }
     .nav {
@@ -220,6 +222,7 @@
   }
   .contentWrapper {
     margin-top 2.26rem
+    background-color #fff
   }
   .goodsWrapper {
     .title {
@@ -240,6 +243,7 @@
     height 1.44rem
     display flex
     border-top 1px solid #d7d7d7
+    z-index 2
     .white {
       flex 1
       background-color #fff

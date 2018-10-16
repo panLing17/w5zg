@@ -1,8 +1,8 @@
 <template lang="pug">
-  .mescroll#goodsMescroll
+  .mescroll#goodsMescroll(v-loading="loadingShow")
     // 导航-------------------------------------------------------------------------------------------
     .headerWrapper(:class="{active: topActive}")
-      span(v-show="topActive") 商品详情
+      .text(v-show="topActive") 商品详情
       .back(@click="goBack")
         img(:src="topActive?require('./back3.png'):require('./back@2x.png')")
     // 轮播图-------------------------------------------------------------------------------------------
@@ -186,6 +186,7 @@
     name: "goodsDetails",
     data () {
       return {
+        loadingShow: true,
         topActive: false, // 头部导航标志，下滑时改变
         banner: [], // 轮播图
         spuId: '',
@@ -285,8 +286,13 @@
               if(self.goodsData.spec_group.length===1 && self.goodsData.spec_group[0].checked>-1) {
                 self.$refs.selectSize.getSku()
               }
+              if (self.informGoods) {
+                self.setInformGoods(null)
+                self.$refs.selectSize.getSku()
+              }
             })
             self.shareGoods()
+            self.loadingShow = false
           }
         })
       },
@@ -382,8 +388,16 @@
         }).then(function(res){
           if (res) {
             if (self.isFavorite.flag==='Y') {
+              self.$notify({
+                content: '取消收藏成功',
+                bottom: 1.8
+              })
               self.$set(self.isFavorite, 'flag', 'N')
             } else {
+              self.$notify({
+                content: '收藏成功',
+                bottom: 1.8
+              })
               self.isFavorite = {
                 fiId: res.data.data.fiId,
                 flag: 'Y'
@@ -455,9 +469,7 @@
       // 加入购物车按钮点击
       add() {
         this.fromType = 1
-        this.btnCommon(() => {
-          this.addShoppingCart()
-        })
+        this.btnCommon()
       },
       // 加入购物车接口
       addShoppingCart(callback) {
@@ -494,7 +506,7 @@
       // 立即购买按钮点击
       buy() {
         this.fromType = 3
-        this.btnCommon(this.saveBuyData)
+        this.btnCommon()
       },
       // 立即购买存数据
       saveBuyData() {
@@ -519,30 +531,27 @@
           this.$router.push('/login')
           return
         }
-        if (!this.skuData.gsku_id) {
-          this.$refs.selectSize.show()
-          this.$notify({
-            content: '请选择规格',
-            bottom: 1.8
-          })
-          return
-        }
-        if (this.shippingMethods===0) {
-          this.$refs.selectSize.show()
-          this.$notify({
-            content: '请选择配送方式',
-            bottom: 1.8
-          })
-          return
-        }
-        if (this.shippingMethods===1 && !this.store.bs_id) {
-          this.$refs.selectSize.show()
-          this.$notify({
-            content: '请选择自提门店',
-            bottom: 1.8
-          })
-          return
-        }
+        this.$refs.selectSize.show()
+        // if (!this.skuData.gsku_id) {
+        //   this.$refs.selectSize.show()
+        //   this.$notify({
+        //     content: '请选择规格',
+        //     bottom: 1.8
+        //   })
+        //   return
+        // }
+        // if (this.shippingMethods===0) {
+        //   this.$refs.selectSize.show()
+        //   return
+        // }
+        // if (this.shippingMethods===1 && !this.store.bs_id) {
+        //   this.$refs.selectSize.show()
+        //   this.$notify({
+        //     content: '请选择自提门店',
+        //     bottom: 1.8
+        //   })
+        //   return
+        // }
         callback && callback()
       },
       // 点击到货通知按钮
@@ -701,7 +710,8 @@
       },
       ...mapMutations({
         setConfirmData: 'setConfirmData',
-        setShoppingCartCount: 'shoppingCartGoodsNumChange'
+        setShoppingCartCount: 'shoppingCartGoodsNumChange',
+        setInformGoods: 'setInformGoods'
       })
     },
     components: {
@@ -727,6 +737,7 @@
     bottom 0
     left 0
     height auto
+    background-color #fff
   }
 
   .headerWrapper {
@@ -739,10 +750,7 @@
     &.active {
       background-color #fff
       border-bottom 1px solid #d7d7d7
-      span {
-        position absolute
-        top 0
-        left 0
+      .text {
         width 100%
         text-align center
         line-height 1.32rem
@@ -751,11 +759,14 @@
       }
     }
     .back {
-     font-size 0
-     padding .26rem .4rem
-     img {
-       width .8rem
-     }
+      font-size 0
+      padding .26rem .4rem
+      position absolute
+      top 0
+      left 0
+      img {
+        width .8rem
+      }
     }
   }
 

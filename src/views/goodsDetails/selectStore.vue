@@ -106,6 +106,7 @@
     width 100%
     height 100vh
     z-index 400
+    background-color rgba(0,0,0,.1)
     &.background {
       background-color rgba(0,0,0,.5)
     }

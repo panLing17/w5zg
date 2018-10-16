@@ -82,7 +82,7 @@
       }
       this._getDefaultWord()
       this.pushHistory = true
-      window.history.pushState(null, null, window.location.href)
+      // window.history.pushState(null, null, window.location.href)
     },
     deactivated() {
       this.focus = false
@@ -95,11 +95,11 @@
       }
       //给window历史记录里增加一条使安卓的返回键可以用
       if (!this.pushHistory) {
-        window.history.pushState(null, null, window.location.href)
+        // window.history.pushState(null, null, window.location.href)
       }
       //切换focus可以使输入框聚焦
       this.focus = true
-      if (this.$route.query.key != this.query) {
+      if (typeof this.$route.query.key !== 'undefined' && this.$route.query.key != this.query) {
         this.query = this.$route.query.key
         this.dataReset({})
       }

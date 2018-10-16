@@ -1,5 +1,5 @@
 <template lang="pug">
-  .self
+  .self(v-loading="loadingShow")
     no-data(v-show="isEmpty")
     .listWrapper(v-show="!isEmpty")
       .commList
@@ -18,31 +18,31 @@
                          @touchend="touchend($event, index, i)",
                          @contextmenu.prevent=""
                           )
-                  .left(@click.stop="goodsCheckedChange(goods, index)")
-                    img(src="./gou.png", v-show="goods.checked==='011'")
+                  .left(@click.stop="goodsCheckedChange(goods, index)", @contextmenu.prevent="")
+                    img(src="./gou.png", v-show="goods.checked==='011'", @contextmenu.prevent="")
                     .noChecked(v-show="goods.checked==='012'")
                   .right
-                    .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
-                      .mask(v-if="goods.goods_num>goods.storage_num") 库存不足
+                    .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})", @contextmenu.prevent="")
+                      .mask(v-if="goods.goods_num>goods.storage_num", @contextmenu.prevent="") 库存不足
                       img(:src="goods.logo | img-filter")
                     .info
-                      .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
+                      .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})", @contextmenu.prevent="") {{goods.gi_name}}
                       .tool
-                        .detail(@click.stop="specChange(goods, index, i)")
+                        .detail(@click.stop="specChange(goods, index, i)", @contextmenu.prevent="")
                           ul
                             li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                         .countWrapper
-                          .minus(@click.stop="minus(goods)")
+                          .minus(@click.stop="minus(goods)", @contextmenu.prevent="")
                             img(src="./minus.png")
-                          .count {{goods.goods_num}}
-                          .add(@click.stop="add(goods)")
+                          .count(@contextmenu.prevent="") {{goods.goods_num}}
+                          .add(@click.stop="add(goods)", @contextmenu.prevent="")
                             img(src="./add.png")
-                      .priceWrapper
+                      .priceWrapper(@contextmenu.prevent="")
                         .leftPrice
                           span.desc 实付价:
                           span.price {{goods.direct_supply_price | price-filter}}
                         .rightPrice 专柜价:{{goods.counter_price | price-filter}}
-                      .toolbar
+                      .toolbar(@contextmenu.prevent="")
                         .cut(v-show="goods.difference_price>0") 比加入时降{{goods.difference_price}}元
                         .btn
                           img(src="./btn.png")
@@ -69,11 +69,11 @@
             li(v-for="(item, i) in data.failure")
               ul.itemWrapper
                 li.item(v-for="(goods, index) in item.shoppingCartVOList")
-                  .left
+                  .left(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
                     .mask 失效
                     img(:src="goods.logo | img-filter")
                   .right
-                    .name {{goods.gi_name}}
+                    .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
                     .size
                       ul
                         li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
@@ -104,6 +104,7 @@
     mixins: [shoppingCart],
     data() {
       return {
+        loadingShow:true,
         data: {},
         specList: [], // 商品规格
         resetSpec: {}, // 更改规格时初始化的参数
@@ -179,6 +180,7 @@
             } else {
               self.$emit('show-change', true)
             }
+            self.loadingShow = false
           }
         })
       },
@@ -458,7 +460,7 @@
         this.data.commList.forEach(item=>{
           item.shoppingCartVOList.forEach(goods=>{
             if (goods.checked==='011') {
-              arr.push(item.sc_id)
+              arr.push(goods.sc_id)
               selectedCount++
             }
           })
@@ -520,6 +522,10 @@
         this.setConfirmData(temp)
         this.$router.push('/orderConfirm')
       },
+      // 数量改变后动作
+      countCallback() {
+        this.queryCartMoneyAjax('168')
+      },
       ...mapMutations({
         setShoppingCartCount: 'shoppingCartGoodsNumChange',
         setConfirmData: 'setConfirmData'
@@ -537,6 +543,14 @@
 <style scoped lang="stylus">
   img {
     pointer-events none
+  }
+  * {
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   .wrapper {
     background-color #fff
@@ -617,6 +631,7 @@
                   font-size .32rem
                   line-height 2.4rem
                   text-align center
+                  z-index 1
                 }
                 img {
                   width 100%
@@ -865,6 +880,7 @@
             font-weight 400
             text-align center
             line-height 2.4rem
+            z-index 1
           }
         }
         .right {

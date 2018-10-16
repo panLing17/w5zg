@@ -1,36 +1,36 @@
 <template lang="pug">
-  .express
+  .express(v-loading="loadingShow")
     no-data(v-show="isEmpty")
     .listWrapper(v-show="!isEmpty")
       ul.goodsWrapper
         li.goods(v-for="(goods, i) in data.commList", @touchstart="touchstart($event)", @touchmove="touchmove($event)", @touchend="touchend($event, i)", @contextmenu.prevent="")
-          .left(@click.stop="goodsChange(goods)")
+          .left(@click="goodsChange(goods)", @contextmenu.prevent="")
             img(src="./gou.png", v-show="goods.checked==='011'")
             .noChecked(v-show="goods.checked==='012'")
           .right
-            .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
-              .mask(v-if="goods.goods_num>goods.storage_num") 库存不足
-              img(:src="goods.logo | img-filter")
+            .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})", @contextmenu.prevent="")
+              .mask(v-if="goods.storage_num===0", @contextmenu.prevent="") 库存不足
+              img(:src="goods.logo | img-filter", @contextmenu.prevent="")
             .info
-              .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
+              .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})", @contextmenu.prevent="") {{goods.gi_name}}
               .tool
-                .detail(@click.stop="specChange(goods, i)")
+                .detail(@click.stop="specChange(goods, i)", @contextmenu.prevent="")
                   ul
                     li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                 .countWrapper
-                  .minus(@click.stop="minus(goods)")
+                  .minus(@click.stop="minus(goods)", @contextmenu.prevent="")
                     img(src="./minus.png")
-                  .count {{goods.goods_num}}
-                  .add(@click.stop="add(goods)")
+                  .count(@contextmenu.prevent="") {{goods.goods_num}}
+                  .add(@click.stop="add(goods)", @contextmenu.prevent="")
                     img(src="./add.png")
-              .priceWrapper
+              .priceWrapper(@contextmenu.prevent="")
                 .leftPrice
                   span.desc 实付价:
                   span.price {{goods.direct_supply_price | price-filter}}
                 .rightPrice 专柜价:{{goods.counter_price | price-filter}}
-              .toolbar(@click.stop="")
+              .toolbar(@click.stop="", @contextmenu.prevent="")
                 .cut(v-show="goods.difference_price>0") 比加入时降{{goods.difference_price}}元
-                .btn
+                .btn(v-show="goods.carry_type===1", @click.stop.prevent="", @touchstart.stop="", @touchmove.stop="", @touchend.stop="")
                   img(src="./btn.png")
                   .pop
                     .sanjiao
@@ -47,11 +47,11 @@
         .content
           ul.itemWrapper
             li.item(v-for="(goods, index) in data.failure")
-              .left
+              .left(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
                 .mask 失效
                 img(:src="goods.logo | img-filter")
               .right
-                .name {{goods.gi_name}}
+                .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
                 .size
                   ul
                     li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
@@ -84,6 +84,7 @@
     mixins: [shoppingCart],
     data() {
       return {
+        loadingShow: true,
         data: {}, // 快递配送购物车合集
         specList: [], // 商品规格
         resetSpec: {}, // 更改规格时初始化的参数
@@ -151,6 +152,7 @@
             } else {
               self.$emit('show-change', true)
             }
+            self.loadingShow = false
           }
         })
       },
@@ -408,6 +410,10 @@
         this.setConfirmData(temp)
         this.$router.push('/orderConfirm')
       },
+      // 数量改变后动作
+      countCallback() {
+        this.queryCartMoneyAjax('167')
+      },
       ...mapMutations({
         setShoppingCartCount: 'shoppingCartGoodsNumChange',
         setConfirmData: 'setConfirmData'
@@ -424,6 +430,17 @@
 </script>
 
 <style scoped lang="stylus">
+  img {
+    pointer-events none
+  }
+  * {
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+  }
   .listWrapper {
     border-top .26rem solid #f3f3f3
   }
@@ -473,6 +490,7 @@
           font-size .32rem
           line-height 2.4rem
           text-align center
+          z-index 1
         }
         img {
           width 100%
@@ -571,9 +589,6 @@
           justify-content space-between
           position relative
           height .58rem
-          &:hover .btn .pop {
-            display block
-          }
           .cut {
             line-height .45rem
             padding 0 .13rem
@@ -588,6 +603,11 @@
             top 0
             font-size 0
             align-self flex-end
+            width 30%
+            text-align right
+            &:hover .pop {
+              display block
+            }
             img {
               width .58rem
             }
@@ -658,6 +678,7 @@
     justify-content: space-between;
     padding: 0 1.7rem;
     align-items: center;
+    z-index: 3;
   }
   .maskBox .collection, .maskBox .delete {
     width: 2.1rem;
@@ -730,6 +751,7 @@
             font-weight 400
             text-align center
             line-height 2.4rem
+            z-index 1
           }
         }
         .right {

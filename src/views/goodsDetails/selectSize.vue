@@ -189,7 +189,7 @@
             params: params
           }).then(function(res){
             if (res) {
-              if (typeof res.data.data !== 'undefined') {
+              if (typeof res.data.data.gsku_id !== 'undefined') {
                 self.storageNum = res.data.data.storage_num
                 // 切换底部按钮
                 if (self.storageNum===0 && self.fromType!==2) {
@@ -297,6 +297,7 @@
       },
       // 到货通知按钮点击
       saveReachGoods() {
+        this.selectSizeShow = false
         this.$emit('save-goods')
       },
       // 预约按钮点击
@@ -612,7 +613,7 @@
       }
     }
     .bottom {
-      position fixed
+      position absolute
       bottom 0
       left 0
       width 100%

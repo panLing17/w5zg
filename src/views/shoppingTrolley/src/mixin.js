@@ -110,13 +110,16 @@ export const shoppingCart = {
       })
     },
     // 更新数量接口
-    updateCountAjax(params) {
+    updateCountAjax(params, callback) {
       let self = this
       self.$ajax({
         method: 'post',
         url: self.$apiGoods + 'shoppingCart/v2/shoppingCart',
         params: params,
       }).then(function (response) {
+        if (response) {
+          callback && callback()
+        }
       })
     },
     // 获取门店接口
@@ -204,11 +207,11 @@ export const shoppingCart = {
         gskuId: goods.gsku_id,
         num: goods.goods_num
       }
-      this.updateCountAjax(params)
+      this.updateCountAjax(params, this.countCallback)
     },
     // 公共数量减
     minus(goods) {
-      if (goods.goods_num===1) {
+      if (goods.goods_num<=1) {
         return
       }
       goods.goods_num--
@@ -217,7 +220,7 @@ export const shoppingCart = {
         gskuId: goods.gsku_id,
         num: goods.goods_num
       }
-      this.updateCountAjax(params)
+      this.updateCountAjax(params, this.countCallback)
     }
   }
 }

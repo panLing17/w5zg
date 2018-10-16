@@ -19,17 +19,17 @@
         .addressWrapper(v-show="confirmData.shippingMethods===1")
           .topItem
             .desc 提货人：
-            input.text(v-model="selfForm.name")
+            input.text(v-model="selfForm.name", placeholder="请输入提货人姓名")
           .bottomItem
             .desc 手机号：
-            input.text(v-model="selfForm.phone")
+            input.text(v-model="selfForm.phone", placeholder="请输入11位手机号码")
         .goodsList
           ul.listWrapper(v-if="confirmData.from===0")
             li.item
               .storeName {{data.shop_Name}}
               .itemWrapper
                 .left
-                  img(src="data.logo | img-filter")
+                  img(:src="data.logo | img-filter")
                 .right
                   .name {{data.gi_name}}
                   .size
@@ -70,7 +70,7 @@
             .right
               span 可抵扣{{ticketData.commTicket}}元
               toggle-button(v-model="ticketSwitch", :optional="ticketOptional")
-        .discount(v-if="ticketData.backCommTicket>0") 确认收货后，本单可返{{ticketData.backCommTicket}}元通用券
+        .discount(v-if="!cashSwitch && ticketData.backCommTicket>0") 确认收货后，本单可返{{cashSwitch?ticketData.backCommTicket:0}}元通用券
     .bottom
       .left
         span 实付：
@@ -190,10 +190,22 @@
       getTotal() {
         if (this.confirmData.from===0) {
           this.totalCount = this.confirmData.goodsCount
-          this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount)
+          if (this.confirmData.shippingMethods===0) {
+            this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount) + this.data.freight
+          } else {
+            this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount)
+          }
         } else {
           this.totalCount = this.data.totalNum
-          this.totalPrice = this.data.totalPrice
+          if (this.confirmData.shippingMethods===0) {
+            let t = 0
+            this.data.commList.forEach(item=>{
+              t+=item.freight
+            })
+            this.totalPrice = this.data.totalPrice + t
+          } else {
+            this.totalPrice = this.data.totalPrice
+          }
         }
         this.computedPrice()
       },
@@ -204,26 +216,27 @@
         }
         let a = this.cashSwitch?this.ticketData.netCard:0
         let b = this.ticketSwitch?this.ticketData.commTicket:0
-        let f = 0
-        if (this.confirmData.from===0 && this.confirmData.shippingMethods===0) {
-          if (typeof this.data.freight !== 'number') {
-            return
-          }
-          f = this.data.freight
-        }
-        if(this.confirmData.from===1 && this.confirmData.shippingMethods===0){
-          if (typeof this.data.commList !== 'object') {
-            return
-          }
-          this.data.commList.forEach(item=>{
-            f+=item.freight
-          })
-        }
-        if (this.confirmData.shippingMethods === 1) {
-          this.directPrice = this.totalPrice - a - b
-        } else {
-          this.directPrice = this.totalPrice - a - b + f
-        }
+        // let f = 0
+        // if (this.confirmData.from===0 && this.confirmData.shippingMethods===0) {
+        //   if (typeof this.data.freight !== 'number') {
+        //     return
+        //   }
+        //   f = this.data.freight
+        // }
+        // if(this.confirmData.from===1 && this.confirmData.shippingMethods===0){
+        //   if (typeof this.data.commList !== 'object') {
+        //     return
+        //   }
+        //   // this.data.commList.forEach(item=>{
+        //   //   f+=item.freight
+        //   // })
+        // }
+        // if (this.confirmData.shippingMethods === 1) {
+        //   this.directPrice = this.totalPrice - a - b
+        // } else {
+        //   this.directPrice = this.totalPrice - a - b
+        // }
+        this.directPrice = this.totalPrice - a - b
       },
       // 卡券
       getTicket() {
@@ -262,11 +275,8 @@
               self.cashSwitch=false
             }
 
-            if (self.ticketData.commTicket>0) {
-              self.ticketSwitch=true
-            } else {
+            if (self.ticketData.commTicket<=0) {
               self.ticketOptional = false
-              self.ticketSwitch = false
             }
             self.computedPrice()
           }
@@ -363,7 +373,7 @@
             this.checkGoodsData.forEach(item=>{
               if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
                 for(let i=arr.length-1;i>=0;i--) {
-                  if (item.sc_id===arr[i].sc_id) {
+                  if (item.sc_id===arr[i]) {
                     arr.splice(i, 1)
                   }
                 }
@@ -417,6 +427,9 @@
 </script>
 
 <style scoped lang="stylus">
+  input::-webkit-input-placeholder{
+    color:#999;
+  }
   .orderConfirm {
     position absolute
     top 0
