@@ -209,7 +209,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteNum',
+          url: self.$apiGoods + 'gcFavoritesInfo/v2/queryFavoriteNum',
           params: {
           }
         }).then(function (res) {

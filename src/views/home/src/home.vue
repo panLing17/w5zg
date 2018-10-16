@@ -85,7 +85,6 @@
 
   export default {
     name: 'home',
-    inject: ['reload'],
     data() {
       return {
         // 整页的固定定位，如果一直有的话会影响页面切换效果

@@ -164,7 +164,7 @@
         let self = this
         self.$ajax({
           method: 'delete',
-          url: self.$apiGoods + 'gcFavoritesInfo/cancelFavoriteList',
+          url: self.$apiGoods + 'gcFavoritesInfo/v2/cancelFavoriteList',
           params: {
             fiIdArray: b
           }
@@ -201,7 +201,7 @@
           let self = this
           self.$ajax({
             method: 'delete',
-            url: self.$apiGoods + 'gcFavoritesInfo/cancelFavoriteList',
+            url: self.$apiGoods + 'gcFavoritesInfo/v2/cancelFavoriteList',
             params: {
               fiIdArray: b
             }
@@ -219,7 +219,7 @@
         let self = this
         self.$ajax({
           method: 'get',
-          url: self.$apiGoods + 'gcFavoritesInfo/queryFavoriteList',
+          url: self.$apiGoods + 'gcFavoritesInfo/v2/queryFavoriteList',
           params: {}
         }).then(function (res) {
           for (let i = 0; i < res.data.data.length; i++) {
