@@ -378,12 +378,12 @@
           params = {
             fiId: this.isFavorite.fiId
           }
-          url = 'gcFavoritesInfo/cancelFavorite'
+          url = 'gcdetails/cancelFavorite'
         } else {
           params = {
             gspuId: this.spuId
           }
-          url = 'gcFavoritesInfo/saveGcFavorite'
+          url = 'gcdetails/saveGcFavorite'
         }
         let self =this
         self.$ajax({

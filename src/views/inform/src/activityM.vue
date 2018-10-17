@@ -55,9 +55,12 @@
             path: this.$route.path,
             y: obj.preScrollY
           })
-        })
+        },this.downCallback,true)
       },
       methods:{
+        downCallback(){
+          this.mescroll.resetUpScroll()
+        },
         // 锁定或者解锁上拉加载
         lockUpDown (isLock) {
           this.mescroll.lockUpScroll(isLock)

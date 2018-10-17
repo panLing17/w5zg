@@ -191,7 +191,7 @@
           })
         }, (obj) => {
 
-        })
+        },this.downCallback,true)
       },
       scrollToTop () {
         this.scroll = true
@@ -259,6 +259,20 @@
       // 锁定或者解锁上拉加载
       lockUpDown (isLock) {
         this.mescroll.lockUpScroll( isLock );
+      },
+      downCallback(){
+        this.getUserDat()
+        // 动画hack
+        this.animateHack()
+        // 获取商品数量
+        this.getGoodsNum()
+        // loading加载
+        let s = 300  // 基础秒数
+        let math = Math.random() * 500 // 随机秒数
+        setTimeout(() => {
+          this.loading = false
+        }, s + math)
+        this.mescroll.resetUpScroll()
       },
       upCallback: function (page) {
         let self = this;

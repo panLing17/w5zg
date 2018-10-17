@@ -481,7 +481,7 @@
             let self = this
             self.$ajax({
               method: 'post',
-              url: self.$apiGoods + 'gcFavoritesInfo/saveGcFavorite',
+              url: self.$apiGoods + 'gcdetails/saveGcFavorite',
               params: {
                 gspuId: self.$route.query.id
               }
@@ -504,7 +504,7 @@
           let self = this
           self.$ajax({
             method: 'post',
-            url: self.$apiGoods + 'gcFavoritesInfo/cancelFavorite',
+            url: self.$apiGoods + 'gcdetails/cancelFavorite',
             params: {
               fiId: self.fiIds
             }
@@ -524,7 +524,7 @@
           let self = this
           self.$ajax({
             method: 'get',
-            url: self.$apiGoods + 'gcFavoritesInfo/queryFavorite',
+            url: self.$apiGoods + 'gcdetails/queryFavorite',
             params: {
               gspuId: self.$route.query.id
             }
