@@ -44,14 +44,15 @@
                         .rightPrice 专柜价:{{goods.counter_price | price-filter}}
                       .toolbar(@contextmenu.prevent="")
                         .cut(v-show="goods.difference_price>0") 比加入时降{{goods.difference_price}}元
-                        .btn
+                        .btn(@click.prevent="openPop(goods, index, i)")
                           img(src="./btn.png")
-                          .pop
+                          .pop(v-show="goods.popShow")
+                            .popMask(@click.stop="hidePop(goods, index, i)")
                             .sanjiao
-                            .popItem(@click="changeWays(goods, index, i)")
+                            .popItem(@click.stop="changeWays(goods, index, i)")
                               img(src="./refresh.png")
                               span 快递配送
-                            .popItem(@click="changeStore(goods, index, i)")
+                            .popItem(@click.stop="changeStore(goods, index, i)")
                               img(src="./address.png")
                               span 切换专柜
                   .maskBox(v-show="goods.maskShow", @click.stop="closeMask(index, i)")
@@ -167,6 +168,7 @@
               }
               item.shoppingCartVOList.forEach(goods=>{
                 goods.maskShow = false
+                goods.popShow = false
                 totalCount++
               })
             })
@@ -242,6 +244,8 @@
       },
       // 切换配送方式
       changeWays(goods, index, i) {
+        goods.popShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
         this.$verify({
           content: '确定要切换为“快递配送”？',
           leftText: '取消',
@@ -267,6 +271,8 @@
       },
       // 切换专柜
       changeStore(goods, index, i) {
+        goods.popShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
         this.specCurrentIndex = {
           index: index,
           i: i
@@ -534,6 +540,14 @@
       countCallback() {
         this.queryCartMoneyAjax('168')
       },
+      openPop(goods, index, i) {
+        goods.popShow = !goods.popShow
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
+      },
+      hidePop(goods, index, i) {
+        goods.popShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
+      },
       ...mapMutations({
         setShoppingCartCount: 'shoppingCartGoodsNumChange',
         setConfirmData: 'setConfirmData'
@@ -737,9 +751,6 @@
                   justify-content space-between
                   position relative
                   height .58rem
-                  &:hover .btn .pop {
-                    display block
-                  }
                   .cut {
                     line-height .45rem
                     padding 0 .13rem
@@ -754,11 +765,12 @@
                     top 0
                     font-size 0
                     align-self flex-end
+                    width 30%
+                    text-align right
                     img {
                       width .58rem
                     }
                     .pop {
-                      display none
                       position absolute
                       top 0.58rem
                       right -.16rem
@@ -766,7 +778,7 @@
                       padding-top .16rem
                       z-index 10
                       overflow hidden
-                      .mask {
+                      .popMask {
                         position fixed
                         top 0
                         left 0
@@ -793,6 +805,8 @@
                         display flex
                         align-items center
                         border-bottom 1px solid #999
+                        position relative
+                        z-index 20
                         &:last-child {
                           border none
                         }

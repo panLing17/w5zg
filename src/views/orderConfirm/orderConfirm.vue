@@ -212,10 +212,11 @@
         this.computedPrice()
       },
       // 计算实付价
-      computedPrice(flag) {
+      computedPrice() {
         if (typeof this.ticketData.netCard !=='number') {
           return
         }
+        console.log(this.totalPrice)
         let a = this.cashSwitch?this.ticketData.netCard:0
         let b = this.ticketSwitch?this.ticketData.commTicket:0
         // let f = 0
@@ -241,7 +242,7 @@
         this.directPrice = this.totalPrice - a - b
       },
       // 卡券
-      getTicket() {
+      getTicket(flag) {
         let url = ''
         let params
         if (this.confirmData.from===0) {

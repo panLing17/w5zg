@@ -83,11 +83,7 @@
       },
       specChange(index, i) {
         let temp = this.specGroup[index]
-        if (this.specGroup[index].checked === i) {
-          temp.checked = -1
-        } else {
-          temp.checked = i
-        }
+        temp.checked = i
         this.specGroup.splice(index, 1, temp)
 
         this.getSku()

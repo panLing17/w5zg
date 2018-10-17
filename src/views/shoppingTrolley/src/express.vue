@@ -30,9 +30,10 @@
                 .rightPrice 专柜价:{{goods.counter_price | price-filter}}
               .toolbar(@click.stop="", @contextmenu.prevent="")
                 .cut(v-show="goods.difference_price>0") 比加入时降{{goods.difference_price}}元
-                .btn(v-show="goods.carry_type===1", @click.stop.prevent="", @touchstart.stop="", @touchmove.stop="", @touchend.stop="")
+                .btn(v-show="goods.carry_type===1", @click.prevent="openPop(i, goods)")
                   img(src="./btn.png")
-                  .pop
+                  .pop(v-show="goods.popShow")
+                    .popMask(@click.stop="hidePop(i, goods)")
                     .sanjiao
                     .popItem(v-show="goods.carry_type===1", @click.stop="changeWays(goods, i)")
                       img(src="./refresh.png")
@@ -141,6 +142,7 @@
                 count++
               }
               item.maskShow = false
+              item.popShow = false
             })
             if (count===self.data.commList.length && count!==0) {
               self.$emit('all-change', true)
@@ -319,6 +321,8 @@
       },
       // 切换配送方式
       changeWays(goods, index) {
+        goods.popShow = false
+        this.data.commList.splice(index, goods)
         this.specCurrentIndex = index
         let params = {
           gspu_id: goods.gspu_id,
@@ -420,6 +424,14 @@
       // 数量改变后动作
       countCallback() {
         this.queryCartMoneyAjax('167')
+      },
+      openPop(index, goods) {
+        goods.popShow = !goods.popShow
+        this.data.commList.splice(index, goods)
+      },
+      hidePop(index, goods) {
+        goods.popShow = false
+        this.data.commList.splice(index, goods)
       },
       ...mapMutations({
         setShoppingCartCount: 'shoppingCartGoodsNumChange',
@@ -612,14 +624,10 @@
             align-self flex-end
             width 30%
             text-align right
-            &:hover .pop {
-              display block
-            }
             img {
               width .58rem
             }
             .pop {
-              display none
               position absolute
               top 0.58rem
               right -.16rem
@@ -627,7 +635,7 @@
               padding-top .16rem
               z-index 10
               overflow hidden
-              .mask {
+              .popMask {
                 position fixed
                 top 0
                 left 0
@@ -654,6 +662,8 @@
                 display flex
                 align-items center
                 border-bottom 1px solid #999
+                position relative
+                z-index 20
                 &:last-child {
                   border none
                 }

@@ -154,11 +154,7 @@
     methods:{
       // 规格选择
       specChange(index, i, item) {
-        if (item.checked === i) {
-          item.checked = -1
-        } else {
-          item.checked = i
-        }
+        item.checked = i
         this.specGroup.splice(index, 1, item)
         this.getSku()
       },
