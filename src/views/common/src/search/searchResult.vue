@@ -2,7 +2,7 @@
   .searchResult
     search-filter(
                   ref="searchFilter",
-                  :brandData="result.aggs",
+                  :brandData="result.aggs.brand_count",
                   :sortFieldType="sortFieldType",
                   @brandSearch="brandSearch",
                   @priceSearch="priceSearch",
@@ -56,7 +56,7 @@
         default () {
           return {
             rows: [],
-            aggs: []
+            aggs: {}
           }
         },
       },

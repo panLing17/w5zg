@@ -109,7 +109,10 @@
       },
       addBespeak () {
         if (!this.bsId) {
-          this.$message.warning('请选择门店')
+          this.$notify({
+            content: '请选择门店',
+            bottom: 1.8
+          })
           return
         }
         let self = this
@@ -121,7 +124,10 @@
             storeId: self.bsId
           },
         }).then(function (response) {
-          self.$message.success(response.data.msg)
+          self.$notify({
+            content: response.data.msg,
+            bottom: 1.8
+          })
           self.close()
         })
       },

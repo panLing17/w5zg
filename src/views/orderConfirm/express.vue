@@ -1,0 +1,174 @@
+<template lang="pug">
+  .express
+    transition(name="fade")
+      .mask(v-show="expressShow", @click="hide()", @touchmove.prevent="")
+    transition(name="fold")
+      .contentWrapper(v-show="expressShow")
+        .title(@click="hide()")
+          img(src="./back2.png")
+          span 选择收货地址
+        scroll.content(ref="expressScroll")
+          ul
+            li(v-for="item in addressList", @click="addressChange(item)")
+              .info
+                .name {{item.ra_name}}
+                .phone {{item.ra_phone}}
+              .address
+                .default(v-if="item.ra_default==='011'") [默认地址]
+                .desc {{item.province_name}}{{item.city_name}}{{item.county_name}}{{item.ra_detailed_addr}}
+        .btn(@click="$router.push('/my/localAdd')") 新增地址
+</template>
+
+<script>
+  import Scroll from 'components/scroll'
+  export default {
+    name: "express",
+    props: {
+      addressList: {
+        type: Array,
+        default() {
+          return []
+        }
+      }
+    },
+    data() {
+      return {
+        expressShow: false
+      }
+    },
+    watch:{
+      expressShow(val) {
+        if (val) {
+          setTimeout(()=>{
+            this.$refs.expressScroll.refresh()
+          }, 520)
+        }
+      }
+    },
+    methods: {
+      addressChange(item) {
+        this.$emit('address-change', item)
+        this.hide()
+      },
+      show() {
+        this.expressShow = true
+      },
+      hide() {
+        this.expressShow = false
+      }
+    },
+    components: {
+      Scroll
+    }
+  }
+</script>
+
+<style scoped lang="stylus">
+  @import '~assets/stylus/variable.styl'
+  .fold-enter-active, .fold-leave-active {
+    transition: all 0.5s;
+  }
+  .fold-enter, .fold-leave-to {
+    transform: translate3d(0,100%,0);
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: all 0.5s;
+  }
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
+  }
+  img {
+    pointer-events none
+  }
+  .mask {
+    position fixed
+    top 0
+    left 0
+    width 100%
+    height 100vh
+    z-index 20
+    background-color rgba(0,0,0,.5)
+  }
+  .express {
+    .contentWrapper {
+      position fixed
+      bottom 0
+      left 0
+      width 100%
+      height $height-pop-details
+      z-index 30
+      background #fff
+      .title {
+        height 1.33rem
+        display flex
+        align-items center
+        padding 0 .53rem
+        border-bottom 1px solid #d7d7d7
+        position relative
+        img {
+          width .26rem
+        }
+        span {
+          position absolute
+          top 50%
+          left 50%
+          transform translate(-50%, -50%)
+          font-size .48rem
+          color #333
+          font-weight 400
+        }
+      }
+      .content {
+        height calc(100% - 1.33rem)
+        overflow hidden
+        ul {
+          padding 0 .53rem
+          li {
+            min-height 1.6rem
+            display flex
+            flex-direction column
+            justify-content center
+            border-bottom 1px solid #d7d7d7
+            line-height .42rem
+            &:last-child {
+              border none
+            }
+            .info {
+              display flex
+              color #333
+              font-size .34rem
+              .phone {
+                margin-left .1rem
+              }
+            }
+            .address {
+              margin-top .13rem
+              display flex
+              font-size .29rem
+              .default {
+                color #f70057
+                margin-right .1rem
+              }
+              .desc {
+                color #333
+              }
+            }
+          }
+        }
+      }
+      .btn {
+        height 1.28rem
+        width 100%
+        position fixed
+        bottom 0
+        left 0
+        background-color #f70057
+        color #fff
+        line-height 1.28rem
+        font-size .48rem
+        text-align center
+        font-weight 500
+      }
+    }
+  }
+</style>

@@ -11,7 +11,7 @@ import Home from '../views/home/index.js'
 // 分类
 import Page from '../views/page/index.js'
 // 购物车
-import ShoppingCart from '../views/shoppingCart/index.js'
+// import ShoppingCart from '../views/shoppingCart/index.js'
 // 我的
 import My from '../views/my/index.js'
 // 订单管理
@@ -44,6 +44,15 @@ import Inform from '../views/inform/index.js'
 
 // 常见问题
 import CProblems from '../views/cProblems/index.js'
+
+// 扫毛购
+import Scan from '../views/scan/index.js'
+//新商品详情
+import GoodsDetails from '../views/goodsDetails/goodsDetails'
+//新购物车
+import ShoppingTrolley from '../views/shoppingTrolley/index'
+// 新确认订单
+import OrderConfirm from '../views/orderConfirm/orderConfirm'
 
 Vue.use(Router)
 const router = new Router ({
@@ -120,14 +129,16 @@ const router = new Router ({
       meta: {
         keepAlive: true
       }
-    }, {
-      path: '/goodsDetailed',
-      name: '商品详情',
-      meta: {
-        keepAlive: true
-      },
-      component: Goods.goodsDetailed
-    }, {
+    },
+    // {
+    //   path: '/goodsDetailed',
+    //   name: '商品详情',
+    //   meta: {
+    //     keepAlive: true
+    //   },
+    //   component: Goods.goodsDetailed
+    // },
+    {
       path: '/service',
       name: '在线客服',
       component: Goods.service,
@@ -135,9 +146,9 @@ const router = new Router ({
         keepAlive: true
       }
     }, {
-      path: '/confirmOrder',
+      path: '/orderConfirm',
       name: '确认订单',
-      component: Goods.confirmOrder,
+      component: OrderConfirm,
       meta: {
         keepAlive: true
       }
@@ -326,6 +337,30 @@ const router = new Router ({
     },
 
     {
+      path: '/goodsDetailed',
+      name: '新详情',
+      component: GoodsDetails,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/scan/shoppingCart',
+      name: '扫码购购物车',
+      component: Scan.shoppingCart,
+      meta:{
+        keepAlive: true
+      }
+    },
+    {
+      path: '/scan/orderConfirm',
+      name: '扫码购订单确认',
+      component: Scan.orderConfirm,
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
@@ -415,28 +450,49 @@ const router = new Router ({
         {
           path: '/shoppingCart',
           name: '购物车',
-          component: ShoppingCart.index,
+          component: ShoppingTrolley.shoppingCart,
           children: [
             {
               path: '/',
+              redirect: '/shoppingCart/express'
+            },
+            {
+              path: '/shoppingCart/express',
               name: '购物车',
-              redirect: '/shoppingCart/express',
-              component: ShoppingCart.shoppingCart,
-              children: [
-                {
-                  path: '/shoppingCart/self',
-                  name: '购物车',
-                  component: ShoppingCart.giveSelf
-                },
-                {
-                  path: '/shoppingCart/express',
-                  name: '购物车',
-                  component: ShoppingCart.express
-                }
-              ]
+              component: ShoppingTrolley.express
+            },
+            {
+              path: '/shoppingCart/self',
+              name: '购物车',
+              component: ShoppingTrolley.self
             }
           ]
         },
+        // {
+        //   path: '/shoppingCart',
+        //   name: '购物车',
+        //   component: ShoppingCart.index,
+        //   children: [
+        //     {
+        //       path: '/',
+        //       name: '购物车',
+        //       redirect: '/shoppingCart/express',
+        //       component: ShoppingCart.shoppingCart,
+        //       children: [
+        //         {
+        //           path: '/shoppingCart/self',
+        //           name: '购物车',
+        //           component: ShoppingCart.giveSelf
+        //         },
+        //         {
+        //           path: '/shoppingCart/express',
+        //           name: '购物车',
+        //           component: ShoppingCart.express
+        //         }
+        //       ]
+        //     }
+        //   ]
+        // },
         {
           path: '/inform',
           name: '通知',
@@ -975,7 +1031,10 @@ router.beforeEach ((to, from, next) => {
   // 购物车及我的页面权限处理
   if (to.name === '我的' || to.name === '购物车') {
     if (!localStorage.hasOwnProperty('token')) {
-      Message.warning('请先登录')
+      Vue.notify({
+        content: '请先登录',
+        bottom: 3
+      })
       next({path:'/login'})
     } else {
       next()

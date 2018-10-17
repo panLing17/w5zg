@@ -34,8 +34,8 @@
       .seleteBg(v-if="show", @click="show = false")
     transition(enter-active-class="animated fadeInUpBig", leave-active-class="animated fadeOutDownBig")
       .seleteMain(v-if="show")
-        w-button(@click="selectSex('m')") 男
-        w-button(@click="selectSex('w')") 女
+        w-button(@click="selectSex('021')") 男
+        w-button(@click="selectSex('022')") 女
 </template>
 
 <script>

@@ -127,7 +127,7 @@
           p 客服
         .leftSmallButtons
           .shoppingCartCount(v-if="shoppingCartCount>0") {{shoppingCartCount}}
-          img(src="../../../assets/img/shoppingCart@2x.png", @click="$router.push('/shoppingCart')")
+          img(src="../../../assets/img/shoppingCart@2x.png", @click="goShoppingCart")
           p 购物车
         .leftSmallButtons
           img(src="../../../assets/img/Group 9 Copy_no@2x.png", v-if="collectFlag == 0", @click="changeCollect1()")
@@ -156,6 +156,10 @@
     // 新手教程
     //goods-guide
       <!--onlyCitySelect(:show="onlyCitySelect", @change="onlyCityChange", @close="onlyCitySelect = false")-->
+    // 加入购物车动效
+    transition(name="scale")
+      .circle(v-show="addGoods")
+        img(:src="skuImg | img-filter")
 </template>
 
 <script>
@@ -245,7 +249,8 @@
         shareFlag: {
           banner: false,
           title: false
-        }
+        },
+        addGoods: false
       }
     },
     computed:{
@@ -264,7 +269,7 @@
       tong () {
         return parseInt(this.goodsData.counter_interval)
       },*/
-      ...mapState(['location', 'userData','skuId', 'transfer','shoppingCartGoodsNum'])
+      ...mapState(['location', 'userData','skuId', 'transfer','shoppingCartGoodsNum', 'skuImg'])
     },
     components: {locationSelect, selectSize, citySelect, disType, storeSelect, shareSelect, onlyStoreSelect, bespeakSelect, cardTips, saveMoneyTips, tagTips, goodsGuide, recommend},
     // 必须获取了推荐广告才可进入，防止异步导致的数据不同步
@@ -399,6 +404,14 @@
       }
     },
     methods:{
+      // 跳往购物车
+      goShoppingCart() {
+        if (this.disTypeName==='快递配送') {
+          this.$router.push('/shoppingCart/express')
+        } else {
+          this.$router.push('/shoppingCart/self')
+        }
+      },
       // 点击量
       clicks(){
         let self = this
@@ -548,7 +561,7 @@
           let self = this
           self.$ajax({
             method: 'post',
-            url: self.$apiGoods + '/goods/spu/findSkuStatus',
+            url: self.$apiGoods + 'goods/spu/findSkuStatus',
             params: {
               gspuId: self.$route.query.id
             },
@@ -839,6 +852,10 @@
               }
             })
           })
+          // 如果只有一个规格默认选中
+          if (newData.length===1 && newData[0].specValue.length===1) {
+            newData[0].valueIndex = 0
+          }
           self.spec = newData
           // 渲染选择规格组件,以此触发组件mounted事件，获取sku
           self.selectSizeShow = true
@@ -865,7 +882,10 @@
         // 如果没登录，直接跳往登录
         if (!localStorage.hasOwnProperty('token')) {
           this.$router.push('/login')
-          this.$message.warning('请先登录')
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
           return
         }
         // 判断库存
@@ -886,7 +906,10 @@
         // 如果没登录，直接跳往登录
         if (!localStorage.hasOwnProperty('token')) {
           this.$router.push('/login')
-          this.$message.warning('请先登录')
+          this.$notify({
+            content: '请先登录',
+            bottom: 1.8
+          })
           return
         }
         // 判断库存
@@ -940,7 +963,7 @@
           }]
           // 传入中转
           this.$store.commit('transferGive', orderData)
-          this.$router.push({path: '/confirmOrder', query: {since: 'true', type: 'direct'}})
+          this.$router.push({path: '/orderConfirm', query: {since: 'true', type: 'direct'}})
         }
         if (this.shoppingCartFlag) {
           // 如果操作来自添加购物车按钮
@@ -998,7 +1021,7 @@
           }]
           // 传入中转
           this.$store.commit('transferGive', orderData)
-          this.$router.push({path: '/confirmOrder', query:{since:'true',type:'direct'}})
+          this.$router.push({path: '/orderConfirm', query:{since:'true',type:'direct'}})
         }
         if (this.shoppingCartFlag) {
           // 如果操作来自添加购物车按钮
@@ -1017,7 +1040,15 @@
           }).then(function (response) {
             // 关闭选择
             self.onlyStoreSelect = false
-            self.$message.success('添加购物车成功')
+            // 加入购物车动画
+            self.addGoods = true
+            setTimeout(()=>{
+              self.addGoods = false
+            }, 0)
+            self.$notify({
+              content: '添加购物车成功',
+              bottom: 1.8
+            })
           })
         }
       },
@@ -1066,9 +1097,12 @@
             if (response.data.data.storage_num>0) {
               // 传入中转
               self.$store.commit('transferGive', orderData)
-              self.$router.push({path: '/confirmOrder', query:{since:'false',type:'direct'}})
+              self.$router.push({path: '/orderConfirm', query:{since:'false',type:'direct'}})
             } else {
-              self.$message.error('库存不足')
+              self.$notify({
+                content: '库存不足',
+                bottom: 1.8
+              })
             }
           })
         }
@@ -1087,7 +1121,14 @@
               goodsNum: self.content
             }
           }).then(function (response) {
-            self.$message.success('添加购物车成功')
+            self.addGoods = true
+            setTimeout(()=>{
+              self.addGoods = false
+            }, 0)
+            self.$notify({
+              content: '添加购物车成功',
+              bottom: 1.8
+            })
           })
         }
       },
@@ -1113,7 +1154,10 @@
                 this.onlyStoreChange()
                 this.selectFlag = false
               } else {
-                this.$message.warning('请选择收货/自提地址')
+                this.$notify({
+                  content: '请选择收货/自提地址',
+                  bottom: 1.8
+                })
               }
             } else {
               // 为配送订单并且已选地址直接进入下一步
@@ -1136,7 +1180,10 @@
                 this.selectFlag = false
                 this.onlyStoreChange()
               } else {
-                this.$message.warning('请选择收货/自提地址')
+                this.$notify({
+                  content: '请选择收货/自提地址',
+                  bottom: 1.8
+                })
               }
             } else {
               this.selectFlag = false
@@ -1750,6 +1797,27 @@
     margin-left: 15px;
     color: rgb(247,0,87);
     border: solid 1px rgb(247,0,87);
+  }
+  .circle {
+    position: fixed;
+    top: 8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .circle img {
+    width: 100%;
+  }
+  .circle.scale-leave-active {
+    transition: all 1s;
+  }
+  .circle.scale-leave-to {
+    transform: scale(0.1) translate3d(-30rem,60rem,0);
+    transform-origin:50% 50%;
+    opacity: 0;
   }
 </style>
 <style>

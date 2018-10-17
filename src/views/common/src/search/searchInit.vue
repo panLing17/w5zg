@@ -100,7 +100,6 @@
     },
     created () {
       this.minHeight = parseFloat(this.$method.getStyle(document.getElementsByTagName('html')[0], 'fontSize')) * 2.22
-      // this.minHeight = ''
       this.hotHeight2 = ''
       this.historyHeight2 = ''
       this._getHotData()

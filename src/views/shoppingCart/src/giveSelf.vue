@@ -150,6 +150,7 @@
                 } else {
                   sonNow.checked = false
                 }
+                sonNow.maskShow = false
                 sonNow.editClose = true
               })
             })

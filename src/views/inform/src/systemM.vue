@@ -202,7 +202,6 @@
             },
             headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
           }).then(function (response) {
-            console.log(response.data.data.rows)
             successCallback&&successCallback(response.data.data.rows)//成功回调
           })
         }

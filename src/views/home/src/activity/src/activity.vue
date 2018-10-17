@@ -10,7 +10,7 @@
       ul.tabList
         li.tabItem(v-for="(item, index) in tabList", ref="tab", :class="{active: tabActive===index}", @click="tabCheck(index)", :key="index") {{item.title}}
     .mescroll#activityMescroll(:style="{top: navShow?'2.5rem':'1.2rem'}")
-      .contentWrapper
+      .contentWrapper(ref="contentWrapper", @touchstart="start($event)", @touchmove="move($event)", @touchend="end($event)")
         router-view(v-if="tabList.length", :id="tabList[tabActive].id")
 </template>
 
@@ -30,7 +30,15 @@
       }
     },
     created () {
-
+      this.currentPosition = 0; // 记录当前页面位置
+      this.pageWidth = window.innerWidth // 页面宽度
+      this.startX
+      this.startY
+      this.initialPos = 0;  // 手指按下的屏幕位置
+      this.direction = 'left'; // 滑动的方向
+      this.isMove = false; // 是否发生左右滑动
+      this.startT = 0; // 记录手指按下去的时间
+      this.isTouchEnd = true; // 标记当前滑动是否结束(手指已离开屏幕)
     },
     activated() {
       if (this.actId != this.$route.query.actId) {
@@ -46,6 +54,52 @@
       this.getTabList()
     },
     methods: {
+      start(e) {
+        // e.preventDefault();
+        // 单手指触摸或者多手指同时触摸，禁止第二个手指延迟操作事件
+        if (e.touches.length === 1 || this.isTouchEnd) {
+          let touch = e.touches[0];
+          this.startX = touch.pageX;
+          this.startY = touch.pageY;
+          this.initialPos = this.currentPosition;   // 本次滑动前的初始位置
+          this.startT = + new Date(); // 记录手指按下的开始时间
+          this.isMove = false; // 是否产生滑动
+          this.isTouchEnd = false; // 当前滑动开始
+        }
+      },
+      move(e) {
+        // e.preventDefault();
+        // 如果当前滑动已结束，不管其他手指是否在屏幕上都禁止该事件
+        if (this.isTouchEnd) return ;
+
+        let touch = e.touches[0];
+        let deltaX = touch.pageX - this.startX;
+        let deltaY = touch.pageY - this.startY;
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          this.isMove = true;
+          this.direction = deltaX > 0 ? 'right' : 'left'; // 判断手指滑动的方向
+        }
+      },
+      end(e) {
+        // e.preventDefault();
+        // 计算手指在屏幕上停留的时间
+        let deltaT = + new Date() - this.startT;
+        // 发生了滑动，并且当前滑动事件未结束
+        if (this.isMove && !this.isTouchEnd) {
+          this.isTouchEnd = true; // 标记当前完整的滑动事件已经结束
+          if (deltaT < 300) { // 如果停留时间小于300ms,则认为是快速滑动，无论滑动距离是多少，都停留到下一页
+            // 如果最终位置超过边界位置，则停留在边界位置
+            if (this.direction === 'left') {
+              this.tabActive++
+              this.tabActive = this.tabActive===this.tabList.length?0:this.tabActive
+            }else {
+              this.tabActive--
+              this.tabActive = this.tabActive===-1?(this.tabList.length-1):this.tabActive
+            }
+            this.tabScroll && this.tabScroll.scrollToElement.call(this.tabScroll, this.$refs.tab[this.tabActive], 500)
+          }
+        }
+      },
       _initParams () {
         this.actId = this.$route.query.actId
         if (this.$route.query.parentType === '362') {
@@ -133,6 +187,7 @@
     display: flex;
     min-width: 100%;
     position: relative;
+    background-color: #fff;
   }
   .tabItem {
     flex: 1;

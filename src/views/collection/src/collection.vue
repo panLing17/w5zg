@@ -21,10 +21,10 @@
             .left 失效商品共<span>{{indexN}}</span>件
             .right(@click="clearLost") 清空失效商品
           li(v-for="item in contLists", v-if="item.gi_status !== '221'")
-            .lefter
+            .lefter(@click="gotoGoods(item)")
               .mask 失效
               img(:src="item.gi_image_url | img-filter", @click.prevent="")
-            .righter
+            .righter(@click="gotoGoods(item)")
               .textLose {{item.gi_name}}
               .lost 该商品已失效，请重新选择
     emptys(v-if="!contsFlag")
@@ -176,6 +176,7 @@
           }
         })
       },
+
       // 判断是否选择要删除的商品
       judgeSelect() {
         for (let i = 0; i < this.contLists.length; i++) {
@@ -191,11 +192,16 @@
         if (this.judgeSelect()) {
           let arr = []
           let b
-          this.contLists.forEach((item) => {
+          let indexArr = []
+          this.contLists.forEach((item,index) => {
             if (item.selected === true) {
               arr.push(item.fi_id)
+              indexArr.push(index)
             }
           })
+          for(let i=indexArr.length-1;i>=0;i--){
+            this.contLists.splice(indexArr[i], 1)
+          }
           console.log(arr)
           b = arr.join(',')
           let self = this
@@ -209,7 +215,7 @@
             if (res.data.code === '081') {
               self.zheng = 0
               self.zhengSFlag = false
-              self.getLists()
+              //self.getLists()
             }
           })
         }
@@ -245,20 +251,6 @@
             self.contsFlag = false
           } else {
             self.contsFlag = true
-            // this.$nextTick(() => {
-            //   this.$refs.conts.style.height = window.innerHeight - parseFloat(this.$refs.nav.offsetHeight) + 'px'
-            // })
-            // self.$nextTick(() => {
-            //   self.$refs.conts.style.height = window.innerHeight - parseFloat(self.$refs.nav.offsetHeight) + 'px'
-            //   if (!self.cScroll) {
-            //     self.cScroll = new BScroll(self.$refs.conts, {
-            //       click: true,
-            //       probeType: 3
-            //     })
-            //   } else {
-            //     self.cScroll.refresh()
-            //   }
-            // })
           }
         })
       },
@@ -283,7 +275,7 @@
       zhengli() {
         this.zheng = !this.zheng
         if (this.zheng != 0) {
-          this.mescroll.lockDownScroll(true)
+          //this.mescroll.lockDownScroll(true)
           this.zhengSFlag = true
           this.contLists.forEach((i) => {
             if (i.gi_status === '221') {
@@ -292,7 +284,7 @@
           })
           this.selectedAll = false
         } else {
-          this.mescroll.lockDownScroll(false)
+          //this.mescroll.lockDownScroll(false)
           this.zhengSFlag = false
         }
         // this.$nextTick(()=>{
@@ -454,9 +446,13 @@
   ul.lose .lefter{
     position: relative;
     border-radius: .13rem;
+    width: 2.4rem;
+    height: 2.4rem;
   }
   ul.lose .lefter img{
     border-radius: .13rem;
+    width: 2.4rem;
+    height: 2.4rem;
   }
   ul.lose .lefter .mask{
     border-radius: .13rem;

@@ -17,9 +17,9 @@ module.exports = {
     publicPath: process.env.NODE_ENV === 'production'
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
-     // publicPath: process.env.NODE_ENV === 'production'
-     //   ? 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/w5mall-web/'
-     //   : config.dev.assetsPublicPath
+   // publicPath: process.env.NODE_ENV === 'production'
+   //   ? 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/w5mall-web/'
+   //   : config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],

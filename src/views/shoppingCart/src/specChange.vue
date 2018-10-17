@@ -17,26 +17,26 @@
             li.specItem(v-for="(i,specIndex) in spec")
               .valueName {{i.specName}}
               ul.valueList
-                li(@click="i.valueIndex=index;specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index}") {{item.value}}
+                li(@click="specClick(specIndex,index)", v-for="(item,index) in i.specValue", :key="index", :class="{checked:i.valueIndex === index, gray: item.gray}") {{item.value}}
                 p.clearBoth
-          .emitGoods
-            .emitGoodsTitle 配送方式
-            ul.emitGoodsButtons
-              li(:class="{checked:emitType === 'express'}", @click="emitType = 'express'") 快递配送
-              li(:class="{checked:emitType === 'counter'}", @click="emitType = 'counter'") 专柜自提
-              p.clearBoth
-          .address
-            .expressAddress(@click="openSelectLocation", v-if="emitType === 'express'")
-              .text
-                img(src="../../../assets/img/location.png")
-                span {{location.province.name}}
-                span {{location.city.name}}
-              img.more(src="../../../assets/img/more.png")
-            .selfAddress(@click="openStoreSelect", v-if="emitType === 'counter'")
-              .text
-                img(src="../../../assets/img/location.png")
-                span {{counterText}}
-              img.more(src="../../../assets/img/more.png")
+          <!--.emitGoods-->
+            <!--.emitGoodsTitle 配送方式-->
+            <!--ul.emitGoodsButtons-->
+              <!--li(:class="{checked:emitType === 'express'}", @click="emitType = 'express'") 快递配送-->
+              <!--li(:class="{checked:emitType === 'counter'}", @click="emitType = 'counter'") 专柜自提-->
+              <!--p.clearBoth-->
+          <!--.address-->
+            <!--.expressAddress(@click="openSelectLocation", v-if="emitType === 'express'")-->
+              <!--.text-->
+                <!--img(src="../../../assets/img/location.png")-->
+                <!--span {{location.province.name}}-->
+                <!--span {{location.city.name}}-->
+              <!--img.more(src="../../../assets/img/more.png")-->
+            <!--.selfAddress(@click="openStoreSelect", v-if="emitType === 'counter'")-->
+              <!--.text-->
+                <!--img(src="../../../assets/img/location.png")-->
+                <!--span {{counterText}}-->
+              <!--img.more(src="../../../assets/img/more.png")-->
           .bottomButton
             .confirm(@click="submit", v-if="kucunF") 确定
             .reachGoods(v-else, @click="reachInform") 到货通知
@@ -68,14 +68,17 @@
         storeId: '',
         spec: [],
         show: false,
-        emitType: 'express',
+        emitType: '',
         counterText: '请选择门店',
         normalGoods: false,
         storeDownGoods: false,
         locationFlag: false,
         locationList: [],
         onlyStoreSelect: false,
-        selectCity: false
+        selectCity: false,
+        grayList: [],
+        province: '',
+        city: ''
       }
     },
     watch: {
@@ -174,7 +177,12 @@
         this.selectCity = true
       },
       // 点击spec
-      specClick () {
+      specClick (specIndex, index) {
+        if (this.spec[specIndex].specValue[index].gray) {
+          return
+        }
+        this.spec[specIndex].valueIndex = index
+        this.grayFormat(specIndex)
         // 获取选中的规格
         let specData = {
           //'W5MALLTOKEN': localStorage.getItem('token'),
@@ -248,13 +256,15 @@
         this.skuId = allData.gsku_id
 
         this.spcGoodsData = allData
-        console.log(allData)
         // 默认选
         let specValueList = []
+        this.emitType = allData.delivery_ways==='167'?'express':'counter'
+        this.storeId = allData.store_id?allData.store_id : ''
+        this.province = allData.province
+        this.city = allData.city
         allData.specVOList.forEach((now)=>{
           specValueList.push(now.gspec_value)
         })
-
         oldData.forEach((now)=>{
           now.specValue.forEach((sonNow, sonIndex)=>{
             if (specValueList.includes(sonNow.value)) {
@@ -278,8 +288,55 @@
           let newData = self.specGray(response.data.data)
           // 选中默认
           newData = self.returnSelectedJson(newData, spec)
-
           self.spec = newData
+          self.getGray(id)
+        })
+      },
+      // 获取置灰规格
+      getGray(id) {
+        let self = this
+        this.$ajax({
+          method: 'post',
+          url: self.$apiGoods + 'goods/spu/skuStatusUnchecked',
+          params: {
+            gspuId: id
+          }
+        }).then(function (response) {
+          self.grayList = response.data.data
+          self.grayFormat()
+        })
+      },
+      // 置灰格式化
+      grayFormat(target) {
+        let temp = []
+        this.spec.forEach((sp, index) => {
+          if (sp.valueIndex > -1) {
+            temp.push({value: sp.specValue[sp.valueIndex], index: index})
+          }
+        })
+
+        this.spec.forEach((sp, index) => {
+          if (index !== (target?target:0)) {
+            sp.specValue.forEach(v => {
+              let flag = false
+              this.grayList.forEach(d => {
+                if (d.includes(v.value)) {
+                  let count = 0
+                  temp.forEach(t => {
+                    if (d.includes(t.value.value)) {
+                      count++
+                    } else if (t.index === index) {
+                      count++
+                    }
+                  })
+                  if (count === temp.length) {
+                    flag = true
+                  }
+                }
+              })
+              v.gray = flag? true:false
+            })
+          }
         })
       },
       submit (reach) {
@@ -287,10 +344,10 @@
         if (this.emitType === 'express') {
           type = 167
         } else {
-          if (!this.storeId) {
-            this.$message.warning('请选择门店')
-            return
-          }
+          // if (!this.storeId) {
+          //   this.$message.warning('请选择门店')
+          //   return
+          // }
           type = 168
         }
         let self = this
@@ -300,8 +357,10 @@
           params: {
             scId: self.spcGoodsData.sc_id,
             gskuId: self.skuId,
-            provinceNo: self.$store.state.location.province.id,
-            cityNo: self.$store.state.location.city.id,
+            // provinceNo: self.$store.state.location.province.id,
+            provinceNo: this.province,
+            cityNo: this.city,
+            // cityNo: self.$store.state.location.city.id,
             deliveryWays: type,
             bsId: self.storeId
           }
@@ -406,6 +465,9 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  .mescroll {
+    height: auto;
+  }
   .notice{
     position: fixed;
     width: 100%;
@@ -435,7 +497,8 @@
   .main {
     background-color: white;
     width: 100%;
-    height: 70%;
+    /*height: 70%;*/
+    height: 13.18rem;
     position: fixed;
     bottom: 0;
     padding-bottom: $height-footer;
@@ -582,7 +645,9 @@
     justify-content center
     font-size .4rem
   }
-  .reachGoods{
-    background-color #9D4AAD
+  .gray {
+    background: #E8E8E8;
+    color: white !important;
+    border: solid 1px #E8E8E8 !important;
   }
 </style>

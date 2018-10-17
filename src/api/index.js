@@ -15,7 +15,11 @@ let noNeedLogin = [
   '/home/sports',
   '/home/largeCollection',
   '/search',
-  '/page'
+  '/page',
+  '/my/receiveTicket',
+  '/my/receiveTicketGH',
+  '/download',
+  '/download/labourunion'
 ]
 
 
@@ -39,11 +43,14 @@ axios.interceptors.response.use(
     if (optSuc) {
       return response
     } else {
-      Message.error(res.msg)
-      // if (response.config.url.indexOf('member/login') === -1) {
-      //   Message.error(res.msg)
-      // }
-      // return response
+      if (response.data.code==='800') {
+        Vue.notify({
+          content: res.msg,
+          bottom: 3
+        })
+      } else {
+        Message.error(res.msg)
+      }
     }
   },
   /*

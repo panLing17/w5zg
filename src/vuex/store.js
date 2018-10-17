@@ -73,9 +73,14 @@ const state = {
   // 收藏商品
   collectGoods:[],
   // 到货传规格
-  informGoods: null
+  informGoods: null,
+  // 跳确认订单页
+  confirmData: {},
 }
 const mutations = {
+  setConfirmData (state, data) {
+    state.confirmData = data
+  },
   setAddressM (state, data) {
     state.addressM = data
   },
@@ -212,7 +217,11 @@ const actions = {
   }
 }
 const getters = {
-  transfer: state => state.transfer
+  transfer: state => state.transfer,
+  userData: state => state.userData,
+  shoppingCartGoodsNum: state => state.shoppingCartGoodsNum,
+  confirmData: state => state.confirmData,
+  informGoods: state => state.informGoods
 }
 const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({
