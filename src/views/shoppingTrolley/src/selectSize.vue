@@ -98,13 +98,20 @@
           gspu_id: this.resetSpec.spuId
         }
         // 如果有-1表示还有规格没有选择
+        let selectionSizeTemp = []
         this.specGroup.forEach((item, index)=>{
           if (item.checked === -1) {
             flag = false
             return false
           }
-          params['spec_name'+(index+1)] = item.spec_name
-          params['spec_value'+(index+1)] = item.spec_value[item.checked]
+          let name = 'spec_name'+(index+1)
+          let value = 'spec_value'+(index+1)
+          params[name] = item.spec_name
+          params[value] = item.spec_value[item.checked]
+          selectionSizeTemp.push({
+            name: item.spec_name,
+            value: item.spec_value[item.checked]
+          })
         })
 
         if (flag) {
@@ -115,35 +122,23 @@
             params: params
           }).then(function(res){
             if (res) {
-              if (typeof res.data.data !== 'undefined') {
+              if (typeof res.data.data.gsku_id !== 'undefined') {
                 self.storageNum = res.data.data.storage_num
                 if(res.data.data.storage_num===0) {
                   self.bottomBtnType = 1
                 } else {
                   self.bottomBtnType = 2
                 }
-                self.selectionSizeFormat(res.data.data)
+                self.selectionSize = selectionSizeTemp
                 self.skuData = res.data.data
               }else {
+                self.selectionSize = selectionSizeTemp
                 self.storageNum = 0
                 self.bottomBtnType = 1
               }
             }
           })
         }
-      },
-      selectionSizeFormat(data) {
-        let temp = []
-        for(let i=1; i<=5; i++) {
-          if (data['spec_name'+i].length>0 && data['spec_value'+i].length>0) {
-            temp.push({
-              name: data['spec_name'+i],
-              value: data['spec_value'+i]
-            })
-          }
-        }
-        data.selectionSize = temp
-        this.selectionSize = temp
       },
       saveReachGoods() {
         let params
@@ -169,6 +164,7 @@
           params: params
         }).then(function (res) {
           if (res) {
+            self.hide()
             self.$notify({
               content: '如果30天内到货,会通过系统消息提醒您',
               bottom: 3
@@ -231,7 +227,7 @@
     z-index 400
   }
   .content {
-    height $height-pop-details
+    height 11rem
     z-index 400
     position fixed
     bottom $height-footer
@@ -303,7 +299,7 @@
       }
     }
     .center {
-      height "calc(%s - 4.21rem)" % $height-pop-details
+      height calc(100% - 4.21rem)
       overflow hidden
       .specGroup {
         padding 0 .4rem

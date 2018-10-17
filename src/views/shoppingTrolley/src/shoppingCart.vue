@@ -63,7 +63,7 @@
       }
     },
     computed: {
-      ...mapGetters(['shoppingCartGoodsNum', 'shoppingCartCheckedCount'])
+      ...mapGetters(['shoppingCartGoodsNum', 'shoppingCartCheckedCount', 'position'])
     },
     watch:{
       '$route'(to) {
@@ -73,6 +73,13 @@
           this.navActive = 1
         }
       }
+    },
+    activated() {
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
     },
     beforeRouteEnter(to, from, next) {
       next(vm=>{
@@ -84,7 +91,12 @@
       })
     },
     mounted() {
-      this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, () => {})
+      this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
     },
     methods: {
       // 点击结算
@@ -319,6 +331,7 @@
     background-color #fff
     height 1.44rem
     border-top 1px solid #d7d7d7
+    z-index 2
     .white {
       display flex
       height 100%

@@ -135,7 +135,7 @@
         if(this.showResult && !this.$route.query.from) {
           this.cancelQuery()
         } else {
-          this.$router.go(-2)
+          this.$router.go(-1)
           setTimeout(() => {
             this.cancelQuery()
           }, 500)

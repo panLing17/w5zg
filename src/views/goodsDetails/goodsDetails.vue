@@ -155,8 +155,9 @@
                 @try-show="$refs.addTryPop.show()",
                 @open-pop="openPop",
                 @count="getCount",
-                @submit-goods="submitGoods"
-                @change-bottom-btn="changeBottomBtn"
+                @submit-goods="submitGoods",
+                @change-bottom-btn="changeBottomBtn",
+                @change-spec="changeSpec"
                 )
     // 预约体验-------------------------------------------------------------------------------------------------------------
     add-try(ref="addTryPop", :data="storeList", :spuId="spuId")
@@ -335,6 +336,10 @@
         if (data.refStoreList) {
           this.storeList = data.refStoreList
         }
+      },
+      // 如果是没有规格则返回选中的规格
+      changeSpec(data) {
+        this.selectionOfSizeData = data
       },
       // 获取将要加入购物车或购买的数量
       getCount(count) {

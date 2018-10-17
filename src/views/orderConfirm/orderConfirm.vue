@@ -46,7 +46,7 @@
                 li.item(v-for="goods in item.shoppingCartVOList")
                   .itemWrapper
                     .left
-                      img(src="goods.logo | img-filter")
+                      img(:src="goods.logo | img-filter")
                     .right
                       .name {{goods.gi_name}}
                       .size
@@ -70,7 +70,7 @@
             .right
               span 可抵扣{{ticketData.commTicket}}元
               toggle-button(v-model="ticketSwitch", :optional="ticketOptional")
-        .discount(v-if="!cashSwitch && ticketData.backCommTicket>0") 确认收货后，本单可返{{cashSwitch?ticketData.backCommTicket:0}}元通用券
+        .discount(v-if="ticketData.backCommTicket>0") 确认收货后，本单可返{{ticketData.backCommTicket}}元通用券
     .bottom
       .left
         span 实付：
@@ -123,9 +123,11 @@
       },
       cashSwitch() {
         this.computedPrice()
+        this.getTicket(1)
       },
       ticketSwitch() {
         this.computedPrice()
+        this.getTicket(1)
       }
     },
     created() {
@@ -210,7 +212,7 @@
         this.computedPrice()
       },
       // 计算实付价
-      computedPrice() {
+      computedPrice(flag) {
         if (typeof this.ticketData.netCard !=='number') {
           return
         }
@@ -269,7 +271,9 @@
           if (res) {
             self.ticketData = res.data.data
             if (self.ticketData.netCard>0) {
-              self.cashSwitch=true
+              if (flag!==1) {
+                self.cashSwitch=true
+              }
             } else {
               self.cashOptional = false
               self.cashSwitch=false

@@ -315,7 +315,7 @@
       // 规格切换完成
       specChangeRight() {
         this.getExpressList()
-
+        this.queryCartMoneyAjax('167')
       },
       // 切换配送方式
       changeWays(goods, index) {
@@ -355,6 +355,13 @@
             selectedCount++
           }
         })
+        if (arr.length===0) {
+          this.$notify({
+            content: '请勾选商品',
+            bottom: 3.2
+          })
+          return
+        }
         let params = {
           scIdArray: arr.join(',')
         }
