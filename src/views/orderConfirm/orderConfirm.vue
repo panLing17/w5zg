@@ -1,5 +1,5 @@
 <template lang="pug">
-  .orderConfirm
+  .orderConfirm(v-loading="loadingShow")
     .headerWrapper
       .back(@click="$router.go(-1)")
         img(src="./back.png")
@@ -26,7 +26,7 @@
         .goodsList
           ul.listWrapper(v-if="confirmData.from===0")
             li.item
-              .storeName {{data.shop_Name}}
+              .storeName {{confirmData.shippingMethods===0?data.shop_Name:confirmData.bsName}}
               .itemWrapper
                 .left
                   img(:src="data.logo | img-filter")
@@ -42,7 +42,7 @@
           ul(v-if="confirmData.from===1")
             li(v-for="item in data.commList", style="border-bottom: .26rem solid #f3f3f3;")
               ul.listWrapper
-                .storeName {{item.si_name}}
+                .storeName {{confirmData.shippingMethods===0?item.si_name:item.store_name}}
                 li.item(v-for="goods in item.shoppingCartVOList")
                   .itemWrapper
                     .left
@@ -108,7 +108,8 @@
           phone: ''
         },
         checkGoodsData: [],
-        btnType: 2
+        btnType: 2,
+        loadingShow: false
       }
     },
     computed: {
@@ -216,7 +217,6 @@
         if (typeof this.ticketData.netCard !=='number') {
           return
         }
-        console.log(this.totalPrice)
         let a = this.cashSwitch?this.ticketData.netCard:0
         let b = this.ticketSwitch?this.ticketData.commTicket:0
         // let f = 0
@@ -335,6 +335,7 @@
           })
           return
         }
+        this.loadingShow = true
         let url
         let params
         let selectedCount = 0
@@ -355,6 +356,9 @@
             params.carryPhone = this.selfForm.phone
             params.bsId = this.confirmData.bsId
             params.supplierId = this.confirmData.gs_id
+          }
+          if(flag === 1) {
+            params.buyNum = this.checkGoodsData[0].storage_num
           }
         } else {
           params = {
@@ -395,6 +399,7 @@
           url: self.$apiTransaction + url,
           params: params
         }).then(function (res) {
+          self.loadingShow = false
           if (res) {
             if (res.data.data.flag) {
               self.$router.replace({path: '/payment', query:{id:res.data.data.totalOrderId, price: res.data.data.payPrice}})

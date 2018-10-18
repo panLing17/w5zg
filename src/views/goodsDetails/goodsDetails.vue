@@ -519,6 +519,7 @@
         if (this.shippingMethods===1) {
           this.skuData.bsId = this.store.bs_id
           this.skuData.gsId = this.store.gs_id
+          this.skuData.bsName = this.store.bs_name
         }
         this.skuData.shippingMethods = this.shippingMethods
         this.skuData.from = 0
