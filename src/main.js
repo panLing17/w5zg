@@ -46,12 +46,26 @@ Vue.use(Advert)
 Vue.use(scroll)
 Vue.use(Verify)
 Vue.use(VueLazyLoad, {
-  loading: require('assets/img/default.png'),
-  filter: {
-    webp (listener, options) {
-        listener.src = 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/' + listener.src + '?x-oss-process=style/compress'
-    }
-  }
+  // loading: require('assets/img/default.png'),
+  // filter: {
+  //   webp (listener, options) {
+  //     console.log(listener.src)
+  //       listener.src = 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/' + listener.src + '?x-oss-process=style/compress'
+  //   }
+  // },
+  // adapter: {
+  //   loaded ({ bindType, el, naturalHeight, naturalWidth, $parent, src, loading, error, Init }) {
+  //     // do something here
+  //     // example for call LoadedHandler
+  //     LoadedHandler(el)
+  //   },
+  //   loading (listender, Init) {
+  //     console.log('loading')
+  //   },
+  //   error (listender, Init) {
+  //     console.log(listender)
+  //   }
+  // }
 })
 
 

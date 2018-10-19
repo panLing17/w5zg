@@ -135,7 +135,6 @@
     // 加入购物车特效---------------------------------------------------------------------------------
     transition(name="scale")
       .circle(v-show="showCircle")
-        img(:src="skuData.logo | img-filter")
     // 标签说明-----------------------------------------------------------------------------------------------------
     tag-desc(ref="tagDesc")
     // 规格选择-----------------------------------------------------------------------------------------------------
@@ -1176,11 +1175,11 @@
   }
   .circle {
     position: fixed;
-    top: 8rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2rem;
-    height: 2rem;
+    top: 8.64rem;
+    right: 0;
+    width: .53rem;
+    height: .53rem;
+    background-color: #f70057;
     border-radius: 50%;
     overflow: hidden;
   }
@@ -1191,8 +1190,7 @@
     transition: all 1s;
   }
   .circle.scale-leave-to {
-    transform: scale(0.1) translate3d(-30rem,60rem,0);
-    transform-origin:50% 50%;
+    transform: translate3d(-6.8rem,6.8rem, 0);
     opacity: 0;
   }
   .noGoodsBtn {

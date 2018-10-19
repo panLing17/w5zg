@@ -81,6 +81,9 @@
         }
       })
     },
+    deactivated() {
+      this.sliceShow = false
+    },
     beforeRouteEnter(to, from, next) {
       next(vm=>{
         if(to.path==='/shoppingCart/express') {
