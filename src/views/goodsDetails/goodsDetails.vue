@@ -139,25 +139,25 @@
     tag-desc(ref="tagDesc")
     // 规格选择-----------------------------------------------------------------------------------------------------
     select-size(
-                ref="selectSize",
-                :imgUrl="goodsData.gi_image_url",
-                :price="goodsData.min_direct_supply_price",
-                :specGroup="goodsData.spec_group",
-                :spuId="spuId",
-                :carryType="goodsData.carry_type",
-                :fromType="fromType",
-                :store="store",
-                :brandId="goodsData.bi_id",
-                @selection-size="selectionOfSize",
-                @shipping-change="shippingMethodsChange",
-                @save-goods="saveReachGoods",
-                @try-show="$refs.addTryPop.show()",
-                @open-pop="openPop",
-                @count="getCount",
-                @submit-goods="submitGoods",
-                @change-bottom-btn="changeBottomBtn",
-                @change-spec="changeSpec"
-                )
+    ref="selectSize",
+    :imgUrl="goodsData.gi_image_url",
+    :price="goodsData.min_direct_supply_price",
+    :specGroup="goodsData.spec_group",
+    :spuId="spuId",
+    :carryType="goodsData.carry_type",
+    :fromType="fromType",
+    :store="store",
+    :brandId="goodsData.bi_id",
+    @selection-size="selectionOfSize",
+    @shipping-change="shippingMethodsChange",
+    @save-goods="saveReachGoods",
+    @try-show="$refs.addTryPop.show()",
+    @open-pop="openPop",
+    @count="getCount",
+    @submit-goods="submitGoods",
+    @change-bottom-btn="changeBottomBtn",
+    @change-spec="changeSpec"
+    )
     // 预约体验-------------------------------------------------------------------------------------------------------------
     add-try(ref="addTryPop", :data="storeList", :spuId="spuId")
     // 自提门店地址----------------------------------------------------------------------------------------------------------
@@ -198,7 +198,6 @@
         shippingMethods: 0, // 配送方式，0为快递 1为自提
         skuData: {}, // sku信息
         minusPrice: 0, // 用券立减
-        shoppingCartNum: 0, //购物车数量
         fromType: 0, // 打开规格弹框的按钮类型， 0 不处理 1 表示加入购物车 3 立即购买按钮，规格页需显示确认按钮 2 表示预约体验按钮
         bottomBtnType: 0, // 底部按钮类型 0 显示购物车、立即购买 1 显示到货通知
         storeList: [], // 门店合集
@@ -244,6 +243,9 @@
       // 专柜价
       counterPrice() {
         return this.skuData.counter_price ? this.skuData.counter_price : this.goodsData.min_counter_price
+      },
+      shoppingCartNum() {
+        return this.shoppingCartGoodsNum.sendNum+this.shoppingCartGoodsNum.carryNum
       }
     },
     methods: {
@@ -316,7 +318,7 @@
                 }
               })
             } else
-              if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
+            if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
               item.checked = 0
             }
           })
@@ -461,7 +463,10 @@
           params: {},
         }).then(function (res) {
           if (res) {
-            self.shoppingCartNum = res.data.data.carryNum + res.data.data.sendNum
+            self.setShoppingCartCount({
+              sendNum: res.data.data.sendNum,
+              carryNum: res.data.data.carryNum
+            })
           }
         })
       },
@@ -498,11 +503,7 @@
               content: '加入购物车成功',
               bottom: 1.8
             })
-            self.shoppingCartNum += self.count
-            let t = self.shippingMethods===0?'sendNum':'carryNum'
-            self.setShoppingCartCount({
-              [t]: self.shoppingCartGoodsNum[t] + 1
-            })
+            self.getGoodsNum()
             callback && callback()
           }
         })
@@ -537,26 +538,7 @@
           return
         }
         this.$refs.selectSize.show()
-        // if (!this.skuData.gsku_id) {
-        //   this.$refs.selectSize.show()
-        //   this.$notify({
-        //     content: '请选择规格',
-        //     bottom: 1.8
-        //   })
-        //   return
-        // }
-        // if (this.shippingMethods===0) {
-        //   this.$refs.selectSize.show()
-        //   return
-        // }
-        // if (this.shippingMethods===1 && !this.store.bs_id) {
-        //   this.$refs.selectSize.show()
-        //   this.$notify({
-        //     content: '请选择自提门店',
-        //     bottom: 1.8
-        //   })
-        //   return
-        // }
+
         callback && callback()
       },
       // 点击到货通知按钮
@@ -734,7 +716,7 @@
 
 <style scoped lang="stylus">
   img {
-   pointer-events none
+    pointer-events none
   }
   .mescroll {
     position fixed
