@@ -53,6 +53,8 @@ import GoodsDetails from '../views/goodsDetails/goodsDetails'
 import ShoppingTrolley from '../views/shoppingTrolley/index'
 // 新确认订单
 import OrderConfirm from '../views/orderConfirm/orderConfirm'
+// 逛专柜
+import PickupArea from '../views/pickupArea/pickupArea'
 
 Vue.use(Router)
 const router = new Router ({
@@ -467,6 +469,11 @@ const router = new Router ({
               component: ShoppingTrolley.self
             }
           ]
+        },
+        {
+          path: '/pickupArea',
+          name: '逛专柜',
+          component: PickupArea
         },
         // {
         //   path: '/shoppingCart',
@@ -1049,7 +1056,7 @@ router.beforeEach ((to, from, next) => {
     },10)
   }
   // 路由切换时隐藏页脚
-  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车') {
+  if (to.name === '首页' || to.name === '我的' || to.name === '分类' || to.name === '购物车' || to.name==='逛专柜') {
     store.state.footerShow = true
   }else {
     store.state.footerShow = false

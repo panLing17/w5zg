@@ -8,23 +8,28 @@
         li
           router-link(to='/home')
             p
-              img(:src="routerPath=='/home'?require('../assets/img/logo2@3x.png'):require('../assets/img/homepage3@3x.png')")
+              img(:src="routerPath=='/home'?require('../assets/img/bottom/home2.png'):require('../assets/img/bottom/home1.png')")
             p(:class="{checked:routerPath=='/home'}") 首页
         li
           router-link(to='/page')
             p
-              img(:src="routerPath=='/page'?require('../assets/img/classification4@3x.png'):require('../assets/img/classification3@3x.png')")
+              img(:src="routerPath=='/page'?require('../assets/img/bottom/fenlei2.png'):require('../assets/img/bottom/fenlei1.png')")
             p(:class="{checked:routerPath=='/page'}") 分类
+        li
+          router-link(to='/pickupArea')
+            p
+              img(:src="routerPath=='/pickupArea'?require('../assets/img/bottom/pickup2.png'):require('../assets/img/bottom/pickup1.png')")
+            p(:class="{checked:routerPath=='/pickupArea'}") 逛专柜
         li
           router-link(:to="$route.matched[1].path !== '/shoppingCart' ? '/shoppingCart' : ''")
             span.count(v-if="shoppingCartCount>0") {{shoppingCartCount}}
             p
-              img(:src="routerPath=='/shoppingCart'?require('../assets/img/shoppingcart4@3x.png'):require('../assets/img/shoppingcart3@3x.png')")
+              img(:src="routerPath=='/shoppingCart'?require('../assets/img/bottom/shoppingCart2.png'):require('../assets/img/bottom/shoppingCart1.png')")
             p(:class="{checked:routerPath=='/shoppingCart'}") 购物车
         li
           router-link(to='/my')
             p
-              img(:src="routerPath=='/my'?require('../assets/img/mine4@3x.png'):require('../assets/img/mine3@3x.png')")
+              img(:src="routerPath=='/my'?require('../assets/img/bottom/mine2.png'):require('../assets/img/bottom/mine1.png')")
             p(:class="{checked:routerPath=='/my'}") 我的
 </template>
 
@@ -199,7 +204,7 @@
   }
 
   .bottomNav > li p > img {
-    width: 1rem;
+    width: 1.28rem;
   }
 
   .bottomNav > li a {
