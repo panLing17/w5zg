@@ -17,7 +17,17 @@
         .right(:class="{active: tabActive===1}") 商圈
       .brand(v-show="tabActive===0")
         ul
-          li(v-for="item in brandList")
+          li(v-for="(item, index) in brandList", :class="{'margin-top': index>3}")
+            .logo
+              img
+            .name {{item}}
+          li.last
+            span 全部<br/>品牌
+            img(src="./img/more.png")
+        .line1
+        .line2
+        .line3
+        .line4
       .area(v-show="tabActive===1")
 </template>
 
@@ -29,7 +39,7 @@
         searchDefaultText: '雅诗兰黛',
         query: '',
         tabActive: 0,
-        brandList: [1,1,1,1,1,1,1,1]
+        brandList: [1,1,1,1,1,1,1]
       }
     }
   }
@@ -37,6 +47,9 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  .mescroll {
+    background-color #fff
+  }
   .header {
     position relative
     height $height-header
@@ -147,6 +160,86 @@
         }
       }
       .right {}
+    }
+    .brand {
+      position relative
+      ul {
+        padding 0 .5rem
+        display flex
+        flex-wrap wrap
+        li {
+          display flex
+          flex-direction column
+          font-size 0
+          margin-right .32rem
+          margin-bottom .26rem
+          &:nth-child(4n) {
+            margin-right 0
+          }
+          &.margin-top {
+            margin-top .13rem
+          }
+          .logo {
+            width 2rem
+            height 2rem
+            overflow hidden
+            background-color orange
+          }
+          img {
+            width 2rem
+          }
+          .name {
+            margin-top .13rem
+            font-size .32rem
+            font-weight 400
+            color #666
+            line-height 1
+            text-align center
+          }
+          &.last {
+            width 2rem
+            height 2rem
+            display flex
+            align-items center
+            flex-direction row
+            padding-left .58rem
+            span {
+              font-size .37rem
+              font-weight 400
+              color #333
+            }
+            img {
+              margin-left .13rem
+              width .32rem
+            }
+          }
+        }
+      }
+      .line1 {
+        width 90%
+        height .05rem
+        background-color #ececec
+        position absolute
+        top 48%
+        left 50%
+        transform translate(-50%, -80%)
+      }
+      .line2, .line3, .line4 {
+        height 4.9rem
+        width .05rem
+        background-color #ececec
+        position absolute
+        top 0
+      }
+      .line2 {
+        left 2.65rem
+      }
+      .line3 {
+        left 4.95rem
+      }
+      .line4 {
+        left 7.3rem
+      }
     }
   }
 </style>
