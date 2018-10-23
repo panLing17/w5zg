@@ -440,6 +440,13 @@
             }
           })
         })
+        if (arr.length===0) {
+          this.$notify({
+            content: '请勾选商品',
+            bottom: 3.2
+          })
+          return
+        }
         indexArr.forEach(item => {
           this.data.commList[item.index].shoppingCartVOList.splice(item.i, 1)
           if(this.data.commList[item.index].shoppingCartVOList.length===0) {
