@@ -13,8 +13,8 @@
       .right 搜索
     .fixedContent
       .tab
-        .left(:class="{active: tabActive===0}") 品牌
-        .right(:class="{active: tabActive===1}") 商圈
+        .left(:class="{active: tabActive===0}", @click="tabActive=0") 品牌
+        .right(:class="{active: tabActive===1}", @click="tabActive=1") 商圈
       .brand(v-show="tabActive===0")
         ul
           li(v-for="(item, index) in brandList", :class="{'margin-top': index>3}")
@@ -29,6 +29,32 @@
         .line3
         .line4
       .area(v-show="tabActive===1")
+        ul(ref="areaUl")
+          li(v-for="(item, index) in areaList", ref="areaLi")
+            img
+            .name {{item}}
+        .openMore(v-show="areaList.length>8", @click="toggleArea")
+          img(:src="areaShowAll?require('./img/up.png'):require('./img/down.png')")
+      .listWrapper
+        ul.list
+          li.item(v-for="(item, index) in list")
+            .picture
+              img.img
+            .content
+              .left
+                img
+              .right
+                .name 雅诗兰黛 | 南京中央商场专柜雅诗兰黛 | 南京中央商场专柜雅诗兰黛 | 南京中央商场专柜
+                .flagWrapper
+                  .flag 专柜自提
+                  .flag 预约体验
+                .address
+                  img(src="./img/address.png")
+                  span 南京市秦淮区中山南路79号南京市秦淮区中山南路79号
+                .activeWrapper
+                  .active
+                    span.desc 活动
+                    span.text 雅诗兰黛眼霜限时抢购，仅售350元！
 </template>
 
 <script>
@@ -38,8 +64,35 @@
       return {
         searchDefaultText: '雅诗兰黛',
         query: '',
-        tabActive: 0,
-        brandList: [1,1,1,1,1,1,1]
+        tabActive: 1,
+        brandList: [1,1,1,1,1,1,1],
+        areaList: [1,1,1,1,1,1,1,1,1],
+        areaShowAll: false,
+        list: [1,1,1,1,1,1,1]
+      }
+    },
+    created() {
+      this.areaInitHeight = 0
+      this.areaMaxHeight = 0
+    },
+    mounted() {
+      this.getAreaInitHeight()
+    },
+    methods: {
+      // 获取商圈的两行高度和最高高度
+      getAreaInitHeight() {
+        this.$nextTick(()=>{
+          if (this.areaList.length>8) {
+            this.areaInitHeight = (parseFloat(this.$method.getStyle(this.$refs.areaLi[0], 'height')) + parseFloat(this.$method.getStyle(this.$refs.areaLi[0], 'marginBottom'))) * 2 + 'px'
+            this.areaMaxHeight = this.$method.getStyle(this.$refs.areaUl, 'height')
+            this.$refs.areaUl.style.height = this.areaInitHeight
+          }
+        })
+      },
+      // 展开收起商圈
+      toggleArea() {
+        this.areaShowAll = !this.areaShowAll
+        this.$refs.areaUl.style.height = this.areaShowAll?this.areaMaxHeight:this.areaInitHeight
       }
     }
   }
@@ -47,12 +100,25 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  img {
+    pointer-events none
+  }
   .mescroll {
     background-color #fff
+    position absolute
+    top 0
+    bottom $height-footer
+    left 0
+    height auto
   }
   .header {
-    position relative
+    position fixed
+    top 0
+    left 0
+    width 100%
     height $height-header
+    z-index 10
+    background-color #fff
     .back {
       position absolute
       left 0
@@ -73,6 +139,7 @@
     }
   }
   .searchWrapper {
+    margin-top $height-header
     display flex
     height 1.17rem
     .left {
@@ -92,6 +159,7 @@
         color #777
         font-size .29rem
         font-weight 400
+        -webkit-appearance: none;
       }
       .search {
         position absolute
@@ -239,6 +307,153 @@
       }
       .line4 {
         left 7.3rem
+      }
+    }
+    .area {
+      ul {
+        padding 0 .26rem
+        display flex
+        flex-wrap wrap
+        transition all 0.5s
+        overflow hidden
+        li {
+          width 2.18rem
+          height 1.49rem
+          background-color orange
+          overflow hidden
+          font-size 0
+          position relative
+          margin-right .24rem
+          margin-bottom .24rem
+          border-radius .1rem
+          &:nth-child(4n) {
+            margin-right 0
+          }
+          img {
+            width 100%
+          }
+          .name {
+            position absolute
+            top 0
+            left 0
+            width 100%
+            text-align center
+            line-height 1.49rem
+            overflow hidden
+            text-overflow ellipsis
+            white-space nowrap
+            color #fff
+            font-size .4rem
+            font-weight bold
+          }
+        }
+      }
+      .openMore {
+        font-size 0
+        img {
+          width 100%
+        }
+      }
+    }
+    .listWrapper {
+      .list {
+        .item {
+          border-top .16rem solid #f2f2f2
+          padding .48rem .4rem
+          .picture {
+            position relative
+            font-size 0
+            width 100%
+            height 3.7rem
+            overflow hidden
+            background-color orange
+            border-radius .13rem
+            .img {
+              width 100%
+            }
+          }
+          .content {
+            display flex
+            justify-content space-between
+            margin-top .4rem
+            .left {
+              width 1.17rem
+              height 1.17rem
+              font-size 0
+              overflow hidden
+              background-color orange
+              border-radius 50%
+              img {
+                width 100%
+              }
+            }
+            .right {
+              width 85%
+              overflow hidden
+              .name {
+                margin-top .08rem
+                color #333
+                font-size .37rem
+                font-weight bold
+                overflow hidden
+                text-overflow ellipsis
+                white-space nowrap
+              }
+              .flagWrapper {
+                margin-top .26rem
+                display flex
+                .flag {
+                  height .37rem
+                  padding 0 .1rem
+                  display inline-flex
+                  align-items center
+                  color #333
+                  font-size 9px
+                  font-weight 400
+                  border 1px solid #ccc
+                  border-radius .05rem
+                  margin-right .13rem
+                  &:last-child {
+                    margin-right 0
+                  }
+                }
+              }
+              .address {
+                margin-top .26rem
+                font-size 0
+                img {
+                  width .32rem
+                }
+                span {
+                  color #999
+                  font-size .32rem
+                  font-weight 400
+                  margin-left .1rem
+                  line-height 1.5
+                }
+              }
+              .activeWrapper {
+                margin-top .26rem
+                .active {
+                  color #f70057
+                  .desc {
+                    height .37rem
+                    font-size 11px
+                    border 1px solid #f70057
+                    border-radius .05rem
+                    padding 0 .1rem
+                    display inline-flex
+                    align-items center
+                  }
+                  .text {
+                    font-size .32rem
+                    margin-left .05rem
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
