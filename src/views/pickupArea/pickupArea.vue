@@ -11,6 +11,7 @@
         img.search(src="./img/search.png")
         img.del(src="./img/del.png", v-show="query.length>0")
       .right 搜索
+    .customWrapper(ref="customWrapper")
     .fixedContent
       .tab
         .left(:class="{active: tabActive===0}", @click="tabActive=0") 品牌
@@ -77,8 +78,30 @@
     },
     mounted() {
       this.getAreaInitHeight()
+      this.getData()
     },
     methods: {
+      getData() {
+        this.createBanner()
+        this.createTwoColumn()
+      },
+      // 新建banner
+      createBanner() {
+        let el = document.createElement("div")
+        el.id = 'bannerWrapper'
+        this.$refs.customWrapper.appendChild(el)
+        this.$banner([1,1,1,1,1])
+      },
+      // 新建多栏栏组件
+      createTwoColumn() {
+        let el = document.createElement("div")
+        el.id = 'twoColumnWrapper'
+        this.$refs.customWrapper.appendChild(el)
+        this.$multiColumn({
+          data: [1,1],
+          id: 'twoColumnWrapper'
+        })
+      },
       // 获取商圈的两行高度和最高高度
       getAreaInitHeight() {
         this.$nextTick(()=>{

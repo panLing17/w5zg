@@ -38,6 +38,10 @@ import Advert from 'views/home/src/goodsList/advert'
 import Notify from '@/plugIn/notification/index.js'
 import Verify from '@/plugIn/verify/index.js'
 
+// 自定义页面组件
+import Banner from 'components/custom/banner/banner'
+import MultiColumn from 'components/custom/multiColumn/multiCcolumn'
+
 Vue.router = router
 Vue.use(Notify)
 Vue.use(Verify)
@@ -53,20 +57,10 @@ Vue.use(VueLazyLoad, {
   //       listener.src = 'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/' + listener.src + '?x-oss-process=style/compress'
   //   }
   // },
-  // adapter: {
-  //   loaded ({ bindType, el, naturalHeight, naturalWidth, $parent, src, loading, error, Init }) {
-  //     // do something here
-  //     // example for call LoadedHandler
-  //     LoadedHandler(el)
-  //   },
-  //   loading (listender, Init) {
-  //     console.log('loading')
-  //   },
-  //   error (listender, Init) {
-  //     console.log(listender)
-  //   }
-  // }
 })
+
+Vue.use(Banner)
+Vue.use(MultiColumn)
 
 
 Vue.prototype.$message = Message
