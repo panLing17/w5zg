@@ -31,6 +31,7 @@
         font-size 0
         img {
           width 100%
+          pointer-events none
         }
       }
     }

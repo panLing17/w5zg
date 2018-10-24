@@ -31,5 +31,8 @@
   .banner {
     width 100%
     overflow hidden
+    img {
+      pointer-events none
+    }
   }
 </style>

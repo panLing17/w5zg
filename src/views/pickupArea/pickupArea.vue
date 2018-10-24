@@ -84,6 +84,7 @@
       getData() {
         this.createBanner()
         this.createTwoColumn()
+        this.createSuspension()
       },
       // 新建banner
       createBanner() {
@@ -101,6 +102,10 @@
           data: [1,1],
           id: 'twoColumnWrapper'
         })
+      },
+      // 新建悬浮按钮
+      createSuspension() {
+        this.$suspension({})
       },
       // 获取商圈的两行高度和最高高度
       getAreaInitHeight() {

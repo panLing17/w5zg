@@ -41,6 +41,7 @@ import Verify from '@/plugIn/verify/index.js'
 // 自定义页面组件
 import Banner from 'components/custom/banner/banner'
 import MultiColumn from 'components/custom/multiColumn/multiCcolumn'
+import Suspension from 'components/custom/suspension/suspension'
 
 Vue.router = router
 Vue.use(Notify)
@@ -61,6 +62,7 @@ Vue.use(VueLazyLoad, {
 
 Vue.use(Banner)
 Vue.use(MultiColumn)
+Vue.use(Suspension)
 
 
 Vue.prototype.$message = Message
