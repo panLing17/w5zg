@@ -40,6 +40,7 @@
       text-align center
       display flex
       align-items center
+      justify-content center
       color #333
       font-weight 500
       font-size .48rem
