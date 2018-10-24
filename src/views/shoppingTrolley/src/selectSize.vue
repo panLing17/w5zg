@@ -15,8 +15,8 @@
                 ul
                   li(v-for="item in selectionSizeText") {{item.value}}
             .desc
-              .yes(v-show="storageNum>0") 有货
-              .no(v-show="storageNum===0") 无货
+              .yes(v-show="num>0") 有货
+              .no(v-show="num===0") 无货
           .close(@click="hide()")
             img(src="./close@2x.png")
         // 中间内容-------------------------------------------------------------------------------------
@@ -33,8 +33,8 @@
                   ) {{value}}
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
-          .one(v-show="bottomBtnType===1", @click="saveReachGoods",  style="background-color:#9D4AAD;") 到货通知
-          .one(v-show="bottomBtnType===2", @click="submitGoods") 确定
+          .one(v-show="bottomBtn===1", @click="saveReachGoods",  style="background-color:#9D4AAD;") 到货通知
+          .one(v-show="bottomBtn===2", @click="submitGoods") 确定
 </template>
 
 <script>
@@ -56,10 +56,10 @@
     data () {
       return {
         selectSizeShow: false, //控制显示和隐藏
-        storageNum: 1, //sku接口返回的数量，为0表示无货，初始化为1
+        storageNum: -1, //sku接口返回的数量，为0表示无货，初始化为1
         selectionSize: [], //选中的规格
         skuData: {}, // sku信息
-        bottomBtnType: 2, // 底部按钮类型 0为默认，即显示加入购物车、立即购买 1为到货通知 2为确定从加入购物车来 4为确定从立即购买来 3为预约体验
+        bottomBtnType: 2, // 底部按钮类型 1为到货通知 2为确定从加入购物车来 4为确定从立即购买来 3为预约体验
       }
     },
     computed: {
@@ -71,6 +71,12 @@
       },
       selectionSizeText() {
         return this.selectionSize.length?this.selectionSize:this.resetSpec.selectionSize
+      },
+      num() {
+        return this.storageNum===-1?this.resetSpec.storageNum:this.storageNum
+      },
+      bottomBtn() {
+        return this.resetSpec.storageNum===0 && this.storageNum===-1?1:this.bottomBtnType
       }
     },
     methods: {
