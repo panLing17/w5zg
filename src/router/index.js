@@ -54,7 +54,7 @@ import ShoppingTrolley from '../views/shoppingTrolley/index'
 // 新确认订单
 import OrderConfirm from '../views/orderConfirm/orderConfirm'
 // 逛专柜
-import PickupArea from '../views/pickupArea/pickupArea'
+import PickupArea from '../views/pickupArea/index'
 
 Vue.use(Router)
 const router = new Router ({
@@ -363,6 +363,11 @@ const router = new Router ({
       }
     },
     {
+      path: '/brand',
+      name: '专柜品牌',
+      component: PickupArea.brand
+    },
+    {
       path: '/',
       name: '应用',
       component: Main,
@@ -473,7 +478,7 @@ const router = new Router ({
         {
           path: '/pickupArea',
           name: '逛专柜',
-          component: PickupArea
+          component: PickupArea.pickupArea
         },
         // {
         //   path: '/shoppingCart',
