@@ -485,7 +485,7 @@
         this.showCircle = true
         setTimeout(()=>{
           this.showCircle = false
-        }, 0)
+        }, 20)
 
         let self = this
         self.$ajax({
@@ -1168,13 +1168,34 @@
   .circle img {
     width: 100%;
   }
-  .circle.scale-leave-active {
-    transition: all 1s;
+  /*.circle.scale-leave-active {
+    transition: all 3s ;
+  }
+  .circle.scale-leave {
+    transform: translate3d(-4rem,4rem, 0);
   }
   .circle.scale-leave-to {
     transform: translate3d(-6.8rem,6.8rem, 0);
     opacity: 0;
+  }*/
+  .circle.scale-leave-active {
+    animation: scale 1s cubic-bezier(1,.29,.43,.83);
   }
+  @keyframes scale {
+    0% {
+      transform: translate3d(0,0,0);
+      opacity: 1;
+    }
+    20% {
+      transform: translate3d(-1rem,0, 0);
+    }
+    100% {
+      transform: translate3d(-6.8rem,7rem, 0);
+      opacity: 0;
+    }
+  }
+
+
   .noGoodsBtn {
     width 2.6rem
     height .74rem
