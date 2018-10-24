@@ -22,7 +22,7 @@
             .right(@click="clearLost") 清空失效商品
           li(v-for="item in contLists", v-if="item.gi_status !== '221'")
             .lefter(@click="gotoGoods(item)")
-              .mask 失效
+              .masks 失效
               img(:src="item.gi_image_url | img-filter", @click.prevent="")
             .righter(@click="gotoGoods(item)")
               .textLose {{item.gi_name}}
@@ -454,7 +454,7 @@
     width: 2.4rem;
     height: 2.4rem;
   }
-  ul.lose .lefter .mask{
+  ul.lose .lefter .masks{
     border-radius: .13rem;
     position: absolute;
     top: 0;
