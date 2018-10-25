@@ -363,9 +363,14 @@ const router = new Router ({
       }
     },
     {
-      path: '/brand',
-      name: '专柜品牌',
+      path: '/brandList',
+      name: '专柜品牌集合',
       component: PickupArea.brandList
+    },
+    {
+      path: '/brand',
+      name: '品牌',
+      component: PickupArea.brand
     },
     {
       path: '/',
