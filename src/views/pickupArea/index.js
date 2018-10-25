@@ -1,7 +1,7 @@
 import pickupArea from './pickupArea'
-import brand from './brand'
+import brandList from './brandList'
 
 export default {
   pickupArea,
-  brand
+  brandList
 }

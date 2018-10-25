@@ -105,6 +105,9 @@
       },
       // 新建悬浮按钮
       createSuspension() {
+        let el = document.createElement("div")
+        el.id = 'suspension'
+        this.$refs.customWrapper.appendChild(el)
         this.$suspension({})
       },
       // 获取商圈的两行高度和最高高度

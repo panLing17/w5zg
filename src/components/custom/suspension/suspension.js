@@ -11,7 +11,7 @@ const Suspension = (data) => {
   })
   SuspensionInstance.vm = SuspensionInstance.$mount() // 挂载但是并未插入dom，是一个完整的Vue实例
   SuspensionInstance.dom = SuspensionInstance.vm.$el
-  document.body.appendChild(SuspensionInstance.dom) // 将dom插入body
+  document.getElementById('suspension').appendChild(SuspensionInstance.dom) // 将dom插入body
   return SuspensionInstance.vm
 }
 
