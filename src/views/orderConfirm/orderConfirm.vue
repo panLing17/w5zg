@@ -563,6 +563,7 @@
           color #333
           font-size .32rem
           font-weight 400
+          border-bottom 1px solid #d7d7d7
           .desc {
 
           }
@@ -570,8 +571,6 @@
             flex 1
             outline none
             border none
-            border-bottom 1px solid #d7d7d7
-            line-height 2.18rem
             margin-left .2rem
             height 100%
           }

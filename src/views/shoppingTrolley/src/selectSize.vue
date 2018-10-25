@@ -232,7 +232,7 @@
     height 11rem
     z-index 400
     position fixed
-    bottom $height-footer
+    bottom 0
     left 0
     width 100%
     background-color #fff

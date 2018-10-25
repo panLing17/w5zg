@@ -821,7 +821,6 @@
       .realIcon {
         color #f70057
         font-size .32rem
-        line-height 1
         margin-left .16rem
       }
       .realPrice {
@@ -832,7 +831,7 @@
             color #f70057
             font-size .693rem
             font-weight 400
-            line-height .8
+            line-height .8rem
             &:nth-child(2) {
               font-size .426rem
             }
@@ -938,8 +937,8 @@
           display flex
           li {
             display flex
-            line-height 1
             margin-right .2rem
+            align-items center
             &:last-child {
               margin-right 0
             }
@@ -1119,7 +1118,6 @@
           color #666
           font-size .26rem
           margin-top .08rem
-          line-height 1
         }
       }
     }

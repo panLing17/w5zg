@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="selectStoreShow", :class="{background: from===1}", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .contentWrapper(v-if="selectStoreShow", :style="{bottom: from===0?0:'1.38rem'}")
+      .contentWrapper(v-if="selectStoreShow")
         .title
           .left(@click="hide")
             img(src="./back2.png")
@@ -115,6 +115,7 @@
     height $height-pop-details
     position fixed
     left 0
+    bottom 0
     width 100%
     background-color #fff
     z-index 400
