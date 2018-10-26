@@ -77,7 +77,7 @@
           img(src="./address.png")
           span 提货门店:
           span {{store.bs_name}}
-    div.noGoodsBtn(v-if="goodsData.gi_status==='222'") 暂不销售
+    div.noGoodsBtn(v-if="goodsData.gi_status!=='221'") 暂不销售
     // 横幅广告---------------------------------------------------------------------------------------------------
     .adWrapper
       img(src="./ad.png")
@@ -92,8 +92,8 @@
         img(src="./title@2x.png")
       goods-list(:data="goodsList")
     // 下架提示------------------------------------------------------------------------------------------------------
-    .noGoodsText(v-if="goodsData.gi_status==='222'") 该商品已下架
-    .toolbarWrapper(v-if="goodsData.gi_status==='222'")
+    .noGoodsText(v-if="goodsData.gi_status!=='221'") 该商品已下架
+    .toolbarWrapper(v-if="goodsData.gi_status!=='221'")
       .left.noGoodsBottom
         .block(@click="goService")
           img(src="./service.png")
