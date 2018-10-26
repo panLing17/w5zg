@@ -50,7 +50,7 @@
       addLoginLog() {
         let self = this
         self.$ajax({
-          method: 'get',
+          method: 'post',
           url: self.$apiMember + 'member/addLoginLog',
           params: {}
         }).then(function (response) {
