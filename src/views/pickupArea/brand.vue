@@ -34,18 +34,30 @@
           .right
             .name 南京中央商场专柜
             .detail 南京市秦淮区中山南路79号 中央商场二期B座一楼（西区自动扶梯旁）
-      .
+      .navWrapper
+        scroll.navList(ref="categoryHeader", :data="navList", :scrollX="true", :scrollY="false", :stopPropagation="true")
+          div
+            ul
+              li(v-for="item in navList") {{item}}
+        .arrow
+          img()
+        .navContent
+          ul
+            li(v-for="item in navList") {{item}}
 </template>
 
 <script>
   import Banner from 'components/custom/banner/banner.vue'
+  import Scroll from 'components/scroll'
   export default {
     name: "brand",
     data() {
       return {
         brandDescShowAll: false,
         brandDescInitHeight: 'auto',
-        brandDescMaxHeight: 0
+        brandDescMaxHeight: 0,
+        navList: [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        navArrow:''
       }
     },
     mounted() {
@@ -64,7 +76,8 @@
       }
     },
     components: {
-      Banner
+      Banner,
+      Scroll
     }
   }
 </script>
@@ -263,6 +276,45 @@
           font-size .32rem
           font-weight 400
         }
+      }
+    }
+  }
+  .navWrapper {
+    border-top .16rem solid #f2f2f2
+    position relative
+    .navList {
+      width 100%
+      overflow hidden
+      height .96rem
+      div {
+        position absolute
+        ul {
+          display flex
+          height .96rem
+          align-items center
+          li {
+            padding 0 .32rem
+            height 100%
+            display flex
+            align-items center
+            color #333
+            font-size .37rem
+            font-weight 400
+            &.active {
+              background-color #FF387E
+              color #fff
+            }
+          }
+        }
+      }
+    }
+    .arrow {
+      position absolute
+      top 0
+      right 0
+      font-size 0
+      img {
+        width .96rem
       }
     }
   }
