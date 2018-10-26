@@ -104,7 +104,7 @@
 
         })
         localStorage.clear()
-        this.$router.push('/my')
+        this.$router.push('/login')
       }
     }
   }

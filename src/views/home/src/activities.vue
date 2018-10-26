@@ -1,8 +1,10 @@
 <template lang="pug">
   .activities
     ul.goodsList
-      li(v-for="(i,index) in listData.slice(0,4)", @click="toNext(i)")
-        img(:src="i.image | gif-filter")
+      li(v-for="(i,index) in listData.slice(0,4)", @click="toNext(i)", v-lazy-container="{ selector: 'img'}")
+        img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+i.image+'?x-oss-process=style/compress'"
+            :data-error="require('../../../assets/img/default/active.png')",
+            :data-loading="require('../../../assets/img/default/active.png')")
     //.columLine
     //.rowLine
 </template>

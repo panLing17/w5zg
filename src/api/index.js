@@ -43,14 +43,10 @@ axios.interceptors.response.use(
     if (optSuc) {
       return response
     } else {
-      if (response.data.code==='800') {
-        Vue.notify({
-          content: res.msg,
-          bottom: 3
-        })
-      } else {
-        Message.error(res.msg)
-      }
+      Vue.notify({
+        content: res.msg,
+        bottom: 3
+      })
     }
   },
   /*

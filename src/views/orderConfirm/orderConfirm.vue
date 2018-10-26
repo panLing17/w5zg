@@ -1,5 +1,5 @@
 <template lang="pug">
-  .orderConfirm
+  .orderConfirm(v-loading="loadingShow")
     .headerWrapper
       .back(@click="$router.go(-1)")
         img(src="./back.png")
@@ -19,17 +19,17 @@
         .addressWrapper(v-show="confirmData.shippingMethods===1")
           .topItem
             .desc 提货人：
-            input.text(v-model="selfForm.name")
+            input.text(v-model="selfForm.name", placeholder="请输入提货人姓名")
           .bottomItem
             .desc 手机号：
-            input.text(v-model="selfForm.phone")
+            input.text(v-model="selfForm.phone", placeholder="请输入11位手机号码")
         .goodsList
           ul.listWrapper(v-if="confirmData.from===0")
             li.item
-              .storeName {{data.shop_Name}}
+              .storeName {{confirmData.shippingMethods===0?data.shop_Name:confirmData.bsName}}
               .itemWrapper
                 .left
-                  img(src="data.logo | img-filter")
+                  img(:src="data.logo | img-filter")
                 .right
                   .name {{data.gi_name}}
                   .size
@@ -42,11 +42,11 @@
           ul(v-if="confirmData.from===1")
             li(v-for="item in data.commList", style="border-bottom: .26rem solid #f3f3f3;")
               ul.listWrapper
-                .storeName {{item.si_name}}
+                .storeName {{confirmData.shippingMethods===0?item.si_name:item.store_name}}
                 li.item(v-for="goods in item.shoppingCartVOList")
                   .itemWrapper
                     .left
-                      img(src="goods.logo | img-filter")
+                      img(:src="goods.logo | img-filter")
                     .right
                       .name {{goods.gi_name}}
                       .size
@@ -77,7 +77,7 @@
         span.price {{directPrice | price-filter}}
       .right(@click="submitOrder") 提交订单
     express(ref="express", :addressList="addressData", @address-change="addressChange")
-    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @submit-order="submitOrder(1)")
+    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @submit-order="reject")
 </template>
 
 <script>
@@ -108,7 +108,8 @@
           phone: ''
         },
         checkGoodsData: [],
-        btnType: 2
+        btnType: 2,
+        loadingShow: false
       }
     },
     computed: {
@@ -123,9 +124,11 @@
       },
       cashSwitch() {
         this.computedPrice()
+        this.getTicket(1)
       },
       ticketSwitch() {
         this.computedPrice()
+        this.getTicket(1)
       }
     },
     created() {
@@ -190,10 +193,22 @@
       getTotal() {
         if (this.confirmData.from===0) {
           this.totalCount = this.confirmData.goodsCount
-          this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount)
+          if (this.confirmData.shippingMethods===0) {
+            this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount) + this.data.freight
+          } else {
+            this.totalPrice = this.data.counter_price * Number(this.confirmData.goodsCount)
+          }
         } else {
           this.totalCount = this.data.totalNum
-          this.totalPrice = this.data.totalPrice
+          if (this.confirmData.shippingMethods===0) {
+            let t = 0
+            this.data.commList.forEach(item=>{
+              t+=item.freight
+            })
+            this.totalPrice = this.data.totalPrice + t
+          } else {
+            this.totalPrice = this.data.totalPrice
+          }
         }
         this.computedPrice()
       },
@@ -204,29 +219,10 @@
         }
         let a = this.cashSwitch?this.ticketData.netCard:0
         let b = this.ticketSwitch?this.ticketData.commTicket:0
-        let f = 0
-        if (this.confirmData.from===0 && this.confirmData.shippingMethods===0) {
-          if (typeof this.data.freight !== 'number') {
-            return
-          }
-          f = this.data.freight
-        }
-        if(this.confirmData.from===1 && this.confirmData.shippingMethods===0){
-          if (typeof this.data.commList !== 'object') {
-            return
-          }
-          this.data.commList.forEach(item=>{
-            f+=item.freight
-          })
-        }
-        if (this.confirmData.shippingMethods === 1) {
-          this.directPrice = this.totalPrice - a - b
-        } else {
-          this.directPrice = this.totalPrice - a - b + f
-        }
+        this.directPrice = this.totalPrice - a - b
       },
       // 卡券
-      getTicket() {
+      getTicket(flag) {
         let url = ''
         let params
         if (this.confirmData.from===0) {
@@ -256,17 +252,16 @@
           if (res) {
             self.ticketData = res.data.data
             if (self.ticketData.netCard>0) {
-              self.cashSwitch=true
+              if (flag!==1) {
+                self.cashSwitch=true
+              }
             } else {
               self.cashOptional = false
               self.cashSwitch=false
             }
 
-            if (self.ticketData.commTicket>0) {
-              self.ticketSwitch=true
-            } else {
+            if (self.ticketData.commTicket<=0) {
               self.ticketOptional = false
-              self.ticketSwitch = false
             }
             self.computedPrice()
           }
@@ -320,6 +315,7 @@
           })
           return
         }
+        this.loadingShow = true
         let url
         let params
         let selectedCount = 0
@@ -340,6 +336,9 @@
             params.carryPhone = this.selfForm.phone
             params.bsId = this.confirmData.bsId
             params.supplierId = this.confirmData.gs_id
+          }
+          if(flag === 1) {
+            params.buyNum = this.checkGoodsData[0].storage_num
           }
         } else {
           params = {
@@ -363,7 +362,7 @@
             this.checkGoodsData.forEach(item=>{
               if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
                 for(let i=arr.length-1;i>=0;i--) {
-                  if (item.sc_id===arr[i].sc_id) {
+                  if (item.sc_id===arr[i]) {
                     arr.splice(i, 1)
                   }
                 }
@@ -380,6 +379,7 @@
           url: self.$apiTransaction + url,
           params: params
         }).then(function (res) {
+          self.loadingShow = false
           if (res) {
             if (res.data.data.flag) {
               self.$router.replace({path: '/payment', query:{id:res.data.data.totalOrderId, price: res.data.data.payPrice}})
@@ -405,6 +405,25 @@
             }
           }
         })
+      },
+      // 剔除商品
+      reject() {
+        if(this.confirmData.from===0) {
+          this.confirmData.goodsCount = this.checkGoodsData[0].storage_num
+        } else {
+          this.checkGoodsData.forEach(item=>{
+            if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
+              for (let i=this.confirmData.list.length-1; i>=0; i--) {
+                if (item.sc_id===this.confirmData.list[i].sc_id) {
+                  this.confirmData.list.splice(i, 1)
+                }
+              }
+
+            }
+          })
+        }
+        this.getData()
+        this.getTicket()
       }
     },
     components: {
@@ -417,6 +436,9 @@
 </script>
 
 <style scoped lang="stylus">
+  input::-webkit-input-placeholder{
+    color:#999;
+  }
   .orderConfirm {
     position absolute
     top 0
@@ -541,6 +563,7 @@
           color #333
           font-size .32rem
           font-weight 400
+          border-bottom 1px solid #d7d7d7
           .desc {
 
           }
@@ -548,8 +571,6 @@
             flex 1
             outline none
             border none
-            border-bottom 1px solid #d7d7d7
-            line-height 2.18rem
             margin-left .2rem
             height 100%
           }

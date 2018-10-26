@@ -1,19 +1,25 @@
 <template lang="pug">
-  .mescroll#shoppingMescroll
-    // 头部-------------------------------------------------------------------------------------
-    .header
-      .title
-        .left
-          img(src="./back.png")
-        .center 购物车
-      .nav
-        .left(@click="go(0)")
-          span(:class="{active: navActive===0}") 快递配送({{shoppingCartGoodsNum.sendNum}})
-        .right(@click="go(1)")
-          span(:class="{active: navActive===1}") 专柜自提({{shoppingCartGoodsNum.carryNum}})
-    // 内容--------------------------------------------------------------------------------------
-    .contentWrapper
-      router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange", @show-change="allSelectShowChange")
+  .shoppingCart
+    .mescroll#shoppingMescroll
+      // 头部-------------------------------------------------------------------------------------
+      .header
+        .title
+          .left(@click="$router.go(-1)")
+            img(src="./back.png")
+          .center 购物车
+        .nav
+          .left(@click="go(0)")
+            span(:class="{active: navActive===0}") 快递配送({{shoppingCartGoodsNum.sendNum}})
+          .right(@click="go(1)")
+            span(:class="{active: navActive===1}") 专柜自提({{shoppingCartGoodsNum.carryNum}})
+      // 内容--------------------------------------------------------------------------------------
+      .contentWrapper
+        router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange", @show-change="allSelectShowChange")
+      // 商品推荐列表-------------------------------------------------------------------------------
+      .goodsWrapper
+        .title
+          img(src="./img1.png")
+        goods-list(:data="goodsList")
     // 全选--------------------------------------------------------------------------------------
     .allSelect(v-show="allSelectShow && !sliceShow")
       .white
@@ -26,9 +32,6 @@
           .top (不含运费)实付: <span>{{totalPrice | price-filter}}</span>
           .bottom 现金券可抵扣: {{totalTicket | price-filter}}
       .red(@click="checkCart") 结算({{totalCount}})
-    // 整理--------------------------------------------------------------------------------------
-    .sliceIcon(v-show="allSelectShow && !sliceShow", @click="sliceShow=true")
-      img(src="./slice.png")
     .sliceWrapper(v-show="sliceShow")
       .white(@click="selectAll")
         .icon
@@ -38,11 +41,9 @@
       .red
         .del(@click="deleteGoods") 删除
         .over(@click="sliceShow=false") 完成
-    // 商品推荐列表-------------------------------------------------------------------------------
-    .goodsWrapper
-      .title
-        img(src="./img1.png")
-      goods-list(:data="goodsList")
+    // 整理--------------------------------------------------------------------------------------
+    .sliceIcon(v-show="allSelectShow && !sliceShow", @click="sliceShow=true")
+      img(src="./slice.png")
 </template>
 
 <script>
@@ -63,7 +64,7 @@
       }
     },
     computed: {
-      ...mapGetters(['shoppingCartGoodsNum', 'shoppingCartCheckedCount'])
+      ...mapGetters(['shoppingCartGoodsNum', 'shoppingCartCheckedCount', 'position'])
     },
     watch:{
       '$route'(to) {
@@ -73,6 +74,16 @@
           this.navActive = 1
         }
       }
+    },
+    activated() {
+      this.position.forEach((now) => {
+        if (now.path === this.$route.path) {
+          this.mescroll.scrollTo(now.y, 0);
+        }
+      })
+    },
+    deactivated() {
+      this.sliceShow = false
     },
     beforeRouteEnter(to, from, next) {
       next(vm=>{
@@ -84,7 +95,12 @@
       })
     },
     mounted() {
-      this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, () => {})
+      this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, (obj) => {
+        this.$store.commit('setPosition', {
+          path: this.$route.path,
+          y: obj.preScrollY
+        })
+      })
     },
     methods: {
       // 点击结算
@@ -153,8 +169,11 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  .shoppingCart {
+    height 100%
+  }
   .mescroll {
-    position fixed
+    position absolute
     top 0
     bottom 1.38rem
     left 0
@@ -166,7 +185,7 @@
     top 0
     left 0
     width 100%
-    z-index 40
+    z-index 9999
     .title {
       height $height-header
       background-color #f70057
@@ -174,6 +193,9 @@
       .left {
         padding .36rem .4rem
         font-size 0
+        position absolute
+        top 0
+        left 0
         img {
           width .58rem
         }
@@ -182,10 +204,9 @@
         font-size .48rem
         color #fff
         font-weight 500
-        position absolute
-        top 50%
-        left 50%
-        transform translate(-50%, -50%)
+        width 100%
+        line-height $height-header
+        text-align center
       }
     }
     .nav {
@@ -220,6 +241,7 @@
   }
   .contentWrapper {
     margin-top 2.26rem
+    background-color #fff
   }
   .goodsWrapper {
     .title {
@@ -240,6 +262,7 @@
     height 1.44rem
     display flex
     border-top 1px solid #d7d7d7
+    z-index 2
     .white {
       flex 1
       background-color #fff
@@ -315,6 +338,7 @@
     background-color #fff
     height 1.44rem
     border-top 1px solid #d7d7d7
+    z-index 2
     .white {
       display flex
       height 100%

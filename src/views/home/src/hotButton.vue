@@ -1,12 +1,18 @@
 <template lang="pug">
   div.box
     ul
-      li(v-for="(item, index) in list.slice(0,5)")
-        img(:src="item.image | gif-filter" , @click="toNext(1,index)")
+      li(v-for="(item, index) in list.slice(0,5)", v-lazy-container="{ selector: 'img'}", @click="toNext(1,index)")
+        img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.image" ,
+            :data-loading="require('../../../assets/img/default/btn.png')",
+            :data-error="require('../../../assets/img/default/btn.png')",
+            )
         span {{item.title}}
     ul
-      li(v-for="(item, index) in list.slice(5,10)", @click="toNext(2,index)")
-        img(:src="item.image | gif-filter" )
+      li(v-for="(item, index) in list.slice(5,10)", v-lazy-container="{ selector: 'img'}", @click="toNext(2,index)")
+        img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.image" ,
+        :data-loading="require('../../../assets/img/default/btn.png')",
+        :data-error="require('../../../assets/img/default/btn.png')",
+        )
         span {{item.title}}
 </template>
 

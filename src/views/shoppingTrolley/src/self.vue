@@ -1,5 +1,5 @@
 <template lang="pug">
-  .self
+  .self(v-loading="loadingShow")
     no-data(v-show="isEmpty")
     .listWrapper(v-show="!isEmpty")
       .commList
@@ -18,40 +18,41 @@
                          @touchend="touchend($event, index, i)",
                          @contextmenu.prevent=""
                           )
-                  .left(@click.stop="goodsCheckedChange(goods, index)")
-                    img(src="./gou.png", v-show="goods.checked==='011'")
+                  .left(@click.stop="goodsCheckedChange(goods, index)", @contextmenu.prevent="")
+                    img(src="./gou.png", v-show="goods.checked==='011'", @contextmenu.prevent="")
                     .noChecked(v-show="goods.checked==='012'")
                   .right
-                    .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
-                      .mask(v-if="goods.goods_num>goods.storage_num") 库存不足
+                    .logo(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})", @contextmenu.prevent="")
+                      .mask(v-if="goods.goods_num>goods.storage_num", @contextmenu.prevent="") 库存不足
                       img(:src="goods.logo | img-filter")
                     .info
-                      .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
+                      .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})", @contextmenu.prevent="") {{goods.gi_name}}
                       .tool
-                        .detail(@click.stop="specChange(goods, index, i)")
+                        .detail(@click.stop="specChange(goods, index, i)", @contextmenu.prevent="")
                           ul
                             li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
                         .countWrapper
-                          .minus(@click.stop="minus(goods)")
+                          .minus(@click.stop="minus(goods)", @contextmenu.prevent="")
                             img(src="./minus.png")
-                          .count {{goods.goods_num}}
-                          .add(@click.stop="add(goods)")
+                          .count(@contextmenu.prevent="") {{goods.goods_num}}
+                          .add(@click.stop="add(goods)", @contextmenu.prevent="")
                             img(src="./add.png")
-                      .priceWrapper
+                      .priceWrapper(@contextmenu.prevent="")
                         .leftPrice
                           span.desc 实付价:
                           span.price {{goods.direct_supply_price | price-filter}}
                         .rightPrice 专柜价:{{goods.counter_price | price-filter}}
-                      .toolbar
+                      .toolbar(@contextmenu.prevent="")
                         .cut(v-show="goods.difference_price>0") 比加入时降{{goods.difference_price}}元
-                        .btn
+                        .btn(@click.prevent="openPop(goods, index, i)")
                           img(src="./btn.png")
-                          .pop
+                          .pop(v-show="goods.popShow")
+                            .popMask(@click.stop="hidePop(goods, index, i)")
                             .sanjiao
-                            .popItem(@click="changeWays(goods, index, i)")
+                            .popItem(@click.stop="changeWays(goods, index, i)")
                               img(src="./refresh.png")
                               span 快递配送
-                            .popItem(@click="changeStore(goods, index, i)")
+                            .popItem(@click.stop="changeStore(goods, index, i)")
                               img(src="./address.png")
                               span 切换专柜
                   .maskBox(v-show="goods.maskShow", @click.stop="closeMask(index, i)")
@@ -69,11 +70,11 @@
             li(v-for="(item, i) in data.failure")
               ul.itemWrapper
                 li.item(v-for="(goods, index) in item.shoppingCartVOList")
-                  .left
+                  .left(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})")
                     .mask 失效
                     img(:src="goods.logo | img-filter")
                   .right
-                    .name {{goods.gi_name}}
+                    .name(@click="$router.push({path: '/goodsDetailed',query:{id: goods.gspu_id}})") {{goods.gi_name}}
                     .size
                       ul
                         li(v-for="detail in goods.specVOList") {{detail.gspec_value}};
@@ -104,6 +105,7 @@
     mixins: [shoppingCart],
     data() {
       return {
+        loadingShow:true,
         data: {},
         specList: [], // 商品规格
         resetSpec: {}, // 更改规格时初始化的参数
@@ -166,6 +168,7 @@
               }
               item.shoppingCartVOList.forEach(goods=>{
                 goods.maskShow = false
+                goods.popShow = false
                 totalCount++
               })
             })
@@ -179,6 +182,7 @@
             } else {
               self.$emit('show-change', true)
             }
+            self.loadingShow = false
           }
         })
       },
@@ -236,9 +240,12 @@
       // 规格切换完成
       specChangeRight() {
         this.getSelfList()
+        this.queryCartMoneyAjax('168')
       },
       // 切换配送方式
       changeWays(goods, index, i) {
+        goods.popShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
         this.$verify({
           content: '确定要切换为“快递配送”？',
           leftText: '取消',
@@ -264,6 +271,8 @@
       },
       // 切换专柜
       changeStore(goods, index, i) {
+        goods.popShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
         this.specCurrentIndex = {
           index: index,
           i: i
@@ -431,6 +440,13 @@
             }
           })
         })
+        if (arr.length===0) {
+          this.$notify({
+            content: '请勾选商品',
+            bottom: 3.2
+          })
+          return
+        }
         indexArr.forEach(item => {
           this.data.commList[item.index].shoppingCartVOList.splice(item.i, 1)
           if(this.data.commList[item.index].shoppingCartVOList.length===0) {
@@ -458,11 +474,18 @@
         this.data.commList.forEach(item=>{
           item.shoppingCartVOList.forEach(goods=>{
             if (goods.checked==='011') {
-              arr.push(item.sc_id)
+              arr.push(goods.sc_id)
               selectedCount++
             }
           })
         })
+        if (arr.length===0) {
+          this.$notify({
+            content: '请勾选商品',
+            bottom: 3.2
+          })
+          return
+        }
         let params = {
           scIdArray: arr.join(',')
         }
@@ -520,6 +543,18 @@
         this.setConfirmData(temp)
         this.$router.push('/orderConfirm')
       },
+      // 数量改变后动作
+      countCallback() {
+        this.queryCartMoneyAjax('168')
+      },
+      openPop(goods, index, i) {
+        goods.popShow = !goods.popShow
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
+      },
+      hidePop(goods, index, i) {
+        goods.popShow = false
+        this.data.commList[index].shoppingCartVOList.splice(i, goods)
+      },
       ...mapMutations({
         setShoppingCartCount: 'shoppingCartGoodsNumChange',
         setConfirmData: 'setConfirmData'
@@ -537,6 +572,14 @@
 <style scoped lang="stylus">
   img {
     pointer-events none
+  }
+  * {
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
   }
   .wrapper {
     background-color #fff
@@ -617,6 +660,7 @@
                   font-size .32rem
                   line-height 2.4rem
                   text-align center
+                  z-index 1
                 }
                 img {
                   width 100%
@@ -714,9 +758,6 @@
                   justify-content space-between
                   position relative
                   height .58rem
-                  &:hover .btn .pop {
-                    display block
-                  }
                   .cut {
                     line-height .45rem
                     padding 0 .13rem
@@ -731,11 +772,12 @@
                     top 0
                     font-size 0
                     align-self flex-end
+                    width 30%
+                    text-align right
                     img {
                       width .58rem
                     }
                     .pop {
-                      display none
                       position absolute
                       top 0.58rem
                       right -.16rem
@@ -743,7 +785,7 @@
                       padding-top .16rem
                       z-index 10
                       overflow hidden
-                      .mask {
+                      .popMask {
                         position fixed
                         top 0
                         left 0
@@ -770,6 +812,8 @@
                         display flex
                         align-items center
                         border-bottom 1px solid #999
+                        position relative
+                        z-index 20
                         &:last-child {
                           border none
                         }
@@ -865,6 +909,7 @@
             font-weight 400
             text-align center
             line-height 2.4rem
+            z-index 1
           }
         }
         .right {

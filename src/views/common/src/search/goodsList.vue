@@ -2,8 +2,10 @@
   .goodsList
     ul.list
       li.item(v-for="item in data", @click="$router.push({path: '/goodsDetailed', query: {id: item.gspu_id}})")
-        .imgWrapper
-          img(:src="item.gi_image_url | img-filter")
+        .imgWrapper(v-lazy-container="{ selector: 'img'}")
+          img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.gi_image_url+'?x-oss-process=style/compress'",
+          :data-error="require('../../../../assets/img/default/goods.png')",
+          :data-loading="require('../../../../assets/img/default/goods.png')")
         .goodsNameWrapper
           .flag(v-show="item.carry_type===1") 专柜提货
           span {{item.gi_name}}

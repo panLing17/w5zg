@@ -221,7 +221,8 @@ const getters = {
   userData: state => state.userData,
   shoppingCartGoodsNum: state => state.shoppingCartGoodsNum,
   confirmData: state => state.confirmData,
-  informGoods: state => state.informGoods
+  informGoods: state => state.informGoods,
+  position: state => state.position
 }
 const debug = process.env.NODE_ENV !== 'production'
 export default new Vuex.Store({

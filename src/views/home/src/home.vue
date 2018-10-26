@@ -1,10 +1,14 @@
 <template lang="pug">
   div
     .homeHeader(:class="{active: homeHeaderActive}")
-      .homeHeaderLeft(@click="toScan")
-        img.headerImg(src="../../../assets/img/sao.png", v-show="!homeHeaderActive", @click.prevent="")
+      <!--.homeHeaderLeft(@click="toScan")-->
+        <!--img.headerImg(src="../../../assets/img/sao.png", v-show="!homeHeaderActive", @click.prevent="")-->
+        <!--.activeHeaderLeft(v-show="homeHeaderActive")-->
+          <!--img.fenleiImg(src="../../../assets/img/sao2.png", @click.prevent="")-->
+      .homeHeaderLeft(@click="$router.push('/page')")
+        img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderLeft(v-show="homeHeaderActive")
-          img.fenleiImg(src="../../../assets/img/sao2.png", @click.prevent="")
+          img.fenleiImg(src="../../../assets/img/fenlei2.png", @click.prevent="")
       .homeHeaderCenter(@click="$router.push('/search')")
         input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
@@ -19,13 +23,19 @@
         <!--carousel(:indicators="true", :auto="5000", v-if="banner.length > 0", :responsive="0", style="height:4.2rem")-->
           <!--div(v-for="(tag, index) in banner", style="width:100%" , @click.prevent="goActivity(index)")-->
             <!--img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4.2rem", @click.prevent="")-->
-        slider(:data="banner", ref="bannerSlider")
+        slider(:data="banner", ref="bannerSlider", v-lazy-container="{ selector: 'img'}")
           div(v-for="(item, index) in banner")
             a(@click.prevent="goActivity(item)")
-              img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
+              img.needsclick(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.ac_phone_image+'?x-oss-process=style/compress'",
+                              :data-error="require('../../../assets/img/default/banner.png')",
+                              :data-loading="require('../../../assets/img/default/banner.png')",
+                              :key="item.ac_phone_image", @click.prevent="")
         //.shanxing
-      .firstFloorADList(v-if="firstFloor && firstFloor.length", @click="goActivity(firstFloor[0])")
-        img(:src="firstFloor[0].ac_phone_image | img-filter", @click.prevent="")
+      .firstFloorADList(v-if="firstFloor && firstFloor.length", @click="goActivity(firstFloor[0])", v-lazy-container="{ selector: 'img'}")
+        img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+firstFloor[0].ac_phone_image+'?x-oss-process=style/compress'",
+            :data-loading="require('../../../assets/img/default/floor.png')",
+            :data-error="require('../../../assets/img/default/floor.png')",
+            @click.prevent="")
       hot-button(:list="hotButton")
       l-news.news(:newsData="news")
       <!--.tradingArea(@click="$router.push('/searchTradingArea')")-->
@@ -36,10 +46,13 @@
       w-activity(:listData="activityGoods")
       //.title2
       .secondFloor(v-if="secondFloor.length")
-        slider(:data="secondFloor")
+        slider(:data="secondFloor", v-lazy-container="{ selector: 'img'}")
           div(v-for="(item, index) in secondFloor")
             a(@click.prevent="goActivity(item)")
-              img.needsclick(:src="item.ac_phone_image | img-filter", @click.prevent="")
+              img.needsclick(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.ac_phone_image+'?x-oss-process=style/compress'",
+                              :data-loading="require('../../../assets/img/default/floor.png')",
+                              :data-error="require('../../../assets/img/default/floor.png')",
+                              @click.prevent="")
       goods-list(:data="goodsList")
       .bottomPlaceholder
     .adWrapper(@click.stop="$router.push('/registerTicket')", :style="{top: fbPosition+'px'}", @touchstart="fbstart($event)", @touchmove="fbmove($event)", v-if="showRegisterTicket")
@@ -651,7 +664,7 @@
     position: relative;
   }
   .activeHeaderLeft:after {
-    content: '扫一扫';
+    content: '分类';
   }
   .activeHeaderRight:after {
     content: '消息';

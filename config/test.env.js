@@ -3,7 +3,7 @@ module.exports = {
   NODE_ENV: '"development"',
   DEV_HOST: '//localhost:',
   REQ_PRE : '"http://"',
-  API_ROOT: '"192.168.2.100:"',
+  API_ROOT: '"192.168.2.69:"',
   MEMBER_PORT: '"8051"',
   GOODS_PORT: '"8041"',
   TRADING_PORT: '"8061"',

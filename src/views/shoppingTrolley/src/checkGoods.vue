@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="checkGoodsShow", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .content(@touchmove.prevent="", v-if="checkGoodsShow", :style="{bottom: (btnType===0||btnType===1)?'1.38rem':0}")
+      .content(@touchmove.prevent="", v-if="checkGoodsShow")
         scroll.contentWrapper(:data="data")
           div
             .title 抱歉，本单部分商品库存不足或失效，已为您降到最大库存
@@ -100,6 +100,7 @@
   .content {
     position fixed
     left 0
+    bottom 0
     width 100%
     height 11.33rem
     background-color #fff

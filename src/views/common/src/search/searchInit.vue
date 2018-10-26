@@ -15,7 +15,7 @@
       .historyWrapper(v-show="history.length")
         .blockTitle
           .title 历史搜索
-          .clear(@click="clearHistory")
+          .clear2(@click="clearHistory")
             img(src="./clear.png")
         .hotContent
           .twoRow(ref="moreContent2", :style="{'max-height': historyHeight}")
@@ -287,7 +287,7 @@
       color:rgb(51,51,51);
       font-weight: 400;
     }
-    .clear {
+    .clear2 {
       img {
         width: .58rem;
       }

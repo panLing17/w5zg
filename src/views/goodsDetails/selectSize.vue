@@ -154,11 +154,7 @@
     methods:{
       // 规格选择
       specChange(index, i, item) {
-        if (item.checked === i) {
-          item.checked = -1
-        } else {
-          item.checked = i
-        }
+        item.checked = i
         this.specGroup.splice(index, 1, item)
         this.getSku()
       },
@@ -172,13 +168,20 @@
           gspu_id: this.spuId,
           bi_id: this.brandId
         }
+        let selectionSizeTemp = []
         // 如果有-1表示还有规格没有选择
         this.specGroup.forEach((item, index)=>{
           if (item.checked === -1) {
             flag = false
           }
-          params['spec_name'+(index+1)] = item.spec_name
-          params['spec_value'+(index+1)] = item.spec_value[item.checked]
+          let name = 'spec_name'+(index+1)
+          let value = 'spec_value'+(index+1)
+          params[name] = item.spec_name
+          params[value] = item.spec_value[item.checked]
+          selectionSizeTemp.push({
+            name: item.spec_name,
+            value: item.spec_value[item.checked]
+          })
         })
 
         if (flag) {
@@ -189,7 +192,7 @@
             params: params
           }).then(function(res){
             if (res) {
-              if (typeof res.data.data !== 'undefined') {
+              if (typeof res.data.data.gsku_id !== 'undefined') {
                 self.storageNum = res.data.data.storage_num
                 // 切换底部按钮
                 if (self.storageNum===0 && self.fromType!==2) {
@@ -203,31 +206,21 @@
                 }else if (self.fromType===2) {
                   self.bottomBtnType = 3
                 }
-                self.selectionSizeFormat(res.data.data)
+                self.selectionSize = selectionSizeTemp
+                res.data.data.selectionSize = selectionSizeTemp
                 self.skuData = res.data.data
                 self.$emit('count', self.count)
                 self.$emit('selection-size', self.skuData)
               }else {
                 self.bottomBtnType = 1
+                self.storageNum = 0
+                self.selectionSize = selectionSizeTemp
                 self.$emit('change-bottom-btn')
+                self.$emit('change-spec', selectionSizeTemp)
               }
             }
           })
         }
-      },
-      // sku尺码格式化
-      selectionSizeFormat(data) {
-        let temp = []
-        for(let i=1; i<=5; i++) {
-          if (data['spec_name'+i].length>0 && data['spec_value'+i].length>0) {
-            temp.push({
-              name: data['spec_name'+i],
-              value: data['spec_value'+i]
-            })
-          }
-        }
-        data.selectionSize = temp
-        this.selectionSize = temp
       },
       // 数量减
       minus() {
@@ -297,6 +290,7 @@
       },
       // 到货通知按钮点击
       saveReachGoods() {
+        this.selectSizeShow = false
         this.$emit('save-goods')
       },
       // 预约按钮点击
@@ -612,7 +606,7 @@
       }
     }
     .bottom {
-      position fixed
+      position absolute
       bottom 0
       left 0
       width 100%

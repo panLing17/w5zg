@@ -15,8 +15,8 @@
                 ul
                   li(v-for="item in selectionSizeText") {{item.value}}
             .desc
-              .yes(v-show="storageNum>0") 有货
-              .no(v-show="storageNum===0") 无货
+              .yes(v-show="num>0") 有货
+              .no(v-show="num===0") 无货
           .close(@click="hide()")
             img(src="./close@2x.png")
         // 中间内容-------------------------------------------------------------------------------------
@@ -33,8 +33,8 @@
                   ) {{value}}
         // 底部按钮--------------------------------------------------------------------------------------
         .bottom
-          .one(v-show="bottomBtnType===1", @click="saveReachGoods",  style="background-color:#9D4AAD;") 到货通知
-          .one(v-show="bottomBtnType===2", @click="submitGoods") 确定
+          .one(v-show="bottomBtn===1", @click="saveReachGoods",  style="background-color:#9D4AAD;") 到货通知
+          .one(v-show="bottomBtn===2", @click="submitGoods") 确定
 </template>
 
 <script>
@@ -56,10 +56,10 @@
     data () {
       return {
         selectSizeShow: false, //控制显示和隐藏
-        storageNum: 1, //sku接口返回的数量，为0表示无货，初始化为1
+        storageNum: -1, //sku接口返回的数量，为0表示无货，初始化为1
         selectionSize: [], //选中的规格
         skuData: {}, // sku信息
-        bottomBtnType: 2, // 底部按钮类型 0为默认，即显示加入购物车、立即购买 1为到货通知 2为确定从加入购物车来 4为确定从立即购买来 3为预约体验
+        bottomBtnType: 2, // 底部按钮类型 1为到货通知 2为确定从加入购物车来 4为确定从立即购买来 3为预约体验
       }
     },
     computed: {
@@ -71,6 +71,12 @@
       },
       selectionSizeText() {
         return this.selectionSize.length?this.selectionSize:this.resetSpec.selectionSize
+      },
+      num() {
+        return this.storageNum===-1?this.resetSpec.storageNum:this.storageNum
+      },
+      bottomBtn() {
+        return this.resetSpec.storageNum===0 && this.storageNum===-1?1:this.bottomBtnType
       }
     },
     methods: {
@@ -83,11 +89,7 @@
       },
       specChange(index, i) {
         let temp = this.specGroup[index]
-        if (this.specGroup[index].checked === i) {
-          temp.checked = -1
-        } else {
-          temp.checked = i
-        }
+        temp.checked = i
         this.specGroup.splice(index, 1, temp)
 
         this.getSku()
@@ -98,13 +100,20 @@
           gspu_id: this.resetSpec.spuId
         }
         // 如果有-1表示还有规格没有选择
+        let selectionSizeTemp = []
         this.specGroup.forEach((item, index)=>{
           if (item.checked === -1) {
             flag = false
             return false
           }
-          params['spec_name'+(index+1)] = item.spec_name
-          params['spec_value'+(index+1)] = item.spec_value[item.checked]
+          let name = 'spec_name'+(index+1)
+          let value = 'spec_value'+(index+1)
+          params[name] = item.spec_name
+          params[value] = item.spec_value[item.checked]
+          selectionSizeTemp.push({
+            name: item.spec_name,
+            value: item.spec_value[item.checked]
+          })
         })
 
         if (flag) {
@@ -115,35 +124,23 @@
             params: params
           }).then(function(res){
             if (res) {
-              if (typeof res.data.data !== 'undefined') {
+              if (typeof res.data.data.gsku_id !== 'undefined') {
                 self.storageNum = res.data.data.storage_num
                 if(res.data.data.storage_num===0) {
                   self.bottomBtnType = 1
                 } else {
                   self.bottomBtnType = 2
                 }
-                self.selectionSizeFormat(res.data.data)
+                self.selectionSize = selectionSizeTemp
                 self.skuData = res.data.data
               }else {
+                self.selectionSize = selectionSizeTemp
                 self.storageNum = 0
                 self.bottomBtnType = 1
               }
             }
           })
         }
-      },
-      selectionSizeFormat(data) {
-        let temp = []
-        for(let i=1; i<=5; i++) {
-          if (data['spec_name'+i].length>0 && data['spec_value'+i].length>0) {
-            temp.push({
-              name: data['spec_name'+i],
-              value: data['spec_value'+i]
-            })
-          }
-        }
-        data.selectionSize = temp
-        this.selectionSize = temp
       },
       saveReachGoods() {
         let params
@@ -169,6 +166,7 @@
           params: params
         }).then(function (res) {
           if (res) {
+            self.hide()
             self.$notify({
               content: '如果30天内到货,会通过系统消息提醒您',
               bottom: 3
@@ -231,10 +229,10 @@
     z-index 400
   }
   .content {
-    height $height-pop-details
+    height 11rem
     z-index 400
     position fixed
-    bottom $height-footer
+    bottom 0
     left 0
     width 100%
     background-color #fff
@@ -303,7 +301,7 @@
       }
     }
     .center {
-      height "calc(%s - 4.21rem)" % $height-pop-details
+      height calc(100% - 4.21rem)
       overflow hidden
       .specGroup {
         padding 0 .4rem

@@ -1,8 +1,8 @@
 <template lang="pug">
-  .mescroll#goodsMescroll
+  .mescroll#goodsMescroll(v-loading="loadingShow")
     // 导航-------------------------------------------------------------------------------------------
     .headerWrapper(:class="{active: topActive}")
-      span(v-show="topActive") 商品详情
+      .text(v-show="topActive") 商品详情
       .back(@click="goBack")
         img(:src="topActive?require('./back3.png'):require('./back@2x.png')")
     // 轮播图-------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@
           img(src="./address.png")
           span 提货门店:
           span {{store.bs_name}}
-    div.noGoodsBtn(v-if="goodsData.gi_status==='222'") 暂不销售
+    div.noGoodsBtn(v-if="goodsData.gi_status!=='221'") 暂不销售
     // 横幅广告---------------------------------------------------------------------------------------------------
     .adWrapper
       img(src="./ad.png")
@@ -92,8 +92,8 @@
         img(src="./title@2x.png")
       goods-list(:data="goodsList")
     // 下架提示------------------------------------------------------------------------------------------------------
-    .noGoodsText(v-if="goodsData.gi_status==='222'") 该商品已下架
-    .toolbarWrapper(v-if="goodsData.gi_status==='222'")
+    .noGoodsText(v-if="goodsData.gi_status!=='221'") 该商品已下架
+    .toolbarWrapper(v-if="goodsData.gi_status!=='221'")
       .left.noGoodsBottom
         .block(@click="goService")
           img(src="./service.png")
@@ -135,29 +135,29 @@
     // 加入购物车特效---------------------------------------------------------------------------------
     transition(name="scale")
       .circle(v-show="showCircle")
-        img(:src="skuData.logo | img-filter")
     // 标签说明-----------------------------------------------------------------------------------------------------
     tag-desc(ref="tagDesc")
     // 规格选择-----------------------------------------------------------------------------------------------------
     select-size(
-                ref="selectSize",
-                :imgUrl="goodsData.gi_image_url",
-                :price="goodsData.min_direct_supply_price",
-                :specGroup="goodsData.spec_group",
-                :spuId="spuId",
-                :carryType="goodsData.carry_type",
-                :fromType="fromType",
-                :store="store",
-                :brandId="goodsData.bi_id",
-                @selection-size="selectionOfSize",
-                @shipping-change="shippingMethodsChange",
-                @save-goods="saveReachGoods",
-                @try-show="$refs.addTryPop.show()",
-                @open-pop="openPop",
-                @count="getCount",
-                @submit-goods="submitGoods"
-                @change-bottom-btn="changeBottomBtn"
-                )
+    ref="selectSize",
+    :imgUrl="goodsData.gi_image_url",
+    :price="goodsData.min_direct_supply_price",
+    :specGroup="goodsData.spec_group",
+    :spuId="spuId",
+    :carryType="goodsData.carry_type",
+    :fromType="fromType",
+    :store="store",
+    :brandId="goodsData.bi_id",
+    @selection-size="selectionOfSize",
+    @shipping-change="shippingMethodsChange",
+    @save-goods="saveReachGoods",
+    @try-show="$refs.addTryPop.show()",
+    @open-pop="openPop",
+    @count="getCount",
+    @submit-goods="submitGoods",
+    @change-bottom-btn="changeBottomBtn",
+    @change-spec="changeSpec"
+    )
     // 预约体验-------------------------------------------------------------------------------------------------------------
     add-try(ref="addTryPop", :data="storeList", :spuId="spuId")
     // 自提门店地址----------------------------------------------------------------------------------------------------------
@@ -186,6 +186,7 @@
     name: "goodsDetails",
     data () {
       return {
+        loadingShow: true,
         topActive: false, // 头部导航标志，下滑时改变
         banner: [], // 轮播图
         spuId: '',
@@ -197,7 +198,6 @@
         shippingMethods: 0, // 配送方式，0为快递 1为自提
         skuData: {}, // sku信息
         minusPrice: 0, // 用券立减
-        shoppingCartNum: 0, //购物车数量
         fromType: 0, // 打开规格弹框的按钮类型， 0 不处理 1 表示加入购物车 3 立即购买按钮，规格页需显示确认按钮 2 表示预约体验按钮
         bottomBtnType: 0, // 底部按钮类型 0 显示购物车、立即购买 1 显示到货通知
         storeList: [], // 门店合集
@@ -243,6 +243,9 @@
       // 专柜价
       counterPrice() {
         return this.skuData.counter_price ? this.skuData.counter_price : this.goodsData.min_counter_price
+      },
+      shoppingCartNum() {
+        return this.shoppingCartGoodsNum.sendNum+this.shoppingCartGoodsNum.carryNum
       }
     },
     methods: {
@@ -285,8 +288,13 @@
               if(self.goodsData.spec_group.length===1 && self.goodsData.spec_group[0].checked>-1) {
                 self.$refs.selectSize.getSku()
               }
+              if (self.informGoods) {
+                self.setInformGoods(null)
+                self.$refs.selectSize.getSku()
+              }
             })
             self.shareGoods()
+            self.loadingShow = false
           }
         })
       },
@@ -310,7 +318,7 @@
                 }
               })
             } else
-              if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
+            if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
               item.checked = 0
             }
           })
@@ -329,6 +337,10 @@
         if (data.refStoreList) {
           this.storeList = data.refStoreList
         }
+      },
+      // 如果是没有规格则返回选中的规格
+      changeSpec(data) {
+        this.selectionOfSizeData = data
       },
       // 获取将要加入购物车或购买的数量
       getCount(count) {
@@ -382,8 +394,16 @@
         }).then(function(res){
           if (res) {
             if (self.isFavorite.flag==='Y') {
+              self.$notify({
+                content: '取消收藏成功',
+                bottom: 1.8
+              })
               self.$set(self.isFavorite, 'flag', 'N')
             } else {
+              self.$notify({
+                content: '收藏成功',
+                bottom: 1.8
+              })
               self.isFavorite = {
                 fiId: res.data.data.fiId,
                 flag: 'Y'
@@ -443,7 +463,10 @@
           params: {},
         }).then(function (res) {
           if (res) {
-            self.shoppingCartNum = res.data.data.carryNum + res.data.data.sendNum
+            self.setShoppingCartCount({
+              sendNum: res.data.data.sendNum,
+              carryNum: res.data.data.carryNum
+            })
           }
         })
       },
@@ -455,16 +478,14 @@
       // 加入购物车按钮点击
       add() {
         this.fromType = 1
-        this.btnCommon(() => {
-          this.addShoppingCart()
-        })
+        this.btnCommon()
       },
       // 加入购物车接口
       addShoppingCart(callback) {
         this.showCircle = true
         setTimeout(()=>{
           this.showCircle = false
-        }, 0)
+        }, 20)
 
         let self = this
         self.$ajax({
@@ -482,11 +503,7 @@
               content: '加入购物车成功',
               bottom: 1.8
             })
-            self.shoppingCartNum += self.count
-            let t = self.shippingMethods===0?'sendNum':'carryNum'
-            self.setShoppingCartCount({
-              [t]: self.shoppingCartGoodsNum[t] + 1
-            })
+            self.getGoodsNum()
             callback && callback()
           }
         })
@@ -494,7 +511,7 @@
       // 立即购买按钮点击
       buy() {
         this.fromType = 3
-        this.btnCommon(this.saveBuyData)
+        this.btnCommon()
       },
       // 立即购买存数据
       saveBuyData() {
@@ -502,6 +519,7 @@
         if (this.shippingMethods===1) {
           this.skuData.bsId = this.store.bs_id
           this.skuData.gsId = this.store.gs_id
+          this.skuData.bsName = this.store.bs_name
         }
         this.skuData.shippingMethods = this.shippingMethods
         this.skuData.from = 0
@@ -519,30 +537,8 @@
           this.$router.push('/login')
           return
         }
-        if (!this.skuData.gsku_id) {
-          this.$refs.selectSize.show()
-          this.$notify({
-            content: '请选择规格',
-            bottom: 1.8
-          })
-          return
-        }
-        if (this.shippingMethods===0) {
-          this.$refs.selectSize.show()
-          this.$notify({
-            content: '请选择配送方式',
-            bottom: 1.8
-          })
-          return
-        }
-        if (this.shippingMethods===1 && !this.store.bs_id) {
-          this.$refs.selectSize.show()
-          this.$notify({
-            content: '请选择自提门店',
-            bottom: 1.8
-          })
-          return
-        }
+        this.$refs.selectSize.show()
+
         callback && callback()
       },
       // 点击到货通知按钮
@@ -701,7 +697,8 @@
       },
       ...mapMutations({
         setConfirmData: 'setConfirmData',
-        setShoppingCartCount: 'shoppingCartGoodsNumChange'
+        setShoppingCartCount: 'shoppingCartGoodsNumChange',
+        setInformGoods: 'setInformGoods'
       })
     },
     components: {
@@ -719,7 +716,7 @@
 
 <style scoped lang="stylus">
   img {
-   pointer-events none
+    pointer-events none
   }
   .mescroll {
     position fixed
@@ -727,6 +724,7 @@
     bottom 0
     left 0
     height auto
+    background-color #fff
   }
 
   .headerWrapper {
@@ -739,10 +737,7 @@
     &.active {
       background-color #fff
       border-bottom 1px solid #d7d7d7
-      span {
-        position absolute
-        top 0
-        left 0
+      .text {
         width 100%
         text-align center
         line-height 1.32rem
@@ -751,11 +746,14 @@
       }
     }
     .back {
-     font-size 0
-     padding .26rem .4rem
-     img {
-       width .8rem
-     }
+      font-size 0
+      padding .26rem .4rem
+      position absolute
+      top 0
+      left 0
+      img {
+        width .8rem
+      }
     }
   }
 
@@ -823,7 +821,6 @@
       .realIcon {
         color #f70057
         font-size .32rem
-        line-height 1
         margin-left .16rem
       }
       .realPrice {
@@ -834,7 +831,7 @@
             color #f70057
             font-size .693rem
             font-weight 400
-            line-height .8
+            line-height .8rem
             &:nth-child(2) {
               font-size .426rem
             }
@@ -940,8 +937,8 @@
           display flex
           li {
             display flex
-            line-height 1
             margin-right .2rem
+            align-items center
             &:last-child {
               margin-right 0
             }
@@ -1121,7 +1118,6 @@
           color #666
           font-size .26rem
           margin-top .08rem
-          line-height 1
         }
       }
     }
@@ -1159,11 +1155,11 @@
   }
   .circle {
     position: fixed;
-    top: 8rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2rem;
-    height: 2rem;
+    bottom: 10rem;
+    left: 9.4rem;
+    width: .53rem;
+    height: .53rem;
+    background-color: #f70057;
     border-radius: 50%;
     overflow: hidden;
   }
@@ -1171,13 +1167,15 @@
     width: 100%;
   }
   .circle.scale-leave-active {
-    transition: all 1s;
+    transition: left .5s linear, bottom .5s cubic-bezier(.48,0,.94,.28);
   }
   .circle.scale-leave-to {
-    transform: scale(0.1) translate3d(-30rem,60rem,0);
-    transform-origin:50% 50%;
-    opacity: 0;
+    left: 2.13rem;
+    bottom: 1.33rem;
+    /*transform: translate3d(-6.8rem,6.8rem, 0);*/
   }
+
+
   .noGoodsBtn {
     width 2.6rem
     height .74rem
