@@ -22,7 +22,10 @@
             span {{!brandDescShowAll?'查看更多品牌信息':'向上收起'}}
             img(:src="!brandDescShowAll?require('./img/down1.png'):require('./img/up1.png')")
           .right
-
+      .storeWrapper
+        .desc
+          .left 支持专柜提货
+          .right 共有<span>3</span>家专柜
 
 </template>
 
@@ -38,7 +41,7 @@
       }
     },
     mounted() {
-
+      this.initBrandDescHeight()
     },
     methods: {
       initBrandDescHeight() {
