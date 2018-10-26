@@ -25,8 +25,16 @@
       .storeWrapper
         .desc
           .left 支持专柜提货
-          .right 共有<span>3</span>家专柜
-
+          .right
+            .text 共有<span>3</span>家专柜
+            img(src="./img/more1.png")
+        .address
+          .left
+            img(src="./img/address.png")
+          .right
+            .name 南京中央商场专柜
+            .detail 南京市秦淮区中山南路79号 中央商场二期B座一楼（西区自动扶梯旁）
+      .
 </template>
 
 <script>
@@ -194,6 +202,67 @@
       img {
         margin-left .1rem
         width .26rem
+      }
+    }
+  }
+  .storeWrapper {
+    border-top .16rem solid #f2f2f2
+    .desc {
+      display flex
+      justify-content space-between
+      align-items center
+      padding 0 .4rem
+      height 1.14rem
+      .left {
+        display flex
+        align-items center
+        color #666
+        font-size .32rem
+        font-weight 400
+        padding 0 .16rem
+        height .64rem
+        border 1px solid #ccc
+      }
+      .right {
+        display flex
+        align-items center
+        font-size 0
+        .text {
+          font-size .32rem
+          color #666
+          font-weight 400
+          span {
+            color #f70057
+          }
+        }
+        img {
+          width .32rem
+        }
+      }
+    }
+    .address {
+      display flex
+      padding 0 .13rem .26rem
+      .left {
+        font-size 0
+        img {
+          margin-top .1rem
+          width .32rem
+        }
+      }
+      .right {
+        margin-left .1rem
+        .name {
+          color #666
+          font-size .37rem
+          font-weight 500
+        }
+        .detail {
+          margin-top .13rem
+          color #999
+          font-size .32rem
+          font-weight 400
+        }
       }
     }
   }
