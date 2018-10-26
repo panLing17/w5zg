@@ -67,20 +67,18 @@
         },
         // 活动通知点击后跳转哪个页面
         goToLinks(e){
-          if (e.url_type === '603') {
-            this.$router.push({path:'/goodsDetailed',query:{id:e.relate_id}})
-          } else{
-            if (Date.parse(e.close_time)>Date.parse(new Date())){
+          if (Date.parse(e.close_time)>Date.parse(new Date())) {
+            if (e.url_type === '603') {
+              this.$router.push({path: '/goodsDetailed', query: {id: e.relate_id}})
+            } else {
               window.location.href = e.url
             }
-          }
-          if (e.ms_status === '5303') {
-            if (Date.parse(e.close_time)>Date.parse(new Date())) {
+            if (e.ms_status === '5303') {
               let self = this
               self.$ajax({
                 method: 'post',
                 url: self.$apiMember + '/ucMessageActivity/viewMessage',
-                params:{
+                params: {
                   maoId: e.mao_id
                 }
               }).then(function (res) {
