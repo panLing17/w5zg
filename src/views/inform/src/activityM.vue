@@ -17,8 +17,8 @@
                 .titleN(:class="{active2:items.ms_status === '5303'}") {{items.ms_title}}
               .righters 点击查看 ＞
             .centers
-              .markDiv(v-if="Date.parse(items.close_time)<Date.parse(new Date())") 活动结束
-                .markDiv(v-if="items.close_flag === 0") 活动结束
+              <!--.markDiv(v-if="Date.parse(items.close_time)<Date.parse(new Date())") 活动结束-->
+              .markDiv(v-if="items.close_flag === 0") 活动结束
               img(:src="items.ms_thumbnail | img-filter")
             .downner <span>{{items.content}}</span>
 </template>
