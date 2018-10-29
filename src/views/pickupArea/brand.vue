@@ -1,5 +1,5 @@
 <template lang="pug">
-  .brand
+  .brand.mescroll
     .header
       .back
         img(src="./img/back.png")
@@ -35,20 +35,49 @@
             .name 南京中央商场专柜
             .detail 南京市秦淮区中山南路79号 中央商场二期B座一楼（西区自动扶梯旁）
       .navWrapper
-        scroll.navList(ref="categoryHeader", :data="navList", :scrollX="true", :scrollY="false", :stopPropagation="true")
+        scroll.navList(ref="nav", :data="navList", :scrollX="true", :scrollY="false", :stopPropagation="true")
           div
-            ul
-              li(v-for="item in navList") {{item}}
-        .arrow
+            ul(ref="navList")
+              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
+        .arrow(@click="navArrow=!navArrow", ref="arrow")
           img(:src="!navArrow?require('./img/down2.png'):require('./img/up2.png')")
-        .navContent
-          ul
-            li(v-for="item in navList") {{item}}
+        .navContentWrapper
+          transition(name="fold")
+            .navContent(v-show="navArrow")
+              ul
+                li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
+      .goodsListWrapper
+        goods-list(:data="goodsList")
+      .hotWrapper
+        .floor
+          img(src="./img/floor.png")
+        .listWrapper
+          ul.list
+            li.item(v-for="item in hotList")
+              .top
+                .left
+                  img()
+                .right
+                  .name 雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder
+                  .country
+                    img
+                    span 美国
+                .more
+                  span 进入品牌
+                  img(src="./img/more2.png")
+              .bottom
+                ul
+                  li(v-for="item in [1,1,1,1]")
+                    .logo
+                      img
+                    .name 魅可MAC子弹头口红15魅可MAC子弹头口红15色
+                    .price ￥99999.99
 </template>
 
 <script>
   import Banner from 'components/custom/banner/banner.vue'
   import Scroll from 'components/scroll'
+  import GoodsList from 'components/goodsList'
   export default {
     name: "brand",
     data() {
@@ -56,8 +85,12 @@
         brandDescShowAll: false,
         brandDescInitHeight: 'auto',
         brandDescMaxHeight: 0,
-        navList: [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        navArrow: false
+        navList: ['全部',1,1,1,1,1,1,1,1,1,1,1,1,'胡德夫胡德夫好多分'],
+        navArrow: false,
+        navActive: 0,
+        screenWidth: document.documentElement.offsetWidth || document.body.clientWidth,
+        goodsList: [],
+        hotList: [1,1,1,1,1,1,1,1,1,1,1]
       }
     },
     mounted() {
@@ -73,11 +106,37 @@
             this.brandDescMaxHeight = height + 'px'
           }
         })
+      },
+      navChange(item, index, e) {
+        if (this.navActive === index) {
+          return
+        }
+        this.navActive = index
+        let liWidth = this.$refs.navList.children[index].offsetWidth
+        let arrowWidth = this.$refs.arrow.offsetWidth
+        if (e.clientX <= (this.screenWidth / 2)) {
+          // 代表左边
+          if (e.clientX <= liWidth) {
+            this.$refs.nav.scrollToElement(this.$refs.navList.children[Math.max(0,index-1)], 300)
+          }
+        } else {
+          // 代表右边
+          if ((this.screenWidth - e.clientX) <= (liWidth + arrowWidth)) {
+            let pos = Math.min(this.$refs.navList.children.length-1, index+1)
+            let totalWidth = 0;
+            for (let i = 0; i<= pos; i++) {
+              totalWidth += this.$refs.navList.children[i].offsetWidth
+            }
+            totalWidth = totalWidth + arrowWidth -this.screenWidth
+            this.$refs.nav.scrollTo(-totalWidth, 0, 300)
+          }
+        }
       }
     },
     components: {
       Banner,
-      Scroll
+      Scroll,
+      GoodsList
     }
   }
 </script>
@@ -282,6 +341,7 @@
   .navWrapper {
     border-top .16rem solid #f2f2f2
     position relative
+    overflow hidden
     .navList {
       width calc(100% - .96rem)
       overflow hidden
@@ -289,14 +349,13 @@
       div {
         position absolute
         ul {
-          display flex
           height .96rem
-          align-items center
+          white-space nowrap
           li {
+            display inline-block
             padding 0 .32rem
             height 100%
-            display flex
-            align-items center
+            line-height .96rem
             color #333
             font-size .37rem
             font-weight 400
@@ -317,20 +376,175 @@
         width .96rem
       }
     }
-    .nacContent {
+    .navContentWrapper {
       position absolute
       top .96rem
       left 0
+      overflow hidden
+      z-index 10
+    }
+    .navContent {
       width 100%
       background-color #fff
+      border-top 1px solid #ccc
       ul {
         display flex
         flex-wrap wrap
         li {
           width 25%
-
+          height .96rem
+          line-height .96rem
+          color #333
+          font-size .37rem
+          font-weight 400
+          overflow hidden
+          text-overflow ellipsis
+          white-space nowrap
+          flex-wrap nowrap
+          padding 0 .2rem
+          text-align center
+          &.active {
+            color #f70057
+          }
         }
       }
     }
+  }
+  .goodsList {
+    border-top .13rem solid #f2f2f2
+  }
+  .hotWrapper {
+    .floor {
+      font-size 0
+      display flex
+      align-items center
+      justify-content center
+      height .96rem
+      img {
+        width 3.2rem
+      }
+    }
+    .listWrapper {
+      .list {
+        .item {
+          padding-bottom .4rem
+          border-bottom .16rem solid #f2f2f2
+          &:last-child{
+            border-bottom none
+          }
+          .top {
+            padding .26rem .4rem
+            position relative
+            display flex
+            .left {
+              width 1.7rem
+              height 1.7rem
+              border-radius .13rem
+              border 1px solid #ccc
+              overflow hidden
+              font-size 0
+              background-color #65aadd
+              img {
+                width 100%
+              }
+            }
+            .right {
+              margin-left .34rem
+              width calc(100% - 2.04rem)
+              .name {
+                margin-top .26rem
+                color #333
+                font-size .37rem
+                font-weight bold
+                overflow hidden
+                text-overflow ellipsis
+                white-space nowrap
+              }
+              .country {
+                margin-top .16rem
+                display flex
+                font-szie 0
+                align-items center
+                img {
+                  width .64rem
+                  height .64rem
+                  border-radius 50%
+                  background-color #65aadd
+                }
+                span {
+                  margin-left .13rem
+                  font-size .32rem
+                  color #666
+                  font-weight 400
+                }
+              }
+            }
+            .more {
+              position absolute
+              right .4rem
+              bottom .61rem
+              display flex
+              align-items center
+              font-size 0
+              span {
+                font-size .32rem
+                font-weight 400
+                color #666
+              }
+              img {
+                width .18rem
+              }
+            }
+          }
+          .bottom {
+            ul {
+              display flex
+              justify-content space-between
+              padding 0 .4rem
+              li {
+                .logo {
+                  width 2.13rem
+                  height 2.13rem
+                  overflow hidden
+                  font-size 0
+                  background-color #65aadd
+                  img {
+                    width 100%
+                  }
+                }
+                .name {
+                  margin-top .26rem
+                  width 2.13rem
+                  overflow : hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  font-size .32rem
+                  color #333
+                  font-weight 500
+                }
+                .price {
+                  margin-top .21rem
+                  font-size .32rem
+                  color #f70057
+                  font-weight 500
+                  width 2.13rem
+                  overflow hidden
+                  text-overflow ellipsis
+                  white-space nowrap
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  .fold-enter-active, .fold-leave-active {
+    transition: all 0.5s;
+  }
+  .fold-enter, .fold-leave-to {
+    transform: translate3d(0,-100%,0);
   }
 </style>
