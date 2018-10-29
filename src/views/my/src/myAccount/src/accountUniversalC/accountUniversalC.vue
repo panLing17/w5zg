@@ -100,11 +100,6 @@
           return text;
         }
       },
-      watch: {
-        userData (value) {
-          this.balance = value.cash_balance
-        }
-      },
       methods: {
         pullDownFun(){
           this.$refs.scroll.resetParams()
@@ -153,10 +148,17 @@
             }
           })
         },
-        getBalance () {
-          if (this.$store.state.userData) {
-            this.balance = this.$store.state.userData.cash_balance;
-          }
+        getBalance() {
+          let self = this
+          self.$ajax({
+            method: 'get',
+            url: self.$apiMember + 'member/currentMember',
+            params: {}
+          }).then(function (response) {
+            if (response) {
+              self.balance = response.data.data.cash_balance
+            }
+          })
         },
         // 过滤
         itemChange (index) {
