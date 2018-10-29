@@ -341,7 +341,6 @@
   .navWrapper {
     border-top .16rem solid #f2f2f2
     position relative
-    overflow hidden
     .navList {
       width calc(100% - .96rem)
       overflow hidden
