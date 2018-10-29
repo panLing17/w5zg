@@ -40,7 +40,7 @@
             ul
               li(v-for="item in navList") {{item}}
         .arrow
-          img()
+          img(:src="!navArrow?require('./img/down2.png'):require('./img/up2.png')")
         .navContent
           ul
             li(v-for="item in navList") {{item}}
@@ -57,7 +57,7 @@
         brandDescInitHeight: 'auto',
         brandDescMaxHeight: 0,
         navList: [1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        navArrow:''
+        navArrow: false
       }
     },
     mounted() {
@@ -283,7 +283,7 @@
     border-top .16rem solid #f2f2f2
     position relative
     .navList {
-      width 100%
+      width calc(100% - .96rem)
       overflow hidden
       height .96rem
       div {
@@ -315,6 +315,21 @@
       font-size 0
       img {
         width .96rem
+      }
+    }
+    .nacContent {
+      position absolute
+      top .96rem
+      left 0
+      width 100%
+      background-color #fff
+      ul {
+        display flex
+        flex-wrap wrap
+        li {
+          width 25%
+
+        }
       }
     }
   }
