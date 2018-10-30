@@ -4,16 +4,16 @@ import banner from './banner.vue'
 const BannerConstructor = Vue.extend(banner) // 直接将Vue组件作为Vue.extend的参数
 
 
-const Banner = (data) => {
+const Banner = (options) => {
 
   const BannerInstance = new BannerConstructor({
     propsData: {
-      data: data
+      data: options.data
     }
   }) // 实例化一个带有content内容的Notice
   BannerInstance.vm = BannerInstance.$mount() // 挂载但是并未插入dom，是一个完整的Vue实例
   BannerInstance.dom = BannerInstance.vm.$el
-  document.getElementById('bannerWrapper').appendChild(BannerInstance.dom) // 将dom插入body
+  document.getElementById(options.id).appendChild(BannerInstance.dom) // 将dom插入body
   return BannerInstance.vm
 }
 

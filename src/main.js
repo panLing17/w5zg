@@ -42,6 +42,7 @@ import Verify from '@/plugIn/verify/index.js'
 import Banner from 'components/custom/banner/banner'
 import MultiColumn from 'components/custom/multiColumn/multiCcolumn'
 import Suspension from 'components/custom/suspension/suspension'
+import TransverseSliding from 'components/custom/transverseSliding/transverseSliding'
 
 Vue.router = router
 Vue.use(Notify)
@@ -63,6 +64,7 @@ Vue.use(VueLazyLoad, {
 Vue.use(Banner)
 Vue.use(MultiColumn)
 Vue.use(Suspension)
+Vue.use(TransverseSliding)
 
 
 Vue.prototype.$message = Message

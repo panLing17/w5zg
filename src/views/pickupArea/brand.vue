@@ -41,11 +41,11 @@
               li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
         .arrow(@click="navArrow=!navArrow", ref="arrow")
           img(:src="!navArrow?require('./img/down2.png'):require('./img/up2.png')")
-        .navContentWrapper
-          transition(name="fold")
-            .navContent(v-show="navArrow")
-              ul
-                li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
+      .navContentWrapper
+        transition(name="fold")
+          .navContent(v-show="navArrow")
+            ul
+              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
       .goodsListWrapper
         goods-list(:data="goodsList")
       .hotWrapper
@@ -340,6 +340,7 @@
   }
   .navWrapper {
     border-top .16rem solid #f2f2f2
+    overflow hidden
     position relative
     .navList {
       width calc(100% - .96rem)
@@ -375,36 +376,34 @@
         width .96rem
       }
     }
-    .navContentWrapper {
-      position absolute
-      top .96rem
-      left 0
-      overflow hidden
-      z-index 10
-    }
-    .navContent {
-      width 100%
-      background-color #fff
-      border-top 1px solid #ccc
-      ul {
-        display flex
-        flex-wrap wrap
-        li {
-          width 25%
-          height .96rem
-          line-height .96rem
-          color #333
-          font-size .37rem
-          font-weight 400
-          overflow hidden
-          text-overflow ellipsis
-          white-space nowrap
-          flex-wrap nowrap
-          padding 0 .2rem
-          text-align center
-          &.active {
-            color #f70057
-          }
+  }
+  .navContentWrapper {
+    position absolute
+    overflow hidden
+    z-index 10
+  }
+  .navContent {
+    width 100%
+    background-color #fff
+    border-top 1px solid #ccc
+    ul {
+      display flex
+      flex-wrap wrap
+      li {
+        width 25%
+        height .96rem
+        line-height .96rem
+        color #333
+        font-size .37rem
+        font-weight 400
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
+        flex-wrap nowrap
+        padding 0 .2rem
+        text-align center
+        &.active {
+          color #f70057
         }
       }
     }

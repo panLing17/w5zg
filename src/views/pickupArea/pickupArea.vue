@@ -85,13 +85,17 @@
         this.createBanner()
         this.createTwoColumn()
         this.createSuspension()
+        this.createTransverseSliding()
       },
       // 新建banner
       createBanner() {
         let el = document.createElement("div")
         el.id = 'bannerWrapper'
         this.$refs.customWrapper.appendChild(el)
-        this.$banner([1,1,1,1,1])
+        this.$banner({
+          data:[1,1,1,1,1],
+          id: 'bannerWrapper'
+        })
       },
       // 新建多栏栏组件
       createTwoColumn() {
@@ -108,7 +112,21 @@
         let el = document.createElement("div")
         el.id = 'suspension'
         this.$refs.customWrapper.appendChild(el)
-        this.$suspension({})
+        this.$suspension({
+          data: {},
+          id: 'suspension'
+        })
+      },
+      // 新建横向滑动
+      createTransverseSliding() {
+        let el = document.createElement("div")
+        el.id = 'transverseSliding'
+        this.$refs.customWrapper.appendChild(el)
+        this.$transverseSliding({
+          data: [{img: 'http://img5.imgtn.bdimg.com/it/u=613763897,114470262&fm=26&gp=0.jpg'
+          },1,1,1,1,1,1,1,1],
+          id: 'transverseSliding'
+        })
       },
       // 获取商圈的两行高度和最高高度
       getAreaInitHeight() {

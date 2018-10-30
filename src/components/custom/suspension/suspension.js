@@ -3,15 +3,15 @@ import suspension from './suspension.vue'
 
 const SuspensionConstructor = Vue.extend(suspension)
 
-const Suspension = (data) => {
+const Suspension = (options) => {
   const SuspensionInstance = new SuspensionConstructor({
     propsData: {
-      data: data
+      data: options.data
     }
   })
   SuspensionInstance.vm = SuspensionInstance.$mount() // 挂载但是并未插入dom，是一个完整的Vue实例
   SuspensionInstance.dom = SuspensionInstance.vm.$el
-  document.getElementById('suspension').appendChild(SuspensionInstance.dom) // 将dom插入body
+  document.getElementById(options.id).appendChild(SuspensionInstance.dom) // 将dom插入body
   return SuspensionInstance.vm
 }
 
