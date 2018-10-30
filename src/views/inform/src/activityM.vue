@@ -18,7 +18,7 @@
               .righters 点击查看 ＞
             .centers
               <!--.markDiv(v-if="Date.parse(items.close_time)<Date.parse(new Date())") 活动结束-->
-              .markDiv(v-if="items.close_flag === 1") 活动结束
+              .markDiv(v-if="items.close_flag == 1") 活动结束
               img(:src="items.ms_thumbnail | img-filter")
             .downner <span>{{items.content}}</span>
 </template>
@@ -89,7 +89,7 @@
           //     })
           //   }
           // }
-          if (e.close_flag === 0) {
+          if (e.close_flag == 0) {
             if (e.url_type === '603') {
               this.$router.push({path: '/goodsDetailed', query: {id: e.relate_id}})
             } else {
