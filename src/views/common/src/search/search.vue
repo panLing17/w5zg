@@ -223,7 +223,7 @@
         }
         this.searchInit = false
         //关闭过滤器
-        this.$refs.searchResult.closeFilter()
+        this.$refs.searchResult && this.$refs.searchResult.closeFilter()
         this.inputBlur()
         // 如果搜索结果触底就调相似/热搜接口
         if (this.searchEnd) {
@@ -388,7 +388,9 @@
       },
       // 让搜索框失去焦点
       inputBlur() {
-        this.$refs.input.blur()
+        this.$nextTick(()=>{
+          this.$refs.input.blur()
+        })
       }
     },
     watch: {
