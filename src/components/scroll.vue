@@ -1,6 +1,6 @@
 <template>
   <div ref="wrapper">
-    <div>
+    <div v-if="pulldown&&dragTip.showLoding">
       <div v-if="pulldown&&dragTip.showLoding" class="pulldown"
            :style="`margin-top:${dragTip.translate}px`">
         <div class="loadTop"><img src="../assets/img/loadTop@2x.png"></div>
@@ -11,6 +11,7 @@
       </div>
       <slot></slot>
     </div>
+    <slot v-else></slot>
   </div>
 </template>
 

@@ -61,6 +61,7 @@
             }
           }).then( (res)=> {
             console.log('111')
+            self.mescroll.resetUpScroll()
             next()
           })
           next(false)
