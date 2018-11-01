@@ -229,10 +229,10 @@
     z-index 400
   }
   .content {
-    height 11rem
+    height 10rem
     z-index 400
     position fixed
-    bottom 0
+    bottom 1.38rem
     left 0
     width 100%
     background-color #fff
