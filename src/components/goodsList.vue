@@ -5,7 +5,8 @@
         .imgWrapper(v-lazy-container="{ selector: 'img'}")
           img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.gi_image_url+'?x-oss-process=style/compress'",
           :data-error="require('../assets/img/default/goods.png')",
-          :data-loading="require('../assets/img/default/goods.png')")
+          :data-loading="require('../assets/img/default/goods.png')",
+          :key="item.gspu_id")
         .goodsNameWrapper
           .flag(v-show="item.carry_type===1") 专柜提货
           span {{item.goods_name}}

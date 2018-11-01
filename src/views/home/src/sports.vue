@@ -12,13 +12,13 @@
           div(v-for="tag in banner", style="width:100%" )
             img(:src="tag.ac_phone_image | img-filter" , style="width:100%;height:4rem")
         .recommendWrapper(v-if="!isEmpty")
-          recommend(ref="recommend")
+          goods-list(:data="goodsListData")
         .noData(v-if="isEmpty") 暂无推荐商品
 </template>
 
 <script>
   import {mapState} from 'vuex'
-  import recommend from './recommend'
+  import GoodsList from 'components/goodsList'
   import {activityShare} from 'assets/js/mixin.js'
   // 引入bus
 
@@ -31,11 +31,12 @@
           recommendGoods: [],
           parentId: null,
           parentType: null,
-          isEmpty: false
+          isEmpty: false,
+          goodsListData: []
         }
       },
       components: {
-        recommend
+        GoodsList
       },
       filters: {
         round (value) {
@@ -73,6 +74,7 @@
         if (this.parentId != this.$route.query.actId) {
           this.getParmas();
           this.getBanner();
+          this.goodsListData = []
           this.mescroll.resetUpScroll()
         }else {
           this.position.forEach((now) => {
@@ -84,10 +86,6 @@
 
       },
       methods: {
-        // 锁定或者解锁上拉加载
-        lockUpDown (isLock) {
-          this.mescroll.lockUpScroll( isLock );
-        },
         back () {
           this.$method.back.apply(this)
         },
@@ -120,7 +118,7 @@
             if (page.num === 1 && curPageData.length === 0 ) {
               self.isEmpty = true
             }else {
-              self.$refs.recommend.more(curPageData,page.num,page.size)
+              self.goodsListData = self.goodsListData.concat(curPageData)
             }
             self.mescroll.endSuccess(curPageData.length)
           }, function() {

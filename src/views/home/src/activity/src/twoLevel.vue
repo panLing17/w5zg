@@ -25,17 +25,17 @@
           .more(v-if="category.show", :class="{down: !category.status, up: category.status}", @click="dropCheck(1)") 更多分类
         img.louceng(src="../../../../../assets/img/louceng2.png")
         .recommendWrapper
-          recommend(ref="recommend", background="rgb(242, 242, 242)")
+          goods-list(:data="goodsListData")
           .noData(v-if="noDataShow.goods") 暂无相关商品
 </template>
 
 <script>
-  import recommend from '../../recommend'
+  import GoodsList from 'components/goodsList'
   import {activityShare} from 'assets/js/mixin.js'
   export default {
     name: 'twoLevel',
     mixins:[activityShare],
-    components: { recommend },
+    components: { GoodsList },
     data () {
       return {
         brand: {
@@ -57,7 +57,8 @@
         },
         brandList: [],
         categoryList: [],
-        parentId: this.$route.query.acId
+        parentId: this.$route.query.acId,
+        goodsListData: []
       }
     },
     deactivated () {
@@ -78,6 +79,7 @@
         this.parentId = this.$route.query.actId
         this.getBrandList()
         this.getCategoryList()
+        this.goodsListData = []
         this.mescroll.resetUpScroll()
       }
     },
@@ -91,10 +93,6 @@
       this.getCategoryList()
     },
     methods: {
-      // 锁定或者解锁上拉加载
-      lockUpDown (isLock) {
-        this.mescroll.lockUpScroll(isLock)
-      },
       toNext (status, index) {
         let obj
         if (status === 0) {
@@ -122,7 +120,7 @@
           } else {
             self.noDataShow.goods = false
           }
-          self.$refs.recommend.more(curPageData, page.num, page.size)
+          self.goodsListData = self.goodsListData.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function () {
           // 联网失败的回调,隐藏下拉刷新和上拉加载的状态;
