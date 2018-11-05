@@ -61,6 +61,7 @@
             }
           }).then( (res)=> {
             console.log('111')
+            self.mescroll.resetUpScroll()
             next()
           })
           next(false)
@@ -127,13 +128,13 @@
             let isExits = false
             self.$ajax({
               method: 'get',
-              url: self.$apiApp + 'shoppingCart/queryCarryShoppingCartList1',
+              url: self.$apiGoods + 'shoppingCart/v2/queryCarryShoppingCartList1',
               params: {},
             }).then(function (response) {
               response.data.data.commList.forEach((item) => {
                 item.shoppingCartVOList.forEach((goods) => {
                   if (e.rel_id === goods.sc_id && e.gspu_id === goods.gspu_id) {
-                    self.$router.push('/shoppingCart')
+                    self.$router.push('/shoppingCart/self')
                     isExits = true
                     return false
                   }
@@ -143,17 +144,15 @@
               if (!isExits) {
                 self.$ajax({
                   method: 'get',
-                  url: self.$apiApp + 'shoppingCart/querySendShoppingCartList1',
+                  url: self.$apiGoods + 'shoppingCart/v2/querySendShoppingCartList1',
                   params: {},
                 }).then(function (res) {
-                  res.data.data.commList.forEach((item) => {
-                    item.shoppingCartVOList.forEach((goods) => {
-                      if (e.rel_id == goods.sc_id && e.gspu_id === goods.gspu_id) {
-                        self.$router.push('/shoppingCart/express')
-                        isExits = true
-                        return false
-                      }
-                    })
+                  res.data.data.commList.forEach((goods) => {
+                    if (e.rel_id == goods.sc_id && e.gspu_id === goods.gspu_id) {
+                      self.$router.push('/shoppingCart/express')
+                      isExits = true
+                      return false
+                    }
                   })
 
                   // 跳商品详情

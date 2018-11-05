@@ -111,7 +111,7 @@
     methods: {
       // 点击搜索框回到初始化页面
       goInit() {
-        this.$refs.searchResult.hideTop()
+        this.$refs.searchResult && this.$refs.searchResult.hideTop()
         this.searchResult = {
           aggs: {},
           rows: []
@@ -144,7 +144,8 @@
       // 所有值恢复出厂
       cancelQuery() {
         this.query = ''
-        this.$refs.searchResult.hideTop()
+
+        this.$refs.searchResult && this.$refs.searchResult.hideTop()
         this.searchResult = {
           aggs: {},
           rows: []
@@ -222,7 +223,7 @@
         }
         this.searchInit = false
         //关闭过滤器
-        this.$refs.searchResult.closeFilter()
+        this.$refs.searchResult && this.$refs.searchResult.closeFilter()
         this.inputBlur()
         // 如果搜索结果触底就调相似/热搜接口
         if (this.searchEnd) {
@@ -321,7 +322,7 @@
           this.$refs.searchResult.clearFilter()
         }
         this.hotResult = []
-        this.$refs.searchResult.hideTop()
+        this.$refs.searchResult && this.$refs.searchResult.hideTop()
         this.likesResult = []
         this.searchType = 1
         this.searchResult.rows = []
@@ -387,7 +388,9 @@
       },
       // 让搜索框失去焦点
       inputBlur() {
-        this.$refs.input.blur()
+        this.$nextTick(()=>{
+          this.$refs.input.blur()
+        })
       }
     },
     watch: {

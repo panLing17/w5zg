@@ -3,7 +3,7 @@
     transition(name="fade")
       .mask(v-show="checkGoodsShow", @click="hide()", @touchmove.prevent="")
     transition(name="fold")
-      .content(@touchmove.prevent="", v-if="checkGoodsShow", :style="{bottom: (btnType===0||btnType===1)?'1.38rem':0}")
+      .content(@touchmove.prevent="", v-if="checkGoodsShow", :style="{bottom: from===1?'1.38rem':0}")
         scroll.contentWrapper(:data="data")
           div
             .title 抱歉，本单部分商品库存不足或失效，已为您降到最大库存
@@ -42,6 +42,10 @@
       },
       btnType: {
         type: Number // 0 返回购物车 1 继续结算 2 剔除商品
+      },
+      from: {
+        type: Number,
+        default: 0
       }
     },
     data() {

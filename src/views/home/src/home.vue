@@ -1,10 +1,14 @@
 <template lang="pug">
   div
     .homeHeader(:class="{active: homeHeaderActive}")
-      .homeHeaderLeft(@click="toScan")
-        img.headerImg(src="../../../assets/img/sao.png", v-show="!homeHeaderActive", @click.prevent="")
+      <!--.homeHeaderLeft(@click="toScan")-->
+        <!--img.headerImg(src="../../../assets/img/sao.png", v-show="!homeHeaderActive", @click.prevent="")-->
+        <!--.activeHeaderLeft(v-show="homeHeaderActive")-->
+          <!--img.fenleiImg(src="../../../assets/img/sao2.png", @click.prevent="")-->
+      .homeHeaderLeft(@click="$router.push('/page')")
+        img.headerImg(src="../../../assets/img/fenlei1.png", v-show="!homeHeaderActive", @click.prevent="")
         .activeHeaderLeft(v-show="homeHeaderActive")
-          img.fenleiImg(src="../../../assets/img/sao2.png", @click.prevent="")
+          img.fenleiImg(src="../../../assets/img/fenlei2.png", @click.prevent="")
       .homeHeaderCenter(@click="$router.push('/search')")
         input.headerSearchInput(type="text", :placeholder="placeholder")
         img.searchImg(src="../../../assets/img/ic_home_search@2x.png", @click.prevent="")
@@ -660,7 +664,7 @@
     position: relative;
   }
   .activeHeaderLeft:after {
-    content: '扫一扫';
+    content: '分类';
   }
   .activeHeaderRight:after {
     content: '消息';

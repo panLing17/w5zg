@@ -66,10 +66,10 @@
               .bottomDiv(@click="pickUpNoFinish()") 完成
         .bottom(v-show="flag")
           p
-            span.shop 提货门店:
+            span.shop 提货专柜:
             span {{item.si_name}}
           p
-            span.shop 门店地址:
+            span.shop 专柜地址:
             span {{item.address}}
           p(v-if="item.shopFlag")
             span.shop 门店联系人:

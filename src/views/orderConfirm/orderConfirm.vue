@@ -77,7 +77,7 @@
         span.price {{directPrice | price-filter}}
       .right(@click="submitOrder") 提交订单
     express(ref="express", :addressList="addressData", @address-change="addressChange")
-    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @submit-order="submitOrder(1)")
+    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @submit-order="reject")
 </template>
 
 <script>
@@ -219,26 +219,6 @@
         }
         let a = this.cashSwitch?this.ticketData.netCard:0
         let b = this.ticketSwitch?this.ticketData.commTicket:0
-        // let f = 0
-        // if (this.confirmData.from===0 && this.confirmData.shippingMethods===0) {
-        //   if (typeof this.data.freight !== 'number') {
-        //     return
-        //   }
-        //   f = this.data.freight
-        // }
-        // if(this.confirmData.from===1 && this.confirmData.shippingMethods===0){
-        //   if (typeof this.data.commList !== 'object') {
-        //     return
-        //   }
-        //   // this.data.commList.forEach(item=>{
-        //   //   f+=item.freight
-        //   // })
-        // }
-        // if (this.confirmData.shippingMethods === 1) {
-        //   this.directPrice = this.totalPrice - a - b
-        // } else {
-        //   this.directPrice = this.totalPrice - a - b
-        // }
         this.directPrice = this.totalPrice - a - b
       },
       // 卡券
@@ -425,6 +405,25 @@
             }
           }
         })
+      },
+      // 剔除商品
+      reject() {
+        if(this.confirmData.from===0) {
+          this.confirmData.goodsCount = this.checkGoodsData[0].storage_num
+        } else {
+          this.checkGoodsData.forEach(item=>{
+            if (item.status_flag==='NO_STORAGE_NUM' || item.status_flag==='GOOD_STATUS_ERROR') {
+              for (let i=this.confirmData.list.length-1; i>=0; i--) {
+                if (item.sc_id===this.confirmData.list[i].sc_id) {
+                  this.confirmData.list.splice(i, 1)
+                }
+              }
+
+            }
+          })
+        }
+        this.getData()
+        this.getTicket()
       }
     },
     components: {
@@ -564,6 +563,7 @@
           color #333
           font-size .32rem
           font-weight 400
+          border-bottom 1px solid #d7d7d7
           .desc {
 
           }
@@ -571,8 +571,6 @@
             flex 1
             outline none
             border none
-            border-bottom 1px solid #d7d7d7
-            line-height 2.18rem
             margin-left .2rem
             height 100%
           }

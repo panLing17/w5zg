@@ -1,48 +1,49 @@
 <template lang="pug">
-  .mescroll#shoppingMescroll
-    // 头部-------------------------------------------------------------------------------------
-    .header
-      .title
-        .left(@click="$router.go(-1)")
-          img(src="./back.png")
-        .center 购物车
-      .nav
-        .left(@click="go(0)")
-          span(:class="{active: navActive===0}") 快递配送({{shoppingCartGoodsNum.sendNum}})
-        .right(@click="go(1)")
-          span(:class="{active: navActive===1}") 专柜自提({{shoppingCartGoodsNum.carryNum}})
-    // 内容--------------------------------------------------------------------------------------
-    .contentWrapper
-      router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange", @show-change="allSelectShowChange")
-    // 全选--------------------------------------------------------------------------------------
-    .allSelect(v-show="allSelectShow && !sliceShow")
-      .white
-        .left(@click="selectAll")
+  .shoppingCart
+    .mescroll#shoppingMescroll
+      // 头部-------------------------------------------------------------------------------------
+      .header
+        .title
+          .left(@click="$router.go(-1)")
+            img(src="./back.png")
+          .center 购物车
+        .nav
+          .left(@click="go(0)")
+            span(:class="{active: navActive===0}") 快递配送({{shoppingCartGoodsNum.sendNum}})
+          .right(@click="go(1)")
+            span(:class="{active: navActive===1}") 专柜自提({{shoppingCartGoodsNum.carryNum}})
+      // 内容--------------------------------------------------------------------------------------
+      .contentWrapper
+        router-view(ref="childView", :totalCount="totalCount",  @all-change="allChange", @total-change="totalChange", @show-change="allSelectShowChange")
+      // 商品推荐列表-------------------------------------------------------------------------------
+      .goodsWrapper
+        .title
+          img(src="./img1.png")
+        goods-list(:data="goodsList")
+      // 全选--------------------------------------------------------------------------------------
+      .allSelect(v-show="allSelectShow && !sliceShow")
+        .white
+          .left(@click="selectAll")
+            .icon
+              img(src="./gou.png", v-show="allChecked")
+              .noChecked(v-show="!allChecked")
+            .text 全选
+          .right
+            .top (不含运费)实付: <span>{{totalPrice | price-filter}}</span>
+            .bottom 现金券可抵扣: {{totalTicket | price-filter}}
+        .red(@click="checkCart") 结算({{totalCount}})
+      .sliceWrapper(v-show="sliceShow")
+        .white(@click="selectAll")
           .icon
             img(src="./gou.png", v-show="allChecked")
             .noChecked(v-show="!allChecked")
           .text 全选
-        .right
-          .top (不含运费)实付: <span>{{totalPrice | price-filter}}</span>
-          .bottom 现金券可抵扣: {{totalTicket | price-filter}}
-      .red(@click="checkCart") 结算({{totalCount}})
+        .red
+          .del(@click="deleteGoods") 删除
+          .over(@click="sliceShow=false") 完成
     // 整理--------------------------------------------------------------------------------------
     .sliceIcon(v-show="allSelectShow && !sliceShow", @click="sliceShow=true")
       img(src="./slice.png")
-    .sliceWrapper(v-show="sliceShow")
-      .white(@click="selectAll")
-        .icon
-          img(src="./gou.png", v-show="allChecked")
-          .noChecked(v-show="!allChecked")
-        .text 全选
-      .red
-        .del(@click="deleteGoods") 删除
-        .over(@click="sliceShow=false") 完成
-    // 商品推荐列表-------------------------------------------------------------------------------
-    .goodsWrapper
-      .title
-        img(src="./img1.png")
-      goods-list(:data="goodsList")
 </template>
 
 <script>
@@ -168,8 +169,11 @@
 
 <style scoped lang="stylus">
   @import '~assets/stylus/variable.styl'
+  .shoppingCart {
+    height 100vh
+  }
   .mescroll {
-    position fixed
+    position absolute
     top 0
     bottom 1.38rem
     left 0

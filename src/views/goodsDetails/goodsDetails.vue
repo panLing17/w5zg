@@ -77,7 +77,7 @@
           img(src="./address.png")
           span 提货门店:
           span {{store.bs_name}}
-    div.noGoodsBtn(v-if="goodsData.gi_status==='222'") 暂不销售
+    div.noGoodsBtn(v-if="goodsData.gi_status!=='221'") 暂不销售
     // 横幅广告---------------------------------------------------------------------------------------------------
     .adWrapper
       img(src="./ad.png")
@@ -92,8 +92,8 @@
         img(src="./title@2x.png")
       goods-list(:data="goodsList")
     // 下架提示------------------------------------------------------------------------------------------------------
-    .noGoodsText(v-if="goodsData.gi_status==='222'") 该商品已下架
-    .toolbarWrapper(v-if="goodsData.gi_status==='222'")
+    .noGoodsText(v-if="goodsData.gi_status!=='221'") 该商品已下架
+    .toolbarWrapper(v-if="goodsData.gi_status!=='221'")
       .left.noGoodsBottom
         .block(@click="goService")
           img(src="./service.png")
@@ -139,25 +139,25 @@
     tag-desc(ref="tagDesc")
     // 规格选择-----------------------------------------------------------------------------------------------------
     select-size(
-                ref="selectSize",
-                :imgUrl="goodsData.gi_image_url",
-                :price="goodsData.min_direct_supply_price",
-                :specGroup="goodsData.spec_group",
-                :spuId="spuId",
-                :carryType="goodsData.carry_type",
-                :fromType="fromType",
-                :store="store",
-                :brandId="goodsData.bi_id",
-                @selection-size="selectionOfSize",
-                @shipping-change="shippingMethodsChange",
-                @save-goods="saveReachGoods",
-                @try-show="$refs.addTryPop.show()",
-                @open-pop="openPop",
-                @count="getCount",
-                @submit-goods="submitGoods",
-                @change-bottom-btn="changeBottomBtn",
-                @change-spec="changeSpec"
-                )
+    ref="selectSize",
+    :imgUrl="goodsData.gi_image_url",
+    :price="goodsData.min_direct_supply_price",
+    :specGroup="goodsData.spec_group",
+    :spuId="spuId",
+    :carryType="goodsData.carry_type",
+    :fromType="fromType",
+    :store="store",
+    :brandId="goodsData.bi_id",
+    @selection-size="selectionOfSize",
+    @shipping-change="shippingMethodsChange",
+    @save-goods="saveReachGoods",
+    @try-show="$refs.addTryPop.show()",
+    @open-pop="openPop",
+    @count="getCount",
+    @submit-goods="submitGoods",
+    @change-bottom-btn="changeBottomBtn",
+    @change-spec="changeSpec"
+    )
     // 预约体验-------------------------------------------------------------------------------------------------------------
     add-try(ref="addTryPop", :data="storeList", :spuId="spuId")
     // 自提门店地址----------------------------------------------------------------------------------------------------------
@@ -318,7 +318,7 @@
                 }
               })
             } else
-              if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
+            if (data.spec_group.length===1 && data.spec_group[0].spec_value.length===1) { // 如果只有一个规格默认选中
               item.checked = 0
             }
           })
@@ -485,7 +485,7 @@
         this.showCircle = true
         setTimeout(()=>{
           this.showCircle = false
-        }, 0)
+        }, 20)
 
         let self = this
         self.$ajax({
@@ -716,7 +716,7 @@
 
 <style scoped lang="stylus">
   img {
-   pointer-events none
+    pointer-events none
   }
   .mescroll {
     position fixed
@@ -821,7 +821,6 @@
       .realIcon {
         color #f70057
         font-size .32rem
-        line-height 1
         margin-left .16rem
       }
       .realPrice {
@@ -832,7 +831,7 @@
             color #f70057
             font-size .693rem
             font-weight 400
-            line-height .8
+            line-height .8rem
             &:nth-child(2) {
               font-size .426rem
             }
@@ -938,8 +937,8 @@
           display flex
           li {
             display flex
-            line-height 1
             margin-right .2rem
+            align-items center
             &:last-child {
               margin-right 0
             }
@@ -1119,7 +1118,6 @@
           color #666
           font-size .26rem
           margin-top .08rem
-          line-height 1
         }
       }
     }
@@ -1157,8 +1155,8 @@
   }
   .circle {
     position: fixed;
-    top: 8.64rem;
-    right: 0;
+    bottom: 10rem;
+    left: 9.4rem;
     width: .53rem;
     height: .53rem;
     background-color: #f70057;
@@ -1169,12 +1167,15 @@
     width: 100%;
   }
   .circle.scale-leave-active {
-    transition: all 1s;
+    transition: left .5s linear, bottom .5s cubic-bezier(.48,0,.94,.28);
   }
   .circle.scale-leave-to {
-    transform: translate3d(-6.8rem,6.8rem, 0);
-    opacity: 0;
+    left: 2.13rem;
+    bottom: 1.33rem;
+    /*transform: translate3d(-6.8rem,6.8rem, 0);*/
   }
+
+
   .noGoodsBtn {
     width 2.6rem
     height .74rem

@@ -88,7 +88,7 @@
                 )
     select-store(ref="selectStore", :from="1", :data="storeList", @store-select="selectStore")
     // 结算失效库存不足弹框-----------------------------------------------------------------------
-    check-goods(ref="checkGoods", :data="checkGoodsData", :btnType="btnType", @go-order="goOrderPage")
+    check-goods(ref="checkGoods", :from="1", :data="checkGoodsData", :btnType="btnType", @go-order="goOrderPage")
 </template>
 
 <script>
@@ -440,6 +440,13 @@
             }
           })
         })
+        if (arr.length===0) {
+          this.$notify({
+            content: '请勾选商品',
+            bottom: 3.2
+          })
+          return
+        }
         indexArr.forEach(item => {
           this.data.commList[item.index].shoppingCartVOList.splice(item.i, 1)
           if(this.data.commList[item.index].shoppingCartVOList.length===0) {

@@ -1,15 +1,15 @@
 <template lang="pug">
   .content
-    recommend(ref="recommend", background="rgb(242, 242, 242)")
+    goods-list(:data="goodsListData")
     .noData(v-if="isEmpty") 暂无相关商品
 </template>
 
 <script>
-  import recommend from '../../recommend'
+  import GoodsList from 'components/goodsList'
   export default {
     name: "activetyContent",
     components: {
-      recommend
+      GoodsList
     },
     props: {
       id: {
@@ -20,11 +20,13 @@
     data () {
       return {
         parentId: '',
-        isEmpty: false
+        isEmpty: false,
+        goodsListData: []
       }
     },
     watch: {
       id () {
+        this.goodsListData = []
         this.mescroll.resetUpScroll();
       }
     },
@@ -50,10 +52,6 @@
       this.mescroll.destroy()
     },
     methods: {
-      // 锁定或者解锁上拉加载
-      lockUpDown (isLock) {
-        this.mescroll.lockUpScroll( isLock );
-      },
       upCallback: function(page) {
         let self = this;
         this.getListDataFromNet(page.num, page.size, function(curPageData) {
@@ -62,7 +60,7 @@
           } else {
             self.isEmpty = false
           }
-          self.$refs.recommend.more(curPageData,page.num,page.size)
+          self.goodsListData = self.goodsListData.concat(curPageData)
           self.mescroll.endSuccess(curPageData.length)
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -107,7 +105,8 @@
 
   }
   .noData {
-    margin-top: 3rem;
+    height: calc(100vh - 2.76rem);
+    padding-top: 3rem;
     text-align: center;
     color: #999;
     font-size: .4rem;

@@ -136,7 +136,7 @@
         }
         this.$ajax({
           method: 'post',
-          url: this.$apiTransaction + 'goodsRejected/rejectedOrderInfo',
+          url: this.$apiTransaction + 'goodsRejected/v2/rejectedOrderInfo',
           params:form
         }).then(function (response) {
           if (response.data.code === '081') {

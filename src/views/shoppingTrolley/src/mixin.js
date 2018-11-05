@@ -176,7 +176,8 @@ export const shoppingCart = {
         price: goods.direct_supply_price,
         selectionSize: selectionSize,
         spuId: goods.gspu_id,
-        scId: goods.sc_id
+        scId: goods.sc_id,
+        storageNum: goods.storage_num
       }
       this.goodsDetailAjax(goods.gspu_id, ()=>{
         this.goodsDetail.spec_group.forEach((item, index) => {
