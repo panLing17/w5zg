@@ -70,8 +70,10 @@
       '$route'(to) {
         if(to.path==='/shoppingCart/express') {
           this.navActive = 0
+          this.mescroll.resetUpScroll()
         } else {
           this.navActive = 1
+          this.mescroll.resetUpScroll()
         }
       }
     },
@@ -89,17 +91,19 @@
       next(vm=>{
         if(to.path==='/shoppingCart/express') {
           vm.navActive = 0
+          vm.mescroll.resetUpScroll()
         } else {
           vm.navActive = 1
+          vm.mescroll.resetUpScroll()
         }
       })
     },
     mounted() {
       this.$mescrollInt("shoppingMescroll", this.upCallback, () => {}, (obj) => {
-        this.$store.commit('setPosition', {
-          path: this.$route.path,
-          y: obj.preScrollY
-        })
+        // this.$store.commit('setPosition', {
+        //   path: this.$route.path,
+        //   y: obj.preScrollY
+        // })
       })
     },
     methods: {

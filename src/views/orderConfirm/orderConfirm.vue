@@ -136,11 +136,12 @@
         this.$router.go(-1)
         return
       }
-      if (this.confirmData.shippingMethods===0) {
-        this.getAddress()
-      } else {
-        this.getData()
-      }
+      // if (this.confirmData.shippingMethods===0) {
+      //
+      // } else {
+      //   this.getData()
+      // }
+      this.getAddress()
       this.getTicket()
     },
     methods: {
@@ -280,6 +281,8 @@
             self.addressData.forEach(item => {
               if (item.ra_default==='011') {
                 self.showAddress = item
+                self.selfForm.name = item.ra_name
+                self.selfForm.phone = item.ra_phone
               }
             })
           }

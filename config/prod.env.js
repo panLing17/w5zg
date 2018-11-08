@@ -1,12 +1,12 @@
 
 module.exports = {
   NODE_ENV: '"production"' ,
-  REQ_PRE : '"http://"',
-  API_ROOT: '".w5zg.com:"',
-  MEMBER_PORT: '"80"',
-  GOODS_PORT: '"80"',
-  TRADING_PORT: '"80"',
-  APP_PORT: '"80"',
+  REQ_PRE : '"https://"',
+  API_ROOT: '".w5zg.com"',
+  MEMBER_PORT: '""',
+  GOODS_PORT: '""',
+  TRADING_PORT: '""',
+  APP_PORT: '""',
   MEMBER_PREFIEX: '"member"',
   GOODS_PREFIEX: '"goods"',
   TRADING_PREFIEX: '"trading"',
