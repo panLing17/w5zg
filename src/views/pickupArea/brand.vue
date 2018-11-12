@@ -1,54 +1,56 @@
 <template lang="pug">
-  .brand.mescroll
+  .brand.mescroll#brandMescroll
     .header
       .back
         img(src="./img/back.png")
       .title 雅诗兰黛
     .contentWrapper
-      banner(:data="[1,1,1,1]")
+      banner(:data="brandData.brandInfo?brandData.brandInfo.brandBannerList:[]")
       .brandFlagWrapper
         .brandFlag
           .left
-            img
+            img(:src="brandData.brandInfo?brandData.brandInfo.bi_pic_url:'' | img-filter")
           .right
-            .name 雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder
+            .name {{brandData.brandInfo?brandData.brandInfo.bi_name:''}}
             .country
-              img
-              span 美国
-        .brandDesc(ref="brandDesc", :style="{height: !brandDescShowAll?brandDescInitHeight:brandDescMaxHeight}") 二十世纪60年代雅诗兰黛开始拓展国际市场，先后进入英国、dfdfdfdfdfdf加拿大、澳大利亚、德国、法国和日本。雅诗兰黛的专柜大多二十世纪60年代雅诗兰黛开始拓展国际市场，先后进入英国、dfdfdfdfdfdf加拿大、澳大利亚、德国、法国和日本。雅诗兰黛的专柜大多
+              img(:src="brandData.brandInfo?brandData.brandInfo.bi_flag:'' | img-filter")
+              span {{brandData.brandInfo?brandData.brandInfo.bi_country:''}}
+        .brandDesc(ref="brandDesc", :style="{height: !brandDescShowAll?brandDescInitHeight:brandDescMaxHeight}") {{brandData.brandInfo?brandData.brandInfo.bi_brand_info:''}}
         .openMore(v-show="brandDescMaxHeight!==0", @click="brandDescShowAll=!brandDescShowAll")
           .left
           .center
             span {{!brandDescShowAll?'查看更多品牌信息':'向上收起'}}
             img(:src="!brandDescShowAll?require('./img/down1.png'):require('./img/up1.png')")
           .right
-      .storeWrapper
+      .storeWrapper(v-if="brandData.counterInfo")
         .desc
           .left 支持专柜提货
           .right
-            .text 共有<span>3</span>家专柜
+            .text 共有<span>{{brandData.counterNum}}</span>家专柜
             img(src="./img/more1.png")
-        .address
+        .address(v-show="currentAddress.bs_name")
+          .del
+            img(src="./img/del.png")
           .left
             img(src="./img/address.png")
           .right
-            .name 南京中央商场专柜
-            .detail 南京市秦淮区中山南路79号 中央商场二期B座一楼（西区自动扶梯旁）
+            .name {{currentAddress.bs_name}}
+            .detail {{currentAddress.bs_address}}
       .navWrapper
         scroll.navList(ref="nav", :data="navList", :scrollX="true", :scrollY="false", :stopPropagation="true")
           div
             ul(ref="navList")
-              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
+              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item.gc_name}}
         .arrow(@click="navArrow=!navArrow", ref="arrow")
           img(:src="!navArrow?require('./img/down2.png'):require('./img/up2.png')")
       .navContentWrapper
         transition(name="fold")
           .navContent(v-show="navArrow")
             ul
-              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item}}
+              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item.gc_name}}
       .goodsListWrapper
         goods-list(:data="goodsList")
-      .hotWrapper
+      .hotWrapper(v-show="hotList.length")
         .floor
           img(src="./img/floor.png")
         .listWrapper
@@ -56,47 +58,102 @@
             li.item(v-for="item in hotList")
               .top
                 .left
-                  img()
+                  img(:src="item.bi_pic_url | img-filter")
                 .right
-                  .name 雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder雅诗兰黛/Estée Lauder
+                  .name {{item.bi_name}}
                   .country
-                    img
-                    span 美国
+                    img(:src="item.bi_flag | img-filter")
+                    span {{item.bi_country}}
                 .more
                   span 进入品牌
                   img(src="./img/more2.png")
               .bottom
                 ul
-                  li(v-for="item in [1,1,1,1]")
+                  li(v-for="goods in item.spuList", @click="$router.push({path: '/goodsDetailed', query: {id: goods.gspu_id}})")
                     .logo
-                      img
-                    .name 魅可MAC子弹头口红15魅可MAC子弹头口红15色
-                    .price ￥99999.99
+                      img(:src="goods.gi_image_url | img-filter")
+                    .name {{goods.gi_name}}
+                    .price {{goods.direct_supply_price | price-filter}}
+    select-store(:data="brandData.counterInfo", ref="selectStore")
 </template>
 
 <script>
   import Banner from 'components/custom/banner/banner.vue'
   import Scroll from 'components/scroll'
   import GoodsList from 'components/goodsList'
+  import SelectStore from 'views/goodsDetails/selectStore'
   export default {
     name: "brand",
     data() {
       return {
+        brandData: {},
         brandDescShowAll: false,
         brandDescInitHeight: 'auto',
         brandDescMaxHeight: 0,
-        navList: ['全部',1,1,1,1,1,1,1,1,1,1,1,1,'胡德夫胡德夫好多分'],
+        navList: [],
         navArrow: false,
         navActive: 0,
         screenWidth: document.documentElement.offsetWidth || document.body.clientWidth,
         goodsList: [],
-        hotList: [1,1,1,1,1,1,1,1,1,1,1]
+        hotList: [],
+        currentAddress: {}
       }
     },
+    created() {
+      this.getData()
+    },
     mounted() {
-      this.initBrandDescHeight()
+      this.$mescrollInt("brandMescroll", this.upCallback, () => {}, (obj) => {})
     },
     methods: {
+      getData() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'gocounterbrand/getAboutBrandInfo',
+          params: {
+            bi_id: 1353
+          }
+        }).then(function (res) {
+          if (res) {
+            self.brandData = res.data.data
+            res.data.data.categoryThird.unshift({
+              gc_name: '全部'
+            })
+            self.navList = res.data.data.categoryThird
+            self.initBrandDescHeight()
+          }
+        })
+      },
+      upCallback: function (page) {
+        let self = this;
+        this.getListDataFromNet(page.num, page.size, function (curPageData) {
+          self.goodsList = self.goodsList.concat(curPageData)
+          if (curPageData.length===0 || curPageData.length<page.size) {
+            self.getRecommendBrand()
+          }
+          self.mescroll.endSuccess(curPageData.length)
+        }, function () {
+          //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
+          self.mescroll.endErr();
+        })
+      },
+      getListDataFromNet(pageNum, pageSize, successCallback, errorCallback) {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'gocounterbrand/getAboutGoodsInfo',
+          params: {
+            page: pageNum,
+            rows: pageSize,
+            bi_id: 10,
+            gc_id: ''
+          },
+          headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
+        }).then(function (response) {
+          successCallback && successCallback(response.data.data.rows)
+        })
+      },
       initBrandDescHeight() {
         this.$nextTick(()=>{
           let lineHeight = parseFloat(this.$method.getStyle(this.$refs.brandDesc, 'lineHeight'))
@@ -104,6 +161,20 @@
           if (height / lineHeight > 2) {
             this.brandDescInitHeight = lineHeight * 2 + 'px'
             this.brandDescMaxHeight = height + 'px'
+          }
+        })
+      },
+      getRecommendBrand() {
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'gocounterbrand/getAboutSameBrandInfo',
+          params: {
+            bi_id: 10
+          }
+        }).then(function (res) {
+          if (res) {
+            self.hotList = res.data.data.brandInfo
           }
         })
       },
@@ -136,7 +207,8 @@
     components: {
       Banner,
       Scroll,
-      GoodsList
+      GoodsList,
+      SelectStore
     }
   }
 </script>
@@ -315,6 +387,15 @@
     .address {
       display flex
       padding 0 .13rem .26rem
+      position relative
+      .del {
+        position absolute
+        right .4rem
+        top 0
+        img {
+          width .53rem
+        }
+      }
       .left {
         font-size 0
         img {
@@ -380,6 +461,7 @@
   .navContentWrapper {
     position absolute
     overflow hidden
+    width 100%
     z-index 10
   }
   .navContent {

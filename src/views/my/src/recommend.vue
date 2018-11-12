@@ -213,10 +213,10 @@
     justify-content: space-between;
     position: relative;
   }
-  .goodsType{
-    background: url("../../../assets/img/noLoadPic.png") no-repeat top;
-    background-size: 100% 67%;
-  }
+  /*.goodsType{*/
+    /*background: url("../../../assets/img/noLoadPic.png") no-repeat top;*/
+    /*background-size: 100% 67%;*/
+  /*}*/
   .goodsType>img {
     width: 100%;
     height: 4.8rem;

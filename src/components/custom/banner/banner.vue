@@ -1,9 +1,9 @@
 <template lang="pug">
   .banner
-    slider(:data="data", v-lazy-container="{ selector: 'img'}")
-      div(v-for="(item, index) in data")
+    slider(:data="data")
+      div(v-for="(item, index) in data", v-lazy-container="{ selector: 'img'}")
         a(@click.prevent="")
-          img.needsclick(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.ac_phone_image+'?x-oss-process=style/compress'",
+          img.needsclick(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item+'?x-oss-process=style/compress'",
           :data-error="require('../../../assets/img/default/banner.png')",
           :data-loading="require('../../../assets/img/default/banner.png')",
           :key="item.ac_phone_image", @click.prevent="")

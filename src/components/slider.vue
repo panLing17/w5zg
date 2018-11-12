@@ -41,19 +41,19 @@ export default {
     }
   },
   watch:{
-    // data(newVal) {
-    //   if (newVal.length) {
-    //     setTimeout(() => {
-    //       this._setSliderWidth()
-    //       this._initDots()
-    //       this._initSlider()
-    //
-    //       if (this.autoPlay) {
-    //         this._play()
-    //       }
-    //     }, 200)
-    //   }
-    // }
+    data(newVal) {
+      if (newVal.length) {
+        setTimeout(() => {
+          this._setSliderWidth()
+          this._initDots()
+          this._initSlider()
+
+          if (this.autoPlay) {
+            this._play()
+          }
+        }, 200)
+      }
+    }
   },
   // activated() {
   //   if (this.autoPlay) {
