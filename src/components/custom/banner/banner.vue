@@ -2,11 +2,11 @@
   .banner
     slider(:data="data")
       div(v-for="(item, index) in data", v-lazy-container="{ selector: 'img'}")
-        a(@click.prevent="")
-          img.needsclick(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item+'?x-oss-process=style/compress'",
+        a(@click.prevent="goNext(item)")
+          img.needsclick(:data-src="item.image_url",
           :data-error="require('../../../assets/img/default/banner.png')",
           :data-loading="require('../../../assets/img/default/banner.png')",
-          :key="item.ac_phone_image", @click.prevent="")
+          :key="item.image_url", @click.prevent="")
 </template>
 
 <script>
@@ -19,6 +19,11 @@
         default() {
           return []
         }
+      }
+    },
+    methods: {
+      goNext(data) {
+        window.location.href = data.url
       }
     },
     components: {

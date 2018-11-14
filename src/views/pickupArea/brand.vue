@@ -1,7 +1,7 @@
 <template lang="pug">
   .brand.mescroll#brandMescroll
     .header
-      .back
+      .back(@click="$router.go(-1)")
         img(src="./img/back.png")
       .title 雅诗兰黛
     .contentWrapper
@@ -26,10 +26,10 @@
         .desc
           .left 支持专柜提货
           .right
-            .text 共有<span>{{brandData.counterNum}}</span>家专柜
+            .text(@click="$refs.selectStore.show()") 共有<span>{{brandData.counterNum}}</span>家专柜
             img(src="./img/more1.png")
         .address(v-show="currentAddress.bs_name")
-          .del
+          .del(@click="delAddress")
             img(src="./img/del.png")
           .left
             img(src="./img/address.png")
@@ -47,7 +47,7 @@
         transition(name="fold")
           .navContent(v-show="navArrow")
             ul
-              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event)") {{item.gc_name}}
+              li(v-for="(item, index) in navList", :class="{active: index===navActive}", @click="navChange(item, index, $event), navArrow=!navArrow") {{item.gc_name}}
       .goodsListWrapper
         goods-list(:data="goodsList")
       .hotWrapper(v-show="hotList.length")
@@ -72,9 +72,9 @@
                   li(v-for="goods in item.spuList", @click="$router.push({path: '/goodsDetailed', query: {id: goods.gspu_id}})")
                     .logo
                       img(:src="goods.gi_image_url | img-filter")
-                    .name {{goods.gi_name}}
+                    .name {{goods.goods_name}}
                     .price {{goods.direct_supply_price | price-filter}}
-    select-store(:data="brandData.counterInfo", ref="selectStore")
+    select-store(:data="brandData.counterInfo", ref="selectStore", @store-select="selectStore")
 </template>
 
 <script>
@@ -96,7 +96,8 @@
         screenWidth: document.documentElement.offsetWidth || document.body.clientWidth,
         goodsList: [],
         hotList: [],
-        currentAddress: {}
+        currentAddress: {},
+        gc_id: ''
       }
     },
     created() {
@@ -147,7 +148,7 @@
             page: pageNum,
             rows: pageSize,
             bi_id: 10,
-            gc_id: ''
+            gc_id: this.gc_id
           },
           headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}
         }).then(function (response) {
@@ -165,6 +166,9 @@
         })
       },
       getRecommendBrand() {
+        if (this.hotList.length > 0) {
+          return
+        }
         let self = this
         self.$ajax({
           method: 'get',
@@ -202,6 +206,17 @@
             this.$refs.nav.scrollTo(-totalWidth, 0, 300)
           }
         }
+
+
+        this.gc_id = item.gc_id
+        this.goodsList = []
+        this.mescroll.resetUpScroll()
+      },
+      selectStore(data) {
+        this.currentAddress = data
+      },
+      delAddress() {
+        this.currentAddress = {}
       }
     },
     components: {

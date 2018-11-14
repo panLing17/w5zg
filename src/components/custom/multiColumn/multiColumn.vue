@@ -1,8 +1,8 @@
 <template lang="pug">
   .multiColumn
     ul
-      li(v-for="item in data", v-lazy-container="{ selector: 'img'}")
-        img(:data-src="'http://w5zg-mall.oss-cn-hangzhou.aliyuncs.com/'+item.ac_phone_image+'?x-oss-process=style/compress'",
+      li(v-for="item in data", v-lazy-container="{ selector: 'img'}", @click="goNext(item)")
+        img(:data-src="item.image_url",
         :data-error="require('../../../assets/img/default/custom1.png')",
         :data-loading="require('../../../assets/img/default/custom1.png')",
         :key="item.ac_phone_image")
@@ -17,6 +17,11 @@
         default() {
           return []
         }
+      }
+    },
+    methods: {
+      goNext(data) {
+        window.location.href = data.url
       }
     }
   }

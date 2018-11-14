@@ -75,56 +75,87 @@
     created() {
       this.areaInitHeight = 0
       this.areaMaxHeight = 0
+      this.getData()
     },
     mounted() {
       this.getAreaInitHeight()
-      this.getData()
     },
     methods: {
       getData() {
-        this.createBanner()
-        this.createTwoColumn()
-        this.createSuspension()
-        this.createTransverseSliding()
+        let self = this
+        self.$ajax({
+          method: 'get',
+          url: self.$apiApp + 'acPageInfo/pageComponentList',
+          params: {
+            pi_id: 1,
+            flag: 0
+          }
+        }).then(function (res) {
+          if (res) {
+            res.data.data.forEach((item, index) => {
+              item.content = JSON.parse(item.content)
+              switch (item.pci_id) {
+                case 1:
+                  self.createBanner(item.content)
+                  break
+                case 2:
+                  self.createSuspension(item.content)
+                  break
+                case 3:
+                  self.createTwoColumn(item.content)
+                  break
+                case 4:
+                  self.createTwoColumn(item.content)
+                  break
+                case 5:
+                  self.createTwoColumn(item.content)
+                  break
+                case 6:
+                  self.createTransverseSliding(item.content)
+                  break
+              }
+            })
+          }
+        })
       },
       // 新建banner
-      createBanner() {
+      createBanner(data) {
         let el = document.createElement("div")
         el.id = 'bannerWrapper'
         this.$refs.customWrapper.appendChild(el)
         this.$banner({
-          data:[1,1,1,1,1],
+          data:data.picList,
           id: 'bannerWrapper'
         })
       },
       // 新建多栏栏组件
-      createTwoColumn() {
+      createTwoColumn(data) {
         let el = document.createElement("div")
         el.id = 'twoColumnWrapper'
         this.$refs.customWrapper.appendChild(el)
         this.$multiColumn({
-          data: [1,1],
+          data: data.picList,
           id: 'twoColumnWrapper'
         })
       },
       // 新建悬浮按钮
-      createSuspension() {
+      createSuspension(data) {
         let el = document.createElement("div")
         el.id = 'suspension'
         this.$refs.customWrapper.appendChild(el)
         this.$suspension({
-          data: {},
+          data: data.picList[0],
           id: 'suspension'
         })
       },
       // 新建横向滑动
-      createTransverseSliding() {
+      createTransverseSliding(data) {
+        console.log(data)
         let el = document.createElement("div")
         el.id = 'transverseSliding'
         this.$refs.customWrapper.appendChild(el)
         this.$transverseSliding({
-          data: [{img: 'http://img5.imgtn.bdimg.com/it/u=613763897,114470262&fm=26&gp=0.jpg'
-          },1,1,1,1,1,1,1,1],
+          data: data.picList,
           id: 'transverseSliding'
         })
       },

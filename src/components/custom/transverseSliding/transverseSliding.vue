@@ -2,8 +2,8 @@
   scroll.transverseSliding(:data="data", :style="{height: wrapperHeight + 'px'}", :scrollX="true", :scrollY="false", :stopPropagation="true")
     div
       ul
-        li(v-for="(item, index) in data")
-          img(:src="item.img", @load="setWrapperHeight($event)")
+        li(v-for="(item, index) in data", @click="goNext(item)")
+          img(:src="item.image_url", @load="setWrapperHeight($event)")
 </template>
 
 <script>
@@ -29,6 +29,9 @@
           return
         }
         this.wrapperHeight = e.target.offsetHeight
+      },
+      goNext(data) {
+        window.location.href = data.url
       }
     },
     components: {
